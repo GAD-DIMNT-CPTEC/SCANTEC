@@ -1,0 +1,7 @@
+# Automatically generated dependencies. Qua Abr  7 16:18:11 BRT 2010
+# fgen v0.3 (C) 1997,98 Beroud Jean-Marc
+
+
+$(srcdir)/teste.o teste.o: \
+	$(srcdir)/teste.f90
+
