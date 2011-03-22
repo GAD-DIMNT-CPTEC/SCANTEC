@@ -1,0 +1,9 @@
+# Automatically generated objects. Qui Out  7 15:33:47 BRT 2010
+# fgen v0.3 (C) 1997,98 Beroud Jean-Marc
+
+OBJS = \
+	$(srcdir)/SCAM_UtilsMOD.o \
+	$(srcdir)/SCAM_coreMOD.o \
+	$(srcdir)/SCAM_gridMOD.o \
+	$(srcdir)/m_timeconv.o \
+	$(srcdir)/scamdrv.o

@@ -1,0 +1,32 @@
+# Lines starting with # are comments which are
+# ignored during processing.
+my_file_names:         jan87.dat jan88.dat jan89.dat radius_of_the_earth:   6.37E6  # these are comments too
+constants:             3.1415   25
+my_favourite_colors:   green blue 022 # text & number are OK
+
+my_table_name::
+ 1000     3000     263.0   
+  925     3000     263.0
+  850     3000     263.0
+  700     3000     269.0
+  500     3000     287.0
+  400     3000     295.8
+  300     3000     295.8    
+::
+
+Meu nome: 'LUIZ SAPUCI JOAO'
+::
+
+levs:: 1 2 3 4 5
+6 7 8 9 10
+34 12 13 14 
+34 16 17 18 19 20
+34 22
+34 24 25 
+34
+34
+34 29 30 31
+34
+2
+2 1 3 4 5 6 76 78 8 9 0
+::

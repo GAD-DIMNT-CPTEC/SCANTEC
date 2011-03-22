@@ -1,0 +1,5 @@
+PROGRAM teste
+   USE utils
+   CALL BANNER()
+   CALL readcard()
+END

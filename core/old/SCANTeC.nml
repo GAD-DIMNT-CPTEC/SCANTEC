@@ -1,0 +1,61 @@
+
+
+$INPUTDATA
+!===================================================================!
+! Data Inicial e final da avaliacao (p.e 2007010100)
+!
+
+DataInp = 2007040600,
+Dataout = 2007043012,
+
+!===================================================================!
+! Incremento de tempo entre as analises avaliadas (p.e. 06,12)
+!
+
+IncTime = 6,
+
+!===================================================================!
+! Numero de horas de integracao do modelo considerada na avaliacao (p.e. 120)
+!
+
+NTHP = 114,
+
+!===================================================================!
+! longitudes inicial e final (p.e. 277.0) e latitudes inicial e final (p.e. -40.0)
+!
+
+loni = 0.0,
+lonf = 360.0,
+lati = -20.0,
+latf = 20.0,
+
+!===================================================================!
+! Variaveies do arquivo de Analise, de previsao e de climatologia
+! respectivamente (p.e "UVEL","VVEL")
+!
+NVar = 20,
+varA ="ZGEO:850","ZGEO:500","ZGEO:300","ZGEO:250","UVEL:850","UVEL:500","UVEL:300","UVEL:250","VVEL:850","VVEL:500","VVEL:300","VVEL:250","UMRL:925","UMRL:850","UMRL:700","UMRL:500","UMRL:400","UMRL:300","UMRL:250","AGPL:1000",
+varP ="ZGEO:850","ZGEO:500","ZGEO:300","ZGEO:250","UVEL:850","UVEL:500","UVEL:300","UVEL:250","VVEL:850","VVEL:500","VVEL:300","VVEL:250","UMRL:925","UMRL:850","UMRL:700","UMRL:500","UMRL:400","UMRL:300","UMRL:250","AGPL:1000",
+varC ="ghmt:850","ghmt:500","ghmt:300","ghmt:250","uvmt:850","uvmt:500","uvmt:300","uvmt:250","vvmt:850","vvmt:500","vvmt:300","vvmt:250","rhmt:925","rhmt:850","rhmt:700","rhmt:500","rhmt:400","rhmt:300","rhmt:250","pwat:1000",
+!===================================================================!
+! Prefixo e sulfixos dos arquivos do modelo 
+!
+
+MODEL_PREFX = "GPOSDAO",
+FOREC_SUFFX = "P.fct.T213L42",
+ANALI_SUFFX = "P.icn.T213L42",
+
+!===================================================================!
+! Arquivo contendo a climatologia
+!
+
+CLIMA_ARQ   = "climato_T213.apr.ctl",
+
+!===================================================================!
+! Diretório e entrada e saída dos dados
+!
+
+MODEL_DIRIN = "/rede/assimdados/psas/lsapucci/T213comIWV",
+CLIMA_DIRIN = "/home/lsapucci/aval_airs/Bsbmet/JGMevaluator",
+DIROUT      = "/rede/assimdados/reanalise/lsapucci/aval1007_T213comIWV/TR"
+$
