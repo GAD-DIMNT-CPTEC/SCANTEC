@@ -1,0 +1,59 @@
+# Automatically generated dependencies. Qua Abr  7 16:39:15 BRT 2010
+# fgen v0.3 (C) 1997,98 Beroud Jean-Marc
+
+
+$(srcdir)/m_chars.o m_chars.o: \
+	$(srcdir)/m_chars.F90
+
+$(srcdir)/m_die.o m_die.o: \
+	$(srcdir)/m_die.f90 \
+	$(srcdir)/m_dropdead.o \
+	$(srcdir)/m_flow.o \
+	$(srcdir)/m_mpout.o \
+	$(srcdir)/m_stdio.o
+
+$(srcdir)/m_dropdead.o m_dropdead.o: \
+	$(srcdir)/m_dropdead.F90 \
+	$(srcdir)/m_stdio.o
+
+$(srcdir)/m_flow.o m_flow.o: \
+	$(srcdir)/m_flow.F90 \
+	$(srcdir)/m_chars.o
+
+$(srcdir)/m_inpak90.o m_inpak90.o: \
+	$(srcdir)/m_inpak90.f90 \
+	$(srcdir)/m_die.o \
+	$(srcdir)/m_ioutil.o \
+	$(srcdir)/m_mall.o \
+	$(srcdir)/m_realkinds.o \
+	$(srcdir)/m_stdio.o
+
+$(srcdir)/m_ioutil.o m_ioutil.o: \
+	$(srcdir)/m_ioutil.F90 \
+	$(srcdir)/m_stdio.o
+
+$(srcdir)/m_mall.o m_mall.o: \
+	$(srcdir)/m_mall.F90 \
+	$(srcdir)/m_chars.o \
+	$(srcdir)/m_dropdead.o \
+	$(srcdir)/m_ioutil.o \
+	$(srcdir)/m_realkinds.o \
+	$(srcdir)/m_stdio.o
+
+$(srcdir)/m_mpout.o m_mpout.o: \
+	$(srcdir)/m_mpout.F90 \
+	$(srcdir)/m_dropdead.o \
+	$(srcdir)/m_ioutil.o \
+	$(srcdir)/m_realkinds.o \
+	$(srcdir)/m_stdio.o
+
+$(srcdir)/m_realkinds.o m_realkinds.o: \
+	$(srcdir)/m_realkinds.F90
+
+$(srcdir)/m_stdio.o m_stdio.o: \
+	$(srcdir)/m_stdio.F90
+
+$(srcdir)/teste.o teste.o: \
+	$(srcdir)/teste.f90 \
+	$(srcdir)/m_inpak90.o
+

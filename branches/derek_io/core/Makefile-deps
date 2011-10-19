@@ -1,0 +1,23 @@
+# Automatically generated dependencies. Qui Out  7 15:33:47 BRT 2010
+# fgen v0.3 (C) 1997,98 Beroud Jean-Marc
+
+
+$(srcdir)/SCAM_UtilsMOD.o SCAM_UtilsMOD.o: \
+	$(srcdir)/SCAM_UtilsMOD.f90
+
+$(srcdir)/SCAM_coreMOD.o SCAM_coreMOD.o: \
+	$(srcdir)/SCAM_coreMOD.f90 \
+	$(srcdir)/SCAM_gridMOD.o \
+	$(srcdir)/SCAM_UtilsMOD.o \
+	$(srcdir)/m_time.o
+
+$(srcdir)/SCAM_gridMOD.o SCAM_gridMOD.o: \
+	$(srcdir)/SCAM_gridMOD.f90
+
+$(srcdir)/m_time.o m_time.o: \
+	$(srcdir)/m_time.f90
+
+$(srcdir)/scamdrv.o scamdrv.o: \
+	$(srcdir)/scamdrv.f90 \
+	$(srcdir)/SCAM_coreMOD.o
+
