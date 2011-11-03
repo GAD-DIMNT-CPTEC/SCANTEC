@@ -1,0 +1,16 @@
+# Automatically generated objects. Sex Set  9 11:26:26 BRT 2011
+# fgen v0.3 (C) 1997,98 Beroud Jean-Marc
+
+OBJS = \
+	$(incdir)/m_StrTemplate.o \
+	$(incdir)/m_chars.o \
+	$(incdir)/m_die.o \
+	$(incdir)/m_dropdead.o \
+	$(incdir)/m_flow.o \
+	$(incdir)/m_inpak90.o \
+	$(incdir)/m_ioutil.o \
+	$(incdir)/m_mall.o \
+	$(incdir)/m_mpout.o \
+	$(incdir)/m_realkinds.o \
+	$(incdir)/m_stdio.o \
+	$(incdir)/teste.o
