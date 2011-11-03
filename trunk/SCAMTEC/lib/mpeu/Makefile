@@ -1,4 +1,4 @@
-# Automatically generated GNU Makefile. Sex Set  9 11:26:26 BRT 2011
+# Automatically generated GNU Makefile. Qui Nov  3 15:38:45 BRST 2011
 # fgen v0.3 (C) 1997,98 Beroud Jean-Marc
 
 # simultaneous parallel jobs & load average limit
@@ -25,9 +25,7 @@ GZIP    = gzip
 INSTALL = install
 
 # dirs
-incdir = ./
-incdir = ./
-srcdir = ../../core
+libdir = ./
 
 # preprocessor, compilers, linker & archiver
 FPP = gcc
@@ -40,8 +38,8 @@ AR  = ar
 mode = opt
 
 # header file directories
-CCFLAGS = -I$(incdir) 
-FFLAGS  = -I$(incdir) 
+CCFLAGS = 
+FFLAGS  = 
 
 # default flags
 FPPFLAGS = -C -E
@@ -75,7 +73,7 @@ endif
 include Makefile-objs
 
 # additionnal libraries
-LIBDIRS = -L$(incdir)  
+LIBDIRS = -L$(libdir)  
 LIBS    = -lmpeu  
 
 # target names
@@ -103,8 +101,8 @@ $(BIN): $(OBJS)
 	$(LD) $(LDFLAGS) $(notdir $(OBJS)) $(LIBDIRS) $(LIBS) -o $@
 
 # args for fgen & f2html
-FGENARGS   = -s $(srcdir) -l $(incdir) -i $(incdir) 
-F2HTMLARGS = $(srcdir) $(incdir) $(incdir) 
+FGENARGS   = -l $(libdir) 
+F2HTMLARGS = $(libdir) 
 
 # rebuild dependencies
 dep:
