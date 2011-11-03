@@ -21,8 +21,8 @@ GZIP    = gzip
 INSTALL = install
 
 # dirs
-incdir = ./lib/inpak90
-incdir = ./lib/inpak90
+incdir = ./lib/mpeu
+incdir = ./lib/mpeu
 srcdir = ./core
 
 PRJDIRS = $(incdir) $(srcdir) 
@@ -31,13 +31,13 @@ PRJDIRS = $(incdir) $(srcdir)
 .PHONY: $(MAKEFILE) all dep html clean install help
 
 # targets
-all: libinpak90.a teste.x 
+all: libmpeu.a scamtec.x 
 
-libinpak90.a:
+libmpeu.a:
 	@$(CD) $(incdir) && \
 	    $(MAKE) -f $(MAKEFILE) $@
 
-teste.x:
+scamtec.x:
 	@$(CD) $(srcdir) && \
 	    $(MAKE) -f $(MAKEFILE) $@
 
