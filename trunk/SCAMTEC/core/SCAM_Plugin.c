@@ -18,10 +18,9 @@ SCAMTEC_MODEL_INI_TABLE load_data[SCAMTEC_MAX_MODEL];
 void FTN(registermodelread)(int *i, void (*func)())
 
 { 
-//  ft_check_index(*i, SCAMTEC_MAX_MODEL, "registermodelread");
+  ft_check_index(*i, SCAMTEC_MAX_MODEL, "registermodelread");
   load_data[*i].func = func; 
 }
-
 
 
 void FTN(load_data)(int *i, char *name)

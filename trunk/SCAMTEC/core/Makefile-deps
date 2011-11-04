@@ -38,9 +38,6 @@ $(srcdir)/agcm_read.o agcm_read.o: \
 $(srcdir)/eta_read.o eta_read.o: \
 	$(srcdir)/eta_read.f90
 
-ftn_drv.h: \
-	
-
 $(srcdir)/m_string.o m_string.o: \
 	$(srcdir)/m_string.f90
 
