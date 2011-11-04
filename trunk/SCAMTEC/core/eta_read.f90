@@ -1,9 +1,6 @@
-SUBROUTINE eta_read(aymd,ahms,pymd,phms)
+SUBROUTINE eta_read(fname)
    IMPLICIT NONE
-   integer, intent(IN) :: aymd
-   integer, intent(IN) :: ahms
-   integer, intent(IN) :: pymd
-   integer, intent(IN) :: phms
+   character(len=*), intent(IN) :: fname
 
    character(len=*),parameter :: myname='eta_read'
 
@@ -14,10 +11,7 @@ SUBROUTINE eta_read(aymd,ahms,pymd,phms)
 
     PRINT*,'Hello from ', myname
 
-    !
-    ! Create Name Files
-    !
-
+    print*,trim(fname)
 
 
 END SUBROUTINE

@@ -84,8 +84,8 @@ MODULE SCAM_Utils
    END TYPE
 
    TYPE, PUBLIC  :: RUNS
+      INTEGER                          :: Id
       CHARACTER(len=300)               :: name
-      CHARACTER(len=300)               :: dir
       CHARACTER(len=300)               :: file
       TYPE(variable), DIMENSION(nvmx)  :: var
    END TYPE
@@ -317,71 +317,35 @@ MODULE SCAM_Utils
 !
 ! Reference File
 !
-         call i90_label ( 'Reference:', iret )
+         call i90_label ( 'Reference model:', iret )
+         Refer%Id = i90_gint(iret)
          if(iret /= 0) then
-            call perr(myname_,'i90_label("Reference:")',iret)
+            call perr(myname_,'i90_gint("Reference model:")',iret)
             if(present(istat))istat=iret
             return
          endif
-!         Refer%name='Control'
-         call i90_Gtoken(Refer%name,iret)
-         if(iret /= 0) then
-            call perr(myname_,'Reference dir',iret)
-            if(present(istat))istat=iret
-            return
-         endif
-         call i90_Gtoken(Refer%dir,iret)
-         if(iret /= 0) then
-            call perr(myname_,'Reference dir',iret)
-            if(present(istat))istat=iret
-            return
-         endif
+
+         call i90_label ( 'Reference file:', iret )
          call i90_Gtoken(Refer%file,iret)
          if(iret /= 0) then
-            call perr(myname_,'Reference File_Name_with_mask',iret)
+            call perr(myname_,'i90_label("Reference file:")',iret)
             if(present(istat))istat=iret
             return
          endif
-         
+         call i90_label ( 'Reference label:', iret )
+         call i90_Gtoken(Refer%name,iret)
+         if(iret /= 0) then
+            call perr(myname_,'i90_label("Reference label:")',iret)
+            if(present(istat))istat=iret
+            return
+         endif
+
 #ifdef DEBUG
          WRITE(*,'(A)')'Reference'
-         WRITE(*,'(2A)')'  |---- Name   :',TRIM(Refer%name)
-         WRITE(*,'(2A)')'  |---- Dir    :',TRIM(Refer%dir)
-         WRITE(*,'(2A)')'  |---- File   :',TRIM(Refer%file)
+         WRITE(*,'(A,I2.2)')'  |---- Id     :',Refer%Id
+         WRITE(*,'(2A)')    '  |---- Name   :',TRIM(Refer%name)
+         WRITE(*,'(2A)')    '  |---- File   :',TRIM(Refer%file)
 #endif
-
-#ifdef DEBUG
-         WRITE(*,'(A)')'Variables and Levels'
-#endif
-
-         call i90_label ( 'VarR:', iret )
-         if(iret /= 0) then
-            call perr(myname_,'i90_label("VarR:")',iret)
-            if(present(istat))istat=iret
-            return
-         endif
-
-         I=1
-         call i90_gline(iret)
-         if(iret /= 0) then
-            call perr(myname_,'i90_label("VarR:")',iret)
-            if(present(istat))istat=iret
-            return
-         endif
-         DO WHILE(iret.NE.1)
-            J=1
-            call i90_Gtoken (Refer%var(I)%name , iret )
-            DO WHILE(iret.EQ.0)
-               Refer%var(I)%levs(J) = i90_gfloat ( iret )
-               if(iret.NE.0) Refer%var(I)%nlevs=J-1
-               J=J+1
-            ENDDO
-            call i90_gline(iret)
-#ifdef DEBUG  
-            write(formato,'(A,I2.2,A)')'(A,2x,',Refer%var(I)%nlevs,'I5)'
-            WRITE(*,formato)TRIM(Refer%var(I)%name), Refer%var(I)%levs(1:Refer%var(I)%nlevs)
-#endif
-         ENDDO
 
 
 !
@@ -407,15 +371,15 @@ MODULE SCAM_Utils
          call i90_gline(iret)
 
          DO I=1,nexper
-            call i90_Gtoken(Exper(I)%name,iret)
+            Exper(I)%Id = i90_gint(iret)
             if(iret /= 0) then
-               call perr(myname_,'i90_label("Experiment Name")',iret)
+               call perr(myname_,'i90_gint("Experiment model:")',iret)
                if(present(istat))istat=iret
                return
             endif
-            call i90_Gtoken(Exper(I)%dir,iret)
+            call i90_Gtoken(Exper(I)%name,iret)
             if(iret /= 0) then
-               call perr(myname_,'i90_label("Experiment dir")',iret)
+               call perr(myname_,'i90_label("Experiment Name")',iret)
                if(present(istat))istat=iret
                return
             endif
@@ -428,45 +392,14 @@ MODULE SCAM_Utils
 
 #ifdef DEBUG
             WRITE(*,'(A)')'Experiment'
-            WRITE(*,'(2A)')'  |---- Name   :',TRIM(Exper(I)%name)
-            WRITE(*,'(2A)')'  |---- Dir    :',TRIM(Exper(I)%dir)
-            WRITE(*,'(2A)')'  |---- File   :',TRIM(Exper(I)%file)
+            WRITE(*,'(A,I2.2)')'  |---- Id     :',Exper(I)%Id
+            WRITE(*,'(2A)')    '  |---- Name   :',TRIM(Exper(I)%name)
+            WRITE(*,'(2A)')    '  |---- File   :',TRIM(Exper(I)%file)
 #endif
             call i90_gline(iret)
 
          ENDDO
 
-#ifdef DEBUG
-         WRITE(*,'(A)')'Variables and Levels'
-#endif
-         call i90_label ( 'VarE:', iret )
-         if(iret /= 0) then
-            call perr(myname_,'i90_label("VarF:")',iret)
-            if(present(istat))istat=iret
-            return
-         endif
-
-         I=1
-         call i90_gline(iret)
-         if(iret /= 0) then
-            call perr(myname_,'i90_label("VarE:")',iret)
-            if(present(istat))istat=iret
-            return
-         endif
-         DO WHILE(iret.NE.1)
-            J=1
-            call i90_Gtoken (Exper(1)%var(I)%name , iret )
-            DO WHILE(iret.EQ.0)
-               Exper(1)%var(I)%levs(J) = i90_gfloat ( iret )
-               if(iret.NE.0) Exper(1)%var(I)%nlevs=J-1
-               J=J+1
-            ENDDO
-            call i90_gline(iret)
-#ifdef DEBUG
-            write(formato,'(A,I2.2,A)')'(A,2x,',Exper(1)%var(I)%nlevs,'I5)'
-            WRITE(*,formato)TRIM(Exper(1)%var(I)%name), Exper(1)%var(I)%levs(1:Exper(1)%var(I)%nlevs)
-#endif
-         ENDDO
 
 
 !
@@ -489,66 +422,30 @@ MODULE SCAM_Utils
          endif
 
          IF(Clima_Flag.EQ.1)THEN
-            call i90_label ( 'Climatology:', iret )
-            if(iret /= 0) then
-               call perr(myname_,'i90_label("Climatology:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
             Clima%name='Climatology'
-            call i90_Gtoken(Clima%dir,iret)
+            call i90_label ( 'Climatology:', iret )
+            Clima%Id = i90_gint(iret)
             if(iret /= 0) then
-               call perr(myname_,'Climatology dir',iret)
+               call perr(myname_,'i90_gint("Climatology:")',iret)
                if(present(istat))istat=iret
                return
             endif
+
+            call i90_label ( 'Climatology file:', iret )
             call i90_Gtoken(Clima%file,iret)
             if(iret /= 0) then
-               call perr(myname_,'Climatology File_name_with_mask',iret)
+               call perr(myname_,'i90_label("Climatology file:")',iret)
                if(present(istat))istat=iret
                return
             endif
             
 #ifdef DEBUG
             WRITE(*,'(A)')'Climatology'
-            WRITE(*,'(2A)')'  |---- Name   :',TRIM(Clima%name)
-            WRITE(*,'(2A)')'  |---- Dir    :',TRIM(Clima%dir)
-            WRITE(*,'(2A)')'  |---- File   :',TRIM(Clima%file)
+            WRITE(*,'(A,I2.2)')'  |---- Id     :',Clima%Id
+            WRITE(*,'(2A)')    '  |---- Dir    :',TRIM(Clima%name)
+            WRITE(*,'(2A)')    '  |---- File   :',TRIM(Clima%file)
 #endif
 
-
-
-#ifdef DEBUG
-            WRITE(*,'(A)')'Variables and Levels'
-#endif
-            call i90_label ( 'VarC:', iret )
-            if(iret /= 0) then
-               call perr(myname_,'i90_label("VarC:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
-
-            I=1
-            call i90_gline(iret)
-            if(iret /= 0) then
-               call perr(myname_,'i90_label("VarC:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
-            DO WHILE(iret.NE.1)
-               J=1
-               call i90_Gtoken (Clima%var(I)%name , iret )
-               DO WHILE(iret.EQ.0)
-                  Clima%var(I)%levs(J) = i90_gfloat ( iret )
-                  if(iret.NE.0) Clima%var(I)%nlevs=J-1
-                  J=J+1
-               ENDDO
-               call i90_gline(iret)
-#ifdef DEBUG  
-               write(formato,'(A,I2.2,A)')'(A,2x,',Clima%var(I)%nlevs,'I5)'
-               WRITE(*,formato)TRIM(Clima%var(I)%name), Clima%var(I)%levs(1:Clima%var(I)%nlevs)
-#endif
-            ENDDO
          ELSE
             WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
             WRITE(*,'(a72)')'!                         Climatology Not Found                       !'

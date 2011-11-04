@@ -1,4 +1,4 @@
-# Automatically generated objects. Qui Out 27 10:07:51 BRST 2011
+# Automatically generated objects. Sex Nov  4 09:10:20 BRST 2011
 # fgen v0.3 (C) 1997,98 Beroud Jean-Marc
 
 OBJS = \
@@ -7,6 +7,7 @@ OBJS = \
 	$(srcdir)/SCAM_Plugin.o \
 	$(srcdir)/SCAM_UtilsMOD.o \
 	$(srcdir)/SCAM_coreMOD.o \
+	$(srcdir)/SCAM_dataMOD.o \
 	$(srcdir)/SCAM_gridMOD.o \
 	$(srcdir)/SCAM_ioMOD.o \
 	$(srcdir)/agcm_read.o \

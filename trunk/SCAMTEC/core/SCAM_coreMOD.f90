@@ -43,7 +43,7 @@ MODULE SCAM_coreMOD
   ! !USES:
 
   USE SCAM_Utils       ! Utilities for SCAMTeC running
-  USE SCAM_gridMOD     ! Grid Data Structure
+  USE SCAM_dataMOD     ! Grid Data Structure
   USE time_module      ! Time operations
   USE m_string         ! String Manipulation
   USE SCAM_ModelPlugin ! A model register 
@@ -220,24 +220,24 @@ CONTAINS
        nhms = MOD(time,100) * 10000
 
        !
-       ! 1.1 Create Reference and Climatology File Names
+       ! 1.1 Create file name and Open Reference data file 
        !
 
        Reference=TRIM(Refer%file)
        CALL str_template(Reference, nymd,nhms)
+       CALL ldata('R',Refer%Id, Reference)
+
+       !
+       ! 1.2 Create file name and Open Climatology data file
+       !
 
        IF(clima_Flag.EQ.1)THEN
           Climatology=TRIM(Clima%file)
           CALL str_template(Climatology, nymd,nhms)
+          CALL ldata('C', Clima%Id, Climatology)
        END IF
 
-       !
-       ! 1.2 Open Reference and Climatology Data Files
-       !
-
-!       CALL ldata(Reference)
-!       CALL ldata(Climatology)
-
+             
        !
        ! 1.3 Loop over time forecast
        !
@@ -262,7 +262,7 @@ CONTAINS
              ! 1.3.2 Open Experiment Data Files
              !
              
-             CALL load_data(1,nymd,nhms,fymd,fhms)
+             CALL ldata('E',Exper(e)%Id, Experiment)
 
 
           ENDDO

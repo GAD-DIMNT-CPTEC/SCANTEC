@@ -38,7 +38,7 @@ LD  = ifort
 AR  = ar
 
 # default mode (max. optimization)
-mode = opt
+mode = dbg
 
 # header file directories
 CCFLAGS = -I$(incdir) -I$(MPEU_INC)
@@ -53,8 +53,8 @@ ARFLAGS  = -r
 
 # add flags for debugging if requested
 ifeq (dbg,$(findstring dbg,$(mode)))
-   CCFLAGS += -g -Wall
-   FFLAGS  += -g -Wall
+   CCFLAGS += -g -Wall 
+   FFLAGS  += -g -traceback -DDEBUG
    LDFLAGS += -g
 endif
 

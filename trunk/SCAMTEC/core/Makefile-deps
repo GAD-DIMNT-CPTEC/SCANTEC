@@ -1,4 +1,4 @@
-# Automatically generated dependencies. Qui Out 27 10:07:51 BRST 2011
+# Automatically generated dependencies. Sex Nov  4 09:10:20 BRST 2011
 # fgen v0.3 (C) 1997,98 Beroud Jean-Marc
 
 
@@ -9,7 +9,8 @@ $(srcdir)/SCAM_ModelPlugin.o SCAM_ModelPlugin.o: \
 	$(srcdir)/SCAM_ModelPlugin.f90
 
 $(srcdir)/SCAM_Plugin.o SCAM_Plugin.o: \
-	$(srcdir)/SCAM_Plugin.c
+	$(srcdir)/SCAM_Plugin.c \
+	$(srcdir)/Ftable.o
 
 $(srcdir)/SCAM_UtilsMOD.o SCAM_UtilsMOD.o: \
 	$(srcdir)/SCAM_UtilsMOD.f90
@@ -17,10 +18,13 @@ $(srcdir)/SCAM_UtilsMOD.o SCAM_UtilsMOD.o: \
 $(srcdir)/SCAM_coreMOD.o SCAM_coreMOD.o: \
 	$(srcdir)/SCAM_coreMOD.f90 \
 	$(srcdir)/m_string.o \
-	$(srcdir)/SCAM_gridMOD.o \
+	$(srcdir)/SCAM_dataMOD.o \
 	$(srcdir)/SCAM_ModelPlugin.o \
 	$(srcdir)/SCAM_UtilsMOD.o \
 	$(srcdir)/m_time.o
+
+$(srcdir)/SCAM_dataMOD.o SCAM_dataMOD.o: \
+	$(srcdir)/SCAM_dataMOD.f90
 
 $(srcdir)/SCAM_gridMOD.o SCAM_gridMOD.o: \
 	$(srcdir)/SCAM_gridMOD.f90

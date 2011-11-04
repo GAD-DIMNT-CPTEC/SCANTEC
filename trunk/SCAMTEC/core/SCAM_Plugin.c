@@ -9,7 +9,7 @@
 
 typedef struct
 { 
-  void (*func)(int*, int*, int*, int*);
+  void (*func)(char*,int*);
 } SCAMTEC_MODEL_INI_TABLE;
 
 SCAMTEC_MODEL_INI_TABLE load_data[SCAMTEC_MAX_MODEL];
@@ -18,14 +18,16 @@ SCAMTEC_MODEL_INI_TABLE load_data[SCAMTEC_MAX_MODEL];
 void FTN(registermodelread)(int *i, void (*func)())
 
 { 
-  ft_check_index(*i, SCAMTEC_MAX_MODEL, "registermodelread");
+//  ft_check_index(*i, SCAMTEC_MAX_MODEL, "registermodelread");
   load_data[*i].func = func; 
 }
 
 
 
-void FTN(load_data)(int *i, int *nymd, int *nhms, int *fymd, int *fhms)
+void FTN(load_data)(int *i, char *name)
 { 
+
+
   if(load_data[*i].func==NULL) {
     printf("****************Error****************************\n"); 
     printf("subroutine that read fields of the Model %d is not defined\n",*i); 
@@ -34,6 +36,6 @@ void FTN(load_data)(int *i, int *nymd, int *nhms, int *fymd, int *fhms)
     exit;
   }
 
-  load_data[*i].func(nymd, nhms, fymd, fhms); 
+  load_data[*i].func(name,strlen(name)); 
 
 }
