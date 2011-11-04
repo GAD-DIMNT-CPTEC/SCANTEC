@@ -225,7 +225,7 @@ CONTAINS
 
        Reference=TRIM(Refer%file)
        CALL str_template(Reference, nymd,nhms)
-       CALL ldata('R',Refer%Id, Reference)
+       CALL ldata('R', Refer%Id, Reference)
 
        !
        ! 1.2 Create file name and Open Climatology data file
@@ -270,16 +270,6 @@ CONTAINS
           ftime = jul2cal(cal2jul(ftime)-incr)
 
        ENDDO
-
-       !
-       !  1.1. Open True data
-       !
-
-       !      CALL TRUE(time)
-
-       !
-       !  1.2. Analise each forecast 
-       !
 
        !      CALL ANALISE(time)
 

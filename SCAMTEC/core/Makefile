@@ -46,8 +46,8 @@ FFLAGS  = -I$(incdir) -I$(MPEU_INC)
 
 # default flags
 FPPFLAGS = -C -E
-CCFLAGS += 
-FFLAGS  += 
+CCFLAGS += -DIFC
+FFLAGS  += -fpp
 LDFLAGS  = 
 ARFLAGS  = -r
 
