@@ -79,7 +79,7 @@ subroutine bilinear_interp_input (gridDesci,gridDesco,npts,&
 
   integer             :: i1, i2, j1, j2
   real                :: xi, xf, yi, yf
-  integer             :: get_fieldpos
+!  integer             :: get_fieldpos
 
   mo = npts
   !------------------------------------------------------------------------
