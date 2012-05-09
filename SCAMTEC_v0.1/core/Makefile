@@ -49,7 +49,7 @@ FFLAGS  = -I$(incdir) -I$(MPEU_INC)
 # default flags
 FPPFLAGS = -C -E
 CCFLAGS += -DIFC
-FFLAGS  += -fpp -assume byterecl
+FFLAGS  += -fpp -assume byterecl -traceback
 LDFLAGS  = 
 ARFLAGS  = -r
 
