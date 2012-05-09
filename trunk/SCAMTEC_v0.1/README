@@ -16,7 +16,7 @@ A. Entre no diretório SCAMTEC_v0.1:
 7. make clean & make
 
 B. Obtencao dos dados para execucao:
-1. Um conjunto de testes será disponibilizado no seguinte endereço ftp://ftp1.cptec.inpe.br/jgerd/PUB/SCAMTeC/testcase
+1. Um conjunto de testes será disponibilizado no seguinte endereço ftp://ftp1.cptec.inpe.br/jgerd/PUB/SCAMTeC/testcase (via ncftp)
 2. Configure o arquivo scamtec.conf que encontra-se no diretório SCAMTEC_v0.1/core para apontar para o diretório onde estão os dados de testcase
 * execute o scamtec com o comando ./scamtec.x
 * serão gerados arquivos txt com o formato estatisticaNOMEEXPERIMENTO.txt
