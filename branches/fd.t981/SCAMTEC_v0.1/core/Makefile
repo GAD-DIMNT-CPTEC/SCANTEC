@@ -32,26 +32,37 @@ GRIB_INC = ../lib/w3lib
 incdir = ./
 srcdir = ./
 
-# preprocessor, compilers, linker & archiver
-FPP = gcc
-CC  = gcc
-FC  = ifort
-LD  = ifort
-AR  = ar
-
 # default mode (max. optimization)
 mode = pro
 
 # header file directories
 CCFLAGS = -I$(incdir) -I$(MPEU_INC)
-FFLAGS  = -I$(incdir) -I$(MPEU_INC)
+FFLAGS  += -I$(incdir) -I$(MPEU_INC)
 
 # default flags
 FPPFLAGS = -C -E
 CCFLAGS += -DIFC
-FFLAGS  += -fpp -assume byterecl -traceback
 LDFLAGS  = 
 ARFLAGS  = -r
+
+# preprocessor, compilers, linker & archiver
+ifeq ($(SCAM_ARCH),Darwin_intel)
+FPP = gcc
+CC  = gcc
+FC  = ifort
+LD  = ifort
+AR  = ar
+FFLAGS += -fpp -assume byterecl -traceback
+endif
+
+ifeq ($(SCAM_ARCH),cray_pgi)
+FPP = cc
+CC  = cc
+FC  = ftn
+LD  = ftn
+AR  = ar
+FFLAGS += -Mpreprocess -traceback -DDEBUG
+endif
 
 # add flags for debugging if requested
 ifeq (dbg,$(findstring dbg,$(mode)))
