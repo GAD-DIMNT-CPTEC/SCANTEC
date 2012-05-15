@@ -21,20 +21,24 @@ GZIP    = gzip
 INSTALL = install
 
 # dirs
-incdir = ./lib/mpeu
-incdir = ./lib/mpeu
+incdira = ./lib/w3lib
+incdirb = ./lib/mpeu
 srcdir = ./core
 
-PRJDIRS = $(incdir) $(srcdir) 
+PRJDIRS = $(incdira) $(incdirb) $(srcdir) 
 
 # Not real file targets
 .PHONY: $(MAKEFILE) all dep html clean install help
 
 # targets
-all: libmpeu.a scamtec.x 
+all: libw3.a libmpeu.a scamtec.x 
+
+libw3.a:
+	@$(CD) $(incdira) && \
+	    $(MAKE) -f $(MAKEFILE) $@
 
 libmpeu.a:
-	@$(CD) $(incdir) && \
+	@$(CD) $(incdirb) && \
 	    $(MAKE) -f $(MAKEFILE) $@
 
 scamtec.x:
@@ -43,8 +47,8 @@ scamtec.x:
 
 
 # args for fgen & f2html
-FGENARGS   = -s $(srcdir) -l $(incdir) -i $(incdir) 
-F2HTMLARGS = $(srcdir) $(incdir) $(incdir) 
+FGENARGS   = -s $(srcdira) -l $(incdirb) -i $(incdir) 
+F2HTMLARGS = $(srcdir) $(incdira) $(incdirb) 
 
 # rebuild dependencies
 dep:
