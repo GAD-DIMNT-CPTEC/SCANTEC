@@ -401,7 +401,7 @@ CONTAINS
              write(formato,'(A4,I3.3,A5)')'(A9,',scamtec%nvar,'A9)'
              write(e+0,formato)'%Previsao',(VarName(v),v=1,scamtec%nvar)
              write(e+1,formato)'%Previsao',(VarName(v),v=1,scamtec%nvar)
-             write(e+2,formato)'%Previsao',(VarName(v),v=1,scamtec%nvar)
+             if(clima_flag.eq.1)write(e+2,formato)'%Previsao',(VarName(v),v=1,scamtec%nvar)
 
 
              write(formato,'(A9,I3.3,A5)')'(6x,I3.3,',scamtec%nvar,'F9.3)'
