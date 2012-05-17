@@ -114,7 +114,6 @@ MODULE SCAM_Utils
    TYPE(RUNS), PUBLIC, DIMENSION(:), ALLOCATABLE :: Exper
 !   TYPE(RUNS), 
 
-
    CONTAINS
 !
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
@@ -137,6 +136,7 @@ MODULE SCAM_Utils
       CHARACTER(len=300)            :: config, formato
       LOGICAL                       :: exists
       INTEGER, ALLOCATABLE          :: tmp(:)
+      INTEGER, EXTERNAL             :: iargc
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 ! !DESCRIPTION:
 !
