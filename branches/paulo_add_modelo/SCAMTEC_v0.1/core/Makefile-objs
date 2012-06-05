@@ -11,11 +11,12 @@ OBJS = \
 	$(srcdir)/SCAM_dataMOD.o \
 	$(srcdir)/SCAM_gridMOD.o \
 	$(srcdir)/SCAM_outputMOD.o \
+        $(srcdir)/SCAM_metricas.o \
 	$(srcdir)/bilinear_interpolation.o \
 	$(srcdir)/eta_read.o \
 	$(srcdir)/m_agcm.o \
 	$(srcdir)/m_clima50yr.o \
-        $(srcdir)/m_IWV_PSAS_T126.o \
+        $(srcdir)/m_T126_Seq.o \
 	$(srcdir)/m_string.o \
 	$(srcdir)/m_time.o \
 	$(srcdir)/scamdrv.o \

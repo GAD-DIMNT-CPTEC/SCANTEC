@@ -9,7 +9,7 @@ $(srcdir)/SCAM_ModelPlugin.o SCAM_ModelPlugin.o: \
 	$(srcdir)/SCAM_ModelPlugin.f90 \
 	$(srcdir)/m_agcm.o \
 	$(srcdir)/m_clima50yr.o \
-	$(srcdir)/m_IWV_PSAS_T126.o
+	$(srcdir)/m_T126_Seq.o
 
 $(srcdir)/SCAM_Plugin.o SCAM_Plugin.o: \
 	$(srcdir)/SCAM_Plugin.c
@@ -47,6 +47,11 @@ $(srcdir)/SCAM_outputMOD.o SCAM_outputMOD.o: \
 $(srcdir)/bilinear_interpolation.o bilinear_interpolation.o: \
 	$(srcdir)/bilinear_interpolation.f90
 
+$(srcdir)/SCAM_metricas.o SCAM_metricas.o: \
+	$(srcdir)/SCAM_metricas.f90 \
+	$(srcdir)/SCAM_bstatistic.o \
+	$(srcdir)/SCAM_dataMOD.o 
+
 $(srcdir)/eta_read.o eta_read.o: \
 	$(srcdir)/eta_read.f90
 
@@ -65,8 +70,8 @@ $(srcdir)/m_clima50yr.o m_clima50yr.o: \
 	$(srcdir)/SCAM_dataMOD.o \
 	$(srcdir)/scamtec_module.o
 
-$(srcdir)/m_IWV_PSAS_T126.o m_IWV_PSAS_T126.o: \
-	$(srcdir)/m_IWV_PSAS_T126.f90 \
+$(srcdir)/m_T126_Seq.o m_T126_Seq.o: \
+	$(srcdir)/m_T126_Seq.f90 \
 	$(srcdir)/bilinear_interpolation.o \
 	$(srcdir)/SCAM_dataMOD.o \
 	$(srcdir)/scamtec_module.o

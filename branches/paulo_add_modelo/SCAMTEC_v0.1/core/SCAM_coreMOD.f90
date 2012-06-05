@@ -266,7 +266,7 @@ CONTAINS
 
 	print*, '::: Calculando VIES / RMSE / ACOR :::'!Paulo Dias		
 
-    DO t=1,scamtec%ntime_steps
+    DO t=1,scamtec%ntime_steps !quantidade de tempo
 
        nymd = time/100
        nhms = MOD(time,100) * 10000
@@ -297,7 +297,7 @@ CONTAINS
 		
        ftime = time 
 
-       DO f = 1, scamtec%ntime_forecast
+       DO f = 1, scamtec%ntime_forecast !quantidade de intervalo de tempo
 		
           fymd = ftime/100
           fhms = MOD(ftime,100) * 10000
@@ -317,7 +317,7 @@ CONTAINS
             
              CALL ldata('E',e,Exper(e)%Id, Experiment)
 			
-             DO v=1,scamtec%nvar
+             DO v=1,scamtec%nvar !quantidades de variaveis 
 		
              !
              ! 1.3.3 Basic Statistic Analisys
@@ -326,10 +326,14 @@ CONTAINS
              !
              
              !		
-             scamdata(e)%diffield(:,:,v) = scamdata(e)%expfield(:,:,v) - scamdata(1)%reffield(:,:,v)
-             scamdata(e)%time_vies(f,v)  = scamdata(e)%time_vies(f,v) + &
-                                        (sum(scamdata(e)%diffield(:,:,v))/scamtec%npts)/scamtec%ntime_steps
 
+		call SCAM_metricas (v,f,e) !Subrotina para calcular as Metricas 
+
+!----------------------------------------------------------------------------------------------------------------- Descomentar
+           !  scamdata(e)%diffield(:,:,v) = scamdata(e)%expfield(:,:,v) - scamdata(1)%reffield(:,:,v)  !Descomentar       
+           !  scamdata(e)%time_vies(f,v)  = scamdata(e)%time_vies(f,v) + &  !Descomentar
+           !                            (sum(scamdata(e)%diffield(:,:,v))/scamtec%npts)/scamtec%ntime_steps  !Descomentar
+!-----------------------------------------------------------------------------------------------------------------Descomentar
 		
 
 !             OutFName = "B"//Exper(e)%name//"%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2.gs4r"
@@ -341,10 +345,11 @@ CONTAINS
              !
              ! RMSE
              !
-             scamdata(e)%rmsfield(:,:,v) = scamdata(e)%diffield(:,:,v)*scamdata(e)%diffield(:,:,v)
-             scamdata(e)%time_rmse(f,v)  = scamdata(e)%time_rmse(f,v) + &
-                                        (sum(scamdata(e)%rmsfield(:,:,v))/scamtec%npts)/scamtec%ntime_steps
-
+!-----------------------------------------------------------------------------------------------------------------Descomentar
+            ! scamdata(e)%rmsfield(:,:,v) = scamdata(e)%diffield(:,:,v)*scamdata(e)%diffield(:,:,v) !Descomentar
+            ! scamdata(e)%time_rmse(f,v)  = scamdata(e)%time_rmse(f,v) + & !Descomentar				
+            !                            (sum(scamdata(e)%rmsfield(:,:,v))/scamtec%npts)/scamtec%ntime_steps !Descomentar
+!-----------------------------------------------------------------------------------------------------------------Descomentar
 			
 	
 		
@@ -356,22 +361,22 @@ CONTAINS
              !
              ! Anomaly Correlation
              !
+!-----------------------------------------------------------------------------------------------------------------Descomentar
+            ! if(Clima_Flag.eq.1)then !Descomentar
 
-             if(Clima_Flag.eq.1)then
-
-!             OutFName = "A"//Exper(e)%name//"%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2.gs4r"
+!             OutFName = "A"//Exper(e)%name//"%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2.gs4r" 
 !             CALL str_template(OutFName, fymd, fhms, nymd, nhms)
 !             CALL write_2d(scamdata(e)%anofield,OutFName)
 
 
-                CALL corr(scamdata(e)%expfield(:,:,v)-scamdata(1)%clmfield(:,:,v),&
-                          scamdata(1)%reffield(:,:,v)-scamdata(1)%clmfield(:,:,v),&
-                          tmp)
-                scamdata(e)%time_acor(f,v) = scamdata(e)%time_acor(f,v) + &
-                                          tmp/float(scamtec%ntime_steps)
+              !  CALL corr(scamdata(e)%expfield(:,:,v)-scamdata(1)%clmfield(:,:,v),& !Descomentar
+              !            scamdata(1)%reffield(:,:,v)-scamdata(1)%clmfield(:,:,v),& !Descomentar
+              !            tmp) !Descomentar
+              !  scamdata(e)%time_acor(f,v) = scamdata(e)%time_acor(f,v) + & !Descomentar
+                                          !tmp/float(scamtec%ntime_steps) !Descomentar
 		
-             endif
-
+             !endif !Descomentar
+!-----------------------------------------------------------------------------------------------------------------Descomentar
              !
              ! 1.3.4 Other statistics metrics
              !
@@ -400,7 +405,7 @@ CONTAINS
        ! 1.4 Write output
        !
        
-       print*, '::: Fim do calculo VIES / RMSE / ACOR :::'	!Paulo Dias
+       
 
        if (t.eq.scamtec%ntime_steps)then
           print*, '::: Arquivos txt salvo no diretorio de saida:::'!Paulo Dias
