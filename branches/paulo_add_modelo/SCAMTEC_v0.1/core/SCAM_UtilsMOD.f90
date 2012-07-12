@@ -110,11 +110,21 @@ MODULE SCAM_Utils
 
 
    TYPE(RUNS), PUBLIC                            :: Refer
-   TYPE(RUNS), PUBLIC                            :: Clima
-   INTEGER   , PUBLIC                            :: Clima_Flag
+   TYPE(RUNS), PUBLIC                            :: Clima, Precip
+   INTEGER   , PUBLIC                            :: Clima_Flag,Precipitation_Flag
    TYPE(RUNS), PUBLIC, DIMENSION(:), ALLOCATABLE :: Exper
 !   TYPE(RUNS), 
 
+!---------------------------------------------------------------------paulo dias
+! Variaveis de Preciptation Histograma  paulo dias
+!
+   TYPE, PUBLIC  :: param_hist
+   INTEGER   , PUBLIC :: valor_limit, valor_min
+   REAL, PUBLIC       :: rang
+   END TYPE
+   
+   TYPE(param_hist), public   :: hist	
+!-------------------------------------------------------------------- paulo dias
 
    CONTAINS
 !
@@ -465,6 +475,90 @@ MODULE SCAM_Utils
             WRITE(*,'(a72)')'!         The mean reference field will be used as climatology        !'
             WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
          ENDIF
+
+!-----------------------------------------------------------------------------------------------------------Paulo Dias
+
+!
+! Precipitation
+!
+	print*, '::: Lendo arquivos de Precipitação :::' 
+         call i90_label ( 'Use Precipitation:', iret )
+         if(iret == -2) then
+            call perr(myname_,'Preciptarion Not Found')
+            Precipitation_flag = 0
+!            if(present(istat))istat=iret
+!            return
+!         endif
+         else
+            Precipitation_Flag = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_label("Use Precipitation:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+         endif
+
+         IF(Precipitation_Flag.EQ.1)THEN
+            Precip%name='Precipitation'
+            call i90_label ( 'Precipitation Model Id:', iret )
+            Precip%Id = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Precipitation Model Id:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Precipitation file:', iret )
+            call i90_Gtoken(Precip%file,iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_label("Precipitation file:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Define o Range do Histograma:', iret )
+            hist%rang = i90_gfloat(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define o Range do Histograma:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Define valor do limite inferior da ultima classe do histograma:', iret )
+            hist%valor_limit = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define valor do limite inferior da ultima classe do histograma:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif            
+            
+            call i90_label ( 'Define valor do minimo inferior da primeira classe do histograma:', iret )
+            hist%valor_min = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define valor do minimo inferior da primeira classe do histograma:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+#ifdef DEBUG
+            WRITE(*,'(A)')'Precipitation'
+            WRITE(*,'(A,I2.2)')'  |---- Id           :',Precip%Id
+            WRITE(*,'(2A)')    '  |---- Dir          :',TRIM(Precip%name)
+            WRITE(*,'(2A)')    '  |---- File         :',TRIM(Precip%file)
+            WRITE(*,'(A,F4.2)')'  |---- Range        :',hist%rang
+            WRITE(*,'(A,I2.2)')'  |---- Valor Minimo :',hist%valor_min
+            WRITE(*,'(A,I3.3)')'  |---- Valor Limite :',hist%valor_limit
+#endif
+         ELSE
+
+
+            WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
+            WRITE(*,'(a72)')'!                       Precipitation Not Found                       !'
+            WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
+         ENDIF
+
+!-----------------------------------------------------------------------------------------------------------Paulo Dias
+
 
 !
 ! ïndices dos modelos

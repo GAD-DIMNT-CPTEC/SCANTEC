@@ -1,6 +1,6 @@
 MODULE SCAM_dataMOD
   USE scamtec_module
-  USE SCAM_Utils, only: dom, nvmx, Clima_Flag
+  USE SCAM_Utils, only: dom, nvmx, Clima_Flag, Precipitation_Flag,hist !Paulo Dias
 
   !BOP
   !
@@ -25,7 +25,8 @@ MODULE SCAM_dataMOD
   ! Variables to be Evaluated
   !
 
-  integer, public, Parameter :: NumVarAval = 15
+  integer :: tam_hist !Paulo dias
+  integer, public, Parameter :: NumVarAval = 17
   character(len=8), public, parameter ::   VarName(1:NumVarAval) = (/ &
   'VTMP:925',& ! Virtual Temperature @ 925 hPa [K]                     1
   'VTMP:850',& ! Virtual Temperature @ 850 hPa [K]                     2
@@ -41,7 +42,9 @@ MODULE SCAM_dataMOD
   'UVEL:250',& ! Zonal Wind @ 250 hPa [m/s]                           12
   'VVEL:850',& ! Meridional Wind @ 850 hPa [m/s]                      13
   'VVEL:500',& ! Meridional Wind @ 500 hPa [m/s]                      14
-  'VVEL:250' & ! Meridional Wind @  250 hPa [m/s]                     15
+  'VVEL:250',& ! Meridional Wind @ 250 hPa [m/s]                      15
+  'PREC:000',& ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]           16
+  'PREV:000' & ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]      17
   /)
 
 
@@ -54,15 +57,18 @@ MODULE SCAM_dataMOD
   !EOP
 
   type model_dec_type
-     real, allocatable :: tmpfield(:,:,:) ! data from model read
-     real, allocatable :: expfield(:,:,:) ! experiment model field
-     real, allocatable :: reffield(:,:,:) ! reference model field
-     real, allocatable :: clmfield(:,:,:) ! climatology field
-     real, allocatable :: diffield(:,:,:) ! diference field
-     real, allocatable :: rmsfield(:,:,:)
-     real, allocatable :: time_rmse(:,:)
-     real, allocatable :: time_vies(:,:)
-     real, allocatable :: time_acor(:,:)
+     real, allocatable    :: tmpfield(:,:,:) ! data from model read
+     real, allocatable    :: expfield(:,:,:) ! experiment model field
+     real, allocatable    :: reffield(:,:,:) ! reference model field
+     real, allocatable    :: clmfield(:,:,:) ! climatology field
+     real, allocatable    :: prefield(:,:,:) ! preciptation field
+     real, allocatable    :: diffield(:,:,:) ! diference field
+     real, allocatable    :: rmsfield(:,:,:)
+     real, allocatable    :: time_rmse(:,:)
+     real, allocatable    :: time_vies(:,:)
+     real, allocatable    :: time_acor(:,:)
+     integer, allocatable :: time_histo(:,:) ! histogroma paulo dias
+     
   end type model_dec_type
 
 
@@ -71,6 +77,7 @@ MODULE SCAM_dataMOD
      real, allocatable :: expfield(:) ! experiment model field
      real, allocatable :: reffield(:) ! reference model field
      real, allocatable :: clmfield(:) ! climatology field
+     real, allocatable :: prefield(:) ! preciptation field paulo dias
      real, allocatable :: diffield(:) ! diference field
   END TYPE obs_dec_type
 
@@ -120,21 +127,29 @@ CONTAINS
   SUBROUTINE allocate_data_mem()
     IMPLICIT NONE
     integer :: I
+    
+    
+     if(Precipitation_Flag.eq.1)then  
+      tam_hist=(hist%valor_limit/hist%rang)+2  	
+      endif
 
     allocate(scamdata(scamtec%nexp))
 
     allocate(scamdata(1)%reffield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
     allocate(scamdata(1)%tmpfield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
     IF(clima_Flag.EQ.1)allocate(scamdata(1)%clmfield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
+    
 
     DO I=1,scamtec%nexp
        allocate(scamdata(I)%expfield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
        allocate(scamdata(I)%diffield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
        allocate(scamdata(I)%rmsfield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
+       IF(Precipitation_Flag.EQ.1)allocate(scamdata(I)%prefield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))!paulo dias
        allocate(scamdata(I)%time_rmse(scamtec%ntime_forecast,scamtec%nvar))
        allocate(scamdata(I)%time_vies(scamtec%ntime_forecast,scamtec%nvar))
        allocate(scamdata(I)%time_acor(scamtec%ntime_forecast,scamtec%nvar))
-    ENDDO
+       IF(Precipitation_Flag.EQ.1)allocate(scamdata(I)%time_histo(tam_hist,scamtec%ntime_forecast))!paulo dias
+    ENDDO 
 
   END SUBROUTINE allocate_data_mem
 
@@ -163,6 +178,7 @@ CONTAINS
     IF (Allocated(scamdata(1)%tmpfield))DeAllocate(scamdata(1)%tmpfield)
 
     DO I=1,scamtec%nexp
+       IF (Allocated(scamdata(I)%prefield))DeAllocate(scamdata(I)%prefield)
        IF (Allocated(scamdata(I)%expfield))DeAllocate(scamdata(I)%expfield)
        IF (Allocated(scamdata(I)%diffield))DeAllocate(scamdata(I)%diffield)
        IF (Allocated(scamdata(I)%rmsfield))DeAllocate(scamdata(I)%rmsfield)
@@ -196,6 +212,8 @@ CONTAINS
        scamdata(e)%expfield = scamdata(1)%tmpfield
     CASE('C')		
        scamdata(e)%clmfield = scamdata(1)%tmpfield
+    CASE('P')		
+       scamdata(e)%prefield = scamdata(1)%tmpfield !paulo dias
     END SELECT
 
 

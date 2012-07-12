@@ -2,6 +2,7 @@ SUBROUTINE SCAM_metricas (v,f,e)
 USE SCAM_dataMOD
 USE SCAM_bstatistic
 
+
 integer v,f,e !indices dos loops que vem do SCAM_coreMod
 
 !- Calculando VIES
@@ -28,6 +29,7 @@ if(Clima_Flag.eq.1)then
 endif
 
 !-------------------------------------------------------------------------------------------------------------------
+
 
 
 

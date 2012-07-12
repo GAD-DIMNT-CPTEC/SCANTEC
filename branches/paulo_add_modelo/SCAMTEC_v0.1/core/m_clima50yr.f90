@@ -118,7 +118,7 @@ CONTAINS
     integer :: npts
     integer :: nx
     integer :: ny
-    integer, dimension(17) :: pds5, pds7
+    integer, dimension(19) :: pds5, pds7
     logical*1, dimension(:), allocatable :: lb
     real, dimension(:,:), allocatable :: f
     real, dimension(:,:), allocatable :: f2
@@ -155,11 +155,11 @@ CONTAINS
     lubi = 0
     j    = 0
     jpds = -1 
-    !          1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17
-    !          T   T   T  rh  rh  rh   P   A   Z   Z   Z   U   U   U   V   V   V
-    !        925 850 500 925 850 500 000 000 850 500 250 850 500 250 850 500 250
-    pds5 = (/ 49, 49, 49, 50, 50, 50, 10, 18, 48, 48, 48, 44, 44, 44, 45, 45, 45/) !parameter
-    pds7 = (/002,003,006,002,003,006,000,000,003,006,009,003,006,009,003,006,009/) !htlev2
+    !          1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17 18   19
+    !          T   T   T  rh  rh  rh   P   A   Z   Z   Z   U   U   U   V   V   V PREC PREV
+    !        925 850 500 925 850 500 000 000 850 500 250 850 500 250 850 500 250 000 000
+    pds5 = (/ 49, 49, 49, 50, 50, 50, 10, 18, 48, 48, 48, 44, 44, 44, 45, 45, 45, 14, 15/) !parameter
+    pds7 = (/002,003,006,002,003,006,000,000,003,006,009,003,006,009,003,006,009,000,000/) !htlev2
      
     allocate(lb(clima50yr_struc%npts))
     allocate(f(clima50yr_struc%npts,size(pds5)))
@@ -245,6 +245,8 @@ CONTAINS
     f2(:,13) = f(:,15)                            ! Vvel @ 850 hPa [m/s]
     f2(:,14) = f(:,16)                            ! Vvel @ 500 hPa [m/s]
     f2(:,15) = f(:,17)                            ! Vvel @ 250 hPa [m/s]
+    f2(:,16) = f(:,18)                            ! PREC @ 000 hPa [kg/m2/day]
+    f2(:,17) = f(:,19)                            ! PREV @ 000 hPa [kg/m2/day]
 
     DeAllocate(f)
 

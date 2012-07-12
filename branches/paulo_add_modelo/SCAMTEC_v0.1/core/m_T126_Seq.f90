@@ -90,7 +90,7 @@ CONTAINS
     T126_Seq_struc%gridDesc( 1) = 4         !Input grid type (4=Gaussian)
     T126_Seq_struc%gridDesc( 2) = 384       !Number of points on a lat circle
     T126_Seq_struc%gridDesc( 3) = 192       !Number of points on a meridian
-    T126_Seq_struc%gridDesc( 4) = 89.2842   !Latitude of origi n
+    T126_Seq_struc%gridDesc( 4) = 89.2842   !Latitude of origin
     T126_Seq_struc%gridDesc( 5) = 0.0       !Longitude of origin
     T126_Seq_struc%gridDesc( 6) = 128       !8 bits (1 byte) related to resolution
                                                  !(recall that 10000000 = 128), Table 7
@@ -113,18 +113,18 @@ CONTAINS
     logical :: file_exists
     integer :: gbret,jret,jpds(200),jgds(200),gridDesc(200),kpds(200)
     real :: lubi,kf,k
-    integer :: i,j,z,y
+    integer :: i,j,z,y,w
     integer :: iv, rc
     integer :: npts
     integer :: nx
     integer :: ny
-    integer, dimension(17) :: pds5, pds7
+    integer, dimension(19) :: pds5, pds7
     logical*1, dimension(:), allocatable :: lb
     real, dimension(:,:), allocatable :: f
     real, dimension(:,:), allocatable :: f2
     real, dimension(:,:), allocatable :: varfield
 
-    REAL,DIMENSION(384*192,208) :: binario !variavel de leitura  
+    REAL,DIMENSION(384*192,214) :: binario !variavel de leitura  
 
     character(len=*),parameter :: myname_=myname//'::T126_Seq_read'
 
@@ -148,15 +148,35 @@ CONTAINS
      
     allocate(lb(T126_Seq_struc%npts))
 	lb = .true.
-    allocate(f(T126_Seq_struc%npts,17))
+    allocate(f(T126_Seq_struc%npts,19))
 	
     lugb = 1
 
     inquire (file=trim(fname), exist=file_exists)
-    if (file_exists) then 
-	OPEN (UNIT=lugb,FILE=trim(fname),FORM='unformatted', CONVERT='BIG_ENDIAN',STATUS ='Unknown')  ! abrindo binario T126_Seq
+	
+    if (file_exists) then
+     
+!Verifica se é analise incial o index z que é da leitura começa com 208	
 		
-	do z=1, 208
+	LOOP_A : do w=1, 100	
+		
+		
+		if(trim(fname(w:w+2)).EQ.'icn')then
+			y=208 
+			exit LOOP_A
+				
+		else
+			y=214
+			
+		endif	
+		
+	enddo LOOP_A
+ 
+  	! abrindo binario T126_Seq
+	OPEN (UNIT=lugb,FILE=trim(fname),FORM='unformatted', CONVERT='BIG_ENDIAN',STATUS ='Unknown')  
+		
+	do z=1, y
+	
 		
 		read(UNIT=lugb)binario(:,z)
                 !write(15)binario(:,z)
@@ -168,7 +188,7 @@ CONTAINS
     else
 
        ferror = 0
-       !deallocate(f)
+       
        !deallocate(lb)
 
     endif
@@ -206,6 +226,8 @@ CONTAINS
    f(:,15) = binario(:,26)     ! Vvel @ 850 hPa [m/s]
    f(:,16) = binario(:,29)     ! Vvel @ 500 hPa [m/s]
    f(:,17) = binario(:,32)     ! Vvel @ 250 hPa [m/s]
+   f(:,18) = binario(:,209)    ! PREC @ 000 hPa [kg/m2/day]
+   f(:,19) = binario(:,210)    ! PREV @ 000 hPa [kg/m2/day]
   
   
 
@@ -235,8 +257,9 @@ CONTAINS
    f2(:,13) = f(:,15)                                ! Vvel @ 850 hPa [m/s]
    f2(:,14) = f(:,16)                                ! Vvel @ 500 hPa [m/s]
    f2(:,15) = f(:,17)                                ! Vvel @ 250 hPa [m/s]
+   f2(:,16) = f(:,18)                                ! PREC @ 000 hPa [kg/m2/day]
+   f2(:,17) = f(:,19)                                ! PREV @ 000 hPa [kg/m2/day]
 
-print*, f2(:,1)	
 	
 !------------------------------------------------------------------------------
 
@@ -253,14 +276,13 @@ print*, f2(:,1)
     allocate(varfield(nx,ny))
     DO iv = 1, scamtec%nvar !15 vairaveis
 	
-       call interp_T126_Seq( kpds, T126_Seq_struc%npts,f2(:,iv),lb, scamtec%gridDesc,&
-                              scamtec%nxpt,scamtec%nypt, varfield)    
+       call interp_T126_Seq( kpds, T126_Seq_struc%npts,f2(:,iv),lb, scamtec%gridDesc,scamtec%nxpt,scamtec%nypt, varfield)    
 		
     !
     ! Transferindo para matriz temporaria do SCAMTEC
     !
        scamdata(1)%tmpfield(:,:,iv) = varfield(:,:)
-       write(75)varfield
+       
 
     enddo
     
@@ -323,3 +345,4 @@ print*, f2(:,1)
   END SUBROUTINE interp_T126_Seq
 
 END MODULE m_T126_Seq
+	

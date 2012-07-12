@@ -54,6 +54,7 @@ PROGRAM SCANTeC
 ! !USES:
 
    USE SCAM_coreMOD
+   USE m_metri_precip
 
 ! !INTERFACE:
 !
@@ -75,11 +76,20 @@ PROGRAM SCANTeC
 !
 !  3. RUN SCAMTeC
 !
-
+   if(Precipitation_Flag.eq.1)then
+   print*,'Nao Roda Calculos VIES / ACOR / RMSE'
+   else
    CALL SCAM_RUN()
+   endif
+   
+!
+!  4. Precipitation
+!
+
+   if(Precipitation_Flag.eq.1) CALL precipitation !paulo dias
 
 !
-!  4. Finalize SCAMTeC, clean memory and etc ...
+!  5. Finalize SCAMTeC, clean memory and etc ...
 !
 
    CALL SCAM_FINALIZE()

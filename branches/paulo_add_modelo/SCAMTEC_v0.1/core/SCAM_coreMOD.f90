@@ -51,6 +51,7 @@ MODULE SCAM_coreMOD
   USE SCAM_OutputMOD , only: write_2d   !
   USE SCAM_bstatistic  !
   USE m_ioutil
+  USE m_metri_precip ! Paulo Dias
 
   IMPLICIT NONE
   PRIVATE
@@ -237,6 +238,8 @@ CONTAINS
 
     character(len=*),parameter :: myname_=myname//'::SCAM_RUN'
     integer             :: t, i, e, f, v
+    !integer             :: tam_hist !paulo dias
+    !real                :: valor_rang !paulo dias
     integer             :: time
     integer             :: ftime
     integer             :: nymd, nhms
@@ -244,18 +247,22 @@ CONTAINS
     character(len=1024) :: Reference      ! Reference File Name
     character(len=1024) :: Experiment     ! Experiment File Name
     character(len=1024) :: Climatology    ! Climatology File Name
+    character(len=1024) :: Precipitation  ! Precipitation File Name paulo dias
     character(len=1024) :: OutFName
     integer             :: ier,CONT
     character(len=1024) :: formato
     real                :: tmp
-
+    
+    !INTEGER, ALLOCATABLE :: histo(:), obs_histo(:) !variavel do histograma
+    !INTEGER, ALLOCATABLE :: tempo(:) !variavel do histograma
+        
     !
     !  0. Hello
     !
 
 #ifdef DEBUG
     WRITE(6,'(     2A)')'Hello from ', myname_
-#endif
+#endif 
 
     !
     !  1. Time Running
@@ -266,7 +273,7 @@ CONTAINS
 
 	print*, '::: Calculando VIES / RMSE / ACOR :::'!Paulo Dias		
 
-    DO t=1,scamtec%ntime_steps !quantidade de tempo
+    DO t=1,scamtec%ntime_steps !quantidade de tempo Paulo Dias
 
        nymd = time/100
        nhms = MOD(time,100) * 10000
@@ -278,7 +285,12 @@ CONTAINS
        Reference=TRIM(Refer%file)
        CALL str_template(Reference, nymd,nhms)
        CALL ldata('R', 1, Refer%Id, Reference)
-		
+       
+       !if(Precipitation_Flag.eq.1)then
+        !  CALL histograma(scamdata(1)%reffield(:,:,16),hist%rang,hist%valor_min,hist%valor_limit,histo)
+         ! obs_histo(:)=histo(:)
+       !endif
+   	
 
        !
        ! 1.2 Create file name and Open Climatology data file
@@ -290,19 +302,22 @@ CONTAINS
           CALL ldata('C', 1, Clima%Id, Climatology)
 		 
        END IF
-
+       
+      
        !
        ! 1.3 Loop over time forecast
        !
-		
+       
        ftime = time 
 
        DO f = 1, scamtec%ntime_forecast !quantidade de intervalo de tempo
+       		
 		
           fymd = ftime/100
           fhms = MOD(ftime,100) * 10000
 
           DO e = 1, scamtec%nexp !numeros de experimento 
+          	
 		
              !
              ! 1.3.1 Create Experiment File Names
@@ -314,7 +329,8 @@ CONTAINS
              !
              ! 1.3.2 Open Experiment Data Files
              !
-            
+             
+                        
              CALL ldata('E',e,Exper(e)%Id, Experiment)
 			
              DO v=1,scamtec%nvar !quantidades de variaveis 
@@ -326,8 +342,11 @@ CONTAINS
              !
              
              !		
-
-		call SCAM_metricas (v,f,e) !Subrotina para calcular as Metricas 
+			
+		CALL SCAM_metricas (v,f,e) !Subrotina para calcular as Metricas 
+		
+		
+		
 
 !----------------------------------------------------------------------------------------------------------------- Descomentar
            !  scamdata(e)%diffield(:,:,v) = scamdata(e)%expfield(:,:,v) - scamdata(1)%reffield(:,:,v)  !Descomentar       
@@ -381,13 +400,15 @@ CONTAINS
              ! 1.3.4 Other statistics metrics
              !
 
-             ENDDO
+             ENDDO !fim do loop de variaveis
 
-          ENDDO
+          ENDDO ! fim do loop do experimento
+     
 	
           ftime = jul2cal(cal2jul(ftime)-scamtec%incr)
 
-       ENDDO
+       ENDDO !fim do loop do quantidade do tempo em horas
+              
 	
        !
        !  1.3. History output
@@ -405,32 +426,32 @@ CONTAINS
        ! 1.4 Write output
        !
        
-       
-
+      
+      
        if (t.eq.scamtec%ntime_steps)then
           print*, '::: Arquivos txt salvo no diretorio de saida:::'!Paulo Dias
           DO e=1,scamtec%nexp
 		
              scamdata(e)%time_rmse = sqrt(scamdata(e)%time_rmse)
 
-
              call opntext(e+0,trim(output_dir)//'/'//'vies'//trim(Exper(e)%name)//'.txt','unknown',ier)
              call opntext(e+1,trim(output_dir)//'/'//'rmse'//trim(Exper(e)%name)//'.txt','unknown',ier)
-             if(clima_flag.eq.1)call opntext(e+2,trim(output_dir)//'/'//'acor'//Trim(Exper(e)%name)//'.txt','unknown',ier)
+             if(clima_flag.eq.1)call opntext(e+2,trim(output_dir)//'/'//'acor'//Trim(Exper(e)%name)//'.txt','unknown',ier)     
 	                  
              write(formato,'(A4,I3.3,A5)')'(A9,',scamtec%nvar,'A9)'
              write(e+0,formato)'%Previsao',(VarName(v),v=1,scamtec%nvar)
              write(e+1,formato)'%Previsao',(VarName(v),v=1,scamtec%nvar)
              write(e+2,formato)'%Previsao',(VarName(v),v=1,scamtec%nvar)
-
-
-             write(formato,'(A9,I3.3,A5)')'(6x,I3.3,',scamtec%nvar,'F9.3)'
+       
+             write(formato,'(A9,I3.3,A5)')'(6x,I3.3,',scamtec%nvar,'F9.3)'             
              DO f=1,scamtec%ntime_forecast
+                  
                write(e+0,formato)(f-1)*time_step,(scamdata(e)%time_vies(f,v),v=1,scamtec%nvar)
                write(e+1,formato)(f-1)*time_step,(scamdata(e)%time_rmse(f,v),v=1,scamtec%nvar)
                if(clima_flag.eq.1)write(e+2,formato)(f-1)*time_step,(scamdata(e)%time_acor(f,v),v=1,scamtec%nvar)
-	    ENDDO
-
+          
+             ENDDO
+	   
              call clstext(e+0,ier)
              call clstext(e+1,ier)
              if(clima_flag.eq.1)call clstext(e+2,ier)
@@ -442,7 +463,9 @@ CONTAINS
 
        time=jul2cal(cal2jul(time)+scamtec%incr)
     ENDDO
-
+    
+    
+ 
 
   END SUBROUTINE SCAM_RUN
 

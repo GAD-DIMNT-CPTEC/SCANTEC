@@ -19,6 +19,8 @@ OBJS = \
         $(srcdir)/m_T126_Seq.o \
 	$(srcdir)/m_string.o \
 	$(srcdir)/m_time.o \
+	$(srcdir)/m_metri_precip.o \
+	$(srcdir)/obs_Precipitation.o \
 	$(srcdir)/scamdrv.o \
 	$(srcdir)/scamtec_module.o \
 	$(srcdir)/template_read.o
