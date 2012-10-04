@@ -58,6 +58,7 @@ $(srcdir)/m_metri_precip.o m_metri_precip.o: \
 	$(srcdir)/m_metri_precip.f90 \
 	$(srcdir)/SCAM_bstatistic.o \
 	$(srcdir)/SCAM_dataMOD.o \
+	$(srcdir)/SCAM_UtilsMOD.o \
 	$(srcdir)/m_time.o
 
 

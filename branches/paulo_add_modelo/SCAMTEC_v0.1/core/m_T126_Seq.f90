@@ -135,7 +135,7 @@ CONTAINS
     integer :: NV1lev = 10! Numero de Variaveis com 1 Nivel
     integer :: NLev   = 18 ! Numero de Niveis
     
-    
+    character(10) :: dataini, datafinal
     
     !
     !  0. Hello
@@ -156,21 +156,37 @@ CONTAINS
 	
     if (file_exists) then
      
-!Verifica se é analise incial o index z que é da leitura começa com 208	
+!Verifica se é analise incial o index z que é da leitura começa com 208
+! Pensar como fazer isso de forma mais adequada	
 		
 	LOOP_A : do w=1, 100	
 		
 		
-		if(trim(fname(w:w+2)).EQ.'icn')then
-			y=208 
-			exit LOOP_A
+		if(w .eq. 46)then
+			dataini=trim(fname(w:w+9))
 				
-		else
-			y=214
 			
-		endif	
+			!exit LOOP_A
+				
+		else if(w .eq. 56)then
+			datafinal=trim(fname(w:w+9))
+			
+			
+			
+		endif
+		
+			
 		
 	enddo LOOP_A
+	
+	if(dataini .eq. datafinal)then
+		y=208
+	else
+		y=214
+	endif
+	
+	
+!-------------------------------------------------------------------------------------------	
  
   	! abrindo binario T126_Seq
 	OPEN (UNIT=lugb,FILE=trim(fname),FORM='unformatted', CONVERT='BIG_ENDIAN',STATUS ='Unknown')  

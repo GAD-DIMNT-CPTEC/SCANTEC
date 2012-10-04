@@ -130,7 +130,7 @@ CONTAINS
     
     
      if(Precipitation_Flag.eq.1)then  
-      tam_hist=(hist%valor_limit/hist%rang)+2  	
+      tam_hist=((hist%valor_limit-hist%valor_min)/hist%rang)+2	
       endif
 
     allocate(scamdata(scamtec%nexp))

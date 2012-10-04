@@ -87,17 +87,17 @@ CONTAINS
 
     Precipitation_struc%gridDesc     = 0 
 
-    Precipitation_struc%gridDesc( 1) = 4         !Input grid type (4=Gaussian)
-    Precipitation_struc%gridDesc( 2) = 196       !Number of points on a lat circle
-    Precipitation_struc%gridDesc( 3) = 251       !Number of points on a meridian
-    Precipitation_struc%gridDesc( 4) = 0.250     !Latitude of origin
-    Precipitation_struc%gridDesc( 5) = 0.250     !Longitude of origin
+    Precipitation_struc%gridDesc( 1) = 0         !Input grid type (4=Gaussian)
+    Precipitation_struc%gridDesc( 2) = 190       !Number of points on a lat circle
+    Precipitation_struc%gridDesc( 3) = 246       !Number of points on a meridian
+    Precipitation_struc%gridDesc( 4) = -49.875   !Latitude of origin
+    Precipitation_struc%gridDesc( 5) = -82.625   !Longitude of origin
     Precipitation_struc%gridDesc( 6) = 128       !8 bits (1 byte) related to resolution
                                                  !(recall that 10000000 = 128), Table 7
-    Precipitation_struc%gridDesc( 7) = -82.625   !Latitude of extreme point
-    Precipitation_struc%gridDesc( 8) = -49.875   !Longitude of extreme point
-    Precipitation_struc%gridDesc( 9) = 49.875    !N/S direction increment
-    Precipitation_struc%gridDesc(10) =  48       !(Gaussian) # lat circles pole-equator
+    Precipitation_struc%gridDesc( 7) = 11.375    !Latitude of extreme point
+    Precipitation_struc%gridDesc( 8) = -35.375   !Longitude of extreme point
+    Precipitation_struc%gridDesc( 9) = 0.250     !N/S direction increment
+    Precipitation_struc%gridDesc(10) = 0.250     !(Gaussian) # lat circles pole-equator
     Precipitation_struc%gridDesc(20) = 0.0  
 
     Precipitation_struc%npts = Precipitation_struc%gridDesc(2)*Precipitation_struc%gridDesc(3)
@@ -124,7 +124,7 @@ CONTAINS
     real, dimension(:,:), allocatable :: f2
     real, dimension(:,:), allocatable :: varfield
 
-    REAL,DIMENSION(196,251) :: binario !variavel de leitura  
+    REAL,DIMENSION(190,246) :: binario !variavel de leitura  
 
     character(len=*),parameter :: myname_=myname//'::Precipitation_read'
 
@@ -159,7 +159,7 @@ CONTAINS
 
  
   	! abrindo binario Precipitation
-	OPEN (UNIT=lugb,FILE=trim(fname),FORM='unformatted',access='direct',recl=196*251*4,ACTION = 'read',STATUS ='Unknown',iostat=iret)
+	OPEN (UNIT=lugb,FILE=trim(fname),FORM='unformatted',convert='big_endian',access='direct',recl=190*246*4,ACTION = 'read',STATUS ='Unknown',iostat=iret)
 			
 		read(lugb, rec=1)binario(:,:)
                 write(15)binario(:,:)
@@ -263,18 +263,23 @@ CONTAINS
     ! Interpolando para a grade do SCAMTEC
     !
 
+
+  
+	scamdata(1)%tmpfield(:,:,16) = binario(:,:)
+
+
     nx = int(scamtec%gridDesc(2))
     ny = int(scamtec%gridDesc(3))
     
     allocate(varfield(nx,ny))
     DO iv = 1, scamtec%nvar !15 vairaveis
 	
-    !   call interp_Precipitation( kpds, Precipitation_struc%npts,f2(:,iv),lb, scamtec%gridDesc,scamtec%nxpt,scamtec%nypt, varfield)    
+      !call interp_Precipitation( kpds, Precipitation_struc%npts,f2(:,iv),lb, scamtec%gridDesc,scamtec%nxpt,scamtec%nypt, varfield)    
 		
     !
     ! Transferindo para matriz temporaria do SCAMTEC
     !
-       scamdata(1)%tmpfield(:,:,iv) = varfield(:,:)
+       !scamdata(1)%tmpfield(:,:,iv) = varfield(:,:)
        
 
     enddo
@@ -320,12 +325,12 @@ CONTAINS
     lo    = .true.
 
     call bilinear_interp(gridDesc,ibi,lb,f,ibo,lo,field1d,   &
-                         Precipitation_struc%npts,nxpt*nypt,          &
-                         Precipitation_struc%rlat1, Precipitation_struc%rlon1, &
-                         Precipitation_struc%w111, Precipitation_struc%w121,   &
-                         Precipitation_struc%w211, Precipitation_struc%w221,   &
-                         Precipitation_struc%n111, Precipitation_struc%n121,   &
-                         Precipitation_struc%n211, Precipitation_struc%n221,scamtec%udef,iret)
+                        Precipitation_struc%npts,nxpt*nypt,          &
+                        Precipitation_struc%rlat1, Precipitation_struc%rlon1, &
+                        Precipitation_struc%w111, Precipitation_struc%w121,   &
+                        Precipitation_struc%w211, Precipitation_struc%w221,   &
+                        Precipitation_struc%n111, Precipitation_struc%n121,   &
+                        Precipitation_struc%n211, Precipitation_struc%n221,scamtec%udef,iret)
 
     k = 0
     do j = 1, nypt

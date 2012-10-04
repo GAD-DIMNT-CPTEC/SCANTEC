@@ -75,13 +75,9 @@ PROGRAM SCANTeC
 
 !
 !  3. RUN SCAMTeC
-!
-   if(Precipitation_Flag.eq.1)then
-   print*,'Nao Roda Calculos VIES / ACOR / RMSE'
-   else
+!  
    CALL SCAM_RUN()
-   endif
-   
+    
 !
 !  4. Precipitation
 !
