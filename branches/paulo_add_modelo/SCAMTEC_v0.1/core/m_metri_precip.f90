@@ -154,7 +154,7 @@ CONTAINS
   
           if (t.eq.scamtec%ntime_steps)then
               DO e=1,scamtec%nexp
-                  call escreve_histograma(e,tempo,histo,obs_histo)
+                  !call escreve_histograma(e,tempo,histo,obs_histo)
           
               ENDDO
           endif

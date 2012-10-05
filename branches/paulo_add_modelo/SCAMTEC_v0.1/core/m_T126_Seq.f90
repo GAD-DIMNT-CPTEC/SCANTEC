@@ -159,33 +159,24 @@ CONTAINS
 !Verifica se é analise incial o index z que é da leitura começa com 208
 ! Pensar como fazer isso de forma mais adequada	
 		
-	LOOP_A : do w=1, 100	
+	LOOP_A : do w=1, 300	
 		
+		if(trim(fname(w:w+6)) .eq. 'GPOSDAO')then
 		
-		if(w .eq. 46)then
-			dataini=trim(fname(w:w+9))
-				
-			
-			!exit LOOP_A
-				
-		else if(w .eq. 56)then
-			datafinal=trim(fname(w:w+9))
-			
-			
-			
-		endif
-		
-			
+			dataini=trim(fname(w+7:w+16))
+			datafinal=trim(fname(w+17:w+26))
+					
+		endif			
 		
 	enddo LOOP_A
+	
 	
 	if(dataini .eq. datafinal)then
 		y=208
 	else
 		y=214
 	endif
-	
-	
+		
 !-------------------------------------------------------------------------------------------	
  
   	! abrindo binario T126_Seq

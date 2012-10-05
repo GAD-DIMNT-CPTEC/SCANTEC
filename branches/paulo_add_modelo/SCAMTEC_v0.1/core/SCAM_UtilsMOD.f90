@@ -104,7 +104,7 @@ MODULE SCAM_Utils
    REAL(DP), PUBLIC  :: incr
    INTEGER, PUBLIC   :: hist_time
    REAL(DP), PUBLIC  :: hist_incr
-   CHARACTER(len=100), PUBLIC :: output_dir
+   CHARACTER(len=200), PUBLIC :: output_dir
 
    TYPE(domain), PUBLIC, DIMENSION(:), ALLOCATABLE    :: dom
 
@@ -151,6 +151,7 @@ MODULE SCAM_Utils
       CHARACTER(len=300)            :: config, formato
       LOGICAL                       :: exists
       INTEGER, ALLOCATABLE          :: tmp(:)
+      INTEGER, EXTERNAL             :: iargc
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 ! !DESCRIPTION:
 !

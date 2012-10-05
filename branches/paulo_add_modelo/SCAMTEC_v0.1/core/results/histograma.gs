@@ -1,20 +1,20 @@
-*****************************************************************************************
-*                                                                                       *
-*     Rotina operacional para gerar arquivos gifs para a                                *
-* apresentacao dos resultados de histograma da precipitacao                             *
-*                                                                                       *
-*Usage:> grads -blc "run histograma.gs /path/ namefile.ctl max_range_p1 max_range_p2 "  *
-*                                                                                       *
-*                       Versao 1.0                                                      *
-*                                                                                       *
-*      Luiz Fernado Sapucci / Paulo Henrique Diniz Dias                                 *
-*   Divisao de modelagem e desenvolvimento do DMD-CPTEC-INPE                            *    
-*                                                                                       *
-*****************************************************************************************
-*                                                                                       *
-*****************************************************************************************
-*  Procedimento iniciais: carrega as referencias de tempo                               *   
-*****************************************************************************************
+*********************************************************************************************
+*                                                                                           *
+*     Rotina operacional para gerar arquivos gifs para a                                    *
+* apresentacao dos resultados de histograma da precipitacao                                 *
+*                                                                                           *
+*Usage:> grads -blc "run histograma.gs /path/ namefile.ctl max_range_p1 max_range_p2 n_exp" *
+*                                                                                           *
+*                       Versao 1.0                                                          *
+*                                                                                           *
+*      Luiz Fernado Sapucci / Paulo Henrique Diniz Dias                                     *
+*   Divisao de modelagem e desenvolvimento do DMD-CPTEC-INPE                                *    
+*                                                                                           *
+*********************************************************************************************
+*                                                                                           *
+*********************************************************************************************
+*  Procedimento iniciais: carrega as referencias de tempo                                   *   
+*********************************************************************************************
 *
 function getarg(arg)
 'reinit'
@@ -22,6 +22,7 @@ pathin=subwrd(arg,1)
 arquivo=subwrd(arg,2)
 max_range_p1=subwrd(arg,3)
 max_range_p2=subwrd(arg,4)
+n_exp=subwrd(arg,5)
 
 *arquivo=sublin(ret,2)
 ano=substr(arquivo,16,4)
@@ -54,7 +55,7 @@ say
 
 * Loop dos experimentos
 exp=1
-while(exp<=4)
+while(exp<=n_exp)
 
 
 * Loop para variar o tempo 
@@ -210,7 +211,7 @@ plot=1
 
  'print'
  'disable print'
- '!/usr/local/bin/gxeps -i 'pathin''saida1' -o 'pathin''saida2
+ '!/stornext/grupos/assim_dados/users/paulo.dias/Dados_SCAMTEC/gxeps -i 'pathin''saida1' -o 'pathin''saida2
  
  
  
