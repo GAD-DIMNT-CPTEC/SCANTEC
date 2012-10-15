@@ -82,6 +82,43 @@ subroutine bilinear_interp_input (gridDesci,gridDesco,npts,&
 !  integer             :: get_fieldpos
 
   mo = npts
+
+ !
+ ! Verify if input and output grid are in same space
+ !
+ if (is_same_grid(gridDesci,gridDesco)) then
+    n11(:) = 0
+    n21(:) = 0
+    n12(:) = 0
+    n22(:) = 0
+    w11(:) = 0
+    w21(:) = 0
+    w12(:) = 0
+    w22(:) = 0
+    return
+ endif
+
+#ifdef DEBUG
+  write(6,*)'SCAMTEC GRID'
+  write(6,*)'lati :',GridDescO(4)
+  write(6,*)'latf :',GridDescO(7)
+  write(6,*)'dy   :',GridDescO(10)
+  write(6,*)'loni :',GridDescO(5)-360.000
+  write(6,*)'lonf :',GridDescO(8)-360.000
+  write(6,*)'dy   :',GridDescO(9)
+
+
+  write(6,*)'MODEL GRID'
+  write(6,*)'lati :',GridDescI(4)
+  write(6,*)'latf :',GridDescI(7)
+  write(6,*)'dy   :',GridDescI(10)
+  write(6,*)'loni :',GridDescI(5)
+  write(6,*)'lonf :',GridDescI(8)
+  write(6,*)'dy   :',GridDescI(9)
+#endif
+
+
+
   !------------------------------------------------------------------------
   !  Calls the routines to decode the grid description and 
   !  calculates the weights and neighbor information to perform
@@ -89,8 +126,27 @@ subroutine bilinear_interp_input (gridDesci,gridDesco,npts,&
   !  compute these weights repeatedly during interpolation. 
   !------------------------------------------------------------------------
   if(gridDesco(1).ge.0) then
+     !
+     ! Compute the earth coordinates of SCAMTEC grid
+     ! INPUT:
+     !       GridDescO - Informations about SCAMTEC grid
+     !       mo        - Number of points of SCAMTEC grid
+     !       fill      - Undef Value
+     ! OUTPUT:
+     !       xpts - grid x point coordinates
+     !       ypts - grid y point coordinates
+     !       rlat - output latitudes in degrees
+     !       rlon - output langitudesin degrees
+     !       nv   - error code
+
      call compute_earth_coord(gridDesco, mo,fill,xpts,ypts,rlon,rlat,nv)
+
+     !
+     !
   endif
+     !
+     ! Compute the grid coordinates of INPUT data
+     !
   call compute_grid_coord(gridDesci,mo,fill,xpts,ypts,rlon,rlat,nv)
   do n=1,mo
      xi=xpts(n)
@@ -106,6 +162,7 @@ subroutine bilinear_interp_input (gridDesci,gridDesco,npts,&
         n21(n)=get_fieldpos(i2,j1,gridDesci)
         n12(n)=get_fieldpos(i1,j2,gridDesci)
         n22(n)=get_fieldpos(i2,j2,gridDesci)
+
         if(min(n11(n),n21(n),n12(n),n22(n)).gt.0) then
            w11(n)=(1-xf)*(1-yf)
            w21(n)=xf*(1-yf)
@@ -125,6 +182,7 @@ subroutine bilinear_interp_input (gridDesci,gridDesco,npts,&
      endif
   enddo
 
+
 end subroutine bilinear_interp_input
 
 
@@ -134,7 +192,7 @@ end subroutine bilinear_interp_input
 ! !REVISION HISTORY:
 !   04-10-96  Mark Iredell; Initial Specification
 !   05-27-04  Sujay Kumar : Modified verision with floating point arithmetic 
-!
+!   10-11-12  joao gerd : Include grid verification
 ! !INTERFACE:
 subroutine bilinear_interp(gridDesco,ibi,li,gi,ibo,lo,go,mi,mo, & 
      rlat,rlon,w11,w12,w21,w22,n11,n12,n21,n22,udef,iret)
@@ -231,13 +289,28 @@ subroutine bilinear_interp(gridDesco,ibi,li,gi,ibo,lo,go,mi,mo, &
 !EOP
 
   integer   :: nn
-  integer n
+  integer   :: n
+  integer   :: s
   real wo(mo)
   real, parameter :: fill=-9999.
+
+  !
+  ! Verify if input and output grid are in the same space. 
+  !
+  s = sum(n11)+sum(n12)+sum(n21)+sum(n22)+sum(w11)+sum(w12)+sum(w21)+sum(w22)
+  if ( s .eq. 0 )then
+     lo  = li
+     ibo = ibi
+     mo  = mi
+     go  = gi
+     where(.NOT.li)go = udef
+     return
+  endif
 
   nn = mo
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !  INTERPOLATE WITH OR WITHOUT BITMAPS
+
   do n=1, nn
      go(n)=0.
      wo(n)=0.
@@ -269,7 +342,6 @@ subroutine bilinear_interp(gridDesco,ibi,li,gi,ibo,lo,go,mi,mo, &
         go(n)=udef
      endif
   enddo
-
   if(gridDesco(1).eq.0) call polfixs(nn,mo,rlat,rlon,ibo,lo,go)
   iret = 0 
 
@@ -446,34 +518,40 @@ subroutine compute_earth_coord_latlon(gridDesc,npts,fill,xpts,ypts,&
   integer :: iscan,jscan,nscan,im,jm,iret,n
   integer :: ii
   if(gridDesc(1).eq.0) then
-     im=gridDesc(2)
-     jm=gridDesc(3)
-     rlat1=gridDesc(4)
-     rlon1=gridDesc(5)
-     rlat2=gridDesc(7)
-     rlon2=gridDesc(8)
+     im    = gridDesc(2)
+     jm    = gridDesc(3)
+     rlat1 = gridDesc(4)
+     rlon1 = gridDesc(5)
+     rlat2 = gridDesc(7)
+     rlon2 = gridDesc(8)
+
      if(rlat1.gt.rlat2) then 
         dlat=-gridDesc(9)
      else
         dlat=gridDesc(9)
      endif
+
      if(rlon1.gt.rlon2) then 
         dlon=-gridDesc(10)
      else
         dlon = gridDesc(10)
      endif
-     xmin=0
-     xmax=im+1
-     if(im.eq.nint(360/abs(dlon))) xmax=im+2
-     ymin=0
-     ymax=jm+1
-     nret=0
 
+     xmin = 0
+     xmax = im+1
+
+     if(im.eq.nint(360/abs(dlon))) xmax=im+2
+
+     ymin = 0
+     ymax = jm+1
+     nret = 0
 !  translate grid coordinates to earth coordinates
      do n=1,npts
         if(xpts(n).ge.xmin.and.xpts(n).le.xmax.and. & 
              ypts(n).ge.ymin.and.ypts(n).le.ymax) then
+
            rlon(n)=rlon1+dlon*(xpts(n)-1)
+
            if(rlon(n).lt.0) then 
               rlon(n) = 360+rlon(n)
            endif
@@ -494,6 +572,7 @@ subroutine compute_earth_coord_latlon(gridDesc,npts,fill,xpts,ypts,&
         rlat(n)=fill
      enddo
   endif
+
 end subroutine compute_earth_coord_latlon
 
 
@@ -773,28 +852,33 @@ subroutine compute_grid_coord_latlon(gridDesc,npts,fill,xpts,ypts,&
   integer :: iscan,jscan,nscan,im,jm,iret,n
   integer :: ii
   if(gridDesc(1).eq.0) then
-     im=gridDesc(2)
-     jm=gridDesc(3)
-     rlat1=gridDesc(4)
-     rlon1=gridDesc(5)
-     rlat2=gridDesc(7)
-     rlon2=gridDesc(8)
+     im    = gridDesc(2)
+     jm    = gridDesc(3)
+     rlat1 = gridDesc(4)
+     rlon1 = gridDesc(5)
+     rlat2 = gridDesc(7)
+     rlon2 = gridDesc(8)
+
      if(rlat1.gt.rlat2) then 
         dlat=-gridDesc(9)
      else
         dlat=gridDesc(9)
      endif
+
      if(rlon1.gt.rlon2) then 
         dlon=-gridDesc(10)
      else
         dlon = gridDesc(10)
      endif
-     xmin=0
-     xmax=im+1
+
+     xmin = 0
+     xmax = im+1
+
      if(im.eq.nint(360/abs(dlon))) xmax=im+2
-     ymin=0
-     ymax=jm+1
-     nret=0
+
+     ymin = 0
+     ymax = jm+1
+     nret = 0
 
 
      do n=1,npts
@@ -824,6 +908,8 @@ subroutine compute_grid_coord_latlon(gridDesc,npts,fill,xpts,ypts,&
         rlat(n)=fill
      enddo
   endif
+
+
 end subroutine compute_grid_coord_latlon
 
 ! 
@@ -1270,5 +1356,49 @@ subroutine polfixs(nm,nx,rlat,rlon,ib,lo,go)
         enddo
      endif
 end subroutine polfixs
+
+function is_same_grid(griddesc1,griddesc2) result(flag)
+   ! verifica se é a mesma grade
+   implicit none
+   real, dimension(50) :: gridDesc1
+   real, dimension(50) :: gridDesc2
+   logical :: flag
+
+   flag = (soma_gd(gridDesc1).eq.soma_gd(gridDesc2))
+
+end function
+
+function soma_gd(gridDesc) result(soma)
+   implicit none
+   real, dimension(50) :: gridDesc
+   real :: soma
+
+   soma = 0
+
+   ! Projeçao
+    
+   soma = soma + gridDesc(1)
+
+   ! Latitude
+
+   soma = soma + gridDesc(4) + gridDesc(7) + gridDesc(9)
+
+   ! Longitude
+
+   if (gridDesc(5).lt.180)then
+      soma = soma + gridDesc(5) + 360.0
+   else
+      soma = soma + gridDesc(5)
+   endif
+
+   if (gridDesc(8).lt.180)then
+      soma = soma + gridDesc(8) + 360.0
+   else
+      soma = soma + gridDesc(8)
+   endif
+
+   soma = soma + gridDesc(10)
+
+end function
 
 END MODULE
