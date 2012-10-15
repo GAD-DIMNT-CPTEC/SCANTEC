@@ -1,47 +1,108 @@
+!-----------------------------------------------------------------------------!
+!           Group on Data Assimilation Development - GDAD/CPTEC/INPE          !
+!-----------------------------------------------------------------------------!
+!BOP
+!
+! !MODULE: m_clima50yr.f90
+!
+! !DESCRIPTON: This module contains routines and functions to configure,
+!              read and interpolate fields of the model to use in SCAMTEC.
+!                 
+!\\
+!\\
+! !INTERFACE:
+!
+
+
 MODULE m_clima50yr
 
-  USE scamtec_module
-  USE SCAM_dataMOD, only : scamdata
-  USE interp_mod
-  USE m_ioutil
+!
+! !USES:
+!
+  USE scamtec_module                ! SCAMTEC types
+  USE SCAM_dataMOD, only : scamdata ! SCAMTEC data matrix
+  USE interp_mod                    ! Interpolation module
+  USE m_die                         ! Error Messages
+  USE m_stdio                       ! Module to defines std. I/O parameters
 
   IMPLICIT NONE
   PRIVATE
+!
+! !PUBLIC TYPES:  
+!  
   type clima50yr_type_dec 
 
-     integer            :: npts
-     real, pointer      :: gridDesc(:)
-     real, pointer      :: rlat1(:)
-     real, pointer      :: rlon1(:)
-     integer, pointer   :: n111(:)
-     integer, pointer   :: n121(:)
-     integer, pointer   :: n211(:)
-     integer, pointer   :: n221(:)
-     real, pointer      :: w111(:),w121(:)
-     real, pointer      :: w211(:),w221(:)
+     integer                :: npts
+     real, allocatable      :: gridDesc(:)
+     real, allocatable      :: rlat1(:)
+     real, allocatable      :: rlon1(:)
+     integer, allocatable   :: n111(:)
+     integer, allocatable   :: n121(:)
+     integer, allocatable   :: n211(:)
+     integer, allocatable   :: n221(:)
+     real, allocatable      :: w111(:),w121(:)
+     real, allocatable      :: w211(:),w221(:)
 
   end type clima50yr_type_dec
 
   type(clima50yr_type_dec) :: clima50yr_struc
+!
+! !PUBLIC MEMBER FUNCTIONS:
+!
 
-  public :: clima50yr_read
-  public :: clima50yr_init
+  public :: clima50yr_read ! Function to read files from clima50yr model
+  public :: clima50yr_init ! Function to initilize weights to interpolate fields
+!
+!
+! !REVISION HISTORY:
+!  06 May 2012 - J. G. de Mattos - Initial Version
+!
+!
+! !SEE ALSO:
+!   
+!
+!EOP
+!-----------------------------------------------------------------------------!
+!
 
-  !---------------------------------------------------------------------
-  !
-  !---------------------------------------------------------------------
   character(len=*),parameter :: myname='m_clima50yr'
 
 CONTAINS
+!
+!-----------------------------------------------------------------------------!
+!BOP
+!
+! !IROUTINE:  clima50yr_init
+!
+! !DESCRIPTION: This function initialize the matrices used to read 
+!               and export fields to SCAMTEC
+!\\
+!\\
+! !INTERFACE:
+!
 
   SUBROUTINE clima50yr_init()
+!
+!
+! !REVISION HISTORY: 
+!  06 May 2012 - J. G. de Mattos - Initial Version
+!
+!
+!EOP
+!-----------------------------------------------------------------------------!
+!BOC
+!
     IMPLICIT NONE
     integer :: nx, ny
 
     character(len=*),parameter :: myname_=myname//'::clima50yr_init'
 
+    !
+    ! DEBUG print
+    !
+
 #ifdef DEBUG
-    WRITE(6,'(     2A)')'Hello from ', myname_
+    WRITE(stdout,'(     2A)')'Hello from ', myname_
 #endif
 
     Allocate(clima50yr_struc%gridDesc(50))
@@ -62,7 +123,9 @@ CONTAINS
     Allocate(clima50yr_struc%w211(nx*ny))
     Allocate(clima50yr_struc%w221(nx*ny))
 
-
+   !
+   ! Initializing arrays of weights for interpolation in the field of SCAMTEC
+   !
 
     call bilinear_interp_input(clima50yr_struc%gridDesc, scamtec%gridDesc,        &
                                int(scamtec%gridDesc(2)*scamtec%gridDesc(3)), &
@@ -74,14 +137,42 @@ CONTAINS
 
 
   END SUBROUTINE clima50yr_init
+!
+!EOC
+!
+!-----------------------------------------------------------------------------!
+!BOP
+!
+! !IROUTINE:  clima50yr_domain
+!
+! !DESCRIPTION: This routine initilize domain parameters of clima50yr model
+!               
+!\\
+!\\
+! !INTERFACE:
+!
 
   SUBROUTINE clima50yr_domain()
-    IMPLICIT NONE
+!
+!
+! !REVISION HISTORY: 
+!  06 May 2012 - J. G. de Mattos - Initial Version
+!
+!
+!EOP
+!-----------------------------------------------------------------------------!
+!BOC
+!
 
+    IMPLICIT NONE
     character(len=*),parameter :: myname_=myname//'::clima50yr_domain'
 
+    !
+    ! DEBUG print
+    !
+
 #ifdef DEBUG
-    WRITE(6,'(     2A)')'Hello from ', myname_
+    WRITE(stdout,'(     2A)')'Hello from ', myname_
 #endif
 
 
@@ -103,12 +194,48 @@ CONTAINS
     clima50yr_struc%npts = clima50yr_struc%gridDesc(2)*clima50yr_struc%gridDesc(3)
 
   END SUBROUTINE clima50yr_domain
+!
+!EOC
+!
+!-----------------------------------------------------------------------------!
+!BOP
+!
+! !IROUTINE:  clima50yr_read
+!
+! !DESCRIPTION: For a given file name, read fields from a clima50yr model,
+!               interpolates to the SCAMTEC domain and export to SCAMTEC
+!               matrices.                
+!               
+!\\
+!\\
+! !INTERFACE:
+!
 
   SUBROUTINE clima50yr_read(fname)
-    IMPLICIT NONE
-    character(len=*), intent(IN) :: fname
-    integer :: ferror
+!
+! !USES:
+!
+  USE m_ioutil, only : opnieee, clsieee
 
+    IMPLICIT NONE
+!
+! !INPUT PARAMETERS:
+!
+  
+    character(len=*), intent(IN) :: fname ! File name of the clima50yr model
+!
+!
+! !REVISION HISTORY: 
+!  03 May 2012 - J. G. de Mattos - Initial Version
+!
+!
+!EOP
+!-----------------------------------------------------------------------------!
+!BOC
+!
+    character(len=*),parameter :: myname_=myname//'::clima50yr_read'
+
+    integer :: ferror
     integer :: iret,lugb
     logical :: file_exists
     integer :: gbret,jret,jpds(200),jgds(200),gridDesc(200),kpds(200)
@@ -123,7 +250,6 @@ CONTAINS
     real, dimension(:,:), allocatable :: f
     real, dimension(:,:), allocatable :: f2
     real, dimension(:,:), allocatable :: varfield
-    character(len=*),parameter :: myname_=myname//'::clima50yr_read'
 
     !
     ! Parametros para ler os dados do arquivo de Climatologia
@@ -143,8 +269,8 @@ CONTAINS
     !
 
 #ifdef DEBUG
-    WRITE(6,'(     2A)')'Hello from ', myname_
-    WRITE(6,'( A,1X,A)')'Open File ::', trim(fname)
+    WRITE(stdout,'(     2A)')'Hello from ', myname_
+    WRITE(stdout,'( A,1X,A)')'Open File ::', trim(fname)
 #endif
 
     !
@@ -187,15 +313,25 @@ CONTAINS
 
        else
           gbret = 99
+          call perr(myname_,'baopenr("'//	&
+                    trim(fname)//'")',iret		)
+          return          
        endif
 
        call clsieee(lugb,jret)
+       if(jret.ne.0) then
+         call perr(myname_,'deallocate()',jret)
+         return
+       endif
 
     else
 
        ferror = 0
        deallocate(f)
        deallocate(lb)
+       
+	    call perr(myname_,'File Not Found: '//trim(fname),ferror)
+       return
 
     endif
 
@@ -289,22 +425,48 @@ CONTAINS
 
 
   END SUBROUTINE clima50yr_read
+!
+!EOC
+!
+!-----------------------------------------------------------------------------!
+!BOP
+!
+! !IROUTINE:  interp_clima50yr
+!
+! !DESCRIPTION: this routine interpolates a givem field to the SCAMTEC domain 
+!
+!\\
+!\\
+! !INTERFACE:
+!
 
   SUBROUTINE interp_clima50yr( kpds, npts,f,lb,gridDesc, nxpt, nypt, varfield)  
 
-    ! !ARGUMENTS:   
-    integer, intent(in)   :: kpds(:)
-    integer, intent(in)   :: npts
-    real, intent(out)     :: f(:)
-    logical*1, intent(in) :: lb(:)
-    real, intent(in)      :: gridDesc(:)
-    integer, intent(in)   :: nxpt
-    integer, intent(in)   :: nypt
-    real, intent(out)     :: varfield(:,:)
+!
+! !INPUT PARAMETERS:
+!
 
-    !
-    !
-    !
+    integer, intent(in)   :: kpds(:)     ! grid deconding array information
+    integer, intent(in)   :: npts        ! number of points in the input grid
+    real, intent(out)     :: f(:)        ! input field to be interpolated
+    logical*1, intent(in) :: lb(:)       ! input bitmap
+    real, intent(in)      :: gridDesc(:) ! array description of the SCAMTEC grid
+    integer, intent(in)   :: nxpt        ! number of columns (in the east-west dimension) in the SCAMTEC grid
+    integer, intent(in)   :: nypt        ! number of rows (in the north-south dimension) in the SCAMTEC grid
+!
+! !OUTPUT PARAMETERS:
+!
+    real, intent(out)     :: varfield(:,:) ! output interpolated field
+
+!
+! !REVISION HISTORY: 
+!  06 May 2012 - J. G. de Mattos - Initial Version
+!
+!
+!EOP
+!-----------------------------------------------------------------------------!
+!BOC
+!
 
     real, dimension(nxpt*nypt) :: field1d
     logical*1, dimension(nxpt,nypt) :: lo
@@ -312,11 +474,14 @@ CONTAINS
     integer :: ip, ipopt(20),ibi,km,iret
     integer :: ibo
     integer :: i,j,k
-
     character(len=*),parameter :: myname_=myname//'::interp_clima50yr'
 
+    !
+    ! DEBUG print
+    !
+
 #ifdef DEBUG
-    WRITE(6,'(     2A)')'Hello from ', myname_
+    WRITE(stdout,'(     2A)')'Hello from ', myname_
 #endif
 
     ip    = 0
@@ -332,6 +497,10 @@ CONTAINS
                          clima50yr_struc%w211, clima50yr_struc%w221,   &
                          clima50yr_struc%n111, clima50yr_struc%n121,   &
                          clima50yr_struc%n211, clima50yr_struc%n221,scamtec%udef,iret)
+    if (iret.ne.0)then
+       call perr(myname_,'bilinear_interp ( ... ) ',iret)
+       return
+    endif
 
     k = 0
     do j = 1, nypt
