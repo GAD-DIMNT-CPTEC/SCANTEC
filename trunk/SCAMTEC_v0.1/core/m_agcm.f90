@@ -56,6 +56,7 @@ MODULE m_agcm
 ! !REVISION HISTORY:
 !  03 May 2012 - J. G. de Mattos - Initial Version
 !  06 May 2012 - J. G. de Mattos - Include new fields read
+!  17 Oct 2012 - J. G. de Mattos - change UMES to g/kg
 !
 !
 !
@@ -336,7 +337,7 @@ CONTAINS
     f2(:, 2) = f(:, 5)*(1 + 0.61*(f(:,2)/(1-f(:,2)))) ! Vtmp @ 850 hPa [K]
     f2(:, 3) = f(:, 6)*(1 + 0.61*(f(:,3)/(1-f(:,3)))) ! Vtmp @ 500 hPa [K]
     f2(:, 4) = f(:, 7)                                ! PSNM [hPa]
-    f2(:, 5) = f(:, 1)                                ! Umes @ 925 hPa [Kg/Kg]
+    f2(:, 5) = f(:, 1)/1000.0                         ! Umes @ 925 hPa [g/Kg]
     f2(:, 6) = f(:, 8)                                ! Agpl @ 925 hPa [Kg/m2]
     f2(:, 7) = f(:, 9)                                ! Zgeo @ 850 hPa [gpm]
     f2(:, 8) = f(:,10)                                ! Zgeo @ 500 hPa [gpm]

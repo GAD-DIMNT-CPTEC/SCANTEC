@@ -35,7 +35,7 @@ MODULE SCAM_dataMOD
                                            'VTMP:850',& ! Virtual Temperature @ 850 hPa [K]
                                            'VTMP:500',& ! Virtual Temperature @ 500 hPa [K]
                                            'PSNM:000',& ! Pressure reduced to MSL [hPa]
-                                           'UMES:925',& ! Specific Humidity @ 925 hPa [Kg/Kg]
+                                           'UMES:925',& ! Specific Humidity @ 925 hPa [g/Kg]
                                            'AGPL:925',& ! Inst. Precipitable Water @ 925 hPa [Kg/m2]
                                            'ZGEO:850',& ! Geopotential height @ 850 hPa [gpm]
                                            'ZGEO:500',& ! Geopotential height @ 500 hPa [gpm]

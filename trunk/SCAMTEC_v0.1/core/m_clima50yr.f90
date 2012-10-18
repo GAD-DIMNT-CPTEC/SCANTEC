@@ -56,7 +56,7 @@ MODULE m_clima50yr
 !
 ! !REVISION HISTORY:
 !  06 May 2012 - J. G. de Mattos - Initial Version
-!
+!  18 Oct 2012 - J. G. de Mattos - change UMES to g/kg
 !
 ! !SEE ALSO:
 !   
@@ -351,7 +351,7 @@ CONTAINS
     ee       = f(:,4)*es
     rv       = (0.622*ee)/(925.0-ee)
 
-    f2(:, 5) = rv/(1+rv)                           ! Umes @ 925 hPa [Kg/Kg]
+    f2(:, 5) = rv/(1+rv)/1000.                     ! Umes @ 925 hPa [g/Kg]
 
     f2(:, 1) = f(:,1)*(1 + 0.61*rv)                ! Vtmp @ 925 hPa [K]
 
