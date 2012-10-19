@@ -254,7 +254,7 @@ CONTAINS
 
      Reference=TRIM(Refer%file)
      CALL str_template(Reference, nymd,nhms)
-!     CALL ldata('R', 1, Refer%Id, Reference)
+     CALL ldata('R', 1, Refer%Id, Reference)
 
      !
      ! 1.2 Climatology data file
@@ -263,7 +263,7 @@ CONTAINS
      IF(clima_Flag.EQ.1)THEN
         Climatology=TRIM(Clima%file)
         CALL str_template(Climatology, nymd,nhms)
-!        CALL ldata('C', 1, Clima%Id, Climatology)
+        CALL ldata('C', 1, Clima%Id, Climatology)
      END IF
 
      !
@@ -272,11 +272,11 @@ CONTAINS
 
      Experiment = TRIM(Exper(NExp)%file)
      CALL str_template(Experiment, fymd, fhms, nymd, nhms)
-!     CALL ldata('E',e,Exper(NExp)%Id, Experiment)
+     CALL ldata('E',NExp,Exper(NExp)%Id, Experiment)
 
-    write(*,'(2(x,A))')'R',TRIM(Reference)
-    write(*,'(2(x,A))')'C',TRIM(Climatology)
-    write(*,'(2(x,A))')'E',TRIM(Experiment)
+!    write(*,'(2(x,A))')'R',TRIM(Reference)
+!    write(*,'(2(x,A))')'C',TRIM(Climatology)
+!    write(*,'(2(x,A))')'E',TRIM(Experiment)
 
 
   END SUBROUTINE

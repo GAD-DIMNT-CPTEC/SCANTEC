@@ -188,7 +188,7 @@ MODULE SCAM_Utils
 ! Reading time parameters
 !
          call i90_label ( 'Starting Time:', iret )
-         starting_time = i90_gint(iret)
+         scamtec%starting_time = i90_gint(iret)
          if(iret /= 0) then
             call perr(myname_,'i90_label("Starting Time:")',iret)
              if(present(istat))istat=iret
@@ -196,7 +196,7 @@ MODULE SCAM_Utils
          endif
 
          call i90_label ( 'Ending Time:', iret )
-         ending_time = i90_gint(iret)
+         scamtec%ending_time = i90_gint(iret)
          if(iret /= 0) then
             call perr(myname_,'i90_label("Ending Time:")',iret)
              if(present(istat))istat=iret
@@ -204,7 +204,7 @@ MODULE SCAM_Utils
          endif
 
          call i90_label ( 'Time Step:', iret )
-         time_step = i90_gint(iret)
+         scamtec%time_step = i90_gint(iret)
          if(iret /= 0) then
             call perr(myname_,'i90_label("Time Step:")',iret)
              if(present(istat))istat=iret
@@ -212,14 +212,14 @@ MODULE SCAM_Utils
          endif
 
          call i90_label ( 'Forecast Time:', iret )
-         forecast_time = i90_gint(iret)
+         scamtec%forecast_time = i90_gint(iret)
          if(iret /= 0) then
             call perr(myname_,'i90_label("Forecast Time:")',iret)
              if(present(istat))istat=iret
             return
          endif
          call i90_label ( 'History Time:', iret )
-         hist_time = i90_gint(iret)
+         scamtec%hist_time = i90_gint(iret)
          if(iret /= 0) then
             call perr(myname_,'i90_label("History Time:")',iret)
              if(present(istat))istat=iret

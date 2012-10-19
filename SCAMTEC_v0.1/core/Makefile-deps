@@ -1,4 +1,4 @@
-# Automatically generated dependencies. Qua Mai  2 10:57:14 BRT 2012
+# Automatically generated dependencies. Sex Out 19 11:52:19 BRT 2012
 # fgen v0.3 (C) 1997,98 Beroud Jean-Marc
 
 
@@ -18,7 +18,9 @@ $(srcdir)/SCAM_UtilsMOD.o SCAM_UtilsMOD.o: \
 	$(srcdir)/scamtec_module.o
 
 $(srcdir)/SCAM_bstatistic.o SCAM_bstatistic.o: \
-	$(srcdir)/SCAM_bstatistic.f90
+	$(srcdir)/SCAM_bstatistic.f90 \
+	$(srcdir)/SCAM_dataMOD.o \
+	$(srcdir)/scamtec_module.o
 
 $(srcdir)/SCAM_coreMOD.o SCAM_coreMOD.o: \
 	$(srcdir)/SCAM_coreMOD.f90 \
@@ -33,6 +35,7 @@ $(srcdir)/SCAM_coreMOD.o SCAM_coreMOD.o: \
 
 $(srcdir)/SCAM_dataMOD.o SCAM_dataMOD.o: \
 	$(srcdir)/SCAM_dataMOD.f90 \
+	$(srcdir)/m_string.o \
 	$(srcdir)/SCAM_UtilsMOD.o \
 	$(srcdir)/scamtec_module.o
 

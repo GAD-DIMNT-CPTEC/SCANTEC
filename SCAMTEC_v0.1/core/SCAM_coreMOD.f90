@@ -63,6 +63,7 @@ MODULE SCAM_coreMOD
   public :: SCAM_Init
   public :: SCAM_RUN
   public :: SCAM_Finalize
+  public :: SCAM_EndRun
 
 
   !---------------------------------------------------------------------
@@ -120,10 +121,22 @@ CONTAINS
     !  3. Time configuration
     !
 
-    scamtec%hist_incr      = real(hist_time/24.0d0)
-    scamtec%incr           = real(time_step/24.0d0)
-    scamtec%ntime_steps    = ( ( cal2jul(ending_time) - cal2jul(starting_time) + scamtec%incr ) / scamtec%incr )
-    scamtec%ntime_forecast = ( Forecast_time / time_step ) + 1
+    scamtec%atime          = scamtec%starting_time
+    scamtec%atime_step     = 1
+    scamtec%ftime          = scamtec%starting_time
+    scamtec%atime_step     = 1
+    scamtec%tfileptime     = 1
+
+
+
+    scamtec%hist_incr      = real(scamtec%hist_time/24.0d0)
+    scamtec%incr           = real(scamtec%time_step/24.0d0)
+
+    scamtec%ntime_steps    = ( ( cal2jul(scamtec%ending_time) - &
+                              cal2jul(scamtec%starting_time) +  &
+                              scamtec%incr ) / scamtec%incr )
+
+    scamtec%ntime_forecast = ( scamtec%Forecast_time / scamtec%time_step ) + 1
 
 #ifdef DEBUG    
    write(6,'(A,F9.3)')'history increment    :',scamtec%hist_incr
@@ -212,6 +225,55 @@ CONTAINS
     END DO
 
   END SUBROUTINE SCAM_Init
+  !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  !               INPE/CPTEC Data Assimilation Group                   !
+  !---------------------------------------------------------------------
+  !BOP
+  !
+  ! !IROUTINE: SCAM_RUN - Run SCAMTeC
+  !
+  ! !DESCRIPTION:
+  !
+  ! !INTERFACE:
+
+  SUBROUTINE SCAM_RUN1()
+
+    implicit none
+
+    ! !REVISION HISTORY:
+    !       07ct10 - Joao Gerd
+    !           Initial prototaype Code
+    !EOP
+    !------------------------------------------------------------------
+
+    character(len=*),parameter :: myname_=myname//'::SCAM_RUN'
+    integer             :: NExp
+
+    !
+    !  0. Hello
+    !
+
+#ifdef DEBUG
+    WRITE(6,'(     2A)')'Hello from ', myname_
+#endif
+
+    !
+    !  1. Loop over time and experiments
+    !
+
+     DO WHILE (.NOT.is_last_step())
+        DO NExp=1,scamtec%nexp
+!            print*,scamtec%atime, scamtec%ftime
+           CALL SCAM_ModelData ( NExp )  ! Load Files: Analisys, Forecast and Climatology
+           CALL CalcBstat ( NExp )   ! Calculate Basic Statistics: Bias, RMSE, Anomaly Correlation
+!           CALL PrecStat ( )    ! Calculate Precipitation Statistics
+
+        ENDDO
+        call SCAM_NextStep( )
+     ENDDO
+
+
+  END SUBROUTINE SCAM_RUN1
 
   !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   !               INPE/CPTEC Data Assimilation Group                   !
@@ -259,7 +321,8 @@ CONTAINS
     !
     !  1. Time Running
     !
-    time=starting_time
+    
+    time=scamtec%starting_time
 
     i=1
     DO t=1,scamtec%ntime_steps
@@ -455,7 +518,97 @@ CONTAINS
     WRITE(6,'(     2A)')'Hello from ', myname_
 #endif
 
-
   END SUBROUTINE SCAM_Finalize
+ 
+  !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  !               INPE/CPTEC Data Assimilation Group                   !
+  !---------------------------------------------------------------------
+  !BOP
+  !
+  ! !IROUTINE: SCAM_Finalize - verify if julian is the last day 
+  !                            of run of SCAMTeC analisys
+  !
+  ! !DESCRIPTION:
+  !
+  ! !INTERFACE:
 
+  recursive SUBROUTINE SCAM_EndRun( )
+!     implicit none
+!     integer, intent(in) :: jd
+!     integer, intent(in) :: jd_incr
+!     integer, intent(in) :: jd_end
+
+
+    !REVISION HISTORY:
+    !  Initial Code :: Joao Gerd - 17Aug2012
+    !
+    !EOP
+
+!    character(len=*),parameter :: myname_=myname//'::SCAM_EndRun'
+
+    !
+    !  0. Hello
+    !
+
+!#ifdef DEBUG
+!    WRITE(6,'(     2A)')'Hello from ', myname_
+!#endif
+    
+    scamtec%atime=jul2cal(cal2jul(scamtec%atime)+scamtec%incr)
+    print*,scamtec%atime,scamtec%ending_time
+    if (scamtec%atime.ge.scamtec%ending_time) call exit()
+
+  END SUBROUTINE SCAM_EndRun
+
+
+  SUBROUTINE SCAM_NextStep()
+     implicit none
+     REAL(DP) :: aincr
+     REAL(DP) :: fincr
+     integer :: I, Nx, Ny
+     integer :: ii, jj
+
+     scamtec%tfileptime = scamtec%tfileptime + 1
+
+     I  = scamtec%tfileptime
+     Nx = scamtec%ntime_steps
+     Ny = scamtec%ntime_forecast
+
+     ii = ceiling((I)/float(Ny))
+     jj = ( I + Ny ) - Ny * ii
+
+     aincr = (ii-1) * scamtec%incr
+     fincr = (jj-1) * scamtec%incr
+
+     scamtec%atime = jul2cal(cal2jul(scamtec%starting_time)+aincr)
+     scamtec%ftime = jul2cal(cal2jul(scamtec%atime)+fincr)
+
+  END SUBROUTINE
+
+!BOP
+! !ROUTINE: is_last_step
+! \label{is_last_step}
+!
+! !INTERFACE:
+function is_last_step( )
+   implicit none
+! !ARGUMENTS: 
+   logical :: is_last_step
+! 
+! !DESCRIPTION:
+!
+! Function returns true on last timestep.
+!
+!  \begin{description}
+!   \item [is\_last\_step]
+!     result of the function 
+!  \end{description}
+!EOP
+
+   is_last_step = .false.
+   if(scamtec%atime .gt. scamtec%ending_time) then
+      is_last_step = .true.
+   endif
+   
+end function is_last_step
 END MODULE SCAM_coreMOD
