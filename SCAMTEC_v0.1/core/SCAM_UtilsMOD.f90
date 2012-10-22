@@ -122,7 +122,9 @@ MODULE SCAM_Utils
 !  \label{readcard}
 !
 ! !REVISION HISTORY:
-!  Initial Code :: Joao Gerd - 
+!  ## ### ####   J. G. de Mattos - Initial Code
+!  22 Oct 2012 - R. Mello        - Correcao na aquisição dos indices 
+!                                  dos modelos.
 !
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 !
@@ -466,8 +468,8 @@ MODULE SCAM_Utils
 !
          IF(Clima_Flag.eq.1)then
 
-            Allocate(tmp(scamtec%nexp+1))
-            call unique((/Exper(:)%Id,Clima%Id/),tmp,I)
+            Allocate(tmp(scamtec%nexp+2))
+            call unique((/Refer%id, Exper(:)%Id, Clima%Id/),tmp,I)
 
             Allocate(scamtec%Init_ModelID(I))
             scamtec%Init_ModelID(1:I) = tmp(1:I)
@@ -475,15 +477,14 @@ MODULE SCAM_Utils
             DeAllocate(tmp)
 
          else
-            Allocate(tmp(scamtec%nexp))
-            call unique(Exper(:)%Id,tmp,I)
+            Allocate(tmp(scamtec%nexp+1))
+            call unique((/Refer%id, Exper(:)%Id/),tmp,I)
 
             Allocate(scamtec%Init_ModelID(I))
             scamtec%Init_ModelID(1:I) = tmp(1:I)
 
             DeAllocate(tmp)
          endif
-
 
 
    END SUBROUTINE
