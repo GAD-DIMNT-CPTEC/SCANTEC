@@ -1,0 +1,83 @@
+.TH "interp_mod" 3 "Wed May 9 2012" "Version v0.1" "SCAMTEC" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+interp_mod \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions/Subroutines"
+
+.in +1c
+.ti -1c
+.RI "subroutine \fBbilinear_interp_input\fP (gridDesci, gridDesco, npts, rlat, rlon, n11, n12, n21, n22, w11, w12, w21, w22)"
+.br
+.ti -1c
+.RI "subroutine \fBbilinear_interp\fP (gridDesco, ibi, li, gi, ibo, lo, go, mi, mo, rlat, rlon, w11, w12, w21, w22, n11, n12, n21, n22, udef, iret)"
+.br
+.ti -1c
+.RI "subroutine \fBcompute_earth_coord\fP (gridDesc, npts, fill, xpts, ypts, rlon, rlat, nret)"
+.br
+.ti -1c
+.RI "subroutine \fBcompute_earth_coord_latlon\fP (gridDesc, npts, fill, xpts, ypts, rlon, rlat, nret)"
+.br
+.ti -1c
+.RI "subroutine \fBcompute_earth_coord_gauss\fP (gridDesc, npts, fill, xpts, ypts, rlon, rlat, nret)"
+.br
+.ti -1c
+.RI "subroutine \fBcompute_grid_coord\fP (gridDesc, npts, fill, xpts, ypts, rlon, rlat, nret)"
+.br
+.ti -1c
+.RI "subroutine \fBcompute_grid_coord_latlon\fP (gridDesc, npts, fill, xpts, ypts, rlon, rlat, nret)"
+.br
+.ti -1c
+.RI "subroutine \fBcompute_grid_coord_gauss\fP (gridDesc, npts, fill, xpts, ypts, rlon, rlat, nret)"
+.br
+.ti -1c
+.RI "subroutine \fBgausslat\fP (jmax, slat, wlat)"
+.br
+.ti -1c
+.RI "integer \fBget_fieldpos\fP (i, j, gridDesc)"
+.br
+.ti -1c
+.RI "subroutine \fBpolfixs\fP (nm, nx, rlat, rlon, ib, lo, go)"
+.br
+.in -1c
+.SH "Function/Subroutine Documentation"
+.PP 
+.SS "subroutine interp_mod::bilinear_interp (real,dimension(50)gridDesco, integeribi, logical*1,dimension(mi)li, real,dimension(mi)gi, integeribo, logical*1,dimension(mo)lo, real,dimension(mo)go, integermi, integermo, real,dimension(mo)rlat, real,dimension(mo)rlon, real,dimension(mo)w11, real,dimension(mo)w12, real,dimension(mo)w21, real,dimension(mo)w22, integer,dimension(mo)n11, integer,dimension(mo)n12, integer,dimension(mo)n21, integer,dimension(mo)n22, realudef, integeriret)"
+.PP
+Definition at line 139 of file bilinear_interpolation.f90.
+.SS "subroutine interp_mod::bilinear_interp_input (real,dimension(50),intent(in)gridDesci, real,dimension(50)gridDesco, integernpts, real,dimension(npts)rlat, real,dimension(npts)rlon, integer,dimension(npts)n11, integer,dimension(npts)n12, integer,dimension(npts)n21, integer,dimension(npts)n22, real,dimension(npts)w11, real,dimension(npts)w12, real,dimension(npts)w21, real,dimension(npts)w22)"
+.PP
+Definition at line 12 of file bilinear_interpolation.f90.
+.SS "subroutine interp_mod::compute_earth_coord (real,dimension(50)gridDesc, integernpts, realfill, real,dimension(npts)xpts, real,dimension(npts)ypts, real,dimension(npts)rlon, real,dimension(npts)rlat, integernret)"
+.PP
+Definition at line 285 of file bilinear_interpolation.f90.
+.SS "subroutine interp_mod::compute_earth_coord_gauss (real,dimension(50)gridDesc, integernpts, realfill, real,dimension(npts)xpts, real,dimension(npts)ypts, real,dimension(npts)rlon, real,dimension(npts)rlat, integernret)"
+.PP
+Definition at line 509 of file bilinear_interpolation.f90.
+.SS "subroutine interp_mod::compute_earth_coord_latlon (real,dimension(50)gridDesc, integernpts, realfill, real,dimension(npts)xpts, real,dimension(npts)ypts, real,dimension(npts)rlon, real,dimension(npts)rlat, integernret)"
+.PP
+Definition at line 406 of file bilinear_interpolation.f90.
+.SS "subroutine interp_mod::compute_grid_coord (real,dimension(50)gridDesc, integernpts, realfill, real,dimension(npts)xpts, real,dimension(npts)ypts, real,dimension(npts)rlon, real,dimension(npts)rlat, integernret)"
+.PP
+Definition at line 636 of file bilinear_interpolation.f90.
+.SS "subroutine interp_mod::compute_grid_coord_gauss (real,dimension(50)gridDesc, integernpts, realfill, real,dimension(npts)xpts, real,dimension(npts)ypts, real,dimension(npts)rlon, real,dimension(npts)rlat, integernret)"
+.PP
+Definition at line 838 of file bilinear_interpolation.f90.
+.SS "subroutine interp_mod::compute_grid_coord_latlon (real,dimension(50)gridDesc, integernpts, realfill, real,dimension(npts)xpts, real,dimension(npts)ypts, real,dimension(npts)rlon, real,dimension(npts)rlat, integernret)"
+.PP
+Definition at line 734 of file bilinear_interpolation.f90.
+.SS "subroutine interp_mod::gausslat (integerjmax, real,dimension(jmax)slat, real,dimension(jmax)wlat)"
+.PP
+Definition at line 977 of file bilinear_interpolation.f90.
+.SS "integer interp_mod::get_fieldpos (integeri, integerj, real,dimension(50)gridDesc)"
+.PP
+Definition at line 1078 of file bilinear_interpolation.f90.
+.SS "subroutine interp_mod::polfixs (integernm, integernx, real,dimension(nm)rlat, real,dimension(nm)rlon, integerib, logical*1,dimension(nx)lo, real,dimension(nx)go)"
+.PP
+Definition at line 1184 of file bilinear_interpolation.f90.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for SCAMTEC from the source code.
