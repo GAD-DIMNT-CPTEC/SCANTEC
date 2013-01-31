@@ -1,10 +1,16 @@
 SUBROUTINE SCAM_metricas (v,f,e)
 USE SCAM_dataMOD
 USE SCAM_bstatistic
+USE SCAM_Utils
+USE SCAM_coreMOD
+
+  USE scamtec_module
+
+IMPLICIT NONE
 
 
 integer v,f,e !indices dos loops que vem do SCAM_coreMod
-
+real :: tmp
 !- Calculando VIES
 !----------------------------------------------------------------------------------------------------------------- 
 scamdata(e)%diffield(:,:,v) = scamdata(e)%expfield(:,:,v) - scamdata(1)%reffield(:,:,v)

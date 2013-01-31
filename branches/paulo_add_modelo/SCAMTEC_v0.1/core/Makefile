@@ -92,7 +92,7 @@ include Makefile-objs
 
 # additionnal libraries
 LIBDIRS = -L$(MPEU_LIB) -L$(GRIB_LIB) 
-LIBS    = -lmpeu  -lw3
+LIBS    = -lmpeu  -lw3 -llapack 
 
 # target names
 BIN = scamtec.x

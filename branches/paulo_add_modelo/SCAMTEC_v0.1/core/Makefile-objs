@@ -23,4 +23,5 @@ OBJS = \
 	$(srcdir)/obs_Precipitation.o \
 	$(srcdir)/scamdrv.o \
 	$(srcdir)/scamtec_module.o \
+	$(srcdir)/eof.o \
 	$(srcdir)/template_read.o

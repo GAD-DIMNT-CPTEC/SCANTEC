@@ -255,6 +255,9 @@ CONTAINS
     
     !INTEGER, ALLOCATABLE :: histo(:), obs_histo(:) !variavel do histograma
     !INTEGER, ALLOCATABLE :: tempo(:) !variavel do histograma
+    
+    
+    
         
     !
     !  0. Hello
@@ -344,6 +347,8 @@ CONTAINS
              !		
 			
 		CALL SCAM_metricas (v,f,e) !Subrotina para calcular as Metricas 
+		
+		
 		
 		
 		

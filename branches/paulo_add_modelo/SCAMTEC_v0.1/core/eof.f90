@@ -1,4 +1,6 @@
-Subroutine eof(Fanom,Ndim,Fvar,Feof,Ieof,Jeof,Cut,Neof,Trace,Npts,Nflds)
+Subroutine eof(Fanom,Ndim,Fvar,Feof,Ieof,Jeof,Cut,Neof,Trace,Npts,Nflds,e,tempo)
+USE m_string
+USE SCAM_Utils
 Implicit None
 !=====================================================================!
 !  PARAMETERS
@@ -23,6 +25,9 @@ Implicit None
 !  Nflds  [input] = number of fields in data set
 !
 !=====================================================================!
+! Character Variables
+      Character(len=3)      :: tempo_char !variavel para converter inteiro para char paulo dias
+ !=====================================================================!
 ! Integer Variables
       Integer, Parameter    :: Mflds = 301
       Integer, Parameter    :: Mdim  = Mflds * ( Mflds + 1 ) / 2
@@ -32,10 +37,13 @@ Implicit None
       Integer               :: Iwork(5*Mflds),Ifail(Mflds)
       Integer               :: Index, Ifld, Info, Meof1
       Integer, Intent(In)   :: Ndim
+      Integer, Intent(In)   :: e !numeros de experimento paulo dias
+      Integer, Intent(In)   :: tempo !tempo de prvisao paulo dias
       Integer, Intent(In)   :: Ieof, Jeof
       Integer, Intent(In)   :: Npts
       Integer, Intent(In)   :: Nflds
       Integer, Intent(Out)  :: Neof
+
 !=====================================================================!
 !Real Variables
       Real (Kind=4), Intent(In),  Dimension(Ndim, Nflds) :: Fanom
@@ -57,6 +65,8 @@ Implicit None
       Real (Kind=8)                        :: Dlamch
 
 !=====================================================================!
+
+	
 !  Check value of  mflds :
 
       If ( mflds .lt. nflds ) Then
@@ -77,7 +87,7 @@ Implicit None
       EndIf
 !=====================================================================!
 !  compute  [fanom (transposed) x fanom]  matrix (upper triangle)
-
+	
       trace = 0.0
       
       Do K1 = 1,Nflds
@@ -106,11 +116,14 @@ Implicit None
       write(*,*)'finding eigenvalues...'
       
       Tol = 2.d0 * Dlamch('S')      
-
-!      print*,"HERE",nflds,meof
+	
+      print*,"HERE",nflds,meof
+      
       
       call dspevx('V','I','U',Nflds,Cov,Vl,Vu,Nflds-Meof+1,Nflds,Tol, &
                   Meof1,Lambda,Eigvec,Mflds,Work,Iwork,Ifail,Info)
+                  
+                  
 
 !      print*,lambda
 !=====================================================================!
@@ -191,18 +204,30 @@ Implicit None
             ExpCff(I,JJ)=EIGVEC(JJ,I)
             WRITE(6,"(2I6,2F20.6)") I,JJ,ExpCff(I,JJ),EIGVEC(JJ,I)
          ENDDO
-      ENDDO
-      OPEN(120,FILE='eofexpcoeffs.bin',FORM='UNFORMATTED',ACCESS='DIRECT',RECL=NFLDS*NEOF)
+      ENDDO     
+      
+      
+      !convertendo inteiro para char
+      write(tempo_char,'(I3.3)')tempo
+      
+      OPEN(120,FILE='eofexpcoeffs'//Trim(Exper(e)%name)//'_'//tempo_char//'h'//'.bin',FORM='UNFORMATTED',ACCESS='DIRECT',RECL=NFLDS*NEOF*4)
+             
+      
       WRITE(120,REC=1) ((ExpCff(I,J),I=1,NEOF),J=1,NFLDS)
       CLOSE(120)
 !
 !     WRITING OUT THE EOF PATTERNS
 !
-         OPEN(130,FILE='eofpatterns.bin',FORM='UNFORMATTED',ACCESS='SEQUENTIAL')
+     
+      OPEN(130,FILE='eofpatterns'//Trim(Exper(e)%name)//'_'//tempo_char//'h'//'.bin',FORM='UNFORMATTED',ACCESS='SEQUENTIAL')
+                   
       DO M=1,NEOF
          PRINT*,'NEOF=',M,'NPTS=',NPTS
+         
          WRITE(130) (FEOF(K,M),K=1,NPTS)
       ENDDO
       CLOSE(130)
-RETURN
+      
+      
+RETURN	
 End Subroutine

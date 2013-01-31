@@ -76,14 +76,23 @@ PROGRAM SCANTeC
 !
 !  3. RUN SCAMTeC
 !  
-   CALL SCAM_RUN()
+   !CALL SCAM_RUN()
     
 !
 !  4. Precipitation
 !
 
-   if(Precipitation_Flag.eq.1) CALL precipitation !paulo dias
-
+   if(Precipitation_Flag.eq.1)then
+	print*, ''
+   	print*, 'NAO VAI EXECUTAR O CORE'
+	print*, ''
+   
+   	CALL precipitation !paulo dias
+   else
+   	CALL SCAM_RUN()
+   endif
+   
+   	
 !
 !  5. Finalize SCAMTeC, clean memory and etc ...
 !

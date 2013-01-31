@@ -5,6 +5,7 @@ USE m_ioutil
 USE SCAM_Utils 
 USE time_module
 USE m_string
+USE scamtec_module
 
 IMPLICIT NONE
 
@@ -14,6 +15,7 @@ IMPLICIT NONE
 CONTAINS
   
   SUBROUTINE precipitation()
+
   INTEGER              :: t, e, f,i,j                         !Variaveis de loop
   INTEGER              :: time, ftime, nymd, nhms, fymd, fhms !Variaveis do tempo 
   INTEGER              :: time_ant, nymd_ant, nhms_ant        !Variaveis do tempo anterior 
@@ -25,6 +27,91 @@ CONTAINS
   INTEGER, ALLOCATABLE :: total_histo(:,:,:,:)                !variavel do histograma
   INTEGER, ALLOCATABLE :: tempo(:)                            !Intervalo de tempo ex(00,06,12...)
   REAL,ALLOCATABLE     :: obs_precip(:,:), ant_obs_precip(:,:)!Variavel de precipitation
+  INTEGER :: tam_hist
+  
+  
+  
+  !--------------------------------------------------------------------------------------------- paulo dias
+    !
+    !Variaveis para EOF
+    !
+    
+    ! PARAMETERS
+    !
+    !  Fanom  [input] = field anomalies
+    !  Ndim   [input] = dimension of rows of fanom as declared in the
+    !                   calling program; ndim must be >= npts
+    !  Fvar  [output] = fraction of variance accounted for by EOFs
+    !  Feof  [output] = neof corresponding eigenvectors
+    !  Ieof   [input] = first dimension of feof as declared in the
+    !                   calling program
+    !  Jeof   [input] = dimension of fvar and second dimension of feof
+    !  Cut    [input] = determines how many EOFs should be computed;
+    !                   cut < 1.0: cut gives the relative variance
+    !                   explained by the computed EOFs;
+    !                   cut > 1.0: cut is the number of EOFs to be
+    !                   computed
+    !  Neof  [output] = number of eigenvalues computed according to the
+    !                   value of  cut
+    !  Trace [output] = trace of covariance matrix
+    !  Npts   [input] = number of (grid) points in input field
+    !  Nflds  [input] = number of fields in data set
+    
+    
+    ! Variaveis que entra na rotina EOF
+    Real, Dimension(scamtec%nexp,int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3)),scamtec%ntime_steps*) :: Fanom ! Fanom(e,x*Y,t)
+    Real, Dimension(scamtec%nexp,int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3)),scamtec%ntime_steps,scamtec%ntime_forecast) :: precip_tempo !precip_tempo(e,x*y,t,f)
+    Real      :: Cut
+    Integer   :: Ndim !nx_pontos * ny+pontos
+    Integer   :: Ieof
+    Integer   :: Jeof	
+    Integer   :: Npts
+    Integer   :: Nflds
+    
+    ! Variaveis que sai da rotina EOF
+    Real (Kind=4), Dimension(int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3)),4)   :: Feof
+    Real (Kind=4), Dimension(4)        :: Fvar    
+    Real (Kind=4)              	          :: Trace
+    Integer   :: Neof    
+    
+    
+    
+    !teste-----    
+    Real,Dimension(int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3))) :: vet_precp
+    Integer              :: cont
+    !-----------
+    
+    print*, ''
+    print*, 'teste', scamtec%gridDesc(2), scamtec%gridDesc(3)
+    print*, ''
+    
+   ! nx = int(scamtec%gridDesc(2))
+   ! ny = int(scamtec%gridDesc(3))
+   
+   
+   
+    Ndim=int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3))
+    Ieof=Ndim
+    Npts=Ndim
+    !Fanom=0
+    Jeof=4
+    Fvar=0.0
+    Cut=4.0
+    Neof=0
+    Trace=0.0
+    Feof=0.0
+    Nflds=scamtec%ntime_steps
+    
+    
+   ! CALL eof(20   ,Ndim,Fvar,Feof,Ieof,Jeof,Cut,Neof,Trace,Npts,Nflds)
+   !      eof(Fanom,Ndim,Fvar,Feof,Ieof,Jeof,Cut,Neof,Trace,Npts,Nflds)     
+    
+    !--------------------------------------------------------------------------------------------- paulo dias
+  
+  
+  
+  
+  
   
   tam_hist=((hist%valor_limit-hist%valor_min)/hist%rang)+2    !Calculando o tamanho do histograma
   quant_arq_ant=hist%acumulo_exp/hist%acumulo_obs     !Calculando quantidade de arquivos anterior para abrir
@@ -68,28 +155,23 @@ CONTAINS
       !
   
       do j=1, quant_arq_ant
-      
-      ant_obs_precip(:,:)=0
       	
-      !tempo anterior
-      nymd_ant = (time_ant/100)
-      nhms_ant = MOD(time_ant,100) * 10000
-      
-      
-      Precipi = TRIM(precip%file)
-      CALL str_template(Precipi, nymd_ant,nhms_ant)
-      CALL ldata('P', 1, precip%Id, Precipi)
-      
-      ant_obs_precip(:,:)=scamdata(1)%prefield(:,:,16)
-      
-      obs_precip(:,:)=obs_precip(:,:)+ant_obs_precip(:,:)
-      
-      time_ant=jul2cal(cal2jul(time_ant)+(scamtec%incr/2))
-    
-    
-    
-    
-    
+      	ant_obs_precip(:,:)=0
+      	
+	      !tempo anterior
+	      nymd_ant = (time_ant/100)
+	      nhms_ant = MOD(time_ant,100) * 10000
+	      
+	      
+	      Precipi = TRIM(precip%file)
+	      CALL str_template(Precipi, nymd_ant,nhms_ant)
+	      CALL ldata('P', 1, precip%Id, Precipi)
+	      
+	      ant_obs_precip(:,:)=scamdata(1)%prefield(:,:,16)
+	      
+	      obs_precip(:,:)=obs_precip(:,:)+ant_obs_precip(:,:)
+	      
+	      time_ant=jul2cal(cal2jul(time_ant)+(scamtec%incr/2))    
    
       enddo
       
@@ -126,16 +208,34 @@ CONTAINS
              !
              Experiment = TRIM(Exper(e)%file)
              CALL str_template(Experiment, fymd, fhms, nymd, nhms)
-                     
+             
              CALL ldata('E',e,Exper(e)%Id, Experiment)
-     
+             
+             print*, ''
+             print*, 'Preenchendo matris de anomalia preciptacao', scamtec%ntime_forecast, scamtec%ntime_steps
+             print*, ''
+             
+             !Preenchendo Matriz de preciptacao para rotina EOF    
+                                      
+             cont=0
+             do j=1, int(scamtec%gridDesc(3))
+                do i=1, int(scamtec%gridDesc(2))
+                cont=cont+1     
+                
+                precip_tempo(e,cont,t,f)=scamdata(e)%expfield(i,j,hist%tipo_precip)                
+                
+                enddo
+             enddo     
+                                    
+             
+            ! Histograma
              histo(:)=0
-             tempo(f)=(f-1)*time_step
+             tempo(f)=(f-1)*time_step 	     
                           
              CALL histograma(scamdata(e)%expfield(:,:,hist%tipo_precip),hist%rang,hist%valor_min,hist%valor_limit,histo)    
-                  			
+                                         
              DO i=1, tam_hist
-             	
+                          	
              	if (f .eq. 1) then
              	    scamdata(e)%time_histo(i,f)= obs_histo(i)
              	    total_histo(t,f,e,i)=obs_histo(i)          
@@ -166,6 +266,30 @@ CONTAINS
   	time=jul2cal(cal2jul(time)+scamtec%incr)
   	time_ant=jul2cal(cal2jul(time_ant)+(scamtec%incr))
   ENDDO !fim do loop dos dias 
+  
+    
+  
+  !Chamando rotina EOF para cada experimento
+  DO e = 1, scamtec%nexp !numeros de experimento 
+  	cont=0
+  	tempo(f)=(f-1)*time_step
+  	
+        do f=1, scamtec%ntime_forecast
+        Fanom(:,:,:)=0
+  	    	do t=1, scamtec%ntime_steps
+             	cont=cont+1    	
+             	
+             	!precip_tempo(e,cont,t,f)=scamdata(e)%expfield(i,j,hist%tipo_precip)              	
+             	Fanom(e,:,cont)=  precip_tempo(e,:,t,f)          
+            enddo           
+            
+            print*, 'tempo f', tempo(f)
+              
+            CALL eof(Fanom(e,:,:),Ndim,Fvar,Feof,Ieof,Jeof,Cut,Neof,Trace,Npts,Nflds,e,tempo(f))       	
+        enddo	
+  ENDDO ! fim do loop do experimento
+  
+  
   
   call escreve_histograma_binario(total_histo,obs_histo)
   
