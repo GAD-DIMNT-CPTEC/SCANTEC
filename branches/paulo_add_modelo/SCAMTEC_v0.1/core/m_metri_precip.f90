@@ -10,8 +10,6 @@ USE scamtec_module
 IMPLICIT NONE
 
 
-
-
 CONTAINS
   
   SUBROUTINE precipitation()
@@ -23,6 +21,7 @@ CONTAINS
   CHARACTER(len=1024)  :: Reference                           !Reference File Name
   CHARACTER(len=1024)  :: Experiment                          !Experiment File Name
   CHARACTER(len=1024)  :: Precipi                             !Precipitation File Name
+  Character(len=3)     :: tempo_char                          !variavel para converter inteiro para char paulo dias
   INTEGER, ALLOCATABLE :: histo(:), obs_histo(:)              !variavel do histograma
   INTEGER, ALLOCATABLE :: total_histo(:,:,:,:)                !variavel do histograma
   INTEGER, ALLOCATABLE :: tempo(:)                            !Intervalo de tempo ex(00,06,12...)
@@ -59,8 +58,9 @@ CONTAINS
     
     
     ! Variaveis que entra na rotina EOF
-    Real, Dimension(scamtec%nexp,int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3)),scamtec%ntime_steps*) :: Fanom ! Fanom(e,x*Y,t)
-    Real, Dimension(scamtec%nexp,int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3)),scamtec%ntime_steps,scamtec%ntime_forecast) :: precip_tempo !precip_tempo(e,x*y,t,f)
+    Real, Dimension(scamtec%nexp,int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3)),scamtec%ntime_steps)                        :: Fanom ! Fanom(e,x*Y,t)
+    Real, Dimension(scamtec%nexp,int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3)),scamtec%ntime_steps,scamtec%ntime_forecast) :: precip_tempo   !precip_tempo(e,x*y,t,f)
+    Real, Dimension(int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3)),scamtec%ntime_steps)                                     :: precip_obs_eof !precip_obs_eof(x*y,t)
     Real      :: Cut
     Integer   :: Ndim !nx_pontos * ny+pontos
     Integer   :: Ieof
@@ -175,7 +175,15 @@ CONTAINS
    
       enddo
       
-          
+   ! Preenchendo matris de obs_preciptacao para eof
+      cont=0
+      do j=1, int(scamtec%gridDesc(3))
+                do i=1, int(scamtec%gridDesc(2))
+                    cont=cont+1
+                    precip_obs_eof(cont,t)=obs_precip(i,j)
+                enddo
+      enddo
+  !----------------------------------------------------------    
             
       obs_histo(:)=0
       histo(:)=0
@@ -271,11 +279,13 @@ CONTAINS
   
   !Chamando rotina EOF para cada experimento
   DO e = 1, scamtec%nexp !numeros de experimento 
-  	cont=0
+  	
   	tempo(f)=(f-1)*time_step
   	
         do f=1, scamtec%ntime_forecast
         Fanom(:,:,:)=0
+        cont=0
+                       
   	    	do t=1, scamtec%ntime_steps
              	cont=cont+1    	
              	
@@ -284,11 +294,20 @@ CONTAINS
             enddo           
             
             print*, 'tempo f', tempo(f)
+            !convertendo inteiro para char
+            write(tempo_char,'(I3.3)')tempo(f)
               
-            CALL eof(Fanom(e,:,:),Ndim,Fvar,Feof,Ieof,Jeof,Cut,Neof,Trace,Npts,Nflds,e,tempo(f))       	
+            CALL eof(Fanom(e,:,:),Ndim,Fvar,Feof,Ieof,Jeof,Cut,Neof,Trace,Npts,Nflds,e,tempo_char)       	
         enddo	
   ENDDO ! fim do loop do experimento
   
+  !Chmando rotina EOF para OBS
+  ! e=0 siqnifica que é 0bservação
+  e=0
+  CALL eof(precip_obs_eof(:,:),Ndim,Fvar,Feof,Ieof,Jeof,Cut,Neof,Trace,Npts,Nflds,e,'OBS')         
+  
+  
+ !-----------------------------------------------------------------------------------------------------------
   
   
   call escreve_histograma_binario(total_histo,obs_histo)
@@ -494,9 +513,10 @@ CONTAINS
   	
   	DO e = 1, scamtec%nexp !numeros de experimento
   	
-   		!k=scamtec%nexp*(t-1)+e	
+   		! Escrevendo Media do Histograma
  		if (t .eq. scamtec%ntime_steps+1)then
 			write(4)real(media_histo(e,:,:),4)
+	    ! Escrevendo Histograma 
 		else
 			write(4)real(total_histo(t,:,e,:),4)
 		endif

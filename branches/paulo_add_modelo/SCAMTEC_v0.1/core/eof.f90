@@ -1,4 +1,4 @@
-Subroutine eof(Fanom,Ndim,Fvar,Feof,Ieof,Jeof,Cut,Neof,Trace,Npts,Nflds,e,tempo)
+Subroutine eof(Fanom,Ndim,Fvar,Feof,Ieof,Jeof,Cut,Neof,Trace,Npts,Nflds,e,tempo_char)
 USE m_string
 USE SCAM_Utils
 Implicit None
@@ -26,7 +26,8 @@ Implicit None
 !
 !=====================================================================!
 ! Character Variables
-      Character(len=3)      :: tempo_char !variavel para converter inteiro para char paulo dias
+      Character(len=3), Intent(In)  :: tempo_char !variavel para converter inteiro para char paulo dias
+      Character(len=200)             :: nome_arq_saida ! variavel para o nome de arquivo de saida
  !=====================================================================!
 ! Integer Variables
       Integer, Parameter    :: Mflds = 301
@@ -38,7 +39,6 @@ Implicit None
       Integer               :: Index, Ifld, Info, Meof1
       Integer, Intent(In)   :: Ndim
       Integer, Intent(In)   :: e !numeros de experimento paulo dias
-      Integer, Intent(In)   :: tempo !tempo de prvisao paulo dias
       Integer, Intent(In)   :: Ieof, Jeof
       Integer, Intent(In)   :: Npts
       Integer, Intent(In)   :: Nflds
@@ -207,11 +207,17 @@ Implicit None
       ENDDO     
       
       
-      !convertendo inteiro para char
-      write(tempo_char,'(I3.3)')tempo
       
-      OPEN(120,FILE='eofexpcoeffs'//Trim(Exper(e)%name)//'_'//tempo_char//'h'//'.bin',FORM='UNFORMATTED',ACCESS='DIRECT',RECL=NFLDS*NEOF*4)
+      !nome do arquivo de saida
+      if(e .eq. 0)then
+        nome_arq_saida=trim(output_dir)//'/'//'eofexpcoeffs'//'_'//tempo_char//'.bin'
+      else
+        nome_arq_saida=trim(output_dir)//'/'//'eofexpcoeffs'//Trim(Exper(e)%name)//'_'//tempo_char//'h'//'.bin'
+      endif
+      
+      OPEN(120,FILE=nome_arq_saida,FORM='UNFORMATTED',ACCESS='DIRECT',RECL=NFLDS*NEOF*4)
              
+      print*, 'teste', NEOF, NFLDS, nome_arq_saida
       
       WRITE(120,REC=1) ((ExpCff(I,J),I=1,NEOF),J=1,NFLDS)
       CLOSE(120)
@@ -219,10 +225,17 @@ Implicit None
 !     WRITING OUT THE EOF PATTERNS
 !
      
-      OPEN(130,FILE='eofpatterns'//Trim(Exper(e)%name)//'_'//tempo_char//'h'//'.bin',FORM='UNFORMATTED',ACCESS='SEQUENTIAL')
+      ! nome do arquivo de saida
+      if(e .eq. 0)then
+        nome_arq_saida=trim(output_dir)//'/'//'eofpatterns'//'_'//tempo_char//'.bin'
+      else
+        nome_arq_saida=trim(output_dir)//'/'//'eofpatterns'//Trim(Exper(e)%name)//'_'//tempo_char//'h'//'.bin'
+      endif
+        
+      OPEN(130,FILE=nome_arq_saida,FORM='UNFORMATTED',ACCESS='SEQUENTIAL')
                    
       DO M=1,NEOF
-         PRINT*,'NEOF=',M,'NPTS=',NPTS
+         PRINT*,'NEOF=',M,'NPTS=',NPTS, nome_arq_saida
          
          WRITE(130) (FEOF(K,M),K=1,NPTS)
       ENDDO
