@@ -1,0 +1,22 @@
+# Automatically generated objects. Sex Out 19 11:52:19 BRT 2012
+# fgen v0.3 (C) 1997,98 Beroud Jean-Marc
+
+OBJS = \
+	$(srcdir)/Ftable.o \
+	$(srcdir)/SCAM_ModelPlugin.o \
+	$(srcdir)/SCAM_Plugin.o \
+	$(srcdir)/SCAM_UtilsMOD.o \
+	$(srcdir)/SCAM_bstatistic.o \
+	$(srcdir)/SCAM_coreMOD.o \
+	$(srcdir)/SCAM_dataMOD.o \
+	$(srcdir)/SCAM_gridMOD.o \
+	$(srcdir)/SCAM_outputMOD.o \
+	$(srcdir)/bilinear_interpolation.o \
+	$(srcdir)/eta_read.o \
+	$(srcdir)/m_agcm.o \
+	$(srcdir)/m_clima50yr.o \
+	$(srcdir)/m_string.o \
+	$(srcdir)/m_time.o \
+	$(srcdir)/scamdrv.o \
+	$(srcdir)/scamtec_module.o \
+	$(srcdir)/template_read.o
