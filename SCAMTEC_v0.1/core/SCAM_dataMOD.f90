@@ -135,6 +135,9 @@ CONTAINS
     scamtec%udef = -999.9
 
     scamtec%nvar = NumVarAval
+    
+    Allocate(scamtec%VarName(NumVarAval))
+    scamtec%VarName = VarName
 
 #ifdef DEBUG  
     write(6, FMT=123)'xdef',scamtec%nxpt,'linear', scamtec%gridDesc(5), scamtec%gridDesc(10)
@@ -254,14 +257,14 @@ CONTAINS
   SUBROUTINE SCAM_ModelData( NExp )
      IMPLICIT NONE
      integer, intent(in) :: NExp
-     integer             :: nymd, nhms
+     integer             :: aymd, ahms
      integer             :: fymd, fhms
      character(len=1024) :: Reference    ! Reference File Name
      character(len=1024) :: Experiment   ! Experiment File Name
      character(len=1024) :: Climatology  ! Climatology File Name
 
-     nymd = scamtec%atime/100
-     nhms = MOD(scamtec%atime,100) * 10000
+     aymd = scamtec%atime/100
+     ahms = MOD(scamtec%atime,100) * 10000
      fymd = scamtec%ftime/100
      fhms = MOD(scamtec%ftime,100) * 10000
 
@@ -276,7 +279,7 @@ CONTAINS
         !
 
         Reference=TRIM(Refer%file)
-        CALL str_template(Reference, nymd,nhms)
+        CALL str_template(Reference, aymd,ahms)
         CALL ldata('R', 1, Refer%Id, Reference)
 
         !
@@ -285,7 +288,7 @@ CONTAINS
        
         IF(scamtec%cflag.EQ.1)THEN
            Climatology=TRIM(Clima%file)
-           CALL str_template(Climatology, nymd,nhms)
+           CALL str_template(Climatology, aymd,ahms)
            CALL ldata('C', 1, Clima%Id, Climatology)
         END IF
 
@@ -303,7 +306,7 @@ CONTAINS
      !
 
      Experiment = TRIM(Exper(NExp)%file)
-     CALL str_template(Experiment, fymd, fhms, nymd, nhms)
+     CALL str_template(Experiment, aymd, ahms, fymd, fhms)
      CALL ldata('E',NExp,Exper(NExp)%Id, Experiment)
 
 
