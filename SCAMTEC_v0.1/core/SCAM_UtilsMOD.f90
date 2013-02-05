@@ -104,15 +104,30 @@ MODULE SCAM_Utils
    REAL(DP), PUBLIC  :: incr
    INTEGER, PUBLIC   :: hist_time
    REAL(DP), PUBLIC  :: hist_incr
+   CHARACTER(len=200), PUBLIC :: output_dir
 
    TYPE(domain), PUBLIC, DIMENSION(:), ALLOCATABLE    :: dom
 
 
    TYPE(RUNS), PUBLIC                            :: Refer
-   TYPE(RUNS), PUBLIC                            :: Clima
-   INTEGER   , PUBLIC                            :: Clima_Flag
+   TYPE(RUNS), PUBLIC                            :: Clima, Precip
+   INTEGER   , PUBLIC                            :: Clima_Flag,Precipitation_Flag
    TYPE(RUNS), PUBLIC, DIMENSION(:), ALLOCATABLE :: Exper
 !   TYPE(RUNS), 
+
+!---------------------------------------------------------------------paulo dias
+! Variaveis de Preciptation Histograma  paulo dias
+!
+   TYPE, PUBLIC     :: param_hist                  
+   REAL, PUBLIC     :: valor_limit, valor_min   !valor maximo e valor minimo 
+   REAL, PUBLIC     :: rang                     !valor do range
+   INTEGER, PUBLIC  :: tipo_precip              !tipo de precipitacao
+   INTEGER, PUBLIC  :: acumulo_obs              !acumulo de precipitacao da observacao
+   INTEGER, PUBLIC  :: acumulo_exp              !acumulo de precipitacao do experimento
+   END TYPE
+   
+   TYPE(param_hist), public   :: hist	
+!-------------------------------------------------------------------- paulo dias
 
    CONTAINS
 !
@@ -122,9 +137,7 @@ MODULE SCAM_Utils
 !  \label{readcard}
 !
 ! !REVISION HISTORY:
-!  ## ### ####   J. G. de Mattos - Initial Code
-!  22 Oct 2012 - R. Mello        - Correcao na aquisição dos indices 
-!                                  dos modelos.
+!  Initial Code :: Joao Gerd - 
 !
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 !
@@ -162,7 +175,7 @@ MODULE SCAM_Utils
 !         call i90_Release ( )
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ! Load descritor file
-
+	print*, '::: Lendo arquivo scamtec.conf :::' 
          narg=iargc()
          IF(narg.EQ.1)then
             call getarg(1,config)
@@ -177,10 +190,9 @@ MODULE SCAM_Utils
 !            END IF
          END IF
 
-
+	
          call i90_LoadF ( TRIM(config), iret )
-
-         if(iret /= 0) then
+	 if(iret /= 0) then
             call perr(myname_,'i90_LoadF("'//trim(config)//'")',iret)
              if(present(istat))istat=iret
             return
@@ -188,9 +200,10 @@ MODULE SCAM_Utils
 !
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ! Reading time parameters
-!
+!	
+	print*, '::: Leitura de parametros do tempo :::' 
          call i90_label ( 'Starting Time:', iret )
-         scamtec%starting_time = i90_gint(iret)
+         starting_time = i90_gint(iret)
          if(iret /= 0) then
             call perr(myname_,'i90_label("Starting Time:")',iret)
              if(present(istat))istat=iret
@@ -198,7 +211,7 @@ MODULE SCAM_Utils
          endif
 
          call i90_label ( 'Ending Time:', iret )
-         scamtec%ending_time = i90_gint(iret)
+         ending_time = i90_gint(iret)
          if(iret /= 0) then
             call perr(myname_,'i90_label("Ending Time:")',iret)
              if(present(istat))istat=iret
@@ -206,7 +219,7 @@ MODULE SCAM_Utils
          endif
 
          call i90_label ( 'Time Step:', iret )
-         scamtec%time_step = i90_gint(iret)
+         time_step = i90_gint(iret)
          if(iret /= 0) then
             call perr(myname_,'i90_label("Time Step:")',iret)
              if(present(istat))istat=iret
@@ -214,14 +227,14 @@ MODULE SCAM_Utils
          endif
 
          call i90_label ( 'Forecast Time:', iret )
-         scamtec%forecast_time = i90_gint(iret)
+         forecast_time = i90_gint(iret)
          if(iret /= 0) then
             call perr(myname_,'i90_label("Forecast Time:")',iret)
              if(present(istat))istat=iret
             return
          endif
          call i90_label ( 'History Time:', iret )
-         scamtec%hist_time = i90_gint(iret)
+         hist_time = i90_gint(iret)
          if(iret /= 0) then
             call perr(myname_,'i90_label("History Time:")',iret)
              if(present(istat))istat=iret
@@ -231,7 +244,7 @@ MODULE SCAM_Utils
 !
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ! Reading Domain Specifications
-
+		print*, '::: Lendo specificações do dominio Area 1  :::' 
          call i90_label ( 'run domain number:', iret )
          ndom = i90_gint(iret)
          if(iret /= 0) then
@@ -327,7 +340,8 @@ MODULE SCAM_Utils
 
 !
 ! Reference File
-!
+!	
+	print*, '::: Lendo Modelo	  :::' 
          call i90_label ( 'Reference model:', iret )
          Refer%Id = i90_gint(iret)
          if(iret /= 0) then
@@ -362,6 +376,7 @@ MODULE SCAM_Utils
 !
 ! Experiments
 !
+	print*, '::: Lendo quantidade de Experimentos :::' 
          call i90_label ( 'Number of Experiments:', iret )
          scamtec%nexp=i90_gint(iret)
          if(iret /= 0) then
@@ -415,6 +430,7 @@ MODULE SCAM_Utils
 !
 ! Climatology
 !
+	print*, '::: Lendo arquivos de Climatologia :::' 
          call i90_label ( 'Use Climatology:', iret )
          if(iret == -2) then
             call perr(myname_,'Climarology Not Found')
@@ -463,22 +479,141 @@ MODULE SCAM_Utils
             WRITE(*,'(a72)')'!         The mean reference field will be used as climatology        !'
             WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
          ENDIF
+
+!-----------------------------------------------------------------------------------------------------------Paulo Dias
+
+!
+! Precipitation
+!
+	print*, '::: Lendo arquivos de Precipitacao :::' 
+         call i90_label ( 'Use Precipitation:', iret )
+         if(iret == -2) then
+            call perr(myname_,'Preciptarion Not Found')
+            Precipitation_flag = 0
+!            if(present(istat))istat=iret
+!            return
+!         endif
+         else
+            Precipitation_Flag = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_label("Use Precipitation:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+         endif
+
+         IF(Precipitation_Flag.EQ.1)THEN
+            Precip%name='Precipitation'
+            call i90_label ( 'Precipitation Model Id:', iret )
+            Precip%Id = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Precipitation Model Id:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Precipitation file:', iret )
+            call i90_Gtoken(Precip%file,iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_label("Precipitation file:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Define o Range do Histograma:', iret )
+            hist%rang = i90_gfloat(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define o Range do Histograma:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Define valor do limite inferior da ultima classe do histograma:', iret )
+            hist%valor_limit = i90_gfloat(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define valor do limite inferior da ultima classe do histograma:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif            
+            
+            call i90_label ( 'Define valor do minimo inferior da primeira classe do histograma:', iret )
+            hist%valor_min = i90_gfloat(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define valor do minimo inferior da primeira classe do histograma:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Define qual Precipitacao deseja avaliar:', iret )
+            hist%tipo_precip = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define qual Precipitacao deseja avaliar:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Define o periodo de acumulo de precpitacao da observacao:', iret )
+            hist%acumulo_obs = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define o periodo de acumulo de precpitacao da observacao:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Define o periodo de acumulo de precpitacao do experimento:', iret )
+            hist%acumulo_exp = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define o periodo de acumulo de precpitacao do experimento:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            
+#ifdef DEBUG
+            WRITE(*,'(A)')'Precipitation'
+            WRITE(*,'(A,I2.2)')'  |---- Id                 :',Precip%Id
+            WRITE(*,'(2A)')    '  |---- Dir                :',TRIM(Precip%name)
+            WRITE(*,'(2A)')    '  |---- File               :',TRIM(Precip%file)
+            WRITE(*,'(A,F4.2)')'  |---- Range              :',hist%rang
+            WRITE(*,'(A,F6.2)')'  |---- Valor Minimo       :',hist%valor_min
+            WRITE(*,'(A,F8.2)')'  |---- Valor Limite       :',hist%valor_limit
+            IF(hist%tipo_precip==16)THEN
+               WRITE(*,'(A)')'  |---- Precipitacao       : TOTAL'
+            ELSE
+               WRITE(*,'(A)')'  |---- Precipitacao       : CONVECTIVE'
+            ENDIF
+            WRITE(*,'(A,I2.2)')'  |---- Acumulo OBS        :',hist%acumulo_obs
+            WRITE(*,'(A,I2.2)')'  |---- Acumulo EXP        :',hist%acumulo_exp
+#endif
+         ELSE
+
+
+            WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
+            WRITE(*,'(a72)')'!                       Precipitation Not Found                       !'
+            WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
+         ENDIF
+
+!-----------------------------------------------------------------------------------------------------------Paulo Dias
+
+
 !
 ! ïndices dos modelos
-!
+!	
          IF(Clima_Flag.eq.1)then
 
-            Allocate(tmp(scamtec%nexp+2))
-            call unique((/Refer%id, Exper(:)%Id, Clima%Id/),tmp,I)
+            Allocate(tmp(scamtec%nexp+1))
+            call unique((/Exper(:)%Id,Clima%Id/),tmp,I)
+	    
 
+	
             Allocate(scamtec%Init_ModelID(I))
             scamtec%Init_ModelID(1:I) = tmp(1:I)
 
             DeAllocate(tmp)
 
          else
-            Allocate(tmp(scamtec%nexp+1))
-            call unique((/Refer%id, Exper(:)%Id/),tmp,I)
+            Allocate(tmp(scamtec%nexp))
+            call unique(Exper(:)%Id,tmp,I)
 
             Allocate(scamtec%Init_ModelID(I))
             scamtec%Init_ModelID(1:I) = tmp(1:I)
@@ -486,6 +621,21 @@ MODULE SCAM_Utils
             DeAllocate(tmp)
          endif
 
+!
+!------------------------------------------------------------------------------- !Paulo Dias
+! Diretorio de Saida
+!	
+	print*, '::: Lendo diretorio de saida :::' 
+	    call i90_label ( 'Output directory:', iret )
+            call i90_Gtoken(output_dir,iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_label("Output directory:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+
+!Fim Diretorio de Saida
+!------------------------------------------------------------------------------- !Paulo Dias
 
    END SUBROUTINE
 
@@ -548,6 +698,7 @@ MODULE SCAM_Utils
      ! No match found so add it to the output
      nelem = nelem + 1
      output(nelem) = input(i)
+
   end do outer
 
   end subroutine

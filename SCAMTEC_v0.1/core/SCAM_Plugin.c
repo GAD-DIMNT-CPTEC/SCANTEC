@@ -34,7 +34,7 @@ void FTN(registermodelread)(int *i, void (*func)( ))
 }
 
 
-void FTN(load_data)( int *i, char *name)
+void FTN(load_data)(int *i, char *name)
 { 
 
 

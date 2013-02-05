@@ -54,6 +54,7 @@ PROGRAM SCANTeC
 ! !USES:
 
    USE SCAM_coreMOD
+   USE m_metri_precip
 
 ! !INTERFACE:
 !
@@ -63,9 +64,9 @@ PROGRAM SCANTeC
 !
 !  1. Configure SCAMTeC to RUN
 !
-
+	print*, '::: Inicializa o Programa :::' 
    CALL SCAM_Config_init()
-
+	
 !
 !  2. Initialize SCAMTeC main Variables and Plugins
 !
@@ -74,14 +75,28 @@ PROGRAM SCANTeC
 
 !
 !  3. RUN SCAMTeC
+!  
+   !CALL SCAM_RUN()
+    
+!
+!  4. Precipitation
 !
 
-   CALL SCAM_RUN()
-
+   if(Precipitation_Flag.eq.1)then
+	print*, ''
+   	print*, 'NAO VAI EXECUTAR O CORE'
+	print*, ''
+   
+   	CALL precipitation !paulo dias
+   else
+   	CALL SCAM_RUN()
+   endif
+   
+   	
 !
-!  4. Finalize SCAMTeC, clean memory and etc ...
+!  5. Finalize SCAMTeC, clean memory and etc ...
 !
 
    CALL SCAM_FINALIZE()
-
+	print*, '::: Fim do Scamtec :::' 
 END PROGRAM

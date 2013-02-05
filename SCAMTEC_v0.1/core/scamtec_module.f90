@@ -15,27 +15,15 @@ MODULE scamtec_module
 !
 
   type scamdec
-     integer(I4B) :: starting_time      ! Initial time
-     integer(I4B) :: ending_time        ! End time
-     integer(I4B) :: Forecast_time      ! Forecast total time
-     integer(I4B) :: time_step          ! time step 
-     integer(I4B) :: ntime_forecast     ! total # of forecast time step
-     integer(I4B) :: ntime_steps        ! total # of Analisys time step
+     integer(I4B) :: starting_time
+     integer(I4B) :: ending_time
+     integer(I4B) :: time_step
+     integer(I4B) :: Forecast_time
+     integer(I4B) :: ntime_forecast
+     integer(I4B) :: ntime_steps
      integer(I4B) :: hist_time
-     real(DP)     :: incr               ! time increment
-     real(DP)     :: hist_incr          ! history time increment
-
-!
-! 
-!
-     integer(I4B) :: atime              ! atual time
-     integer(I4B) :: ftime              ! forecast time
-     integer(I4B) :: atime_step         ! Atual time step in hours
-     integer(I4B) :: ftime_step         ! Forecast time step in hours
-     integer(I4B) :: tfileptime         !
-!
-!
-!
+     real(DP)     :: incr
+     real(DP)     :: hist_incr
 
      real(SP)     :: gridDesc(50)
      integer(I4B) :: nxpt
