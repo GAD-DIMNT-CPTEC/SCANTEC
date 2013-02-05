@@ -42,17 +42,20 @@ Module SCAM_bstatistic
   real, pointer     :: clmfield(:,:)
 
   real, allocatable :: diffield(:,:) ! diference field
-  real, allocatable :: rmse(:)
-  real, allocatable :: vies(:)
-  real, allocatable :: acor(:)
-  real, allocatable :: tmp(:)
+
+  type bstat
+     real, allocatable :: rmse(:,:)
+     real, allocatable :: vies(:,:)
+     real, allocatable :: acor(:,:)
+  end type bstat
+
+  type(bstat), allocatable :: dado(:)
 
   integer, allocatable :: Idx(:)
   integer              :: nidx
 
 
-  character(len=512) :: FNameOut = 'BstatExp%e_%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2.scam'
-  character(len=512) :: FNameCtl = 'BstatExp%e_%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2.ctl'
+  character(len=512) :: FNameOut = 'EXP%e_%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2.scam'
   integer            :: FUnitOut = 10
 
   !
@@ -105,7 +108,7 @@ Contains
     !
 
     integer            :: i, npts
-    character(len=512) :: fname
+    character(len=512) :: fname, fmt
     integer            :: nymd, nhms
     integer            :: fymd, fhms
 
@@ -128,27 +131,58 @@ Contains
     reffield => scamdata(1)%reffield
     clmfield => scamdata(1)%clmfield
     expfield => scamdata(run)%expfield
-  
-    !
-    ! Abrindo arquivo de saida
-    !
+
 
     if(scamtec%loop_count.eq.1)then
+
+       !
+       ! Abrindo arquivo de saida
+       !
 
        nymd = scamtec%starting_time/100
        nhms = MOD(scamtec%starting_time,100) * 10000
        fymd = scamtec%ending_time/100
        fhms = MOD(scamtec%ending_time,100) * 10000
-       
+
        fname = FNameOut
        CALL str_template(FName, nymd, nhms, fymd, fhms, int2str(run,'(I2.2)'))
 
-       open(unit   = FUnitOut,      &
-            File   = Trim(FName),   &
+       open(unit   = FUnitOut+0,      &
+            File   = 'RMSE'//Trim(FName),   &
             access = 'sequential',  &
-            Form   = 'Unformatted', &
-            Status = 'unknown'      &
+            Form   = 'formatted', &
+            Status = 'replace'      &
             )
+       open(unit   = FUnitOut+1,      &
+            File   = 'VIES'//Trim(FName),   &
+            access = 'sequential',  &
+            Form   = 'formatted', &
+            Status = 'replace'      &
+            )
+       open(unit   = FUnitOut+2,      &
+            File   = 'ACOR'//Trim(FName),   &
+            access = 'sequential',  &
+            Form   = 'formatted', &
+            Status = 'replace'      &
+            )
+
+       !
+       ! Allocando Memoria para o calculo dos Indices
+       !
+
+       Allocate(dado(scamtec%nexp))
+       Do i=1,scamtec%nexp
+
+          Allocate(dado(i)%rmse(scamtec%nvar,scamtec%ntime_forecast))
+          Allocate(dado(i)%vies(scamtec%nvar,scamtec%ntime_forecast))
+          Allocate(dado(i)%acor(scamtec%nvar,scamtec%ntime_forecast))
+
+          dado(i)%rmse = 0.0
+          dado(i)%vies = 0.0
+          dado(i)%acor = 0.0
+
+       Enddo
+
 
     endif
 
@@ -166,8 +200,14 @@ Contains
   !\\
   ! !INTERFACE:
 
-  Subroutine FinalizeBstat( )
+  Subroutine FinalizeBstat( run )
     Implicit None
+    !
+    ! !INPUT PARAMETERS:
+    !
+
+    integer, intent(in) :: run ! experiment number
+
     !
     !
     ! !REVISION HISTORY: 
@@ -178,6 +218,7 @@ Contains
     !-----------------------------------------------------------------------------!
     !BOC
     !
+
 
     !
     ! Desassociando ponteiros
@@ -198,7 +239,6 @@ Contains
     !
 
     close(FUnitOut)
-
 
   End Subroutine FinalizeBstat
 
@@ -235,9 +275,10 @@ Contains
     !BOC
     !
 
-    integer             :: i
+    integer             :: i, j
+    real                :: tmp
     real, allocatable   :: anomfield(:,:)
-    
+
 
 
     character(len=*),parameter :: myname_=myname//'::CalcBstat'
@@ -253,16 +294,18 @@ Contains
 
     diffield = expfield(Idx,:) - reffield(Idx,:)
 
-    Allocate(rmse(scamtec%nvar))
-    Allocate(vies(scamtec%nvar))
-    Allocate(acor(scamtec%nvar))
+    !    Allocate(rmse(scamtec%nvar))
+    !    Allocate(vies(scamtec%nvar))
+    !    Allocate(acor(scamtec%nvar))
 
     Allocate(anomfield(size(Idx),2))
 
+    j = scamtec%ftime_idx
+
     Do i = 1, scamtec%nvar
 
-       rmse(i) = sum (diffield(Idx,i)*diffield(Idx,i)) / size(Idx)
-       vies(i) = sum (diffield(Idx,i)) / size(Idx)
+       dado(run)%rmse(i,j) = dado(run)%rmse(i,j) + sum (diffield(Idx,i)*diffield(Idx,i)) / size(Idx)
+       dado(run)%vies(i,j) = dado(run)%vies(i,j) + sum (diffield(Idx,i)) / size(Idx)
 
        if (scamtec%cflag.eq.1)then
 
@@ -270,33 +313,133 @@ Contains
           anomfield(:,2) = reffield(Idx,i)-clmfield(Idx,i)
 
           CALL corr(anomfield(Idx,1),&
-                    anomfield(IdX,2),&
-                    acor(i)                         &
-                    )
+               anomfield(IdX,2),&
+               tmp              &
+               )
 
        else
           CALL corr(expfield(Idx,i),&
-                    reffield(Idx,i),&
-                    acor(i)         &
-                    )
+               reffield(Idx,i),&
+               tmp             &
+               )
        endif
+
+       dado(run)%acor(i,j) = dado(run)%acor(i,j) + tmp
 
     EndDo
 
+    if ( scamtec%atime_step.eq.scamtec%ntime_steps )then
+       CALL WriteBstat( run )
+    endif
 
-    CALL WriteBstat( run )
 
     DeAllocate(anomfield)
     DeAllocate(diffield)
-    DeAllocate(rmse)
-    DeAllocate(vies)
-    DeAllocate(acor)
+    !    DeAllocate(rmse)
+    !    DeAllocate(vies)
+    !    DeAllocate(acor)
 
-    CALL FinalizeBStat( )
+    CALL FinalizeBStat( run )
 
 
   End Subroutine CalcBstat
 
+  !
+  !-----------------------------------------------------------------------------!
+  !BOP
+  !
+  ! !IROUTINE:  WriteBstat
+  !
+  ! !DESCRIPTION: This routine ....
+  !
+  !\\
+  !\\
+  ! !INTERFACE:
+  !
+
+  Subroutine WriteBstat( run )
+    Implicit None
+
+    !
+    ! !INPUT PARAMETERS:
+    !
+
+    integer, intent(in) :: run ! experiment number
+
+    !
+    !
+    ! !REVISION HISTORY: 
+    !  01 February 2013 - J. G. de Mattos - Initial Version
+    !
+    !
+    !EOP
+    !-----------------------------------------------------------------------------!
+    !BOC
+    !
+
+    integer            :: iret,i,j
+    character(len=512) :: fname, fmt
+    integer            :: nymd, nhms
+    integer            :: fymd, fhms
+    real               :: k
+
+    inquire(unit=FUnitOut, opened=iret)
+    if(.not.iret) then
+
+       nymd = scamtec%starting_time/100
+       nhms = MOD(scamtec%starting_time,100) * 10000
+       fymd = scamtec%ending_time/100
+       fhms = MOD(scamtec%ending_time,100) * 10000
+
+       fname = FNameOut
+
+       CALL str_template(FName, nymd, nhms, fymd, fhms, int2str(run,'(I2.2)'))
+
+
+       Open( unit   = FUnitOut+0,      &
+            file   = 'RMSE'//trim(Fname),   &
+            form   = 'formatted', &
+            access = 'sequential',  &
+            position = 'append'   &
+            )
+       Open( unit   = FUnitOut+1,      &
+            file   = 'VIES'//trim(Fname),   &
+            form   = 'formatted', &
+            access = 'sequential',  &
+            position = 'append'   &
+            )
+       Open( unit   = FUnitOut+2,      &
+            file   = 'ACOR'//trim(Fname),   &
+            form   = 'formatted', &
+            access = 'sequential',  &
+            position = 'append'   &
+            )
+    endif
+
+    write(fmt,'(A,I,A)')'(I3.3,1x,',scamtec%nvar,'F9.3)'
+
+    i = scamtec%ftime_idx
+
+    dado(run)%rmse(:,i) = sqrt(dado(run)%rmse(:,i) / scamtec%ftime_count(i))
+    dado(run)%vies(:,i) = dado(run)%vies(:,i) / scamtec%ftime_count(i)
+    dado(run)%acor(:,i) = dado(run)%acor(:,i) / scamtec%ftime_count(i)
+
+    write(FunitOut+0,fmt)(i-1)*scamtec%time_step,(dado(run)%rmse(j,i),j=1,scamtec%nvar)
+    write(FunitOut+1,fmt)(i-1)*scamtec%time_step,(dado(run)%vies(j,i),j=1,scamtec%nvar)
+    write(FunitOut+2,fmt)(i-1)*scamtec%time_step,(dado(run)%acor(j,i),j=1,scamtec%nvar)
+
+
+
+
+    Close(FUnitOut)
+
+
+
+
+  End Subroutine WriteBstat
+  !EOC
+  !
+  !-----------------------------------------------------------------------------!
 
   !=======================================
   Subroutine corr(A,B,Rho)
@@ -334,137 +477,6 @@ Contains
     return
 
   End Subroutine corr
-
-
-  !
-  !-----------------------------------------------------------------------------!
-  !BOP
-  !
-  ! !IROUTINE:  WriteBstat
-  !
-  ! !DESCRIPTION: This routine ....
-  !
-  !\\
-  !\\
-  ! !INTERFACE:
-  !
-
-  Subroutine WriteBstat( run )
-    Implicit None
-
-    !
-    ! !INPUT PARAMETERS:
-    !
-
-    integer, intent(in) :: run ! experiment number
-
-    !
-    !
-    ! !REVISION HISTORY: 
-    !  01 February 2013 - J. G. de Mattos - Initial Version
-    !
-    !
-    !EOP
-    !-----------------------------------------------------------------------------!
-    !BOC
-    !
-    integer            :: iret
-    character(len=512) :: fname
-    integer            :: nymd, nhms
-    integer            :: fymd, fhms
-
-    inquire(unit=FUnitOut, opened=iret)
-    if(.not.iret) then
-
-       nymd = scamtec%starting_time/100
-       nhms = MOD(scamtec%starting_time,100) * 10000
-       fymd = scamtec%ending_time/100
-       fhms = MOD(scamtec%ending_time,100) * 10000
-
-       fname = FNameOut
-
-       CALL str_template(FName, nymd, nhms, fymd, fhms, int2str(run,'(I2.2)'))
-
-
-       Open( unit   = FUnitOut,      &
-             file   = trim(Fname),   &
-             form   = 'Unformatted', &
-             access = 'append'       &
-            )
-
-       write(FUnitOut) rmse(:)
-       write(FUnitOut) vies(:)
-       write(FUnitOut) acor(:)
-
-
-    endif
-
-    !
-    ! escrevendo ctl dos resultados caso seja o ultimo tempo
-    !
-
-    if (scamtec%atime_step.eq.scamtec%ntime_steps)then
-
-       fname = FNameCtl
-       CALL str_template(FName, nymd, nhms, fymd, fhms, int2str(run,'(I2.2)'))
-
-       open(Unit = FUnitOut+1,  &
-            File = trim(fname), &
-            Form = 'Formatted'  &
-            )
-
-
-       fname = FNameOut
-       CALL str_template(FName, nymd, nhms, fymd, fhms, int2str(run,'(I2.2)'))
-       write(FUnitOut+1,           '(2(A,1x))')'dset',Trim(FName)
-       write(FUnitOut+1,         '(A,1x,F9.3)')'undef',scamtec%udef
-       write(FUnitOut+1,      '(A,1x,I3,1x,A)')'xdef',scamtec%nvar,'linear 1 1'
-       write(FUnitOut+1,                 '(A)')'ydef   1 linear 1 1'
-       write(FUnitOut+1,'(A,1x,I3,1x,A,1x,I3)')'zdef',scamtec%ntime_forecast,'linear 0',scamtec%time_step
-
-       fname = '%h2Z%d2%mc%y4'
-       CALL str_template(FName, nymd, nhms)
-       write(FUnitOut+1,'(A,1x,I3,1x,A,1x,A,1x,I3,A)')'tdef',scamtec%ntime_steps,'linear',trim(fname),scamtec%time_step,'hr'
-       write(FUnitOut+1,                 '(A)')'vars 3'
-       write(FUnitOut+1,      '(A,1x,I3,1x,A)')'rmse',scamtec%ntime_forecast,'99 Root Mean Square Error'
-       write(FUnitOut+1,      '(A,1x,I3,1x,A)')'vies',scamtec%ntime_forecast,'99 Vies'
-       write(FUnitOut+1,      '(A,1x,I3,1x,A)')'acor',scamtec%ntime_forecast,'99 Anomaly Correlation'
-       write(FUnitOut+1,                 '(A)')'endvars'
-
-       write(FUnitOut+1,      '(A)')'*                                       *'
-       write(FUnitOut+1,      '(A)')'*                                       *'
-       write(FUnitOut+1,      '(A)')'*                   LEIAME              *'
-       write(FUnitOut+1,      '(A)')'*                                       *'
-       write(FUnitOut+1,      '(A)')'* Este ctl foi criado para plotar os'
-       write(FUnitOut+1,      '(A)')'* resultados da estatistica basica (rmse,vies, acor)'
-       write(FUnitOut+1,      '(A)')'* Na dimensao Xdef estao as variaveis'
-       write(FUnitOut+1,      '(A)')'* avaliadadas na seguinte ordem:'
-       write(FUnitOut+1,      '(A)')'* 1-VTMP:925'
-       write(FUnitOut+1,      '(A)')'* 2-VTMP:850'
-       write(FUnitOut+1,      '(A)')'* 3-VTMP:500'
-       write(FUnitOut+1,      '(A)')'* 4-PSNM:000'
-       write(FUnitOut+1,      '(A)')'* 5-UMES:925'
-       write(FUnitOut+1,      '(A)')'* 6-AGPL:925'
-       write(FUnitOut+1,      '(A)')'* 7-ZGEO:850'
-       write(FUnitOut+1,      '(A)')'* 8-ZGEO:500'
-       write(FUnitOut+1,      '(A)')'* 9-ZGEO:250'
-       write(FUnitOut+1,      '(A)')'* 10-UVEL:850'
-       write(FUnitOut+1,      '(A)')'* 11-UVEL:500'
-       write(FUnitOut+1,      '(A)')'* 12-UVEL:250'
-       write(FUnitOut+1,      '(A)')'* 13-VVEL:850'
-       write(FUnitOut+1,      '(A)')'* 14-VVEL:500'
-       write(FUnitOut+1,      '(A)')'* 15-VVEL:250'
-       write(FUnitOut+1,      '(A)')'* A dimensao zdef correponde aos horarios'
-       write(FUnitOut+1,      '(A)')'* de previsao com relacao a data tdef'
-
-       close(Unit=FUnitOut+1)
-    endif
-
-
-  End Subroutine WriteBstat
-  !EOC
-  !
-  !-----------------------------------------------------------------------------!
 
 
 End Module SCAM_bstatistic

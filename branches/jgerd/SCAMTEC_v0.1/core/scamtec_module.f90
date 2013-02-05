@@ -24,7 +24,6 @@ MODULE scamtec_module
      integer(I4B) :: hist_time
      real(DP)     :: incr               ! time increment
      real(DP)     :: hist_incr          ! history time increment
-
 !
 ! 
 !
@@ -33,11 +32,13 @@ MODULE scamtec_module
      integer(I4B) :: atime_step         ! Atual time step in hours
      integer(I4B) :: ftime_step         ! Forecast time step in hours
      integer(I4B) :: loop_count         !
-     logical      :: atime_flag         !
-!
-!
-!
+     integer(I4B) :: ftime_idx          ! forecast time idx count 
+     logical      :: atime_flag         ! is new date reference (not forecast)?
 
+     integer(I4B), Allocatable :: ftime_count(:) 
+!
+!
+!
      real(SP)     :: gridDesc(50)
      integer(I4B) :: nxpt
      integer(I4B) :: nypt
@@ -45,8 +46,14 @@ MODULE scamtec_module
      integer(I4B) :: nexp
      real(SP)     :: udef
 
-     integer(I4B) :: nvar
-
+!
+!
+!
+     integer(I4B)                  :: nvar
+     character(len=8), allocatable :: VarName(:)
+!
+!
+!
      integer(I4B), allocatable :: Init_ModelID(:)
 !
 !    

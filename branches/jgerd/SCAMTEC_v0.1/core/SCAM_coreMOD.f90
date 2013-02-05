@@ -125,9 +125,9 @@ CONTAINS
     scamtec%atime_step     = 1
 
     scamtec%ftime          = scamtec%starting_time
+    scamtec%ftime_idx      = 1
     scamtec%loop_count     = 1
     scamtec%atime_flag     = .true.
-
 
 
     scamtec%hist_incr      = real(scamtec%hist_time/24.0d0)
@@ -138,6 +138,10 @@ CONTAINS
                               scamtec%incr ) / scamtec%incr )
 
     scamtec%ntime_forecast = ( scamtec%Forecast_time / scamtec%time_step ) + 1
+
+    Allocate(scamtec%ftime_count(scamtec%ntime_forecast))
+    scamtec%ftime_count    = 0
+    scamtec%ftime_count(1) = 1
 
 #ifdef DEBUG    
    write(6,'(A,F9.3)')'history increment    :',scamtec%hist_incr
@@ -369,12 +373,15 @@ CONTAINS
      aincr = (ii-1) * scamtec%incr
      fincr = (jj-1) * scamtec%incr
      
-     atimebufr     = scamtec%atime
-     scamtec%atime = jul2cal(cal2jul(scamtec%starting_time)+aincr)
-     scamtec%ftime = jul2cal(cal2jul(scamtec%atime)+fincr)
+     atimebufr               = scamtec%atime
+     scamtec%atime           = jul2cal(cal2jul(scamtec%starting_time)+aincr)
+     scamtec%ftime           = jul2cal(cal2jul(scamtec%atime)+fincr)
+     scamtec%ftime_idx       = jj
+     scamtec%ftime_count(jj) = scamtec%ftime_count(jj) + 1
+     scamtec%atime_flag      = (atimebufr.ne.scamtec%atime)
 
-     scamtec%atime_flag = (atimebufr.ne.scamtec%atime)
      if (scamtec%atime_flag)scamtec%atime_step = scamtec%atime_step + 1
+
 
   END SUBROUTINE
 
