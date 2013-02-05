@@ -15,9 +15,9 @@
 
       public   :: die   ! terminate a program with a condition
 
-      interface die; module procedure&
-         die_,&
-         diex_
+      interface die
+	module procedure die_
+        module procedure diex_
       end interface
 
 ! !REVISION HISTORY:

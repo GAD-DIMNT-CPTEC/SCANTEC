@@ -33,7 +33,7 @@ incdir = ./
 srcdir = ./
 
 # default mode (max. optimization)
-mode = dbg
+mode = pro
 
 # header file directories
 CCFLAGS = -I$(incdir) -I$(MPEU_INC)
@@ -92,7 +92,7 @@ include Makefile-objs
 
 # additionnal libraries
 LIBDIRS = -L$(MPEU_LIB) -L$(GRIB_LIB) 
-LIBS    = -lmpeu  -lw3
+LIBS    = -lmpeu  -lw3 -llapack 
 
 # target names
 BIN = scamtec.x
