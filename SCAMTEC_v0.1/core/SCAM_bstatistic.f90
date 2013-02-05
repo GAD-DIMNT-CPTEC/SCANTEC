@@ -136,7 +136,7 @@ Contains
     if(scamtec%loop_count.eq.1)then
 
        !
-       ! Abrindo arquivo de saida
+       ! Abrindo arquivo de saida e escrevendo o Cabecalho
        !
 
        nymd = scamtec%starting_time/100
@@ -165,6 +165,12 @@ Contains
             Form   = 'formatted', &
             Status = 'replace'      &
             )
+
+       write(fmt,'(A4,I3.3,A5)')'(A9,',scamtec%nvar,'A9)'
+       write(FUnitOut+0,fmt)'%Previsao',(scamtec%VarName(i),i=1,scamtec%nvar)
+       write(FUnitOut+1,fmt)'%Previsao',(scamtec%VarName(i),i=1,scamtec%nvar)
+       write(FUnitOut+2,fmt)'%Previsao',(scamtec%VarName(i),i=1,scamtec%nvar)
+
 
        !
        ! Allocando Memoria para o calculo dos Indices
@@ -416,7 +422,7 @@ Contains
             )
     endif
 
-    write(fmt,'(A,I,A)')'(I3.3,1x,',scamtec%nvar,'F9.3)'
+    write(fmt,'(A9,I3.3,A5)')'(6x,I3.3,',scamtec%nvar,'F9.3)'
 
     i = scamtec%ftime_idx
 
