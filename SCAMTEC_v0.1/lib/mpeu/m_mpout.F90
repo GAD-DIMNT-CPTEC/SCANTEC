@@ -31,14 +31,14 @@
       interface mpout_sync;  module procedure sync_;  end interface
       interface mpout_flush; module procedure flush_; end interface
       interface mpout_ison;  module procedure ison_;  end interface
-      interface mpout_log;   module procedure   &
-         logi_,&
-         logr_,&
-         logd_,&
-         log_
+      interface mpout_log
+	 module procedure logi_
+         module procedure logr_
+         module procedure logd_
+         module procedure log_
       end interface
-      interface mpout_setflush; module procedure&
-         setflush_
+      interface mpout_setflush
+         module procedure setflush_
       end interface
 
 ! !REVISION HISTORY:
