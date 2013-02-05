@@ -5,12 +5,12 @@
 !
 ! !MODULE: m_time.f90
 !
-! !DESCRIPTON: This module contains routines and functions to manipulate time
+! !DESCRIPTION: This module contains routines and functions to manipulate time
 !              periods, e.g, functions to calculate total number of hours, days, 
 !              months and years between two dates, also contains routines to
 !              convert julian days to gregorian day and vice and versa.
-!\\
-!\\
+!
+!
 ! !INTERFACE:
 !
 MODULE time_module
@@ -34,12 +34,35 @@ MODULE time_module
 !                               - Number of days [nod]
 !                               - Number of months [nom]
 !                               - Number of year [moy]
-! !SEE ALSO:
+! 23 Mar 2010 - J. G. de Mattos - Modified the call for Cal2Jul routine
+!                                 was created the interface block for
+!                                 use of this new Cal2Jul
+! !SEE ALSO: 
 ! 
 !
 !EOP
 !-----------------------------------------------------------------------------!
 !
+
+!
+! KINDS
+!
+
+!   INTEGER, PUBLIC, PARAMETER :: I4B = SELECTED_INT_KIND(9)
+!   INTEGER, PUBLIC, PARAMETER :: I2B = SELECTED_INT_KIND(4)
+!   INTEGER, PUBLIC, PARAMETER :: I1B = SELECTED_INT_KIND(2)
+!   INTEGER, PUBLIC, PARAMETER :: SP  = KIND(1.0)
+!   INTEGER, PUBLIC, PARAMETER :: DP  = KIND(1.0D0)
+
+
+   INTERFACE Cal2Jul
+      MODULE PROCEDURE cal2jul_, cal2jul__
+   END INTERFACE Cal2Jul
+
+   INTERFACE Jul2Cal
+      MODULE PROCEDURE jul2cal_, jul2cal__
+   END INTERFACE Jul2Cal
+
 CONTAINS
 !
 !-----------------------------------------------------------------------------!
@@ -48,8 +71,8 @@ CONTAINS
 ! !IROUTINE:  eom
 !
 ! !DESCRIPTION: This function calculate the end day of month.
-!\\
-!\\
+!
+!
 ! !INTERFACE:
 !
   FUNCTION eom(year,month) RESULT(day)
@@ -90,8 +113,8 @@ CONTAINS
 !
 ! !DESCRIPTION: This function calculate the total number of hours between two
 !               dates.
-!\\
-!\\
+!
+!
 ! !INTERFACE:
 !
   FUNCTION noh(di,df) RESULT(Nhour)
@@ -129,8 +152,8 @@ CONTAINS
 !
 ! !DESCRIPTION: This function calculate the total number of days between two
 !               dates.
-!\\
-!\\
+!
+!
 ! !INTERFACE:
 !
   FUNCTION nod(di,df) RESULT(Nday)
@@ -168,8 +191,8 @@ CONTAINS
 !
 ! !DESCRIPTION: This function calculate the total number of months between two
 !               dates.
-!\\
-!\\
+!
+!
 ! !INTERFACE:
 !
   FUNCTION nom(di,df) RESULT(Nmonth)
@@ -211,8 +234,8 @@ CONTAINS
 !
 ! !DESCRIPTION: This function calculate the total number of Years between two
 !               dates.
-!\\
-!\\
+!
+!
 ! !INTERFACE:
 !
   FUNCTION noy(di,df) RESULT(Nyear)
@@ -245,20 +268,64 @@ CONTAINS
 !-----------------------------------------------------------------------------!
 !BOP
 !
-! !IROUTINE:  Cal2Jul
+! !IROUTINE:  Cal2Jul__
 !
 ! !DESCRIPTION: This function calculate the julian day from gregorian day
 !
-!\\
-!\\
+!
 ! !INTERFACE:
 !
-  FUNCTION cal2jul(CalDate) RESULT(julian)
+  FUNCTION cal2jul_(CalDate) RESULT(julian)
     IMPLICIT NONE
 !
 ! !INPUT PARAMETERS:
 !
     INTEGER, INTENT(IN) :: CalDate
+
+!
+! !OUTPUT PARAMETERS:
+!
+    REAL(kind=8)  :: julian
+!
+!
+! !REVISION HISTORY: 
+!  15 Jun 2005 - J. G. de Mattos - Initial Version
+!
+!
+!EOP
+!-----------------------------------------------------------------------------!
+!BOC
+!
+  INTEGER :: nymd
+  INTEGER :: nhms
+
+  nymd = CalDate/100
+  nhms = MOD(CalDate,100) * 10000
+
+  julian = cal2jul__(nymd,nhms)
+
+  RETURN
+
+  END FUNCTION
+!EOC
+!-----------------------------------------------------------------------------!
+!
+!BOP
+!
+! !IROUTINE:  Cal2Jul__
+!
+! !DESCRIPTION: This function calculate the julian day from gregorian day
+!
+!
+! !INTERFACE:
+!
+  FUNCTION cal2jul__(ymd,hms) RESULT(julian)
+    IMPLICIT NONE
+!
+! !INPUT PARAMETERS:
+!
+    INTEGER, INTENT(IN) :: ymd
+    INTEGER, INTENT(IN) :: hms
 !
 ! !OUTPUT PARAMETERS:
 !
@@ -274,53 +341,57 @@ CONTAINS
 !BOC
 !
 
-    REAL(kind=8)  :: Ano, Mes, Dia, Hora
+    REAL(kind=8)  :: year, month, day
+    REAL(kind=8)  :: hour, minute, second
     REAL(kind=8)  :: A, B, C, D, E
     
 
-    Ano  =       CalDate / 1000000
-    Mes  = MOD ( CalDate,  1000000 ) / 10000
-    Dia  = MOD ( CalDate,    10000 ) /100
-    Hora = MOD ( CalDate,      100 )
+    year   = INT ( ymd / 10000 )
+    month  = MOD ( ymd,  10000 ) / 100
+    day    = MOD ( ymd,    100 )
+    hour   = INT ( hms / 10000 )
+    minute = MOD ( hms,  10000 ) / 100
+    second = MOD ( hms,    100 )
 
-    IF(Mes < 3)THEN
-       Ano=Ano-1
-       Mes=Mes+12
+    IF(month < 3)THEN
+       year=year-1
+       month=month+12
     ENDIF
 
-    IF(CalDate>=15821015)THEN
-       A = INT(Ano/100)
+    IF(ymd>=15821015)THEN
+       A = INT(year/100)
        B = INT(A/4)
        C = 2 - A + B
     ENDIF
 
-    IF(CalDate<=15821004)THEN
+    IF(ymd<=15821004)THEN
        C = 0
     ENDIF
 
-    D = INT(365.25 * (Ano + 4716))
-    E = INT(30.6001 * (Mes + 1))
+    D = INT(365.25 * (year + 4716))
+    E = INT(30.6001 * (month + 1))
 
-    julian = INT(D + E + Dia + 0.5 + C - 1524.5)+ (Hora / 24.0)
+    julian = INT(D + E + day + 0.5 + C - 1524.5) +      &
+                ( hour / 24.0 ) + ( minute / (60*24) ) + &
+                ( second / (60*60*24) ) 
 
     RETURN
 
-  END FUNCTION Cal2Jul
+  END FUNCTION
 !
 !EOC
 !
 !-----------------------------------------------------------------------------!
 !BOP
 !
-! !IROUTINE:  Cal2Jul
+! !IROUTINE:  Jul2Cal
 !
 ! !DESCRIPTION: This function calculate the gregorian date from julian day.
-!               
-!\\
-!\\
+!
+!
 ! !INTERFACE:
 !
-  FUNCTION jul2cal(jd) RESULT(gregorian)
+  FUNCTION jul2cal__(jd) RESULT(gregorian)
     IMPLICIT NONE
 !
 ! !INPUT PARAMETERS:
@@ -334,7 +405,56 @@ CONTAINS
 !
 !
 ! !REVISION HISTORY: 
+!  23 Mar 2011 - J. G. de Mattos - created to maintain the 
+!                                  original interface
+!                                  of jul2cal function
+! 
+! !REMARKS:
+!        This algorithm was adopted from Press et al.
+!EOP
+!-----------------------------------------------------------------------------!
+!BOC
+
+  INTEGER :: nymd
+  INTEGER :: nhms
+
+  call jul2cal(jd,nymd,nhms)
+
+  gregorian = (nymd*100)+INT(nhms/10000)
+
+  END FUNCTION
+!
+!EOC
+!
+!-----------------------------------------------------------------------------!
+!BOP
+!
+! !IROUTINE:  Jul2Cal
+!
+! !DESCRIPTION: This function calculate the gregorian date from julian day.
+!
+!
+! !INTERFACE:
+!
+  SUBROUTINE jul2cal_(jd,ymd,hms)
+    IMPLICIT NONE
+!
+! !INPUT PARAMETERS:
+!
+	 REAL (kind=8), INTENT(IN) :: jd
+
+!
+! !OUTPUT PARAMETERS:
+!
+   INTEGER(kind=4) :: ymd ! year month day (yyyymmdd)
+   INTEGER(kind=4) :: hms ! hour minute second (hhmnsd)
+
+!
+!
+! !REVISION HISTORY: 
 !  15 Jun 2005 - J. G. de Mattos - Initial Version
+!  23 Mar 2011 - J. G. de Mattos - Modified Interface
+!                                  to a subroutine call
 !
 ! !REMARKS:
 !        This algorithm was adopted from Press et al.
@@ -344,16 +464,16 @@ CONTAINS
 !
     INTEGER (kind=4), PARAMETER :: Gregjd = 2299161
     INTEGER                     ::  j1, j2, j3, j4, j5
-    INTEGER (kind=4)            ::  Ano
-    INTEGER (kind=4)            ::  Mes
-    INTEGER (kind=4)            ::  Dia
-    INTEGER (kind=4)            ::  Hora
-    INTEGER (kind=4)            ::  Min
-    INTEGER (kind=4)            ::  Seg
+    INTEGER (kind=4)            ::  year
+    INTEGER (kind=4)            ::  month
+    INTEGER (kind=4)            ::  day
+    INTEGER (kind=4)            ::  Hour
+    INTEGER (kind=4)            ::  Minute
+    INTEGER (kind=4)            ::  Second
     INTEGER (kind=4)            ::  Intgr
     INTEGER (kind=4)            ::  f, tmp
 
-    REAL (kind=4)               ::  dayfrac, frac
+    REAL (kind=8)               ::  dayfrac, frac
 
     !       
     ! get the date from the Julian day number
@@ -361,7 +481,7 @@ CONTAINS
     ! jd=2453372.25
 
     intgr   = INT(jd)
-    frac    = jd - intgr
+    frac    = real(jd - intgr,8)
 
     IF( intgr >= gregjd )THEN              !Gregorian calendar correction
        tmp = INT( ( (intgr - 1867216) - 0.25 ) / 36524.25 )
@@ -370,66 +490,73 @@ CONTAINS
        j1 = intgr
     ENDIF
     !       correction for half day offset
-    dayfrac = frac + 0.0
+
+    dayfrac = frac + 0.0d0
+!    print*,dayfrac
     IF( dayfrac >= 1.0 )THEN
-       dayfrac = dayfrac - 1.0
+       dayfrac = dayfrac - 1.0d0
        j1 = j1+1
     ENDIF
-
 
     j2 = j1 + 1524
     j3 = INT( 6680.0 + ( (j2 - 2439870) - 122.1 )/365.25 )
     j4 = INT(j3*365.25)
     j5 = INT( (j2 - j4)/30.6001 )
 
-    dia = INT(j2 - j4 - INT(j5*30.6001))
-    mes = INT(j5 - 1)
-    IF( mes > 12 ) mes = mes- 12
-    Ano = INT(j3 - 4715)
-    IF( mes > 2 )  Ano = Ano - 1
-    IF( Ano <= 0 ) Ano = Ano - 1
+    day   = INT(j2 - j4 - INT(j5*30.6001))
+    month = INT(j5 - 1)
+    IF( month > 12 ) month = month- 12
+    year = INT(j3 - 4715)
+    IF( month > 2 )  year = year - 1
+    IF( year <= 0 ) year = year - 1
 
     !
     ! get time of day from day fraction
     !
-    hora = INT(dayfrac * 24.0)
-    min  = INT((dayfrac*24.0 - hora)*60.0)
-    f    = INT( ((dayfrac*24.0 - hora)*60.0 - min)*60.0)
-    seg  = INT(f)
+    hour   = INT(dayfrac * 24.0d0)
+    minute = INT((dayfrac*24.0d0 - hour)*60.0d0)
+    f      = NINT( ((dayfrac*24.0d0 - hour)*60.0d0 - minute)*60.0d0)
+    second = INT(f)
+    f      = f-second
+!    print*,dayfrac * 24.0d0,hour
+!    print*,(dayfrac*24.0d0 - hour)
 
-    f = f - seg
-    IF( f > 0.5 ) seg = seg +1
+!    print*,hour,minute,second
+    IF( f > 0.5 ) second = second + 1
 
-    IF( seg == 60 )THEN
-       seg = 0
-       min = min + 1
+    IF( second == 60 )THEN
+       second = 0
+       minute = minute + 1
     ENDIF
 
-    IF( min == 60 )THEN
-       min = 0
-       hora = hora +1
+    IF( minute == 60 )THEN
+       minute = 0
+       hour   = hour + 1
     ENDIF
 
-    IF( hora == 24 )THEN
+    IF( hour == 24 )THEN
 
-       hora = 0
+       hour = 0
        !
        ! this could cause a bug, but probably 
        ! will never happen in practice
        !
-       dia = dia + 1
+       day = day + 1
 
     ENDIF
 
-    IF( Ano < 0 )THEN
-       Ano = -Ano
+    IF( year < 0 )THEN
+       year = year * (-1)
     ENDIF
 
-    gregorian=(Ano*1000000)+(Mes*10000)+(Dia*100)+Hora
+    ymd = (year*10000)+(month*100)+(day)
+    hms = (hour*10000)+(minute*100)+second
+
+!    gregorian=(year*1000000)+(month*10000)+(day*100)+hour
 
     RETURN
 
-  END FUNCTION Jul2Cal
+  END SUBROUTINE
 
 
 END MODULE time_module
