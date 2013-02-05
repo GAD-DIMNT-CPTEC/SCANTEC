@@ -43,13 +43,13 @@ MODULE SCAM_coreMOD
   ! !USES:
 
   USE scamtec_module
-  USE SCAM_Utils       ! Utilities for SCAMTeC running
-  USE SCAM_dataMOD     ! Grid Data Structure
-  USE time_module      ! Time operations
-  USE m_string         ! String Manipulation
-  USE SCAM_ModelPlugin ! A model register 
-  USE SCAM_OutputMOD , only: write_2d   !
-  USE SCAM_bstatistic  !
+  USE SCAM_Utils                          ! Utilities for SCAMTeC running
+  USE SCAM_dataMOD                        ! Grid Data Structure
+  USE time_module, only: jul2cal, cal2jul ! Time operations
+  USE m_string                            ! String Manipulation
+  USE SCAM_ModelPlugin                    ! A model register 
+  USE SCAM_OutputMOD , only: write_2d     !
+  USE SCAM_bstatistic                     !
   USE m_ioutil
 
   IMPLICIT NONE
