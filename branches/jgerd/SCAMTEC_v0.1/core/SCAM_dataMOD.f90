@@ -241,13 +241,10 @@ CONTAINS
 
     SELECT CASE(trim(type))
     CASE('R')
-       print*,'R'
        scamdata(e)%reffield = scamdata(1)%tmpfield
     CASE('E')
-       print*,'E'
        scamdata(e)%expfield = scamdata(1)%tmpfield
     CASE('C')
-       print*,'C'
        scamdata(e)%clmfield = scamdata(1)%tmpfield
     END SELECT
 
