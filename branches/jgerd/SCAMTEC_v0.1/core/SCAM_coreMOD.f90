@@ -147,7 +147,8 @@ CONTAINS
 
 #ifdef DEBUG    
    write(6,'(A,F9.3)')'history increment    :',scamtec%hist_incr
-   write(6,'(A,F9.3)')'increment time       :',scamtec%incr
+   write(6,'(A,F9.3)')'Analisys increment   :',scamtec%aincr
+   write(6,'(A,F9.3)')'Forecast increment   :',scamtec%aincr
    write(6,'(A,I9.3)')'N time steps         :',scamtec%ntime_steps
    write(6,'(A,I9.3)')'N forecat time steps :',scamtec%ntime_forecast
 #endif
@@ -383,7 +384,7 @@ CONTAINS
      scamtec%ftime_count(jj) = scamtec%ftime_count(jj) + 1
      scamtec%atime_flag      = (atimebufr.ne.scamtec%atime)
 
-     if (scamtec%atime_flag)scamtec%atime_step = scamtec%atime_step + 1
+     if (scamtec%atime_flag)scamtec%time_step = scamtec%time_step + 1
 
 
   END SUBROUTINE

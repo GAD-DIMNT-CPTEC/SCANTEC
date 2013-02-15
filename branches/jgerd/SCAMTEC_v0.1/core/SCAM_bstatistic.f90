@@ -334,7 +334,7 @@ Contains
 
     EndDo
 
-    if ( scamtec%atime_step.eq.scamtec%ntime_steps )then
+    if ( scamtec%time_step.eq.scamtec%ntime_steps )then
        CALL WriteBstat( run )
     endif
 

@@ -52,7 +52,7 @@ CC  = gcc
 FC  = ifort
 LD  = ifort
 AR  = ar
-FFLAGS += -fpp -assume byterecl -traceback
+FFLAGS += -fpp -assume byterecl
 endif
 
 ifeq ($(SCAM_ARCH),cray_pgi)
@@ -61,7 +61,7 @@ CC  = cc
 FC  = ftn
 LD  = ftn
 AR  = ar
-FFLAGS += -Mpreprocess -traceback -DDEBUG
+FFLAGS += -Mpreprocess
 endif
 
 # add flags for debugging if requested
