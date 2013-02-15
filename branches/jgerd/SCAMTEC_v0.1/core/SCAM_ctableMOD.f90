@@ -20,8 +20,10 @@ MODULE SCAM_ctableMOD
   ! !USES:
   !
 
-  USE m_die     ! Error Messages
-  USE m_stdio   ! Module to defines std. I/O parameters
+  USE m_die                         ! Error Messages
+  USE m_stdio                       ! Module to defines std. I/O parameters
+  USE scamtec_module                ! SCAMTEC types
+  USE SCAM_dataMOD, only : scamdata ! SCAMTEC data matrix
 
   IMPLICIT NONE
   PRIVATE
@@ -111,15 +113,15 @@ contains
     !
     ! !INPUT PARAMETERS:
     !
-    ! Fct   = Forecast Field [Nx,Ny]
-    ! OBs   = Observation Field [Nx,Ny]
+    ! Fct   = Forecast Field [Nx*Ny]
+    ! OBs   = Observation Field [Nx*Ny]
     ! Thres = Threshold to cut rain event [Nthreshold]
     ! Undef = Undefined value                          
 
-    REAL, DIMENSION(:,:), INTENT(IN) :: Fct
-    REAL, DIMENSION(:,:), INTENT(IN) :: Obs
-    REAL, DIMENSION(:)  , INTENT(IN) :: thres
-    REAL                , INTENT(IN) :: Undef
+    REAL, DIMENSION(:), INTENT(IN) :: Fct
+    REAL, DIMENSION(:), INTENT(IN) :: Obs
+    REAL, DIMENSION(:), INTENT(IN) :: thres
+    REAL              , INTENT(IN) :: Undef
 
     !
     ! !OUTPUT PARAMETERS:
@@ -155,10 +157,10 @@ contains
     !----------------------------------------------------------------!
     ! misc variables
 
-    integer :: t
-    integer :: nt, ni, nj
+    integer :: i, t
+    integer :: nt, np
     integer :: iret
-    integer, allocatable, dimension(:,:) :: mask
+    integer, allocatable, dimension(:) :: Idx
 
     character(len=*),parameter :: myname_=myname//'::BCtable'
 
@@ -171,27 +173,24 @@ contains
 #endif
 
 
-    if(size(Fct,1).ne.size(Obs,1).or.&
-         size(Fct,2).ne.size(Obs,2)) Then
+    if(size(Fct).ne.size(Obs)) Then
 
        call perr(myname_,'Incompatible Size of the matrices',-1)
        return
 
     End if
 
-
-    ni = min(size(Fct,1),size(Obs,1))
-    nj = min(size(Fct,2),size(Obs,2))
+    np = min(size(Fct),size(Obs))
+    ni = count (scamdata(run)%UdfIdx)
     nt = size(thres)
 
-    ALLOCATE(mask(ni,nj))
+    ALLOCATE(Idx(np))
 
     !
     ! Creating mask to only compute contingency table for valid grid points
     !
 
-    mask = 1
-    where(Fct.eq.Undef.or.Obs.eq.Undef) mask = 0
+    Idx(1:ni) = PACK ( (/(i,i=1,np)/), mask = scamdata(run)%UdfIdx)
 
     !
     ! loop over all thresholds
@@ -204,14 +203,14 @@ contains
        ! superiores ao threshold são considerados chuva e computados como tal.
        !
 
-       A(t) = count(fct>=Thres(t).and.Obs>=Thres(t).and.mask.eq.1)
-       B(t) = count(fct>=Thres(t).and.Obs< Thres(t).and.mask.eq.1)
-       C(t) = count(fct< Thres(t).and.Obs>=Thres(t).and.mask.eq.1)
-       D(t) = count(fct< Thres(t).and.Obs< Thres(t).and.mask.eq.1)
+       A(t) = count(fct(Idx)>=Thres(t).and.Obs(Idx)>=Thres(t))
+       B(t) = count(fct(Idx)>=Thres(t).and.Obs(Idx)< Thres(t))
+       C(t) = count(fct(Idx)< Thres(t).and.Obs(Idx)>=Thres(t))
+       D(t) = count(fct(Idx)< Thres(t).and.Obs(Idx)< Thres(t))
 
     ENDDO
 
-    DEALLOCATE(mask,stat=iret)
+    DEALLOCATE(idx,stat=iret)
     if(iret.ne.0) then
        call perr(myname_,'deallocate(mask)',iret)
        return

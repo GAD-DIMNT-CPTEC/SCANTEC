@@ -200,20 +200,24 @@ MODULE SCAM_Utils
 ! Reading time parameters
 !
 
-         call get_value ( 'Starting Time:',  scamtec%starting_time, iret )
-         call get_value ( 'Ending Time:',    scamtec%ending_time,   iret )
-         call get_value ( 'Time Step:',      scamtec%time_step,     iret )
-         call get_value ( 'Forecast Time:',  scamtec%forecast_time, iret )
-         call get_value ( 'History Time:',   scamtec%hist_time,     iret )
+         call get_value ( 'Starting Time:',      scamtec%starting_time, iret )
+         call get_value ( 'Ending Time:',        scamtec%ending_time,   iret )
+         call get_value ( 'Analisys Time Step:', scamtec%atime_step,    iret )
+         call get_value ( 'Forecast Time Step:', scamtec%ftime_step,    iret )
+         call get_value ( 'Forecast Total Time:',scamtec%forecast_time, iret )
+         call get_value ( 'History Time:',       scamtec%hist_time,     iret )
          
 #ifdef DEBUG
         write(*,'(   1A   )')'Running Specification:'
         write(*,'(A,x,I10.10)')'Starting Time:',  scamtec%starting_time
         write(*,'(A,x,I10.10)')'Ending Time:',    scamtec%ending_time
         write(*,'(A,x,I3.2)')'Time Step:',      scamtec%time_step 
-        write(*,'(A,x,I3.2)')'Forecast Time:',  scamtec%forecast_time
+        write(*,'(A,x,I3.2)')'Analisys Time Step:',  scamtec%forecast_time
+        write(*,'(A,x,I3.2)')'Forecast Time Step:',  scamtec%forecast_time
+        write(*,'(A,x,I3.2)')'Forecast Total Time:',  scamtec%forecast_time
         write(*,'(A,x,I3.2)')'History Time:',   scamtec%hist_time
 #endif
+
 
 !
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

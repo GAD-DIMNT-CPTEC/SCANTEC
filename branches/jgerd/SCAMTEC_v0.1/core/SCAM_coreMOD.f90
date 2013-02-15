@@ -122,22 +122,24 @@ CONTAINS
     !
 
     scamtec%atime          = scamtec%starting_time
-    scamtec%atime_step     = 1
-
     scamtec%ftime          = scamtec%starting_time
+
+    scamtec%time_step      = 1
     scamtec%ftime_idx      = 1
     scamtec%loop_count     = 1
     scamtec%atime_flag     = .true.
 
 
     scamtec%hist_incr      = real(scamtec%hist_time/24.0d0)
-    scamtec%incr           = real(scamtec%time_step/24.0d0)
+    scamtec%aincr          = real(scamtec%atime_step/24.0d0)
+    scamtec%fincr          = real(scamtec%ftime_step/24.0d0)
+
 
     scamtec%ntime_steps    = ( ( cal2jul(scamtec%ending_time) - &
                               cal2jul(scamtec%starting_time) +  &
-                              scamtec%incr ) / scamtec%incr )
+                              scamtec%aincr ) / scamtec%aincr )
 
-    scamtec%ntime_forecast = ( scamtec%Forecast_time / scamtec%time_step ) + 1
+    scamtec%ntime_forecast = ( scamtec%Forecast_time / scamtec%ftime_step ) + 1
 
     Allocate(scamtec%ftime_count(scamtec%ntime_forecast))
     scamtec%ftime_count    = 0
@@ -267,6 +269,7 @@ CONTAINS
     !
 
      DO WHILE (.NOT.is_last_step())
+        write(*,'(2(1x,I10.10),1x,I3.2)')scamtec%atime, scamtec%ftime, int(abs(cal2jul(scamtec%atime)-cal2jul(scamtec%ftime))*24)
         DO NExp=1,scamtec%nexp
            CALL SCAM_ModelData ( NExp )  ! Load Files: Analisys, Forecast and Climatology
            CALL CalcBstat ( NExp )       ! Calculate Basic Statistics: Bias, RMSE, Anomaly Correlation
@@ -346,9 +349,9 @@ CONTAINS
 !    WRITE(6,'(     2A)')'Hello from ', myname_
 !#endif
     
-    scamtec%atime=jul2cal(cal2jul(scamtec%atime)+scamtec%incr)
-    print*,scamtec%atime,scamtec%ending_time
-    if (scamtec%atime.ge.scamtec%ending_time) call exit()
+!   scamtec%atime=jul2cal(cal2jul(scamtec%atime)+scamtec%incr)
+!   print*,scamtec%atime,scamtec%ending_time
+!   if (scamtec%atime.ge.scamtec%ending_time) call exit()
 
   END SUBROUTINE SCAM_EndRun
 
@@ -370,8 +373,8 @@ CONTAINS
      ii = ceiling((I)/float(Ny))
      jj = ( I + Ny ) - Ny * ii
 
-     aincr = (ii-1) * scamtec%incr
-     fincr = (jj-1) * scamtec%incr
+     aincr = (ii-1) * scamtec%aincr
+     fincr = (jj-1) * scamtec%fincr
      
      atimebufr               = scamtec%atime
      scamtec%atime           = jul2cal(cal2jul(scamtec%starting_time)+aincr)
