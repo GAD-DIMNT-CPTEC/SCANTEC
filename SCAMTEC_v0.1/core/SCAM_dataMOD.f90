@@ -269,23 +269,25 @@ CONTAINS
      ! 1. Create file name and Open 
      !
 
-     if (scamtec%atime_flag)then
+!     if (scamtec%atime_flag)then
 
         !
         ! 1.1 Reference data file 
         !
 
         Reference=TRIM(Refer%file)
-        CALL str_template(Reference, aymd,ahms)
+        CALL str_template(Reference, fymd,fhms)
         CALL ldata('R', 1, Refer%Id, Reference)
 
         !
         ! 1.2 Climatology data file
         !
-       
+
+     if (scamtec%atime_flag)then
+      
         IF(scamtec%cflag.EQ.1)THEN
            Climatology=TRIM(Clima%file)
-           CALL str_template(Climatology, aymd,ahms)
+           CALL str_template(Climatology, fymd,fhms)
            CALL ldata('C', 1, Clima%Id, Climatology)
         END IF
 
