@@ -281,7 +281,8 @@ CONTAINS
     lugb = 10
     lubi = 0
     j    = 0
-    jpds = -1 
+    jpds = -1
+
     !          1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17
     !          T   T   T  rh  rh  rh   P   A   Z   Z   Z   U   U   U   V   V   V
     !        925 850 500 925 850 500 000 000 850 500 250 850 500 250 850 500 250
@@ -333,7 +334,7 @@ CONTAINS
        deallocate(f)
        deallocate(lb)
        
-	    call perr(myname_,'File Not Found: '//trim(fname),ferror)
+       call perr(myname_,'File Not Found: '//trim(fname),ferror)
        return
 
     endif
@@ -422,7 +423,8 @@ CONTAINS
     !
     ! padronizando pontos com undef
     !
-!       where(.not.lb(:,iv))varfield = scamtec%udef
+
+       where( varfield .eq. undef ) varfield = scamtec%udef
 
     !
     ! Transferindo para matriz temporaria do SCAMTEC
