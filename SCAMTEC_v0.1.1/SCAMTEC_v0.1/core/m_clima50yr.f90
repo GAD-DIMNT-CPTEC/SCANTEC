@@ -422,7 +422,7 @@ CONTAINS
     !
     ! padronizando pontos com undef
     !
-!       where(.not.lb(:,iv))varfield = scamtec%udef
+       where(varfield .eq. undef)varfield = scamtec%udef
 
     !
     ! Transferindo para matriz temporaria do SCAMTEC

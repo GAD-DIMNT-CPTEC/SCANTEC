@@ -15,6 +15,8 @@ OBJS = \
 	$(srcdir)/eta_read.o \
 	$(srcdir)/m_agcm.o \
 	$(srcdir)/m_clima50yr.o \
+	$(srcdir)/m_T126_Seq.o \
+	$(srcdir)/obs_Precipitation.o \
 	$(srcdir)/m_string.o \
 	$(srcdir)/m_time.o \
 	$(srcdir)/scamdrv.o \

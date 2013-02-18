@@ -33,7 +33,7 @@ incdir = ./
 srcdir = ./
 
 # default mode (max. optimization)
-mode = pro
+mode = dbg
 
 # header file directories
 CCFLAGS = -I$(incdir) -I$(MPEU_INC)
@@ -52,7 +52,7 @@ CC  = gcc
 FC  = ifort
 LD  = ifort
 AR  = ar
-FFLAGS += -fpp -assume byterecl
+FFLAGS += -fpp -assume byterecl -traceback
 endif
 
 ifeq ($(SCAM_ARCH),cray_pgi)
@@ -61,14 +61,14 @@ CC  = cc
 FC  = ftn
 LD  = ftn
 AR  = ar
-FFLAGS += -Mpreprocess
+FFLAGS += -Mpreprocess -traceback 
 endif
 
 # add flags for debugging if requested
 ifeq (dbg,$(findstring dbg,$(mode)))
    CCFLAGS += 
-   FFLAGS  += -g -pg -check all -fpe0 -warn -traceback -debug extended -DDEBUG
-   LDFLAGS += -g -pg
+   FFLAGS  += -traceback -DDEBUG
+   LDFLAGS += 
 endif
 
 

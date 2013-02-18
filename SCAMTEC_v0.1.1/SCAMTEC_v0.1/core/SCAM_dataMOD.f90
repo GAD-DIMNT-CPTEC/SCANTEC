@@ -29,7 +29,7 @@ MODULE SCAM_dataMOD
 ! !PARAMETERS:
 !
 
-  integer, public, Parameter :: NumVarAval = 15
+  integer, public, Parameter :: NumVarAval = 17
   character(len=8), public, parameter ::   VarName(1:NumVarAval) = (/ &
                                            'VTMP:925',& ! Virtual Temperature @ 925 hPa [K]
                                            'VTMP:850',& ! Virtual Temperature @ 850 hPa [K]
@@ -45,7 +45,9 @@ MODULE SCAM_dataMOD
                                            'UVEL:250',& ! Zonal Wind @ 250 hPa [m/s]
                                            'VVEL:850',& ! Meridional Wind @ 850 hPa [m/s]
                                            'VVEL:500',& ! Meridional Wind @ 500 hPa [m/s]
-                                           'VVEL:250' & ! Meridional Wind @  250 hPa [m/s]
+                                           'VVEL:250',& ! Meridional Wind @  250 hPa [m/s]
+                                           'PREC:000',& ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]           16 paulo dias
+                                           'PREV:000' & ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]      17 paulo dias
                                           /)
 
 !

@@ -43,6 +43,7 @@ MODULE scamtec_module
      integer(I4B) :: Forecast_time      ! Forecast total time
      integer(I4B) :: ftime_idx          ! forecast time idx count
      integer(I4B), Allocatable :: ftime_count(:)  
+     CHARACTER(len=200), PUBLIC :: output_dir ! Diretoeio de saida paulo dias
 !
 ! History Variables
 !

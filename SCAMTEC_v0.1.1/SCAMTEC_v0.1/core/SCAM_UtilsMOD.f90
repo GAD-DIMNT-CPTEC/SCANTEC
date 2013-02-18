@@ -404,6 +404,20 @@ MODULE SCAM_Utils
                DeAllocate(tmp)
          end select
 
+!
+!------------------------------------------------------------------------------- !Paulo Dias
+! Diretorio de Saida
+!   
+        call i90_label ( 'Output directory:', iret )
+            call i90_Gtoken(scamtec%output_dir,iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_label("Output directory:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+
+!Fim Diretorio de Saida
+!--------
 
    END SUBROUTINE
 
