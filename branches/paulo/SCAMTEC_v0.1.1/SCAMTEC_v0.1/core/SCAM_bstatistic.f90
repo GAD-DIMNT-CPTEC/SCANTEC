@@ -148,19 +148,19 @@ Contains
        CALL str_template(FName, nymd, nhms, fymd, fhms, int2str(run,'(I2.2)'))
 
        open(unit   = FUnitOut+0,      &
-            File   = 'RMSE'//Trim(FName),   &
+            File   = trim(scamtec%output_dir)//'RMSE'//Trim(FName),   &
             access = 'sequential',  &
             Form   = 'formatted', &
             Status = 'replace'      &
             )
        open(unit   = FUnitOut+1,      &
-            File   = 'VIES'//Trim(FName),   &
+            File   = trim(scamtec%output_dir)//'VIES'//Trim(FName),   &
             access = 'sequential',  &
             Form   = 'formatted', &
             Status = 'replace'      &
             )
        open(unit   = FUnitOut+2,      &
-            File   = 'ACOR'//Trim(FName),   &
+            File   = trim(scamtec%output_dir)//'ACOR'//Trim(FName),   &
             access = 'sequential',  &
             Form   = 'formatted', &
             Status = 'replace'      &
@@ -307,7 +307,7 @@ Contains
     Allocate(anomfield(size(Idx),2))
 
     j = scamtec%ftime_idx
-
+    
     Do i = 1, scamtec%nvar
 
        dado(run)%rmse(i,j) = dado(run)%rmse(i,j) + sum (diffield(Idx,i)*diffield(Idx,i)) / size(Idx)
@@ -403,19 +403,19 @@ Contains
 
 
        Open( unit   = FUnitOut+0,      &
-            file   = 'RMSE'//trim(Fname),   &
+            file   = trim(scamtec%output_dir)//'RMSE'//trim(Fname),   &
             form   = 'formatted', &
             access = 'sequential',  &
             position = 'append'   &
             )
        Open( unit   = FUnitOut+1,      &
-            file   = 'VIES'//trim(Fname),   &
+            file   = trim(scamtec%output_dir)//'VIES'//trim(Fname),   &
             form   = 'formatted', &
             access = 'sequential',  &
             position = 'append'   &
             )
        Open( unit   = FUnitOut+2,      &
-            file   = 'ACOR'//trim(Fname),   &
+            file   = trim(scamtec%output_dir)//'ACOR'//trim(Fname),   &
             form   = 'formatted', &
             access = 'sequential',  &
             position = 'append'   &

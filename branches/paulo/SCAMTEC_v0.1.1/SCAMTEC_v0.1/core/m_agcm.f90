@@ -352,6 +352,12 @@ CONTAINS
     DeAllocate(f)
 
     !
+    ! padronizando pontos com undef
+    !
+   
+    where(.not.lb) f2 = scamtec%udef
+    
+    !
     ! Interpolando para a grade do SCAMTEC
     !
 
@@ -364,12 +370,7 @@ CONTAINS
 
        call interp_agcm( kpds, agcm_struc%npts,f2(:,iv),lb(:,iv), scamtec%gridDesc,&
                          scamtec%nxpt,scamtec%nypt, varfield, iret)    
-    !
-    ! padronizando pontos com undef
-    !
-
-       where(.not.lb(:,iv))varfield = scamtec%udef
-
+    
     !
     ! Transferindo para matriz temporaria do SCAMTEC
     !
