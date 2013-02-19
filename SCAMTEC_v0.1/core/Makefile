@@ -33,7 +33,7 @@ incdir = ./
 srcdir = ./
 
 # default mode (max. optimization)
-mode = pro
+mode =
 
 # header file directories
 CCFLAGS = -I$(incdir) -I$(MPEU_INC)
@@ -45,47 +45,61 @@ CCFLAGS += -DIFC
 LDFLAGS  = 
 ARFLAGS  = -r
 
-# preprocessor, compilers, linker & archiver
-ifeq ($(SCAM_ARCH),Darwin_intel)
-FPP = gcc
-CC  = gcc
-FC  = ifort
-LD  = ifort
-AR  = ar
-FFLAGS += -fpp -assume byterecl
-endif
 
-ifeq ($(SCAM_ARCH),cray_pgi)
-FPP = cc
-CC  = cc
-FC  = ftn
-LD  = ftn
-AR  = ar
-FFLAGS += -Mpreprocess
-endif
+#
+# Flags to Intel fortran with gcc
+#
+
+ifeq ($(SCAM_ARCH),Darwin_intel)
+   FPP = gcc
+   CC  = gcc
+   FC  = ifort
+   LD  = ifort
+   AR  = ar
+   FFLAGS += -fpp -assume byterecl
 
 # add flags for debugging if requested
-ifeq (dbg,$(findstring dbg,$(mode)))
-   CCFLAGS += 
-   FFLAGS  += -g -pg -check all -fpe0 -warn -traceback -debug extended -DDEBUG
-   LDFLAGS += -g -pg
-endif
-
+   ifeq (dbg,$(findstring dbg,$(mode)))
+      CCFLAGS += 
+      FFLAGS  += -g -debug extended -O0 -traceback -fpe-all=0 -check all -pg -warn -DDEBUG
+      LDFLAGS += -g -pg
+   endif
 
 # add flags for profiling if requested
-ifeq (pro,$(findstring pro,$(mode)))
-   CCFLAGS += 
-   FFLAGS  += -O3
-   LDFLAGS += 
+   ifeq (pro,$(findstring pro,$(mode)))
+      CCFLAGS += 
+      FFLAGS  += -O3 -fast
+      LDFLAGS += 
+   endif
 endif
 
-# add flags for optimization if requested
-ifeq (opt,$(findstring opt,$(mode)))
-   CCFLAGS += 
-   FFLAGS  += 
-   LDFLAGS += 
-endif
+#
+# Flags to PGI on Cray
+#
 
+ifeq ($(SCAM_ARCH),cray_pgi)
+   FPP = cc
+   CC  = cc
+   FC  = ftn
+   LD  = ftn
+   AR  = ar
+   FFLAGS += -Mpreprocess
+
+# add flags for debugging if requested
+   ifeq (dbg,$(findstring dbg,$(mode)))
+      CCFLAGS += 
+      FFLAGS  += -g -O0 -traceback -Ktrap=inv,divz,ovf -Mbounds -DDEBUG
+      LDFLAGS += -g -pg
+   endif
+
+	# add flags for profiling if requested
+   ifeq (pro,$(findstring pro,$(mode)))
+      CCFLAGS += 
+      FFLAGS  += -O3
+      LDFLAGS += 
+   endif
+
+endif
 
 # objectlist file
 include Makefile-objs
