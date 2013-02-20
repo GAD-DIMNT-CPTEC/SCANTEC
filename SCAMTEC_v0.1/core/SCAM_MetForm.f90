@@ -540,8 +540,8 @@ Contains
   !
   ! !IROUTINE:  Tv1
   !
-  ! !DESCRIPTION: Esta função calcula a temperatura virtual [C] a partir da
-  !               temperatura do ar [C] e da Umidade especícia [Kg/Kg]
+  ! !DESCRIPTION: Esta função calcula a temperatura virtual [C ou K] a partir da
+  !               temperatura do ar [C ou K] e da Umidade especícia [Kg/Kg]
   !
   !\\
   !\\
@@ -555,14 +555,14 @@ Contains
     ! !INPUT PARAMETERS:
     !
 
-    real, intent(in) :: t ! temperatura do ar [C]
+    real, intent(in) :: t ! temperatura do ar [C ou K]
     real, intent(in) :: q ! Umidade Específica [kg/Kg]
 
     !
     ! !OUTPUT PARAMETERS:
     !
 
-    real :: tv1 ! temperatura virtural [C]
+    real :: tv1 ! temperatura virtural [C ou K]
 
     !
     !
