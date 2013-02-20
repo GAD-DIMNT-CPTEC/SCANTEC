@@ -52,6 +52,11 @@ Module SCAM_MetForm
                       w2   ! utiliza umidade especifica w(q)
   end interface
 
+  interface tv
+     module procedure tv1,& ! utiliza temperatura do ar [C] e Umidade Especifica [kg/kg] tv(t,q)
+                      tv2   ! utiliza temperatura do ar [C], umidade relativa [%] e pressao atm [Pa] tv(t,rh,p)
+  end interface
+
   !
   ! !REVISION HISTORY:
   !  19 FebT 2013 - J. G. de Mattos - Initial Version
@@ -232,7 +237,7 @@ Contains
   !
   ! !IROUTINE:  w2
   !
-  ! !DESCRIPTION: Esta rotina calcula a razao de mistura [kg/kg] a partir da umidade
+  ! !DESCRIPTION: Esta rotina calcula a razao de mistura [-] a partir da umidade
   !               especifica [kg/kg].
   !
   !\\
@@ -269,7 +274,7 @@ Contains
     WRITE(stdout,'(     2A)')'Hello from ', trim(myname_)
 #endif
 
-    w2 = (q / ( 1000.0 - q ) )
+    w2 = (q / ( 1 - q ) )
 
   end function
   !EOC
@@ -321,7 +326,7 @@ Contains
 #endif
 
      q1 = w / (1.0 + w)
-     q1 = q1 * 1000.0
+!     q1 = q1 * 1000.0
 
   endfunction
   !EOC
@@ -330,7 +335,7 @@ Contains
   !
   ! !IROUTINE:  q2
   !
-  ! !DESCRIPTION: Esta funcao calcula a umidade especifica em g/kg 
+  ! !DESCRIPTION: Esta funcao calcula a umidade especifica em kg/kg 
   !               
   !
   !\\
@@ -379,7 +384,7 @@ Contains
 
      e  = 611.20*exp((17.67*Td)/(Td + 243.5)); 
      q2 = (0.622 * e)/(pres - (0.378 * e)); 
-     q2 = q2 * 1000.0
+!     q2 = q2 * 1000.0
 
   endfunction
   !EOC
@@ -448,7 +453,7 @@ Contains
   ! !IROUTINE:  rh
   !
   ! !DESCRIPTION: Esta função calcula a umidade relativa [-] a partir da
-  !               razão de mistura [kg/kg], da pressao de vapor de saturacao [hPa] e
+  !               razão de mistura [-], da pressao de vapor de saturacao [hPa] e
   !               da pressão atmosferica [hPa].
   !\\
   !\\
@@ -493,10 +498,10 @@ Contains
 
     eps = Rd / Rv
     ws  = (eps*es) / (pres - es);
-    rh  = (w/ws)
+    rh  = (w/ws) * 100.0
 
     !  mask to rh > 100 %
-    IF(rh .GT. 1.0) rh = 1.0
+    IF(rh .GT. 100.0) rh = 100.0
 
   end function
   !EOC
@@ -504,16 +509,16 @@ Contains
   !-----------------------------------------------------------------------------!
   !BOP
   !
-  ! !IROUTINE:  Tv
+  ! !IROUTINE:  Tv1
   !
-  ! !DESCRIPTION: Esta função calcula a temperatura virtual [K] a partir da
-  !               temperatura do ar [K] e da Umidade especícia [Kg/Kg]
+  ! !DESCRIPTION: Esta função calcula a temperatura virtual [C] a partir da
+  !               temperatura do ar [C] e da Umidade especícia [Kg/Kg]
   !
   !\\
   !\\
   ! !INTERFACE:
 
-  function Tv(t,q)
+  function tv1(t,q)
 
     Implicit None
 
@@ -521,14 +526,14 @@ Contains
     ! !INPUT PARAMETERS:
     !
 
-    real, intent(in) :: t ! temperatura do ar [K]
+    real, intent(in) :: t ! temperatura do ar [C]
     real, intent(in) :: q ! Umidade Específica [kg/Kg]
 
     !
     ! !OUTPUT PARAMETERS:
     !
 
-    real :: tv ! temperatura virtural [K]
+    real :: tv1 ! temperatura virtural [C]
 
     !
     !
@@ -541,13 +546,76 @@ Contains
     !BOC
     !
 
-    character(len=1024),parameter :: myname_=trim(myname)//'::tv'
+    character(len=1024),parameter :: myname_=trim(myname)//'::tv1'
 
 #ifdef DEBUG
     WRITE(stdout,'(     2A)')'Hello from ', trim(myname_)
 #endif
 
-    tv = t * ( 1 + 0.61 * ( q / ( 1 - q ) ) ) 
+    tv1 = t * ( 1 + 0.61 * ( q / ( 1 - q ) ) ) 
+
+  end function
+  !EOC
+  !
+  !-----------------------------------------------------------------------------!
+  !BOP
+  !
+  ! !IROUTINE:  Tv2
+  !
+  ! !DESCRIPTION: Esta função calcula a temperatura virtual [C] a partir da
+  !               temperatura do ar [C] e da Umidade Relativa [%] e da Pressao
+  !               atmosferica [Pa]
+  !
+  !\\
+  !\\
+  ! !INTERFACE:
+
+  function tv2(t,rh,pres)
+
+    Implicit None
+
+    !
+    ! !INPUT PARAMETERS:
+    !
+
+    real, intent(in) :: t    ! temperatura do ar [C]
+    real, intent(in) :: rh   ! Umidade Relativa [%]
+    real, intent(in) :: pres ! Pressão Atmosferica [Pa]
+
+    !
+    ! !OUTPUT PARAMETERS:
+    !
+
+    real :: tv2 ! temperatura virtural [C]
+
+    !
+    !
+    ! !REVISION HISTORY: 
+    !  19 Feb 2013 - J. G. de Mattos - Initial Version
+    !
+    !
+    !EOP
+    !-----------------------------------------------------------------------------!
+    !BOC
+    !
+
+    real :: eps
+    real :: es, ee
+    real :: w
+
+    character(len=1024),parameter :: myname_=trim(myname)//'::tv2'
+
+#ifdef DEBUG
+    WRITE(stdout,'(     2A)')'Hello from ', trim(myname_)
+#endif
+
+   eps = Rd / Rv
+   es  = 611.2*exp((17.67 * t)/(t+243.5))
+   ee  = ( rh / 100.0 ) * es
+   w   = eps * ( ee / (pres - ee) )
+
+   Tv2 = t * (1 + w / eps) / (1 + w)
+
 
   end function
   !EOC
