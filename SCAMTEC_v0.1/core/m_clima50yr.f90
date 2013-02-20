@@ -24,6 +24,7 @@ MODULE m_clima50yr
   USE interp_mod                    ! Interpolation module
   USE m_die                         ! Error Messages
   USE m_stdio                       ! Module to defines std. I/O parameters
+  USE SCAM_MetForm                  ! Module to convert meteorological variables
 
   IMPLICIT NONE
   PRIVATE
@@ -263,7 +264,7 @@ CONTAINS
     ! Variaveis temporarias utilizadas para conversao de umidades e variaveis
     !
     
-    real, allocatable, dimension(:) :: ee, es, rv, qq
+!    real, allocatable, dimension(:) :: ee, es, rv, qq
 
     !
     !  0. Hello
@@ -345,33 +346,15 @@ CONTAINS
     ! * A lista de variaveis e as unidades utilizadas podem ser
     !   obtidas no modulo SCAM_dataMOD.f90
     !
+
     allocate(f2(clima50yr_struc%npts,scamtec%nvar))
-    allocate(es(clima50yr_struc%npts))
-    allocate(ee(clima50yr_struc%npts))
-    allocate(rv(clima50yr_struc%npts))
 
-
-    es       = 6.1078*exp((17.2693882*(f(:,1)-273.16))/(f(:,1)-35.86))
-    ee       = f(:,4)*es
-    rv       = (0.622*ee)/(925.0-ee)
-
-    f2(:, 5) = rv/(1+rv)/1000.                     ! Umes @ 925 hPa [g/Kg]
-
-    f2(:, 1) = f(:,1)*(1 + 0.61*rv)                ! Vtmp @ 925 hPa [K]
-
-    es       = 6.1078*exp((17.2693882*(f(:,2)-273.16))/(f(:,2)-35.86))
-    ee       = f(:,5)*es
-    rv       = (0.622*ee)/(925.0-ee)
-    f2(:, 2) = f(:,2)*(1 + 0.61*rv)                ! Vtmp @ 850 hPa [K]
-
-    es       = 6.1078*exp((17.2693882*(f(:,3)-273.16))/(f(:,3)-35.86))
-    ee       = f(:,6)*es
-    rv       = (0.622*ee)/(925.0-ee)
-    f2(:, 3) = f(:,3)*(1 + 0.61*rv)                ! Vtmp @ 500 hPa [K]
-
-    DeAllocate(es)
-    DeAllocate(ee)
-    DeAllocate(rv)
+    do i=1,clima50yr_struc%npts
+       f2(i,1) = tv(f(i,1)-273.16,f(i,4),92500.0) + 273.16 ! Vtmp @ 925 hPa [K]
+       f2(i,2) = tv(f(i,2)-273.16,f(i,5),85000.0) + 273.16 ! Vtmp @ 850 hPa [K]
+       f2(i,3) = tv(f(i,3)-273.16,f(i,3),50000.0) + 273.16 ! Vtmp @ 500 hPa [K]
+       f2(i,5) = q(92500.0,f(i,1)-273.16,f(i,5)) * 1000.00 ! Umes @ 925 hPa [g/Kg]
+    enddo
 
     f2(:, 4) = f(:, 7)                            ! PSNM [hPa]
     f2(:, 6) = f(:, 8)                            ! Agpl @ 925 hPa [Kg/m2]
