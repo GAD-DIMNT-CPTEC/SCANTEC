@@ -53,19 +53,19 @@ $(srcdir)/bilinear_interpolation.o bilinear_interpolation.o: \
 $(srcdir)/eta_read.o eta_read.o: \
 	$(srcdir)/eta_read.f90
 
-ftn_drv.h: \
-	
 
 $(srcdir)/m_agcm.o m_agcm.o: \
 	$(srcdir)/m_agcm.f90 \
 	$(srcdir)/bilinear_interpolation.o \
 	$(srcdir)/SCAM_dataMOD.o \
+	$(srcdir)/SCAM_MetForm.o \
 	$(srcdir)/scamtec_module.o
 
 $(srcdir)/m_clima50yr.o m_clima50yr.o: \
 	$(srcdir)/m_clima50yr.f90 \
 	$(srcdir)/bilinear_interpolation.o \
 	$(srcdir)/SCAM_dataMOD.o \
+	$(srcdir)/SCAM_MetForm.o \
 	$(srcdir)/scamtec_module.o
 
 $(srcdir)/m_string.o m_string.o: \
@@ -83,4 +83,8 @@ $(srcdir)/scamtec_module.o scamtec_module.o: \
 
 $(srcdir)/template_read.o template_read.o: \
 	$(srcdir)/template_read.f90
+
+$(srcdir)/SCAM_MetForm.o SCAM_MetForm.o: \
+	$(srcdir)/SCAM_MetForm.f90
+
 

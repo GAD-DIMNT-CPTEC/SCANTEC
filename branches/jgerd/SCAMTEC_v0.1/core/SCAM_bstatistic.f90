@@ -434,13 +434,7 @@ Contains
     write(FunitOut+1,fmt)(i-1)*scamtec%time_step,(dado(run)%vies(j,i),j=1,scamtec%nvar)
     write(FunitOut+2,fmt)(i-1)*scamtec%time_step,(dado(run)%acor(j,i),j=1,scamtec%nvar)
 
-
-
-
     Close(FUnitOut)
-
-
-
 
   End Subroutine WriteBstat
   !EOC

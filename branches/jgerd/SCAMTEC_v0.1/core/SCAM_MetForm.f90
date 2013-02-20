@@ -17,6 +17,32 @@ Module SCAM_MetForm
 
   IMPLICIT NONE
   PRIVATE
+
+  public :: es
+  public :: ee
+  public :: w
+  public :: q
+  public :: rh
+  public :: td
+  public :: tv
+
+  interface q
+     module procedure q1,& ! utiliza somente razao de mistura q(w)
+                      q2,& ! utiliza td e pressao q(p,td)
+                      q3   ! utiliza pressao, temperatura e umidade relativa q(p,t,rh)
+  end interface q
+
+  interface w
+     module procedure w1,& ! utiliza pressão de vapor e pressao atmosferica w(p,e)
+                      w2   ! utiliza umidade especifica w(q)
+  end interface w
+
+  interface tv
+     module procedure tv1,& ! utiliza temperatura do ar [C] e Umidade Especifica [kg/kg] tv(t,q)
+                      tv2   ! utiliza temperatura do ar [C], umidade relativa [%] e pressao atm [Pa] tv(t,rh,p)
+  end interface tv
+
+
   !
   ! !PARAMETERS:
   !
@@ -30,32 +56,7 @@ Module SCAM_MetForm
   integer, parameter :: stdout = 6
   character(len=1024),parameter :: myname='SCAM_MetForm'
 
-  !
-  ! !PUBLIC MEMBER FUNCTIONS:
-  !
-  
-  public :: es
-  public :: ee
-  public :: w
-  public :: q
-  public :: rh
-  public :: td
-  public :: tv
 
-  interface q
-     module procedure q1,& ! utiliza somente razao de mistura q(w)
-                      q2   ! utiliza td e pressao q(p,td)
-  end interface
-
-  interface w
-     module procedure w1,& ! utiliza pressão de vapor e pressao atmosferica w(p,e)
-                      w2   ! utiliza umidade especifica w(q)
-  end interface
-
-  interface tv
-     module procedure tv1,& ! utiliza temperatura do ar [C] e Umidade Especifica [kg/kg] tv(t,q)
-                      tv2   ! utiliza temperatura do ar [C], umidade relativa [%] e pressao atm [Pa] tv(t,rh,p)
-  end interface
 
   !
   ! !REVISION HISTORY:
@@ -85,7 +86,7 @@ Contains
   ! !INTERFACE:
 
   function es(temp)
-     implicit none
+    implicit none
     !
     ! !INPUT PARAMETERS:
     !
@@ -114,14 +115,9 @@ Contains
 
     character(len=1024),parameter :: myname_=trim(myname)//'::es'
 
-#ifdef DEBUG
-    WRITE(stdout,'(     2A)')'Hello from ', trim(myname_)
-#endif
-    
-
     es = 611.2*exp((17.67 * temp)/(temp+243.5))
 
-  end function
+  end function es
   !EOC
   !
   !-----------------------------------------------------------------------------!
@@ -135,44 +131,40 @@ Contains
   !\\
   ! !INTERFACE:
   function ee(es, rh)
-     implicit none
+    implicit none
 
-     !
-     ! !INPUT PARAMETERS:
-     !
+    !
+    ! !INPUT PARAMETERS:
+    !
 
-     real, intent(in) :: es ! Pressão de vapor saturado [Pa]
-     real, intent(in) :: rh ! Umidade relativa [%]
+    real, intent(in) :: es ! Pressão de vapor saturado [Pa]
+    real, intent(in) :: rh ! Umidade relativa [%]
 
-     !
-     ! !OUTPUT PARAMETERS:
-     !
+    !
+    ! !OUTPUT PARAMETERS:
+    !
 
-     real :: ee ! pressao de vapor [Pa]
+    real :: ee ! pressao de vapor [Pa]
 
-     !
-     !
-     ! !REVISION HISTORY: 
-     !  19 Feb 2013 - J. G. de Mattos - Initial Version
-     !
-     ! !SEE ALSO: 
-     !     Huschke, Glossary of Meteorology, 1959, p. 477
-     !      
-     !     
-     !
-     !EOP
-     !-----------------------------------------------------------------------------!
-     !BOC
-     !
+    !
+    !
+    ! !REVISION HISTORY: 
+    !  19 Feb 2013 - J. G. de Mattos - Initial Version
+    !
+    ! !SEE ALSO: 
+    !     Huschke, Glossary of Meteorology, 1959, p. 477
+    !      
+    !     
+    !
+    !EOP
+    !-----------------------------------------------------------------------------!
+    !BOC
+    !
     character(len=1024),parameter :: myname_=trim(myname)//'::ee'
 
-#ifdef DEBUG
-    WRITE(stdout,'(     2A)')'Hello from ', trim(myname_)
-#endif
+    ee = ( rh / 100.0 ) * es
 
-     ee = ( rh / 100.0 ) * es
-
-  endfunction
+  end function ee
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
@@ -187,50 +179,45 @@ Contains
   ! !INTERFACE:
 
   function w1(pres, ee)
-     implicit none
+    implicit none
 
-     !
-     ! !INPUT PARAMETERS:
-     !
+    !
+    ! !INPUT PARAMETERS:
+    !
 
-     real, intent(in) :: pres  ! pressão atmosferica [Pa]
-     real, intent(in) :: ee    ! pressao de vapor [Pa]
+    real, intent(in) :: pres  ! pressão atmosferica [Pa]
+    real, intent(in) :: ee    ! pressao de vapor [Pa]
 
-     !
-     ! !OUTPUT PARAMETERS:
-     !
+    !
+    ! !OUTPUT PARAMETERS:
+    !
 
-     real :: w1 ! razão de mistura [-]
+    real :: w1 ! razão de mistura [-]
 
-     !
-     !
-     ! !REVISION HISTORY: 
-     !  19 Feb 2013 - J. G. de Mattos - Initial Version
-     !
-     ! !SEE ALSO: 
-     !     Wallace & Hobbs, Atmospheric Science, 1977, Academic Press 
-     !
-     !     
-     !
-     !EOP
-     !-----------------------------------------------------------------------------!
-     !BOC
-     !
+    !
+    !
+    ! !REVISION HISTORY: 
+    !  19 Feb 2013 - J. G. de Mattos - Initial Version
+    !
+    ! !SEE ALSO: 
+    !     Wallace & Hobbs, Atmospheric Science, 1977, Academic Press 
+    !
+    !     
+    !
+    !EOP
+    !-----------------------------------------------------------------------------!
+    !BOC
+    !
 
-     real :: eps
+    real :: eps
 
     character(len=1024),parameter :: myname_=trim(myname)//'::w1'
 
-#ifdef DEBUG
-    WRITE(stdout,'(     2A)')'Hello from ', trim(myname_)
-#endif
-     
+    eps = Rd / Rv
 
-     eps = Rd / Rv
+    w1 = eps * ( ee / (pres - ee) ) 
 
-     w1 = eps * ( ee / (pres - ee) );  
-
-  endfunction
+  end function w1
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
@@ -244,7 +231,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  FUNCTION w2(q)
+  function w2(q)
 
     Implicit None
     !
@@ -254,7 +241,7 @@ Contains
     !
     ! !OUTPUT PARAMETERS:
     !
-    
+
     real :: w2 ! Razão de Mistura [kg/kg]
 
     !
@@ -270,13 +257,9 @@ Contains
 
     character(len=1024),parameter :: myname_=trim(myname)//'::w2'
 
-#ifdef DEBUG
-    WRITE(stdout,'(     2A)')'Hello from ', trim(myname_)
-#endif
-
     w2 = (q / ( 1 - q ) )
 
-  end function
+  end function w2
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
@@ -291,44 +274,40 @@ Contains
   ! !INTERFACE:
 
   function q1(w)
-     implicit none
+    implicit none
 
-     !
-     ! !INPUT PARAMETERS:
-     !
+    !
+    ! !INPUT PARAMETERS:
+    !
 
-     real, intent(in) :: w ! razao de mistura em kg/kg
+    real, intent(in) :: w ! razao de mistura em kg/kg
 
-     !
-     ! !OUTPUT PARAMETERS:
-     ! 
+    !
+    ! !OUTPUT PARAMETERS:
+    ! 
 
-     real :: q1 ! Umidade especifica em kg/kg
+    real :: q1 ! Umidade especifica em kg/kg
 
-     !
-     !
-     ! !REVISION HISTORY: 
-     !  19 Feb 2013 - J. G. de Mattos - Initial Version
-     !
-     ! !SEE ALSO: 
-     !     Huschke, Glossary of Meteorology, 1959, p. 530
-     !      
-     !     
-     !
-     !EOP
-     !-----------------------------------------------------------------------------!
-     !BOC
-     !
+    !
+    !
+    ! !REVISION HISTORY: 
+    !  19 Feb 2013 - J. G. de Mattos - Initial Version
+    !
+    ! !SEE ALSO: 
+    !     Huschke, Glossary of Meteorology, 1959, p. 530
+    !      
+    !     
+    !
+    !EOP
+    !-----------------------------------------------------------------------------!
+    !BOC
+    !
     character(len=1024),parameter :: myname_=trim(myname)//'::q1'
 
-#ifdef DEBUG
-    WRITE(stdout,'(     2A)')'Hello from ', trim(myname_)
-#endif
+    q1 = w / (1.0 + w)
+    !     q1 = q1 * 1000.0
 
-     q1 = w / (1.0 + w)
-!     q1 = q1 * 1000.0
-
-  endfunction
+  end function q1
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
@@ -343,51 +322,110 @@ Contains
   ! !INTERFACE:
 
   function q2(pres,td)
-     implicit none
+    implicit none
 
-     !
-     ! !INPUT PARAMETERS:
-     !
+    !
+    ! !INPUT PARAMETERS:
+    !
 
-     real, intent(in) :: pres ! Pressao Atmosférica [Pa]
-     real, intent(in) :: td   ! Tempeatura do Ponto de Orvalho [C]
+    real, intent(in) :: pres ! Pressao Atmosférica [Pa]
+    real, intent(in) :: td   ! Tempeatura do Ponto de Orvalho [C]
 
-     !
-     ! !OUTPUT PARAMETERS:
-     ! 
+    !
+    ! !OUTPUT PARAMETERS:
+    ! 
 
-     real :: q2 ! Umidade especifica em g/kg
+    real :: q2 ! Umidade especifica em g/kg
 
-     !
-     !
-     ! !REVISION HISTORY: 
-     !  19 Feb 2013 - J. G. de Mattos - Initial Version
-     !
-     ! !SEE ALSO: 
-     !     Bolton, D., The computation of equivalent potential temperature, 
-     !                  Monthly Weather Review, 108, 1046-1053, 1980. 
-     !      
-     !     
-     !
-     !EOP
-     !-----------------------------------------------------------------------------!
-     !BOC
-     !
-     
-     real :: e
+    !
+    !
+    ! !REVISION HISTORY: 
+    !  19 Feb 2013 - J. G. de Mattos - Initial Version
+    !
+    ! !SEE ALSO: 
+    !     Bolton, D., The computation of equivalent potential temperature, 
+    !                  Monthly Weather Review, 108, 1046-1053, 1980. 
+    !      
+    !     
+    !
+    !EOP
+    !-----------------------------------------------------------------------------!
+    !BOC
+    !
+
+    real :: e
 
     character(len=1024),parameter :: myname_=trim(myname)//'::q2'
 
-#ifdef DEBUG
-    WRITE(stdout,'(     2A)')'Hello from ', trim(myname_)
-#endif
+    e  = 611.20*exp((17.67*Td)/(Td + 243.5)); 
+    q2 = (0.622 * e)/(pres - (0.378 * e)); 
+    !     q2 = q2 * 1000.0
 
-     e  = 611.20*exp((17.67*Td)/(Td + 243.5)); 
-     q2 = (0.622 * e)/(pres - (0.378 * e)); 
-!     q2 = q2 * 1000.0
-
-  endfunction
+  end function q2
   !EOC
+  !-----------------------------------------------------------------------------!
+  !BOP
+  !
+  ! !IROUTINE:  q3
+  !
+  ! !DESCRIPTION: Esta funcao calcula a umidade especifica em kg/kg 
+  !               
+  !
+  !\\
+  !\\
+  ! !INTERFACE:
+
+  function q3(pres,t,rh)
+    implicit none
+
+    !
+    ! !INPUT PARAMETERS:
+    !
+
+    real, intent(in) :: pres ! Pressao Atmosférica [Pa]
+    real, intent(in) :: t    ! Tempeatura do Ar [C]
+    real, intent(in) :: rh   ! Umidade Relativa [%]
+
+
+    !
+    ! !OUTPUT PARAMETERS:
+    ! 
+
+    real :: q3 ! Umidade especifica em g/kg
+
+    !
+    !
+    ! !REVISION HISTORY: 
+    !  19 Feb 2013 - J. G. de Mattos - Initial Version
+    !
+    ! !SEE ALSO: 
+    !     Bolton, D., The computation of equivalent potential temperature, 
+    !                  Monthly Weather Review, 108, 1046-1053, 1980. 
+    !      
+    !     
+    !
+    !EOP
+    !-----------------------------------------------------------------------------!
+    !BOC
+    !
+
+    real :: eps
+    real :: es
+    real :: ee
+    real :: w
+
+    character(len=1024),parameter :: myname_=trim(myname)//'::q3'
+
+    eps = Rd / Rv
+    es  = 611.20 * exp((17.67 * t)/(t + 243.5));
+    ee  = es * ( rh / 100.0 );
+    eps = Rd / Rv
+    w   = eps * ( ee / (pres - ee) ) 
+    q3 = w / (1.0 + w)
+
+  end function q3
+  !EOC
+
   !-----------------------------------------------------------------------------!
   !BOP
   !
@@ -401,51 +439,46 @@ Contains
   ! !INTERFACE:
 
   function td(t,rh)
-     implicit none
+    implicit none
 
-     !
-     ! !INPUT PARAMETERS:
-     !
+    !
+    ! !INPUT PARAMETERS:
+    !
 
-     real, intent(in) :: rh ! Umidade Relativa [-]
-     real, intent(in) :: t   ! Tempeatura do Ar [C]
+    real, intent(in) :: rh ! Umidade Relativa [%]
+    real, intent(in) :: t   ! Tempeatura do Ar [C]
 
-     !
-     ! !OUTPUT PARAMETERS:
-     ! 
+    !
+    ! !OUTPUT PARAMETERS:
+    ! 
 
-     real :: td ! Temperatura do Ponto de Orvalho [C]
+    real :: td ! Temperatura do Ponto de Orvalho [C]
 
-     !
-     !
-     ! !REVISION HISTORY: 
-     !  19 Feb 2013 - J. G. de Mattos - Initial Version
-     !
-     ! !SEE ALSO: 
-     !     Bolton, D., The computation of equivalent potential temperature, 
-     !                  Monthly Weather Review, 108, 1046-1053, 1980. 
-     !      
-     !     
-     !
-     !EOP
-     !-----------------------------------------------------------------------------!
-     !BOC
-     !
-     
-     real :: e, es
+    !
+    !
+    ! !REVISION HISTORY: 
+    !  19 Feb 2013 - J. G. de Mattos - Initial Version
+    !
+    ! !SEE ALSO: 
+    !     Bolton, D., The computation of equivalent potential temperature, 
+    !                  Monthly Weather Review, 108, 1046-1053, 1980. 
+    !      
+    !     
+    !
+    !EOP
+    !-----------------------------------------------------------------------------!
+    !BOC
+    !
+
+    real :: e, es
 
     character(len=1024),parameter :: myname_=trim(myname)//'::td'
 
-#ifdef DEBUG
-    WRITE(stdout,'(     2A)')'Hello from ', trim(myname_)
-#endif
+    es = 6.112 * exp((17.67 * t)/(t + 243.5)); 
+    e = es * ( rh / 100.0 ); 
+    Td = log(e/6.112)*243.5/(17.67-log(e/6.112)); 
 
-
-     es = 6.112 * exp((17.67 * t)/(t + 243.5)); 
-     e = es * ( rh / 100.0 ); 
-     Td = log(e/6.112)*243.5/(17.67-log(e/6.112)); 
-
-  endfunction
+  end function td
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
@@ -492,10 +525,6 @@ Contains
 
     character(len=1024),parameter :: myname_=trim(myname)//'::rh'
 
-#ifdef DEBUG
-    WRITE(stdout,'(     2A)')'Hello from ', trim(myname_)
-#endif
-
     eps = Rd / Rv
     ws  = (eps*es) / (pres - es);
     rh  = (w/ws) * 100.0
@@ -503,7 +532,7 @@ Contains
     !  mask to rh > 100 %
     IF(rh .GT. 100.0) rh = 100.0
 
-  end function
+  end function rh
   !EOC
   !
   !-----------------------------------------------------------------------------!
@@ -548,13 +577,9 @@ Contains
 
     character(len=1024),parameter :: myname_=trim(myname)//'::tv1'
 
-#ifdef DEBUG
-    WRITE(stdout,'(     2A)')'Hello from ', trim(myname_)
-#endif
-
     tv1 = t * ( 1 + 0.61 * ( q / ( 1 - q ) ) ) 
 
-  end function
+  end function tv1
   !EOC
   !
   !-----------------------------------------------------------------------------!
@@ -605,19 +630,15 @@ Contains
 
     character(len=1024),parameter :: myname_=trim(myname)//'::tv2'
 
-#ifdef DEBUG
-    WRITE(stdout,'(     2A)')'Hello from ', trim(myname_)
-#endif
+    eps = Rd / Rv
+    es  = 611.2*exp((17.67 * t)/(t+243.5))
+    ee  = ( rh / 100.0 ) * es
+    w   = eps * ( ee / (pres - ee) )
 
-   eps = Rd / Rv
-   es  = 611.2*exp((17.67 * t)/(t+243.5))
-   ee  = ( rh / 100.0 ) * es
-   w   = eps * ( ee / (pres - ee) )
-
-   Tv2 = t * (1 + w / eps) / (1 + w)
+    Tv2 = t * (1 + w / eps) / (1 + w)
 
 
-  end function
+  end function tv2
   !EOC
   !
   !-----------------------------------------------------------------------------!
