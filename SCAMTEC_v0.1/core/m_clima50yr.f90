@@ -58,7 +58,8 @@ MODULE m_clima50yr
 ! !REVISION HISTORY:
 !  06 May 2012 - J. G. de Mattos - Initial Version
 !  18 Oct 2012 - J. G. de Mattos - change UMES to g/kg
-!
+!  20 Feb 2013 - J. G. de Mattos - include SCAM_MetForm.f90 
+!                                - and use it to make conversions
 ! !SEE ALSO:
 !   
 !

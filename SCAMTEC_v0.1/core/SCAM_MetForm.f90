@@ -18,28 +18,32 @@ Module SCAM_MetForm
   IMPLICIT NONE
   PRIVATE
 
-  public :: es
-  public :: ee
-  public :: w
-  public :: q
-  public :: rh
-  public :: td
-  public :: tv
+  !
+  ! Funções para obter variaveis meteorologicas 
+  !
+
+  public :: es ! Pressão de Vapor Saturado
+  public :: ee ! Pressão de Vapor
+  public :: w  ! Razão de Mistura
+  public :: q  ! Umidade Especifica
+  public :: rh ! Umidade Relativa
+  public :: td ! Temperatura do Ponto de Orvalho
+  public :: tv ! Temperatura Virtual
 
   interface q
-     module procedure q1,& ! utiliza somente razao de mistura q(w)
-                      q2,& ! utiliza td e pressao q(p,td)
-                      q3   ! utiliza pressao, temperatura e umidade relativa q(p,t,rh)
+     module procedure q1,& ! utiliza somente razao de mistura: q(w)
+                      q2,& ! utiliza td e pressao atm: q(p,td)
+                      q3   ! utiliza pressao atm, temperatura do ar e umidade relativa: q(p,t,rh)
   end interface q
 
   interface w
-     module procedure w1,& ! utiliza pressão de vapor e pressao atmosferica w(p,e)
-                      w2   ! utiliza umidade especifica w(q)
+     module procedure w1,& ! utiliza pressão de vapor e pressao atm: w(p,e)
+                      w2   ! utiliza umidade especifica: w(q)
   end interface w
 
   interface tv
-     module procedure tv1,& ! utiliza temperatura do ar [C] e Umidade Especifica [kg/kg] tv(t,q)
-                      tv2   ! utiliza temperatura do ar [C], umidade relativa [%] e pressao atm [Pa] tv(t,rh,p)
+     module procedure tv1,& ! utiliza temperatura do ar e Umidade Especifica: tv(t,q)
+                      tv2   ! utiliza temperatura do ar, umidade relativa e pressao atm: tv(t,rh,p)
   end interface tv
 
 
@@ -47,13 +51,12 @@ Module SCAM_MetForm
   ! !PARAMETERS:
   !
 
-  real, parameter  :: p0 = 1000.00 ! pressão de referencia
+  real, parameter  :: p0 = 1000.00 ! pressão de referencia [hPa]
   real, parameter  :: Rd =  287.04 ! Constante dos Gases para o ar seco [ Joutes/K/kg]
   real, parameter  :: Rv =  461.50 ! Constante dos Gases para o Vapor d'água [ Joutes/K/kg]
   real, parameter  :: cp = 1003.50 ! Calor especifico para o ar seco [Joules/K/kg]
   real, parameter  :: L  = 2257e03 ! Calor latente de vaporização [Joules/kg]
 
-  integer, parameter :: stdout = 6
   character(len=1024),parameter :: myname='SCAM_MetForm'
 
 
@@ -242,7 +245,7 @@ Contains
     ! !OUTPUT PARAMETERS:
     !
 
-    real :: w2 ! Razão de Mistura [kg/kg]
+    real :: w2 ! Razão de Mistura [-]
 
     !
     !
@@ -266,7 +269,7 @@ Contains
   !
   ! !IROUTINE:  q1
   !
-  ! !DESCRIPTION: Esta funcao calcula a umidade especifica em kg/kg 
+  ! !DESCRIPTION: Esta funcao calcula a umidade especifica [kg/kg]
   !               
   !
   !\\
@@ -280,13 +283,13 @@ Contains
     ! !INPUT PARAMETERS:
     !
 
-    real, intent(in) :: w ! razao de mistura em kg/kg
+    real, intent(in) :: w ! razao de mistura [kg/kg]
 
     !
     ! !OUTPUT PARAMETERS:
     ! 
 
-    real :: q1 ! Umidade especifica em kg/kg
+    real :: q1 ! Umidade especifica [kg/kg]
 
     !
     !
@@ -314,7 +317,7 @@ Contains
   !
   ! !IROUTINE:  q2
   !
-  ! !DESCRIPTION: Esta funcao calcula a umidade especifica em kg/kg 
+  ! !DESCRIPTION: Esta funcao calcula a umidade especifica [kg/kg]
   !               
   !
   !\\
@@ -335,7 +338,7 @@ Contains
     ! !OUTPUT PARAMETERS:
     ! 
 
-    real :: q2 ! Umidade especifica em g/kg
+    real :: q2 ! Umidade especifica [kg/kg]
 
     !
     !
@@ -368,7 +371,7 @@ Contains
   !
   ! !IROUTINE:  q3
   !
-  ! !DESCRIPTION: Esta funcao calcula a umidade especifica em kg/kg 
+  ! !DESCRIPTION: Esta funcao calcula a umidade especifica [kg/kg]
   !               
   !
   !\\
@@ -391,7 +394,7 @@ Contains
     ! !OUTPUT PARAMETERS:
     ! 
 
-    real :: q3 ! Umidade especifica em g/kg
+    real :: q3 ! Umidade especifica [kg/kg]
 
     !
     !
@@ -446,7 +449,7 @@ Contains
     !
 
     real, intent(in) :: rh ! Umidade Relativa [%]
-    real, intent(in) :: t   ! Tempeatura do Ar [C]
+    real, intent(in) :: t  ! Tempeatura do Ar [C]
 
     !
     ! !OUTPUT PARAMETERS:
@@ -485,7 +488,7 @@ Contains
   !
   ! !IROUTINE:  rh
   !
-  ! !DESCRIPTION: Esta função calcula a umidade relativa [-] a partir da
+  ! !DESCRIPTION: Esta função calcula a umidade relativa [%] a partir da
   !               razão de mistura [-], da pressao de vapor de saturacao [hPa] e
   !               da pressão atmosferica [hPa].
   !\\
@@ -508,7 +511,7 @@ Contains
     ! !OUTPUT PARAMETERS:
     !
 
-    real :: rh  ! Umidade Relativa [-]
+    real :: rh  ! Umidade Relativa [%]
 
     !
     !
