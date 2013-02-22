@@ -147,24 +147,24 @@ CONTAINS
 #endif
      
     allocate(lb(Precipitation_struc%npts,scamtec%nvar))
-	lb = .true.
+    lb = .true.
     allocate(f(Precipitation_struc%npts,19))
-	
+    
     lugb = 1
 
     inquire (file=trim(fname), exist=file_exists)
-	
+    
     if (file_exists) then
      
 
  
-  	! abrindo binario Precipitation
-	OPEN (UNIT=lugb,FILE=trim(fname),FORM='unformatted',convert='big_endian',access='direct',&
-	recl=190*246*4,ACTION = 'read',STATUS ='Unknown',iostat=iret)
-			
-		read(lugb, rec=1)binario(:)
+    ! abrindo binario Precipitation
+    OPEN (UNIT=lugb,FILE=trim(fname),FORM='unformatted',convert='big_endian',access='direct',recl=190*246*4,ACTION = 'read',STATUS ='Unknown',iostat=iret)
+            
+        read(lugb, rec=1)binario(:)
                 !write(15)binario(:,:)
-	    call clsieee(lugb,jret)
+                
+       call clsieee(lugb,jret)
 
     else
 
@@ -173,7 +173,8 @@ CONTAINS
        !deallocate(lb)
 
     endif
-        
+    
+
     !
     ! Convertendo as Variaveis para as utilizadas no SCAMTEC
     ! * A lista de variaveis e as unidades utilizadas podem ser
@@ -190,11 +191,11 @@ CONTAINS
    f(:,3) = 0     ! T 500            ABSOLUTE TEMPERATURE  
    f(:,4) = 0     ! PSNM [hPa]
 
-		
+        
 
-   f(:,5) = 0     ! Q 925 		  SPECIFIC HUMIDITY
-   f(:,6) = 0     ! Q 850 		  SPECIFIC HUMIDITY
-   f(:,7) = 0     ! Q 500 		  SPECIFIC HUMIDITY
+   f(:,5) = 0     ! Q 925         SPECIFIC HUMIDITY
+   f(:,6) = 0     ! Q 850         SPECIFIC HUMIDITY
+   f(:,7) = 0     ! Q 500         SPECIFIC HUMIDITY
 
    f(:,8)  = 0    ! Agpl @ 925 hPa [Kg/m2]
    f(:,9)  = 0    ! Zgeo @ 850 hPa [gpm]
@@ -230,7 +231,7 @@ CONTAINS
    f2(:,16) = f(:,18)                                ! PREC @ 000 hPa [kg/m2/day]
    f2(:,17) = f(:,19)                                ! PREV @ 000 hPa [kg/m2/day]
 
-	do iv=1, scamtec%nvar
+    do iv=1, scamtec%nvar
        where(f2(:,iv).eq.undef) lb(:,iv) = .false.
     enddo
 !------------------------------------------------------------------------------
@@ -266,7 +267,7 @@ CONTAINS
 
 
   
-	scamdata(1)%tmpfield(:,16) = binario(:)
+    scamdata(1)%tmpfield(:,16) = binario(:)
 
 
     nx = int(scamtec%gridDesc(2))
@@ -274,9 +275,9 @@ CONTAINS
     
     allocate(varfield(nx*ny))
     DO iv = 1, scamtec%nvar !15 vairaveis
-	
+    
       !call interp_Precipitation( kpds, Precipitation_struc%npts,f2(:,iv),lb, scamtec%gridDesc,scamtec%nxpt,scamtec%nypt, varfield)    
-		
+        
     !
     ! Transferindo para matriz temporaria do SCAMTEC
     !
@@ -318,7 +319,7 @@ CONTAINS
 #ifdef DEBUG
     WRITE(6,'(     2A)')'Hello from ', myname_
 #endif
-		
+        
     ip    = 0
     ipopt = 0
     km    = 1
@@ -344,4 +345,4 @@ CONTAINS
   END SUBROUTINE interp_Precipitation
 
 END MODULE obs_Precipitation
-	
+    

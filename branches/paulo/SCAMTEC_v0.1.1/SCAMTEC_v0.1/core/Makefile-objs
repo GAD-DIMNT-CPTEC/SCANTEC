@@ -11,6 +11,7 @@ OBJS = \
 	$(srcdir)/SCAM_dataMOD.o \
 	$(srcdir)/SCAM_gridMOD.o \
 	$(srcdir)/SCAM_outputMOD.o \
+	$(srcdir)/SCAM_MetForm.o \
 	$(srcdir)/bilinear_interpolation.o \
 	$(srcdir)/eta_read.o \
 	$(srcdir)/m_agcm.o \
@@ -19,6 +20,7 @@ OBJS = \
 	$(srcdir)/obs_Precipitation.o \
 	$(srcdir)/m_string.o \
 	$(srcdir)/m_time.o \
+	$(srcdir)/m_metri_precip.o \
 	$(srcdir)/scamdrv.o \
 	$(srcdir)/scamtec_module.o \
 	$(srcdir)/template_read.o

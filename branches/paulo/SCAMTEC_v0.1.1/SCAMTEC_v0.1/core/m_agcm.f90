@@ -23,6 +23,7 @@ MODULE m_agcm
   USE interp_mod                    ! Interpolation module
   USE m_die                         ! Error Messages
   USE m_stdio                       ! Module to defines std. I/O parameters
+  USE SCAM_MetForm                  ! Module to conversion of meteorological variables
 
 
   IMPLICIT NONE
@@ -57,6 +58,8 @@ MODULE m_agcm
 !  03 May 2012 - J. G. de Mattos - Initial Version
 !  06 May 2012 - J. G. de Mattos - Include new fields read
 !  17 Oct 2012 - J. G. de Mattos - change UMES to g/kg
+!  20 Feb 2013 - J. G. de Mattos - include SCAM_MetForm.f90 
+!                                - and use it to make conversions
 !
 !
 !
@@ -292,7 +295,7 @@ CONTAINS
 
              if (gbret.ne.0)then
                 stat = gbret
-                call perr(myname_,'getgb("'//	  &
+                call perr(myname_,'getgb("'//     &
                           trim(fname)//'")',gbret &
                          )
                 return
@@ -300,7 +303,7 @@ CONTAINS
 
           else
              stat = iret
-             call perr(myname_,'baopenr("'//	 &
+             call perr(myname_,'baopenr("'//     &
                        trim(fname)//'")',iret &
                       )
              return
@@ -311,14 +314,14 @@ CONTAINS
             stat = jret
             call perr(myname_,'deallocate()',jret)
             return
-	       endif
+          endif
        else
           stat = -1
 
           deallocate(f)
           deallocate(lb)
 
-	       call perr(myname_,'File Not Found: '//trim(fname),stat)
+          call perr(myname_,'File Not Found: '//trim(fname),stat)
           return
 
        endif
@@ -333,9 +336,16 @@ CONTAINS
 
     allocate(f2(agcm_struc%npts,scamtec%nvar))
 
-    f2(:, 1) = f(:, 4)*(1 + 0.61*(f(:,1)/(1-f(:,1)))) ! Vtmp @ 925 hPa [K]
-    f2(:, 2) = f(:, 5)*(1 + 0.61*(f(:,2)/(1-f(:,2)))) ! Vtmp @ 850 hPa [K]
-    f2(:, 3) = f(:, 6)*(1 + 0.61*(f(:,3)/(1-f(:,3)))) ! Vtmp @ 500 hPa [K]
+   f2(:, 1) = f(:, 4)*(1 + 0.61*(f(:,1)/(1-f(:,1)))) ! Vtmp @ 925 hPa [K]
+   f2(:, 2) = f(:, 5)*(1 + 0.61*(f(:,2)/(1-f(:,2)))) ! Vtmp @ 850 hPa [K]
+   f2(:, 3) = f(:, 6)*(1 + 0.61*(f(:,3)/(1-f(:,3)))) ! Vtmp @ 500 hPa [K]
+
+    !do i=1,agcm_struc%npts
+    !   f2(:, 1) = tv(f(i,4),f(i,1)) ! Vtmp @ 925 hPa [K]
+    !   f2(:, 2) = tv(f(i,5),f(i,2)) ! Vtmp @ 850 hPa [K]
+    !   f2(:, 3) = tv(f(i,6),f(i,2)) ! Vtmp @ 500 hPa [K]  
+    !enddo
+
     f2(:, 4) = f(:, 7)                                ! PSNM [hPa]
     f2(:, 5) = f(:, 1)*1000.0                         ! Umes @ 925 hPa [g/Kg]
     f2(:, 6) = f(:, 8)                                ! Agpl @ 925 hPa [Kg/m2]
@@ -354,9 +364,9 @@ CONTAINS
     !
     ! padronizando pontos com undef
     !
-   
+
     where(.not.lb) f2 = scamtec%udef
-    
+
     !
     ! Interpolando para a grade do SCAMTEC
     !
@@ -370,7 +380,7 @@ CONTAINS
 
        call interp_agcm( kpds, agcm_struc%npts,f2(:,iv),lb(:,iv), scamtec%gridDesc,&
                          scamtec%nxpt,scamtec%nypt, varfield, iret)    
-    
+
     !
     ! Transferindo para matriz temporaria do SCAMTEC
     !

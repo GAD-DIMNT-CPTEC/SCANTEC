@@ -51,6 +51,7 @@ MODULE SCAM_coreMOD
   USE SCAM_OutputMOD , only: write_2d     !
   USE SCAM_bstatistic                     !
   USE m_ioutil
+  USE m_metri_precip
 
   IMPLICIT NONE
   PRIVATE
@@ -274,7 +275,8 @@ CONTAINS
         DO NExp=1,scamtec%nexp
            CALL SCAM_ModelData ( NExp )  ! Load Files: Analisys, Forecast and Climatology
            CALL CalcBstat ( NExp )       ! Calculate Basic Statistics: Bias, RMSE, Anomaly Correlation
-!           CALL PrecStat ( )            ! Calculate Precipitation Statistics
+           !CALL PrecStat ( NExp )       ! Calculate Precipitation Statistics
+           IF(Precipitation_Flag .EQ. 1)CALL HistoStat ( NExp )  ! Calculate histogram 
 
         ENDDO
         call SCAM_NextStep( )
