@@ -364,15 +364,15 @@ CONTAINS
         
    
    ! Calculo para Temperatira Virtual
-   f2(:,1) = f(:,1)*(1 + 0.61*(f(:,5)/(1-f(:,5)))) ! Vtmp @ 925 hPa [K]
-   f2(:,2) = f(:,2)*(1 + 0.61*(f(:,6)/(1-f(:,6)))) ! Vtmp @ 850 hPa [K]
-   f2(:,3) = f(:,3)*(1 + 0.61*(f(:,7)/(1-f(:,7)))) ! Vtmp @ 500 hPa [K]
+   !f2(:,1) = f(:,1)*(1 + 0.61*(f(:,5)/(1-f(:,5)))) ! Vtmp @ 925 hPa [K]
+   !f2(:,2) = f(:,2)*(1 + 0.61*(f(:,6)/(1-f(:,6)))) ! Vtmp @ 850 hPa [K]
+   !f2(:,3) = f(:,3)*(1 + 0.61*(f(:,7)/(1-f(:,7)))) ! Vtmp @ 500 hPa [K]
  
-   !do i=1,T126_Seq_struc%npts
-   !     f2(:, 1) = tv(f(i,1),f(i,5)) ! Vtmp @ 925 hPa [K]
-   !     f2(:, 2) = tv(f(i,2),f(i,6)) ! Vtmp @ 850 hPa [K]
-   !     f2(:, 3) = tv(f(i,3),f(i,7)) ! Vtmp @ 500 hPa [K]  
-   !enddo
+   do i=1,T126_Seq_struc%npts
+        f2(i, 1) = tv(f(i,1),f(i,5)) ! Vtmp @ 925 hPa [K]
+        f2(i, 2) = tv(f(i,2),f(i,6)) ! Vtmp @ 850 hPa [K]
+        f2(i, 3) = tv(f(i,3),f(i,7)) ! Vtmp @ 500 hPa [K]  
+  enddo
  
    f2(:, 4) = f(:,4)                                 ! PSNM [hPa]
    f2(:, 5) = f(:,5)*1000                            ! Umes @ 925 hPa [Kg/Kg] (esta multiplicado para rmse ficar mais visivel)

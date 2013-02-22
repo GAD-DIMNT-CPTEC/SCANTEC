@@ -336,15 +336,15 @@ CONTAINS
 
     allocate(f2(agcm_struc%npts,scamtec%nvar))
 
-   f2(:, 1) = f(:, 4)*(1 + 0.61*(f(:,1)/(1-f(:,1)))) ! Vtmp @ 925 hPa [K]
-   f2(:, 2) = f(:, 5)*(1 + 0.61*(f(:,2)/(1-f(:,2)))) ! Vtmp @ 850 hPa [K]
-   f2(:, 3) = f(:, 6)*(1 + 0.61*(f(:,3)/(1-f(:,3)))) ! Vtmp @ 500 hPa [K]
+!   f2(:, 1) = f(:, 4)*(1 + 0.61*(f(:,1)/(1-f(:,1)))) ! Vtmp @ 925 hPa [K]
+!   f2(:, 2) = f(:, 5)*(1 + 0.61*(f(:,2)/(1-f(:,2)))) ! Vtmp @ 850 hPa [K]
+!   f2(:, 3) = f(:, 6)*(1 + 0.61*(f(:,3)/(1-f(:,3)))) ! Vtmp @ 500 hPa [K]
 
-    !do i=1,agcm_struc%npts
-    !   f2(:, 1) = tv(f(i,4),f(i,1)) ! Vtmp @ 925 hPa [K]
-    !   f2(:, 2) = tv(f(i,5),f(i,2)) ! Vtmp @ 850 hPa [K]
-    !   f2(:, 3) = tv(f(i,6),f(i,2)) ! Vtmp @ 500 hPa [K]  
-    !enddo
+    do i=1,agcm_struc%npts
+       f2(i, 1) = tv(f(i,4),f(i,1)) ! Vtmp @ 925 hPa [K]
+       f2(i, 2) = tv(f(i,5),f(i,2)) ! Vtmp @ 850 hPa [K]
+       f2(i, 3) = tv(f(i,6),f(i,3)) ! Vtmp @ 500 hPa [K]  
+    enddo
 
     f2(:, 4) = f(:, 7)                                ! PSNM [hPa]
     f2(:, 5) = f(:, 1)*1000.0                         ! Umes @ 925 hPa [g/Kg]
