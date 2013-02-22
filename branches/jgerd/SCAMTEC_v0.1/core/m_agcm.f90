@@ -343,7 +343,7 @@ CONTAINS
     do i=1,agcm_struc%npts
        f2(:, 1) = tv(f(i,4),f(i,1)) ! Vtmp @ 925 hPa [K]
        f2(:, 2) = tv(f(i,5),f(i,2)) ! Vtmp @ 850 hPa [K]
-       f2(:, 3) = tv(f(i,6),f(i,2)) ! Vtmp @ 500 hPa [K]  
+       f2(:, 3) = tv(f(i,6),f(i,3)) ! Vtmp @ 500 hPa [K]  
     enddo
 
     f2(:, 4) = f(:, 7)                                ! PSNM [hPa]
