@@ -4,7 +4,10 @@ MODULE obs_Precipitation
   USE SCAM_dataMOD, only : scamdata
   USE interp_mod
   USE m_ioutil
-
+  USE time_module, only: jul2cal, cal2jul ! Time operations
+  USE SCAM_Utils, only: Precip
+  
+  
   IMPLICIT NONE
   PRIVATE
   type Precipitation_type_dec 
@@ -156,8 +159,17 @@ CONTAINS
     
     if (file_exists) then
      
-
- 
+     
+     
+    ! print *, Precip%file
+     
+    ! print *, jul2cal(cal2jul(scamtec%starting_time)-0.25)
+    !stop
+    
+    
+    
+    
+    
     ! abrindo binario Precipitation
     OPEN (UNIT=lugb,FILE=trim(fname),FORM='unformatted',convert='big_endian',access='direct',recl=190*246*4,ACTION = 'read',STATUS ='Unknown',iostat=iret)
             
