@@ -297,7 +297,7 @@ Contains
 
     Allocate(diffield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
     diffield = scamtec%udef
-
+            
     diffield = expfield(Idx,:) - reffield(Idx,:)
 
     !    Allocate(rmse(scamtec%nvar))
@@ -307,7 +307,7 @@ Contains
     Allocate(anomfield(size(Idx),2))
 
     j = scamtec%ftime_idx
-    
+       
     Do i = 1, scamtec%nvar
 
        dado(run)%rmse(i,j) = dado(run)%rmse(i,j) + sum (diffield(Idx,i)*diffield(Idx,i)) / size(Idx)

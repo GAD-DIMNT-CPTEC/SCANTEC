@@ -21,7 +21,8 @@ MODULE SCAM_dataMOD
   USE scamtec_module    ! SCAMTEC types
   USE m_string          ! String Manipulation
   USE SCAM_Utils, only: dom, nvmx, Refer, Clima, Exper
-
+  USE SCAM_Utils, only: Precipitation_Flag,hist,Precip !Paulo Dias
+  
   IMPLICIT NONE
   PRIVATE
 
@@ -59,6 +60,7 @@ MODULE SCAM_dataMOD
      real, allocatable :: expfield(:,:) ! experiment model field
      real, allocatable :: reffield(:,:) ! reference model field
      real, allocatable :: clmfield(:,:) ! climatology field
+     real, allocatable :: prefield(:,:) ! preciptation field (paulo dias)
 
      logical, allocatable :: UdfIdx (:)
 !     real, allocatable :: diffield(:,:,:) ! diference field
@@ -73,6 +75,7 @@ MODULE SCAM_dataMOD
      real, allocatable :: expfield(:) ! experiment model field
      real, allocatable :: reffield(:) ! reference model field
      real, allocatable :: clmfield(:) ! climatology field
+     real, allocatable :: prefield(:) ! preciptation field (paulo dias)
      real, allocatable :: diffield(:) ! diference field
   END TYPE obs_dec_type
 
@@ -161,10 +164,16 @@ CONTAINS
     allocate(scamdata(1)%reffield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
     allocate(scamdata(1)%tmpfield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
     IF(scamtec%cflag.EQ.1)allocate(scamdata(1)%clmfield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
-
+    IF(Precipitation_Flag.EQ.1)allocate(scamdata(1)%prefield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))!paulo dias
+    
     DO I=1,scamtec%nexp
        allocate(scamdata(I)%expfield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
        allocate(scamdata(I)%UdfIdx(scamtec%nxpt*scamtec%nypt))
+       
+       
+       !IF(Precipitation_Flag.EQ.1)allocate(scamdata(I)%time_histo(tam_hist,scamtec%ntime_forecast))!paulo dias
+       
+       
 !      allocate(scamdata(I)%diffield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
 !      allocate(scamdata(I)%rmsfield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
 !      allocate(scamdata(I)%time_rmse(scamtec%ntime_forecast,scamtec%nvar))
@@ -200,7 +209,8 @@ CONTAINS
     IF (Allocated(scamdata(1)%reffield))DeAllocate(scamdata(1)%reffield)
     IF (Allocated(scamdata(1)%clmfield))DeAllocate(scamdata(1)%clmfield)
     IF (Allocated(scamdata(1)%tmpfield))DeAllocate(scamdata(1)%tmpfield)
-
+    IF (Allocated(scamdata(I)%prefield))DeAllocate(scamdata(1)%prefield)!paulo dias
+     
     DO I=1,scamtec%nexp
        IF (Allocated(scamdata(I)%expfield))DeAllocate(scamdata(I)%expfield)
        IF (Allocated(scamdata(I)%UdfIdx))Deallocate(scamdata(I)%UdfIdx)
@@ -248,6 +258,8 @@ CONTAINS
        scamdata(e)%expfield = scamdata(1)%tmpfield
     CASE('C')
        scamdata(e)%clmfield = scamdata(1)%tmpfield
+    CASE('P')       
+       scamdata(e)%prefield = scamdata(1)%tmpfield !paulo dias
     END SELECT
 
 
@@ -261,6 +273,8 @@ CONTAINS
      character(len=1024) :: Reference    ! Reference File Name
      character(len=1024) :: Experiment   ! Experiment File Name
      character(len=1024) :: Climatology  ! Climatology File Name
+     character(len=1024) :: Precipitation  ! Precipitation File Name (Paulo dias)
+     
 
      aymd = scamtec%atime/100
      ahms = MOD(scamtec%atime,100) * 10000
@@ -309,6 +323,16 @@ CONTAINS
      Experiment = TRIM(Exper(NExp)%file)
      CALL str_template(Experiment, aymd, ahms, fymd, fhms)
      CALL ldata('E',NExp,Exper(NExp)%Id, Experiment)
+     
+     !
+     ! 1.4 Precipitation data file 
+     !
+     IF(Precipitation_Flag .EQ. 1)THEN
+     
+        Precipitation=TRIM(Precip%file)
+        CALL str_template(Precipitation, fymd,fhms)
+        CALL ldata('P', 1, Precip%Id, Precipitation)
+     END IF
 
 
   END SUBROUTINE

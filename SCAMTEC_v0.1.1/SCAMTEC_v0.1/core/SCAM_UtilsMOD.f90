@@ -105,13 +105,30 @@ MODULE SCAM_Utils
    INTEGER, PUBLIC   :: hist_time
    REAL(DP), PUBLIC  :: hist_incr
 
+
    TYPE(domain), PUBLIC, DIMENSION(:), ALLOCATABLE    :: dom
 
 
    TYPE(RUNS), PUBLIC                            :: Refer
    TYPE(RUNS), PUBLIC                            :: Clima
+   TYPE(RUNS), PUBLIC                            :: Precip !paulo dias
+   INTEGER   , PUBLIC                            :: Precipitation_Flag !paulo dias
    TYPE(RUNS), PUBLIC, DIMENSION(:), ALLOCATABLE :: Exper
 !   TYPE(RUNS), 
+
+!---------------------------------------------------------------------paulo dias
+! Variaveis de Preciptation Histograma  paulo dias
+!
+   TYPE, PUBLIC     :: param_hist                  
+   REAL, PUBLIC     :: valor_limit, valor_min   !valor maximo e valor minimo 
+   REAL, PUBLIC     :: rang                     !valor do range
+   INTEGER, PUBLIC  :: tipo_precip              !tipo de precipitacao
+   INTEGER, PUBLIC  :: acumulo_obs              !acumulo de precipitacao da observacao
+   INTEGER, PUBLIC  :: acumulo_exp              !acumulo de precipitacao do experimento
+   END TYPE
+   
+   TYPE(param_hist), public   :: hist   
+!-------------------------------------------------------------------- paulo dias
 
 !
 ! INTERFACES
@@ -378,6 +395,122 @@ MODULE SCAM_Utils
             WRITE(*,'(a72)')'!         The mean reference field will be used as climatology        !'
             WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
          ENDIF
+         
+!-----------------------------------------------------------------------------------------------------------Paulo Dias
+
+!
+! Precipitation
+!
+    print*, '::: Lendo arquivos de Precipitacao :::' 
+         call i90_label ( 'Use Precipitation:', iret )
+         if(iret == -2) then
+            call perr(myname_,'Preciptarion Not Found')
+            Precipitation_flag = 0
+!            if(present(istat))istat=iret
+!            return
+!         endif
+         else
+            Precipitation_Flag = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_label("Use Precipitation:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+         endif
+
+         IF(Precipitation_Flag .EQ. 1)THEN
+            Precip%name='Precipitation'
+            call i90_label ( 'Precipitation Model Id:', iret )
+            Precip%Id = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Precipitation Model Id:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Precipitation file:', iret )
+            call i90_Gtoken(Precip%file,iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_label("Precipitation file:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Define o Range do Histograma:', iret )
+            hist%rang = i90_gfloat(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define o Range do Histograma:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Define valor do limite inferior da ultima classe do histograma:', iret )
+            hist%valor_limit = i90_gfloat(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define valor do limite inferior da ultima classe do histograma:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif            
+            
+            call i90_label ( 'Define valor do minimo inferior da primeira classe do histograma:', iret )
+            hist%valor_min = i90_gfloat(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define valor do minimo inferior da primeira classe do histograma:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Define qual Precipitacao deseja avaliar:', iret )
+            hist%tipo_precip = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define qual Precipitacao deseja avaliar:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Define o periodo de acumulo de precpitacao da observacao:', iret )
+            hist%acumulo_obs = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define o periodo de acumulo de precpitacao da observacao:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Define o periodo de acumulo de precpitacao do experimento:', iret )
+            hist%acumulo_exp = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define o periodo de acumulo de precpitacao do experimento:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            
+#ifdef DEBUG
+            WRITE(*,'(A)')'Precipitation'
+            WRITE(*,'(A,I2.2)')'  |---- Id                 :',Precip%Id
+            WRITE(*,'(2A)')    '  |---- Dir                :',TRIM(Precip%name)
+            WRITE(*,'(2A)')    '  |---- File               :',TRIM(Precip%file)
+            WRITE(*,'(A,F4.2)')'  |---- Range              :',hist%rang
+            WRITE(*,'(A,F6.2)')'  |---- Valor Minimo       :',hist%valor_min
+            WRITE(*,'(A,F8.2)')'  |---- Valor Limite       :',hist%valor_limit
+            IF(hist%tipo_precip==16)THEN
+               WRITE(*,'(A)')'  |---- Precipitacao       : TOTAL'
+            ELSE
+               WRITE(*,'(A)')'  |---- Precipitacao       : CONVECTIVE'
+            ENDIF
+            WRITE(*,'(A,I2.2)')'  |---- Acumulo OBS        :',hist%acumulo_obs
+            WRITE(*,'(A,I2.2)')'  |---- Acumulo EXP        :',hist%acumulo_exp
+#endif
+         ELSE
+
+
+            WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
+            WRITE(*,'(a72)')'!                       Precipitation Not Found                       !'
+            WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
+         ENDIF
+
+!-----------------------------------------------------------------------------------------------------------Paulo Dias
+         
 !
 ! ïndices dos modelos
 !

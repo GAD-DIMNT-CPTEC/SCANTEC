@@ -23,6 +23,7 @@ MODULE m_T126_Seq
   USE interp_mod                    ! Interpolation module
   USE m_die                         ! Error Messages
   USE m_stdio                       ! Module to defines std. I/O parameters
+  USE SCAM_MetForm                  ! Module to conversion of meteorological variables
 
 
   IMPLICIT NONE
@@ -360,17 +361,19 @@ CONTAINS
         f(:,19) = binario(:,210)    ! PREV @ 000 hPa [kg/m2/day]
    endif
    deallocate (binario)
-           
-   
-   !f2(:, 1) = f(:, 1)*((461.5250/287.0597-1)*f(:,5)+1) ! Vtmp @ 925 hPa [K] (modo de calcular temperatura virtual do operador rognss)
-   !f2(:, 2) = f(:, 2)*((461.5250/287.0597-1)*f(:,6)+1) ! Vtmp @ 850 hPa [K] (modo de calcular temperatura virtual do operador rognss)
-   !f2(:, 3) = f(:, 3)*((461.5250/287.0597-1)*f(:,7)+1) ! Vtmp @ 500 hPa [K] (modo de calcular temperatura virtual do operador rognss)
+        
    
    ! Calculo para Temperatira Virtual
    f2(:,1) = f(:,1)*(1 + 0.61*(f(:,5)/(1-f(:,5)))) ! Vtmp @ 925 hPa [K]
    f2(:,2) = f(:,2)*(1 + 0.61*(f(:,6)/(1-f(:,6)))) ! Vtmp @ 850 hPa [K]
    f2(:,3) = f(:,3)*(1 + 0.61*(f(:,7)/(1-f(:,7)))) ! Vtmp @ 500 hPa [K]
-   
+ 
+   !do i=1,T126_Seq_struc%npts
+   !     f2(:, 1) = tv(f(i,1),f(i,5)) ! Vtmp @ 925 hPa [K]
+   !     f2(:, 2) = tv(f(i,2),f(i,6)) ! Vtmp @ 850 hPa [K]
+   !     f2(:, 3) = tv(f(i,3),f(i,7)) ! Vtmp @ 500 hPa [K]  
+   !enddo
+ 
    f2(:, 4) = f(:,4)                                 ! PSNM [hPa]
    f2(:, 5) = f(:,5)*1000                            ! Umes @ 925 hPa [Kg/Kg] (esta multiplicado para rmse ficar mais visivel)
    f2(:, 6) = f(:,8)                                 ! Agpl @ 925 hPa [Kg/m2]

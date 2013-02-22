@@ -24,7 +24,8 @@ MODULE m_clima50yr
   USE interp_mod                    ! Interpolation module
   USE m_die                         ! Error Messages
   USE m_stdio                       ! Module to defines std. I/O parameters
-
+  USE SCAM_MetForm                  ! Module to convert meteorological variables
+  
   IMPLICIT NONE
   PRIVATE
 !
@@ -371,6 +372,13 @@ CONTAINS
     DeAllocate(es)
     DeAllocate(ee)
     DeAllocate(rv)
+    
+    !do i=1,clima50yr_struc%npts
+    !   f2(i,1) = tv(f(i,1)-273.16,f(i,4),92500.0) + 273.16 ! Vtmp @ 925 hPa [K]
+    !   f2(i,2) = tv(f(i,2)-273.16,f(i,5),85000.0) + 273.16 ! Vtmp @ 850 hPa [K]
+    !   f2(i,3) = tv(f(i,3)-273.16,f(i,3),50000.0) + 273.16 ! Vtmp @ 500 hPa [K]
+    !   f2(i,5) = q(92500.0,f(i,1)-273.16,f(i,5)) * 1000.00 ! Umes @ 925 hPa [g/Kg]
+    !enddo
 
     f2(:, 4) = f(:, 7)                            ! PSNM [hPa]
     f2(:, 6) = f(:, 8)                            ! Agpl @ 925 hPa [Kg/m2]
