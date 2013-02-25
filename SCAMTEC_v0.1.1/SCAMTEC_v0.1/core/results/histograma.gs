@@ -3,7 +3,7 @@
 *     Rotina operacional para gerar arquivos gifs para a                                    *
 * apresentacao dos resultados de histograma da precipitacao                                 *
 *                                                                                           *
-*Usage:> grads -blc "run histograma.gs /path/ namefile.ctl max_range_p1 max_range_p2 n_exp" *
+*Usage:> grads -blc "run histograma.gs /path/ namefile.ctl max_range_p1 max_range_p2 n_prev" *
 *                                                                                           *
 *                       Versao 1.0                                                          *
 *                                                                                           *
@@ -22,7 +22,7 @@ pathin=subwrd(arg,1)
 arquivo=subwrd(arg,2)
 max_range_p1=subwrd(arg,3)
 max_range_p2=subwrd(arg,4)
-n_exp=subwrd(arg,5)
+n_prev=subwrd(arg,5)
 
 *arquivo=sublin(ret,2)
 ano=substr(arquivo,16,4)
@@ -53,10 +53,6 @@ say
 **************************************************************
 *
 
-* Loop dos experimentos
-exp=1
-while(exp<=n_exp)
-
 
 * Loop para variar o tempo 
 esta=1
@@ -78,10 +74,10 @@ part=1
  
 
   
-  if(exp=1)
+*  if(exp=1)
   nome_saida='Histograma_EXP01_'
   titulo='draw string 3.0 8 EXPERIMENTO 01 - Convencional'
-  endif
+*  endif
   if(exp=2)
   nome_saida='Histograma_EXP02_'
   titulo='draw string 3.0 8 EXPERIMENTO 02 - Convencional + SSMI + AIRS'
@@ -140,7 +136,7 @@ part=1
 
 hora=0 
 plot=1
- while(hora<=12)
+ while(hora<=n_prev)
   
 * Plotagem do histograma 
  _vpg.plot
@@ -228,9 +224,6 @@ endwhile
 * Fim do laco de tempo 
 endwhile
 
- exp=exp+1
-* Fim do laco de experimento
-endwhile
 
 *
 'quit'

@@ -5,7 +5,8 @@ MODULE obs_Precipitation
   USE interp_mod
   USE m_ioutil
   USE time_module, only: jul2cal, cal2jul ! Time operations
-  USE SCAM_Utils, only: Precip
+  USE SCAM_Utils, only: Precip, hist
+  USE m_string          ! String Manipulation
   
   
   IMPLICIT NONE
@@ -128,6 +129,7 @@ CONTAINS
     real, dimension(:), allocatable :: varfield
 
     REAL,DIMENSION(190*246) :: binario !variavel de leitura  
+    REAL,DIMENSION(190*246) :: binario_total !variavel de leitura  
 
     character(len=*),parameter :: myname_=myname//'::Precipitation_read'
 
@@ -140,13 +142,28 @@ CONTAINS
     real    :: undef = -9999.0
     
     
+   !------------------------ 
+  
+    character(len=512) :: fname2, fmt
+    integer            :: nymd, nhms
+    integer            :: fymd, fhms
+    INTEGER            :: quant_arq_ant   !Quantidade de arquivos anterior  
+    character(len=1024) :: Precipitation  ! Precipitation File Name (Paulo dias)
+    integer(I4B) :: atime 
+    real :: incr
+   
+    
+    
+    
+    
+    
+    
     !
     !  0. Hello
     !
 
 #ifdef DEBUG
-    WRITE(6,'(     2A)')'Hello from ', myname_
-    WRITE(6,'( A,1X,A)')'Open File ::', trim(fname)
+    WRITE(6,'(     2A)')'Hello from ', myname_    
 #endif
      
     allocate(lb(Precipitation_struc%npts,scamtec%nvar))
@@ -154,29 +171,39 @@ CONTAINS
     allocate(f(Precipitation_struc%npts,19))
     
     lugb = 1
-
+    binario_total=0
     inquire (file=trim(fname), exist=file_exists)
     
-    if (file_exists) then
-     
-     
-     
-    ! print *, Precip%file
-     
-    ! print *, jul2cal(cal2jul(scamtec%starting_time)-0.25)
-    !stop
+    !Calculo para o incremento do tempo
+    incr=((100*hist%acumulo_obs)/24.0)/100.0   
     
+    atime=scamtec%atime
     
+    if (file_exists) then        
     
-    
-    
-    ! abrindo binario Precipitation
-    OPEN (UNIT=lugb,FILE=trim(fname),FORM='unformatted',convert='big_endian',access='direct',recl=190*246*4,ACTION = 'read',STATUS ='Unknown',iostat=iret)
+        quant_arq_ant=hist%acumulo_exp/hist%acumulo_obs     !Calculando quantidade de arquivos anterior para abrir
+        
+        ! loop para somar o acumulo de precipitacao
+        do i=1, quant_arq_ant
+            scamtec%ftime  = atime   
+            fymd = scamtec%ftime/100
+            fhms = MOD(scamtec%ftime,100) * 10000
+            Precipitation=TRIM(Precip%file)                
+            CALL str_template(Precipitation, fymd,fhms)
             
-        read(lugb, rec=1)binario(:)
-                !write(15)binario(:,:)
+#ifdef DEBUG
+   WRITE(6,'( A,1X,A)')'Open File ::', trim(Precipitation)
+#endif         
+            OPEN (UNIT=lugb,FILE=trim(Precipitation),FORM='unformatted',convert='big_endian',access='direct',recl=190*246*4,ACTION = 'read',STATUS ='Unknown',iostat=iret)
                 
-       call clsieee(lugb,jret)
+            read(lugb, rec=1)binario(:)
+            binario_total(:)=binario_total(:)+binario(:)
+            !write(15)binario(:,:)                    
+            close(lugb)
+            
+            atime=jul2cal(cal2jul(atime)-incr)
+            
+          enddo  
 
     else
 
@@ -184,7 +211,11 @@ CONTAINS
        !deallocate(f)
        !deallocate(lb)
 
-    endif
+    endif     
+    
+    
+    ! abrindo binario Precipitation
+    
     
 
     !
@@ -220,7 +251,7 @@ CONTAINS
    f(:,16) = 0    ! Vvel @ 500 hPa [m/s]
    f(:,17) = 0    ! Vvel @ 250 hPa [m/s]
    f(:,18) = 0    ! PREC @ 000 hPa [kg/m2/day]
-   f(:,19) = binario(:)!teste    ! PREV @ 000 hPa [kg/m2/day] 
+   f(:,19) = binario_total(:)!teste    ! PREV @ 000 hPa [kg/m2/day] 
    
    
 

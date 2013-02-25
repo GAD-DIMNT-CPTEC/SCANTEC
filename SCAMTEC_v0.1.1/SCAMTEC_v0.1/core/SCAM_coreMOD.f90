@@ -375,7 +375,8 @@ CONTAINS
 
      ii = ceiling((I)/float(Ny))
      jj = ( I + Ny ) - Ny * ii
-
+    
+               
      aincr = (ii-1) * scamtec%aincr
      fincr = (jj-1) * scamtec%fincr
      
