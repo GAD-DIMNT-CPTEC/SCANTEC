@@ -7,7 +7,8 @@ MODULE obs_Precipitation
   USE time_module, only: jul2cal, cal2jul ! Time operations
   USE SCAM_Utils, only: Precip, hist
   USE m_string          ! String Manipulation
-  
+  USE m_die                         ! Error Messages
+  USE m_stdio                       ! Module to defines std. I/O parameters
   
   IMPLICIT NONE
   PRIVATE
@@ -49,7 +50,7 @@ CONTAINS
 #endif
 
     Allocate(Precipitation_struc%gridDesc(50))
-
+    
     call Precipitation_domain()
 
     nx = int(scamtec%gridDesc(2))
@@ -150,11 +151,7 @@ CONTAINS
     INTEGER            :: quant_arq_ant   !Quantidade de arquivos anterior  
     character(len=1024) :: Precipitation  ! Precipitation File Name (Paulo dias)
     integer(I4B) :: atime 
-    real :: incr
-   
-    
-    
-    
+    real :: incr  
     
     
     
@@ -165,7 +162,10 @@ CONTAINS
 #ifdef DEBUG
     WRITE(6,'(     2A)')'Hello from ', myname_    
 #endif
-     
+    
+    !print *, Precipitation_struc%npts
+    !stop
+    
     allocate(lb(Precipitation_struc%npts,scamtec%nvar))
     lb = .true.
     allocate(f(Precipitation_struc%npts,19))
@@ -178,7 +178,7 @@ CONTAINS
     incr=((100*hist%acumulo_obs)/24.0)/100.0   
     
     atime=scamtec%atime
-    
+ 
     if (file_exists) then        
     
         quant_arq_ant=hist%acumulo_exp/hist%acumulo_obs     !Calculando quantidade de arquivos anterior para abrir

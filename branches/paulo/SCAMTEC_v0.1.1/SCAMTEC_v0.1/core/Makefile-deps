@@ -10,7 +10,7 @@ $(srcdir)/SCAM_ModelPlugin.o SCAM_ModelPlugin.o: \
 	$(srcdir)/m_agcm.o \
 	$(srcdir)/m_clima50yr.o \
 	$(srcdir)/m_T126_Seq.o \
-	$(srcdir)/obs_Precipitation.o 
+	$(srcdir)/obs_Precipitation.o
 
 $(srcdir)/SCAM_Plugin.o SCAM_Plugin.o: \
 	$(srcdir)/SCAM_Plugin.c
@@ -88,6 +88,7 @@ $(srcdir)/m_T126_Seq.o m_T126_Seq.o: \
 	$(srcdir)/scamtec_module.o
 
 $(srcdir)/obs_Precipitation.o obs_Precipitation.o: \
+	$(srcdir)/m_string.o \
 	$(srcdir)/obs_Precipitation.f90 \
 	$(srcdir)/bilinear_interpolation.o \
 	$(srcdir)/SCAM_dataMOD.o \
@@ -113,3 +114,6 @@ $(srcdir)/SCAM_MetForm.o SCAM_MetForm.o: \
 
 $(srcdir)/template_read.o template_read.o: \
 	$(srcdir)/template_read.f90
+
+$(srcdir)/eof.o eof.o: \
+	$(srcdir)/eof.f90		
