@@ -271,7 +271,7 @@ CONTAINS
     WRITE(6,'(     2A)')'Hello from ', myname_
     WRITE(6,'( A,1X,A)')'Open File ::', trim(fname)
 #endif
-        
+ 
     allocate(lb(T126_Seq_struc%npts,scamtec%nvar))
 	lb = .true.    	
     lugb = 1
@@ -400,7 +400,7 @@ CONTAINS
     !
     ! Interpolando para a grade do SCAMTEC
     !
-
+    
     nx = int(scamtec%gridDesc(2))
     ny = int(scamtec%gridDesc(3))
     

@@ -43,7 +43,8 @@ MODULE m_metri_precip
   !
   
   type bstat
-     integer, allocatable :: histo(:,:,:)     
+     integer, allocatable :: histo(:,:,:)   
+     integer, allocatable :: prec(:,:,:)    
   end type bstat
   type(bstat), allocatable :: dado(:)
   
@@ -109,8 +110,7 @@ Contains
 
     integer            :: i, npts,ier, tam_hist
     character(len=512) :: fname, fmt
-    integer            :: nymd, nhms
-    integer            :: fymd, fhms
+    
 
         
     !
@@ -157,7 +157,10 @@ Contains
        Do i=1,scamtec%nexp
 
           Allocate(dado(i)%histo(scamtec%ntime_steps,scamtec%ntime_forecast,tam_hist))
-          dado(i)%histo = 0.0                  
+          dado(i)%histo = 0.0  
+          
+          Allocate(dado(i)%prec(scamtec%npts,scamtec%ntime_steps,scamtec%ntime_forecast))
+          dado(i)%prec = 0.0                
     
           ALLOCATE(histogram(i)%soma_histo(scamtec%ntime_forecast,tam_hist))
           histogram(i)%soma_histo = 0
@@ -252,18 +255,10 @@ Contains
   
   
   INTEGER              :: t, e, f,i,j                         !Variaveis de loop
-  INTEGER              :: time, ftime, nymd, nhms, fymd, fhms !Variaveis do tempo 
-  INTEGER              :: time_ant, nymd_ant, nhms_ant        !Variaveis do tempo anterior 
-  INTEGER              :: quant_arq_ant                       !Quantidade de arquivos anterior  
-  CHARACTER(len=1024)  :: Reference                           !Reference File Name
-  CHARACTER(len=1024)  :: Experiment                          !Experiment File Name
-  CHARACTER(len=1024)  :: Precipi                             !Precipitation File Name
-  Character(len=3)     :: tempo_char                          !variavel para converter inteiro para char paulo dias
   INTEGER, ALLOCATABLE :: histo(:), obs_histo(:)              !variavel do histograma
-  INTEGER, ALLOCATABLE :: total_histo(:,:,:,:)                !variavel do histograma
-  INTEGER, ALLOCATABLE :: tempo(:)                            !Intervalo de tempo ex(00,06,12...)
   REAL,ALLOCATABLE     :: obs_precip(:), ant_obs_precip(:)    !Variavel de precipitation
   INTEGER :: tam_hist
+  INTEGER, ALLOCATABLE :: tempo(:)                            !Intervalo de tempo ex(00,06,12...)
   
   character(len=*),parameter :: myname_=myname//'::HistoStat'
 
@@ -274,66 +269,64 @@ Contains
   CALL InitBstat( run )  
   
   tam_hist=((hist%valor_limit-hist%valor_min)/hist%rang)+2    !Calculando o tamanho do histograma
-  quant_arq_ant=hist%acumulo_exp/hist%acumulo_obs     !Calculando quantidade de arquivos anterior para abrir
-  
+    
   ALLOCATE(histo(tam_hist))    
   ALLOCATE(obs_histo(tam_hist))    
-  ALLOCATE(tempo(scamtec%ntime_forecast))
-  ALLOCATE(total_histo(scamtec%ntime_steps,scamtec%ntime_forecast,scamtec%nexp,tam_hist))
   ALLOCATE(obs_precip(scamtec%nxpt*scamtec%nypt))
   ALLOCATE(ant_obs_precip(scamtec%nxpt*scamtec%nypt))  
-  
+  ALLOCATE(tempo(scamtec%ntime_forecast))
   
   
   !Zerando variaveis
   histo(:)=0
   obs_histo(:)=0
-  tempo(:)=0
-  total_histo(:,:,:,:)=0
-  
+   
   t=scamtec%time_step
-   print *, 'teste:',t
-  j = scamtec%ftime_idx 
-   
   
-  !scamtec%time_step.eq.scamtec%ntime_steps
-  !DO i=1, tam_hist
-   !print *, t,j,run,dado(run)%histo(j,i)
-  !enddo
-   
-   
+  j = scamtec%ftime_idx 
+    
   if(j .EQ. 1)then
+        !Preenchendo dados de precipitacao OBS
+        dado(run)%prec(:,t,j)=prefield(Idx,16)
+        
+        !Chamando rotina de Histograma     
         CALL histograma(prefield(Idx,16),hist%rang,hist%valor_min,hist%valor_limit,histo)
         obs_histo(:)=histo(:)
+        print *, '::: HISTOGRAMA OBS :::'
         DO i=1, tam_hist
             print*,obs_histo(i)
             dado(run)%histo(t,j,i)=obs_histo(i)
         ENDDO
-  else      
+  else  
+        !Preenchendo dados de precipitacao EXP
+        dado(run)%prec(:,t,j)=expfield(Idx,hist%tipo_precip)
+        
+            
         histo(:)=0
+        !Chamando rotina de Histograma        
         CALL histograma(expfield(Idx,hist%tipo_precip),hist%rang,hist%valor_min,hist%valor_limit,histo)
+        print *, '::: HISTOGRAMA EXP :::'
+        tempo(j)=(j-1)*scamtec%ftime_step 
         DO i=1, tam_hist
             !print*, histo(i)
             dado(run)%histo(t,j,i)=histo(i)                       
         
-        print*,t,j,run,dado(run)%histo(t,j,i)
+        print*,t,tempo(j),run,dado(run)%histo(t,j,i)
                                
         ENDDO
   endif
   
   if ( (scamtec%time_step.eq.scamtec%ntime_steps) .and. (scamtec%ftime_idx .eq.scamtec%ntime_forecast) )then
        CALL WriteBstat( run )
+       CALL DadosEOFs ( run )
        CALL FinalizeBStat( run )
+       
       
-  endif
-      
-         
-  
-  
-  
+  endif  
   
  END SUBROUTINE HistoStat
   
+  !Rotina para Calcular Histograma
   SUBROUTINE histograma(prec,rang,valor_min,valor_limit, histo)
   IMPLICIT NONE
   
@@ -343,15 +336,17 @@ Contains
   REAL,DIMENSION(:), intent(in)    :: prec                         !Variavel de precipitation
   INTEGER                          :: indice, tam_hist 
   INTEGER                          :: k, i, j                      !Variavel de loop
+  character(len=*),parameter :: myname_=myname//'::histograma'
+  
+ #ifdef DEBUG
+    WRITE(stdout,'(     2A)')'Hello from ', myname_
+#endif 
   
   valor_minimo=valor_min
   tam_hist=((hist%valor_limit-hist%valor_min)/hist%rang)+2
   ALLOCATE(histo(tam_hist))
 !Percorrendo toda a matris
-    
-    
-    
-    print*, '::::::::::::::::::::::::::'
+ 
   
   do i=1, scamtec%nxpt*scamtec%nypt
         indice=0    
@@ -469,9 +464,7 @@ Contains
          enddo !fim das previsoes
      enddo ! fim das classes
      
-    
-     print *, ''
-            print *, '::: MEDIA :::'
+            
      !Tirando a media  
      do f = 1, scamtec%ntime_forecast 
         do i=1,tam_hist !quantidade de classe
@@ -496,10 +489,121 @@ Contains
     !Fechando arquivo binario 
     Close(FUnitOut)
 
-
-
-
   End Subroutine WriteBstat
+  
+  
+  
+  SUBROUTINE DadosEOFs(run)
+  
+    !
+    ! !INPUT PARAMETERS:
+    !
+
+    integer, intent(in)  :: run ! experiment number
+    
+    
+    !
+    ! Variaveis
+    !
+    integer :: i,t,f
+    INTEGER, ALLOCATABLE :: tempo(:) 
+    Character(len=3)     :: tempo_char      !variavel para converter inteiro para char paulo dias
+  !--------------------------------------------------------------------------------------------- paulo dias
+    !
+    !Variaveis para EOF
+    !
+    
+    ! PARAMETERS
+    !
+    !  Fanom  [input] = field anomalies
+    !  Ndim   [input] = dimension of rows of fanom as declared in the
+    !                   calling program; ndim must be >= npts
+    !  Fvar  [output] = fraction of variance accounted for by EOFs
+    !  Feof  [output] = neof corresponding eigenvectors
+    !  Ieof   [input] = first dimension of feof as declared in the
+    !                   calling program
+    !  Jeof   [input] = dimension of fvar and second dimension of feof
+    !  Cut    [input] = determines how many EOFs should be computed;
+    !                   cut < 1.0: cut gives the relative variance
+    !                   explained by the computed EOFs;
+    !                   cut > 1.0: cut is the number of EOFs to be
+    !                   computed
+    !  Neof  [output] = number of eigenvalues computed according to the
+    !                   value of  cut
+    !  Trace [output] = trace of covariance matrix
+    !  Npts   [input] = number of (grid) points in input field
+    !  Nflds  [input] = number of fields in data set
+    
+    
+    ! Variaveis que entra na rotina EOF
+    Real, Dimension(int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3)),scamtec%ntime_steps)           :: Fanom ! Fanom(e,x*Y,t)
+    Real, Dimension(int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3)),scamtec%ntime_steps,scamtec%ntime_forecast) :: precip_tempo   !precip_tempo(e,x*y,t,f)
+    Real, Dimension(int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3)),scamtec%ntime_steps)                        :: precip_obs_eof !precip_obs_eof(x*y,t)
+    Real      :: Cut
+    Integer   :: Ndim !nx_pontos * ny+pontos
+    Integer   :: Ieof
+    Integer   :: Jeof   
+    Integer   :: Npts
+    Integer   :: Nflds
+    
+    ! Variaveis que sai da rotina EOF
+    Real (Kind=4), Dimension(int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3)),4)   :: Feof
+    Real (Kind=4), Dimension(4)        :: Fvar    
+    Real (Kind=4)                      :: Trace
+    Integer   :: Neof    
+    
+    
+    
+    !teste-----    
+    Real,Dimension(int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3))) :: vet_precp
+    Integer              :: cont
+    !-----------
+    
+    print*, ''
+    print*, 'teste', scamtec%gridDesc(2), scamtec%gridDesc(3), scamtec%npts
+    print*, ''
+    
+   ! nx = int(scamtec%gridDesc(2))
+   ! ny = int(scamtec%gridDesc(3))
+   
+   
+   
+    Ndim=int(scamtec%gridDesc(2))*int(scamtec%gridDesc(3))
+    Ieof=Ndim
+    Npts=Ndim
+    !Fanom=0
+    Jeof=4
+    Fvar=0.0
+    Cut=4.0
+    Neof=0
+    Trace=0.0
+    Feof=0.0
+    Nflds=scamtec%ntime_steps
+    
+    
+    precip_obs_eof(:,:)=0
+    precip_tempo(:,:,:)=0
+    
+        !dado(run)%histo(t,f,i)
+    ! Total de preciptação do arquivo de Observação
+    
+    ALLOCATE(tempo(scamtec%ntime_forecast))
+        
+    do f=1, scamtec%ntime_forecast
+        Fanom(:,:)=0
+        tempo(f)=(f-1)*scamtec%ftime_step 
+        cont=0
+        do t=1, scamtec%ntime_steps
+           Fanom(:,t)=dado(run)%prec(:,t,f)            
+             
+         enddo ! fim do dias     
+         !convertendo inteiro para char
+         write(tempo_char,'(I3.3)')tempo(f)
+         CALL eof(Fanom(:,:),Ndim,Fvar,Feof,Ieof,Jeof,Cut,Neof,Trace,Npts,Nflds,run,tempo_char)  
+      enddo
+                
+    
+  END SUBROUTINE DadosEOFs
   
   
   
