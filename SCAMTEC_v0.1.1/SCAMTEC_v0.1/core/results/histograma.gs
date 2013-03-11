@@ -56,7 +56,7 @@ say
 
 * Loop para variar o tempo 
 esta=1
- while(esta<=6)
+ while(esta<=93)
  
 *loop para divir em dois
 part=1
@@ -94,8 +94,8 @@ part=1
   
  
 * Escrevendo o nome do arquivo de saida
- saida1='estat.prn'
- if(esta=105)
+* saida1='estat.prn'
+ if(esta=93)
   saida2=nome_saida'MEDIA_part'%part'.eps' 
  else
   saida2=nome_saida%time'_part'%part'.eps'
@@ -112,7 +112,9 @@ part=1
 **************** Titulo da figura ****************************
 **************************************************************
 
- if(esta=105)
+ if(esta=93)
+ say 'TEMPO'
+ say esta 
  'set string 2 l 3 0'
  titulo' (MEDIA do MES) Parte '%part
 
