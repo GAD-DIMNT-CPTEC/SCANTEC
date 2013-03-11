@@ -47,6 +47,7 @@ Module SCAM_bstatistic
      real, allocatable :: rmse(:,:)
      real, allocatable :: vies(:,:)
      real, allocatable :: acor(:,:)
+  !   real, allocatable :: desp(:,:) ! desvio padrao paulo dias
   end type bstat
 
   type(bstat), allocatable :: dado(:)
@@ -165,12 +166,18 @@ Contains
             Form   = 'formatted', &
             Status = 'replace'      &
             )
+   !    open(unit   = FUnitOut+3,      &
+    !        File   = trim(scamtec%output_dir)//'DESP'//Trim(FName),   &
+     !       access = 'sequential',  &
+      !      Form   = 'formatted', &
+       !     Status = 'replace'      &
+        !    )! paulo dias
 
        write(fmt,'(A4,I3.3,A5)')'(A9,',scamtec%nvar,'A9)'
        write(FUnitOut+0,fmt)'%Previsao',(scamtec%VarName(i),i=1,scamtec%nvar)
        write(FUnitOut+1,fmt)'%Previsao',(scamtec%VarName(i),i=1,scamtec%nvar)
        write(FUnitOut+2,fmt)'%Previsao',(scamtec%VarName(i),i=1,scamtec%nvar)
-
+     !  write(FUnitOut+3,fmt)'%Previsao',(scamtec%VarName(i),i=1,scamtec%nvar) ! paulo dias
 
        !
        ! Allocando Memoria para o calculo dos Indices
@@ -182,10 +189,12 @@ Contains
           Allocate(dado(i)%rmse(scamtec%nvar,scamtec%ntime_forecast))
           Allocate(dado(i)%vies(scamtec%nvar,scamtec%ntime_forecast))
           Allocate(dado(i)%acor(scamtec%nvar,scamtec%ntime_forecast))
+          !Allocate(dado(i)%desp(scamtec%nvar,scamtec%ntime_forecast))! paulo dias
 
           dado(i)%rmse = 0.0
           dado(i)%vies = 0.0
           dado(i)%acor = 0.0
+         ! dado(i)%desp = 0.0 ! paulo dias
 
        Enddo
 
@@ -312,6 +321,7 @@ Contains
 
        dado(run)%rmse(i,j) = dado(run)%rmse(i,j) + sum (diffield(Idx,i)*diffield(Idx,i)) / size(Idx)
        dado(run)%vies(i,j) = dado(run)%vies(i,j) + sum (diffield(Idx,i)) / size(Idx)
+    !   dado(run)%desp(i,j) = dado(run)%desp(i,j) + sum (diffield(Idx,i)-dado(run)%vies(i,j)) !paulo dias
 
        if (scamtec%cflag.eq.1)then
 
@@ -420,6 +430,12 @@ Contains
             access = 'sequential',  &
             position = 'append'   &
             )
+    !   Open( unit   = FUnitOut+3,      &
+     !       file   = trim(scamtec%output_dir)//'DESP'//trim(Fname),   &
+      !      form   = 'formatted', &
+       !     access = 'sequential',  &
+        !    position = 'append'   &
+         !   )! paulo dias
     endif
 
     write(fmt,'(A9,I3.3,A5)')'(6x,I3.3,',scamtec%nvar,'F9.3)'
@@ -429,10 +445,12 @@ Contains
     dado(run)%rmse(:,i) = sqrt(dado(run)%rmse(:,i) / scamtec%ftime_count(i))
     dado(run)%vies(:,i) = dado(run)%vies(:,i) / scamtec%ftime_count(i)
     dado(run)%acor(:,i) = dado(run)%acor(:,i) / scamtec%ftime_count(i)
+    !dado(run)%desp(:,i) = sqrt(dado(run)%desp(:,i) / (scamtec%ftime_count(i)-1)) ! paulo dias
 
     write(FunitOut+0,fmt)(i-1)*scamtec%time_step,(dado(run)%rmse(j,i),j=1,scamtec%nvar)
     write(FunitOut+1,fmt)(i-1)*scamtec%time_step,(dado(run)%vies(j,i),j=1,scamtec%nvar)
     write(FunitOut+2,fmt)(i-1)*scamtec%time_step,(dado(run)%acor(j,i),j=1,scamtec%nvar)
+    !write(FunitOut+3,fmt)(i-1)*scamtec%time_step,(dado(run)%desp(j,i),j=1,scamtec%nvar) ! paulo dias
 
 
 

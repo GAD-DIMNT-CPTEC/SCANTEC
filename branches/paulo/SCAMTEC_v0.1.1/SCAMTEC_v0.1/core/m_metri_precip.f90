@@ -58,7 +58,7 @@ MODULE m_metri_precip
   
   integer, allocatable :: Idx(:)
   integer              :: nidx
-  integer              :: FUnitOut = 4
+  integer              :: FUnitOut=4
 
   character(len=*),parameter :: myname='m_metri_precip'
   
@@ -134,43 +134,36 @@ Contains
     prefield => scamdata(1)%prefield
 
     
-    if(scamtec%loop_count.eq.1)then
-
-       !
-       ! Abrindo arquivo de saida e escrevendo o Cabecalho
-       !
-
-       OPEN(unit=FUnitOut, &
-            file=trim(scamtec%output_dir)//'histo'//Trim(Exper(run)%name)//'.bin', &
-            form='unformatted', &
-            status='replace',iostat=ier)            
-
-
+    if((scamtec%loop_count.eq.1) .and. (run .eq. 1))then
+     
        !
        ! Allocando Memoria para o calculo dos Indices
        !
        tam_hist=((hist%valor_limit-hist%valor_min)/hist%rang)+2
     
        Allocate(dado(scamtec%nexp))
-       Allocate(histogram(scamtec%nexp))       
+       Allocate(histogram(scamtec%nexp)) 
+          
        
        Do i=1,scamtec%nexp
 
           Allocate(dado(i)%histo(scamtec%ntime_steps,scamtec%ntime_forecast,tam_hist))
-          dado(i)%histo = 0.0  
-          
+                   
           Allocate(dado(i)%prec(scamtec%npts,scamtec%ntime_steps,scamtec%ntime_forecast))
-          dado(i)%prec = 0.0                
-    
+             
           ALLOCATE(histogram(i)%soma_histo(scamtec%ntime_forecast,tam_hist))
-          histogram(i)%soma_histo = 0
-    
+              
           ALLOCATE(histogram(i)%media_histo(scamtec%ntime_forecast,tam_hist))
-          histogram(i)%media_histo = 0
           
+          dado(i)%histo = 0.0   
+          dado(i)%prec = 0.0   
+          histogram(i)%soma_histo = 0
+          histogram(i)%media_histo = 0
+                             
        Enddo
-
-
+       
+       
+       
     endif
 
   End Subroutine InitBstat
@@ -265,7 +258,7 @@ Contains
 #ifdef DEBUG
     WRITE(stdout,'(     2A)')'Hello from ', myname_
 #endif
-
+    
   CALL InitBstat( run )  
   
   tam_hist=((hist%valor_limit-hist%valor_min)/hist%rang)+2    !Calculando o tamanho do histograma
@@ -285,19 +278,21 @@ Contains
   
   j = scamtec%ftime_idx 
     
-  if(j .EQ. 1)then
+  if(j .EQ. 1)then  
+       
         !Preenchendo dados de precipitacao OBS
         dado(run)%prec(:,t,j)=prefield(Idx,16)
-        
+        histo(:)=0      
         !Chamando rotina de Histograma     
         CALL histograma(prefield(Idx,16),hist%rang,hist%valor_min,hist%valor_limit,histo)
-        obs_histo(:)=histo(:)
+        
         print *, '::: HISTOGRAMA OBS :::'
         DO i=1, tam_hist
-            print*,obs_histo(i)
-            dado(run)%histo(t,j,i)=obs_histo(i)
+            dado(run)%histo(t,j,i)=histo(i)
+            print*,t,j,run,i, dado(run)%histo(t,j,i)
         ENDDO
   else  
+        
         !Preenchendo dados de precipitacao EXP
         dado(run)%prec(:,t,j)=expfield(Idx,hist%tipo_precip)
         
@@ -305,24 +300,33 @@ Contains
         histo(:)=0
         !Chamando rotina de Histograma        
         CALL histograma(expfield(Idx,hist%tipo_precip),hist%rang,hist%valor_min,hist%valor_limit,histo)
-        print *, '::: HISTOGRAMA EXP :::'
-        tempo(j)=(j-1)*scamtec%ftime_step 
+        print *, '::: HISTOGRAMA EXP :::', run        
+        tempo(j)=(j-1)*scamtec%ftime_step                
+                       
         DO i=1, tam_hist
             !print*, histo(i)
             dado(run)%histo(t,j,i)=histo(i)                       
-        
-        print*,t,tempo(j),run,dado(run)%histo(t,j,i)
+            print*,t,tempo(j),run,dado(run)%histo(t,j,i)
                                
         ENDDO
   endif
   
-  if ( (scamtec%time_step.eq.scamtec%ntime_steps) .and. (scamtec%ftime_idx .eq.scamtec%ntime_forecast) )then
-       CALL WriteBstat( run )
-       CALL DadosEOFs ( run )
-       CALL FinalizeBStat( run )
-       
-      
+  
+  if ( (scamtec%time_step.eq.scamtec%ntime_steps) .and. (scamtec%ftime_idx .eq.scamtec%ntime_forecast)) then
+  
+          CALL WriteBstat( run )
+       if (EOFs_Flag .eq. 1)CALL DadosEOFs ( run )
+  endif
+     
+  if ( (scamtec%time_step.eq.scamtec%ntime_steps) .and. (scamtec%ftime_idx .eq.scamtec%ntime_forecast) .and. (run .eq. scamtec%nexp))then
+         CALL FinalizeBStat( run )      
   endif  
+  
+  DEALLOCATE (histo)
+  DEALLOCATE (obs_histo)
+  DEALLOCATE (obs_precip)
+  DEALLOCATE (ant_obs_precip)
+  DEALLOCATE (tempo)
   
  END SUBROUTINE HistoStat
   
@@ -340,7 +344,7 @@ Contains
   
  #ifdef DEBUG
     WRITE(stdout,'(     2A)')'Hello from ', myname_
-#endif 
+#endif   
   
   valor_minimo=valor_min
   tam_hist=((hist%valor_limit-hist%valor_min)/hist%rang)+2
@@ -438,46 +442,63 @@ Contains
     integer              :: t,f
     
     
-    INTEGER, ALLOCATABLE :: media_histo(:,:)        !variavel do histograma
-    INTEGER, ALLOCATABLE :: soma_histo(:,:)        !variavel do histograma  
+    !INTEGER, ALLOCATABLE :: media_histo(:,:)        !variavel do histograma
+    !INTEGER, ALLOCATABLE :: soma_histo(:,:)        !variavel do histograma  
     
     tam_hist=((hist%valor_limit-hist%valor_min)/hist%rang)+2
     
     
     ! Verificando se o arquivo esta aberto 
     inquire(unit=FUnitOut, opened=iret)
-    if(.not.iret) then       
+   
+       !
+       ! Abrindo arquivo binario de saida
+       !
+         
        OPEN(unit = FUnitOut, &
            file=trim(scamtec%output_dir)//'histo'//Trim(Exper(run)%name)//'.bin', &
            form='unformatted', &
-           status='old',iostat=ier)    
-    endif    
-    
+           status='replace',iostat=ier)  
+              
   
     ! Somando todas as classes
+    print *, ''
+    print *, 'SOMA'
     do i=1,tam_hist
         do f=1, scamtec%ntime_forecast
             do t=1, scamtec%ntime_steps
+                                
                  histogram(run)%soma_histo(f,i)= histogram(run)%soma_histo(f,i)+dado(run)%histo(t,f,i)
+                 PRINT *, run, t, f, i, histogram(run)%soma_histo(f,i)
                 
             enddo  !fim quantidade de dias
          enddo !fim das previsoes
      enddo ! fim das classes
      
             
-     !Tirando a media  
+     !Tirando a media
+     print *, ''
+     print *, 'MEDIA'  
      do f = 1, scamtec%ntime_forecast 
         do i=1,tam_hist !quantidade de classe
+            
              histogram(run)%media_histo(f,i)= histogram(run)%soma_histo(f,i)/(scamtec%ntime_steps)
+             print *, run, f, histogram(run)%media_histo(f,i)
                        
         enddo !fimquantidade de classe
     enddo !fim das previsoes
+    
    
     ! Escrevendo binario histo.bin   
     do t=1, scamtec%ntime_steps+1 ! +1 é para guardar a media
         if (t .eq. scamtec%ntime_steps+1)then
             
             ! Escrevendo Media do Histograma
+            do f=1, scamtec%ntime_forecast
+                do i=1, tam_hist
+                    print*,f, i, histogram(run)%media_histo(f,i)
+                enddo
+            enddo
             write(FUnitOut)real( histogram(run)%media_histo(:,:),4)
         else
             
@@ -488,7 +509,7 @@ Contains
       
     !Fechando arquivo binario 
     Close(FUnitOut)
-
+    
   End Subroutine WriteBstat
   
   

@@ -150,7 +150,7 @@ CONTAINS
     integer            :: fymd, fhms
     INTEGER            :: quant_arq_ant   !Quantidade de arquivos anterior  
     character(len=1024) :: Precipitation  ! Precipitation File Name (Paulo dias)
-    integer(I4B) :: atime 
+    integer(I4B) :: atime , ftime
     real :: incr  
     
     
@@ -185,9 +185,9 @@ CONTAINS
         
         ! loop para somar o acumulo de precipitacao
         do i=1, quant_arq_ant
-            scamtec%ftime  = atime   
-            fymd = scamtec%ftime/100
-            fhms = MOD(scamtec%ftime,100) * 10000
+            ftime  = atime   
+            fymd = ftime/100
+            fhms = MOD(ftime,100) * 10000
             Precipitation=TRIM(Precip%file)                
             CALL str_template(Precipitation, fymd,fhms)
             

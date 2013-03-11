@@ -116,15 +116,21 @@ MODULE SCAM_Utils
    TYPE(RUNS), PUBLIC, DIMENSION(:), ALLOCATABLE :: Exper
 !   TYPE(RUNS), 
 
+   !
+   !Variaveis EOFs
+   !
+   INTEGER   , PUBLIC                            :: EOFs_Flag  !paulo dias
+   INTEGER   , PUBLIC                            :: quant_EOFs !paulo dias
+
 !---------------------------------------------------------------------paulo dias
 ! Variaveis de Preciptation Histograma  paulo dias
 !
    TYPE, PUBLIC     :: param_hist                  
-   REAL, PUBLIC     :: valor_limit, valor_min   !valor maximo e valor minimo 
-   REAL, PUBLIC     :: rang                     !valor do range
-   INTEGER, PUBLIC  :: tipo_precip              !tipo de precipitacao
-   INTEGER, PUBLIC  :: acumulo_obs              !acumulo de precipitacao da observacao
-   INTEGER, PUBLIC  :: acumulo_exp              !acumulo de precipitacao do experimento
+     REAL, PUBLIC     :: valor_limit, valor_min   !valor maximo e valor minimo 
+     REAL, PUBLIC     :: rang                     !valor do range
+     INTEGER, PUBLIC  :: tipo_precip              !tipo de precipitacao
+     INTEGER, PUBLIC  :: acumulo_obs              !acumulo de precipitacao da observacao
+     INTEGER, PUBLIC  :: acumulo_exp              !acumulo de precipitacao do experimento
    END TYPE
    
    TYPE(param_hist), public   :: hist   
@@ -510,6 +516,36 @@ MODULE SCAM_Utils
          ENDIF
 
 !-----------------------------------------------------------------------------------------------------------Paulo Dias
+   
+   
+!-----------------------------------------------------------------------------------------------------------Paulo Dias
+! EOFs
+
+            call i90_label ( 'Use EOFs:', iret )
+            EOFs_Flag = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Use EOFs:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif
+            
+            call i90_label ( 'Define a quantidade de EOFs:', iret )
+            quant_EOFs = i90_gint(iret)
+            if(iret /= 0) then
+               call perr(myname_,'i90_gint("Define a quantidade de EOFs:")',iret)
+               if(present(istat))istat=iret
+               return
+            endif           
+            
+#ifdef DEBUG
+            WRITE(*,'(A)')'Empirical Orthogonal Functions (EOF)'
+            WRITE(*,'(A,I2.2)')'  |---- Quantidade de EOF:',quant_EOFs
+            
+#endif
+
+
+!-----------------------------------------------------------------------------------------------------------Paulo Dias
+    
          
 !
 ! ïndices dos modelos
