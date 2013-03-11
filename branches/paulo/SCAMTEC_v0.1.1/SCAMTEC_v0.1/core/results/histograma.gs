@@ -3,7 +3,7 @@
 *     Rotina operacional para gerar arquivos gifs para a                                    *
 * apresentacao dos resultados de histograma da precipitacao                                 *
 *                                                                                           *
-*Usage:> grads -blc "run histograma.gs /path/ namefile.ctl max_range_p1 max_range_p2 n_prev" *
+*Usage:> grads -blc "run histograma.gs /path/ namefile.ctl max_range_p1 max_range_p2 n_exp" *
 *                                                                                           *
 *                       Versao 1.0                                                          *
 *                                                                                           *
@@ -22,7 +22,7 @@ pathin=subwrd(arg,1)
 arquivo=subwrd(arg,2)
 max_range_p1=subwrd(arg,3)
 max_range_p2=subwrd(arg,4)
-n_prev=subwrd(arg,5)
+n_exp=subwrd(arg,5)
 
 *arquivo=sublin(ret,2)
 ano=substr(arquivo,16,4)
@@ -71,25 +71,14 @@ part=1
 * Pegando o volor de t do terminal
  time=subwrd(result,4)
 
- 
-
+* Pegando o nome do EXPERIMENTO 
+ 'q file'
   
-*  if(exp=1)
-  nome_saida='Histograma_EXP01_'
-  titulo='draw string 3.0 8 EXPERIMENTO 01 - Convencional'
-*  endif
-  if(exp=2)
-  nome_saida='Histograma_EXP02_'
-  titulo='draw string 3.0 8 EXPERIMENTO 02 - Convencional + SSMI + AIRS'
-  endif
-  if(exp=3)
-  nome_saida='Histograma_EXP03_'
-  titulo='draw string 3.0 8 EXPERIMENTO 03 - Convencional + AIRS'
-  endif
-  if(exp=4) 
-  nome_saida='Histograma_EXP04_'
-  titulo='draw string 3.0 8 EXPERIMENTO 04 - Convencional + SSMI'  
-  endif
+  nome_exp=subwrd(result,46)
+   
+  nome_saida='Histograma_EXP'%n_exp'_'
+  titulo='draw string 3.0 8 EXPERIMENTO '%n_exp' - '%nome_exp
+
   
   
  
@@ -113,8 +102,7 @@ part=1
 **************************************************************
 
  if(esta=93)
- say 'TEMPO'
- say esta 
+
  'set string 2 l 3 0'
  titulo' (MEDIA do MES) Parte '%part
 
@@ -138,7 +126,7 @@ part=1
 
 hora=0 
 plot=1
- while(hora<=n_prev)
+ while(hora<=48)
   
 * Plotagem do histograma 
  _vpg.plot

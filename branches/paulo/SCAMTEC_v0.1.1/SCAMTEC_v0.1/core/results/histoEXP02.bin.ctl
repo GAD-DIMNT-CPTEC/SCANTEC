@@ -1,4 +1,4 @@
-dset histoEXP01.bin
+dset histoEXP02.bin
 TITLE FILE CREATED BY GRADS USING LATS4D AVAILABL FROM HTTP://DAO.GSFC.NASA.GOV/SOFTWARE/GRADS/LATS4
 OPTIONS SEQUENTIAL
 undef 1e+20    
@@ -7,5 +7,5 @@ YDEF  37 LINEAR  1.000000   1.000000
 ZDEF  1 LEVELS 2000 
 TDEF  105 LINEAR 00Z06MAR2004  6HR
 VARS 1
-histo   1 99  histograma da precipitacao Convencional+SSMI+AIRS
+histo   1 99  histograma da precipitacao Convencional
 ENDVARS
