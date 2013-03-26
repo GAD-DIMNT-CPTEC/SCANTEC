@@ -147,7 +147,7 @@ Contains
 
        fname = FNameOut
        CALL str_template(FName, nymd, nhms, fymd, fhms, int2str(run,'(I2.2)'))
-
+	
        open(unit   = FUnitOut+0,      &
             File   = trim(scamtec%output_dir)//'RMSE'//Trim(FName),   &
             access = 'sequential',  &
@@ -447,9 +447,9 @@ Contains
     dado(run)%acor(:,i) = dado(run)%acor(:,i) / scamtec%ftime_count(i)
     !dado(run)%desp(:,i) = sqrt(dado(run)%desp(:,i) / (scamtec%ftime_count(i)-1)) ! paulo dias
 
-    write(FunitOut+0,fmt)(i-1)*scamtec%time_step,(dado(run)%rmse(j,i),j=1,scamtec%nvar)
-    write(FunitOut+1,fmt)(i-1)*scamtec%time_step,(dado(run)%vies(j,i),j=1,scamtec%nvar)
-    write(FunitOut+2,fmt)(i-1)*scamtec%time_step,(dado(run)%acor(j,i),j=1,scamtec%nvar)
+    write(FunitOut+0,fmt)(i-1)*scamtec%ftime_step,(dado(run)%rmse(j,i),j=1,scamtec%nvar)
+    write(FunitOut+1,fmt)(i-1)*scamtec%ftime_step,(dado(run)%vies(j,i),j=1,scamtec%nvar)
+    write(FunitOut+2,fmt)(i-1)*scamtec%ftime_step,(dado(run)%acor(j,i),j=1,scamtec%nvar)
     !write(FunitOut+3,fmt)(i-1)*scamtec%time_step,(dado(run)%desp(j,i),j=1,scamtec%nvar) ! paulo dias
 
 
