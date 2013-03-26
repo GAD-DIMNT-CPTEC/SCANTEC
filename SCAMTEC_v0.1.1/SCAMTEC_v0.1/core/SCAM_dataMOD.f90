@@ -30,25 +30,30 @@ MODULE SCAM_dataMOD
 ! !PARAMETERS:
 !
 
-  integer, public, Parameter :: NumVarAval = 17
+  integer, public, Parameter :: NumVarAval = 22
   character(len=8), public, parameter ::   VarName(1:NumVarAval) = (/ &
-                                           'VTMP:925',& ! Virtual Temperature @ 925 hPa [K]
-                                           'VTMP:850',& ! Virtual Temperature @ 850 hPa [K]
-                                           'VTMP:500',& ! Virtual Temperature @ 500 hPa [K]
-                                           'PSNM:000',& ! Pressure reduced to MSL [hPa]
-                                           'UMES:925',& ! Specific Humidity @ 925 hPa [g/Kg]
-                                           'AGPL:925',& ! Inst. Precipitable Water @ 925 hPa [Kg/m2]
-                                           'ZGEO:850',& ! Geopotential height @ 850 hPa [gpm]
-                                           'ZGEO:500',& ! Geopotential height @ 500 hPa [gpm]
-                                           'ZGEO:250',& ! Geopotential height @ 250 hPa [gpm]
-                                           'UVEL:850',& ! Zonal Wind @ 850 hPa [m/s]
-                                           'UVEL:500',& ! Zonal Wind @ 500 hPa [m/s]
-                                           'UVEL:250',& ! Zonal Wind @ 250 hPa [m/s]
-                                           'VVEL:850',& ! Meridional Wind @ 850 hPa [m/s]
-                                           'VVEL:500',& ! Meridional Wind @ 500 hPa [m/s]
-                                           'VVEL:250',& ! Meridional Wind @  250 hPa [m/s]
-                                           'PREC:000',& ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]           16 paulo dias
-                                           'PREV:000' & ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]      17 paulo dias
+                                           'VTMP-925',& ! Virtual Temperature @ 925 hPa [K]
+                                           'VTMP-850',& ! Virtual Temperature @ 850 hPa [K]
+                                           'VTMP-500',& ! Virtual Temperature @ 500 hPa [K]                                           
+                                           'TEMP-850',& ! Absolute Temperature @ 850 hPa [K]             4 paulo dias
+                                           'TEMP-500',& ! Absolute Temperature @ 500 hPa [K]		 5 paulo dias
+                                           'TEMP-250',& ! Absolute Temperature @ 250 hPa [K]		 6 paulo dias                                           
+                                           'PSNM-000',& ! Pressure reduced to MSL [hPa]                                           
+                                           'UMES-925',& ! Specific Humidity @ 925 hPa [g/Kg]
+                                           'UMES-850',& ! Specific Humidity @ 850 hPa [g/Kg]		 9 paulo dias
+                                           'UMES-500',& ! Specific Humidity @ 500 hPa [g/Kg]		10 paulo dias                                           
+                                           'AGPL-925',& ! Inst. Precipitable Water @ 925 hPa [Kg/m2]
+                                           'ZGEO-850',& ! Geopotential height @ 850 hPa [gpm]
+                                           'ZGEO-500',& ! Geopotential height @ 500 hPa [gpm]
+                                           'ZGEO-250',& ! Geopotential height @ 250 hPa [gpm]
+                                           'UVEL-850',& ! Zonal Wind @ 850 hPa [m/s]
+                                           'UVEL-500',& ! Zonal Wind @ 500 hPa [m/s]
+                                           'UVEL-250',& ! Zonal Wind @ 250 hPa [m/s]
+                                           'VVEL-850',& ! Meridional Wind @ 850 hPa [m/s]
+                                           'VVEL-500',& ! Meridional Wind @ 500 hPa [m/s]
+                                           'VVEL-250',& ! Meridional Wind @  250 hPa [m/s]
+                                           'PREC-000',& ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]           21 paulo dias
+                                           'PREV-000' & ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]      22 paulo dias
                                           /)
 
 !
@@ -290,7 +295,7 @@ CONTAINS
         !
         ! 1.1 Reference data file 
         !
-
+	
         Reference=TRIM(Refer%file)
         CALL str_template(Reference, fymd,fhms)
         CALL ldata('R', 1, Refer%Id, Reference)

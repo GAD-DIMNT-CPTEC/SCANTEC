@@ -242,16 +242,16 @@ CONTAINS
     integer :: lugb
     real    :: lubi
     real    :: kf,k
-    integer :: i,j,iv
+    integer :: i,j,iv,y
     integer :: npts
     integer :: nx
     integer :: ny
-    integer, dimension(17) :: pds5, pds7
-    logical*1, dimension(:,:), allocatable :: lb
+    integer, dimension(20) :: pds5, pds7
+    logical*1, dimension(:,:), allocatable :: lb, lb2
     real, dimension(:,:), allocatable :: f
     real, dimension(:,:), allocatable :: f2
     real, dimension(:),   allocatable :: varfield
-
+    character(10) :: dataini, datafinal 
 
     !
     !  0. Hello
@@ -270,16 +270,35 @@ CONTAINS
     lubi = 0
     j    = 0
     jpds = -1 
-    !          Q   Q   Q   T   T   T   P   A   Z   Z   Z   U   U   U   V   V   V
-    pds5 = (/ 51, 51, 51, 11, 11, 11,  2, 54,  7,  7,  7, 33, 33, 33, 34, 34, 34/) !parameter
-    pds7 = (/925,850,500,925,850,500,000,000,850,500,250,850,500,250,850,500,250/) !htlev2
+    !          Q   Q   Q   T   T   T   T  P   A   Z   Z   Z   U   U   U   V   V   V  PRE PRC
+    pds5 = (/ 51, 51, 51, 11, 11, 11, 11, 2, 54,  7,  7,  7, 33, 33, 33, 34, 34, 34, 61, 63/) !parameter
+    pds7 = (/925,850,500,925,850,500,250,000,000,850,500,250,850,500,250,850,500,250,000,000/) !htlev2
 
+    allocate(lb2(agcm_struc%npts,scamtec%nvar))
     allocate(lb(agcm_struc%npts,size(pds5)))
     allocate(f(agcm_struc%npts,size(pds5)))
 
+  
     inquire (file=trim(fname), exist=file_exists)
-    do iv = 1, size(pds5)
-
+    
+    do i=1, 300	
+		
+		    if(trim(fname(i:i+6)) .eq. 'GPOSNMC')then
+			    dataini=trim(fname(i+7:i+16))
+			    datafinal=trim(fname(i+17:i+26))
+		    endif			
+		
+	    enddo 
+	   	
+	    if(dataini .eq. datafinal)then
+		    y=size(pds5)-2
+	    else
+		    y=size(pds5)
+	    endif
+	    	    	    
+    
+    do iv = 1, y!size(pds5)
+             
        if (file_exists) then 
 
           jpds(5) = pds5(iv)
@@ -341,31 +360,41 @@ CONTAINS
 !   f2(:, 3) = f(:, 6)*(1 + 0.61*(f(:,3)/(1-f(:,3)))) ! Vtmp @ 500 hPa [K]
 
     do i=1,agcm_struc%npts
-       f2(i, 1) = tv(f(i,4),f(i,1)) ! Vtmp @ 925 hPa [K]
-       f2(i, 2) = tv(f(i,5),f(i,2)) ! Vtmp @ 850 hPa [K]
-       f2(i, 3) = tv(f(i,6),f(i,3)) ! Vtmp @ 500 hPa [K]  
+       f2(i, 1) = tv(f(i,4),f(i,1)); lb2(i,1) = lb(i,1) ! Vtmp @ 925 hPa [K]
+       f2(i, 2) = tv(f(i,5),f(i,2)); lb2(i,2) = lb(i,2) ! Vtmp @ 850 hPa [K]
+       f2(i, 3) = tv(f(i,6),f(i,3)); lb2(i,3) = lb(i,3) ! Vtmp @ 500 hPa [K]  
     enddo
+    
+    f2(:, 4) = f(:, 5); lb2(:,4) = lb(:,5)              ! Absolute Temperature @ 850 hPa [K]             4 paulo dias
+    f2(:, 5) = f(:, 6); lb2(:,5) = lb(:,6)              ! Absolute Temperature @ 500 hPa [K]             5 paulo dias
+    f2(:, 6) = f(:, 7); lb2(:,6) = lb(:,7)              ! Absolute Temperature @ 250 hPa [K]             6 paulo dias
+    
 
-    f2(:, 4) = f(:, 7)                                ! PSNM [hPa]
-    f2(:, 5) = f(:, 1)*1000.0                         ! Umes @ 925 hPa [g/Kg]
-    f2(:, 6) = f(:, 8)                                ! Agpl @ 925 hPa [Kg/m2]
-    f2(:, 7) = f(:, 9)                                ! Zgeo @ 850 hPa [gpm]
-    f2(:, 8) = f(:,10)                                ! Zgeo @ 500 hPa [gpm]
-    f2(:, 9) = f(:,11)                                ! Zgeo @ 250 hPa [gpm]
-    f2(:,10) = f(:,12)                                ! Uvel @ 850 hPa [m/s]
-    f2(:,11) = f(:,13)                                ! Uvel @ 500 hPa [m/s]
-    f2(:,12) = f(:,14)                                ! Uvel @ 250 hPa [m/s]
-    f2(:,13) = f(:,15)                                ! Vvel @ 850 hPa [m/s]
-    f2(:,14) = f(:,16)                                ! Vvel @ 500 hPa [m/s]
-    f2(:,15) = f(:,17)                                ! Vvel @ 250 hPa [m/s]
-
+    f2(:, 7) = f(:, 8); lb2(:, 7) = lb(:,8)             ! PSNM [hPa]
+    f2(:, 8) = f(:, 1)*1000.0 ; lb2(:, 8) = lb(:,1)     ! Umes @ 925 hPa [g/Kg]
+    f2(:, 9) = f(:, 2)*1000.0 ; lb2(:, 9) = lb(:,2)     ! Umes @ 850 hPa [g/Kg]
+    f2(:,10) = f(:, 3)*1000.0 ; lb2(:,10) = lb(:,3)     ! Umes @ 500 hPa [g/Kg]
+    
+    f2(:,11) = f(:, 9); lb2(:,11) = lb(:, 9)             ! Agpl @ 925 hPa [Kg/m2]
+    f2(:,12) = f(:,10); lb2(:,12) = lb(:,10)             ! Zgeo @ 850 hPa [gpm]
+    f2(:,13) = f(:,11); lb2(:,13) = lb(:,11)             ! Zgeo @ 500 hPa [gpm]
+    f2(:,14) = f(:,12); lb2(:,14) = lb(:,12)             ! Zgeo @ 250 hPa [gpm]
+    f2(:,15) = f(:,13); lb2(:,15) = lb(:,13)             ! Uvel @ 850 hPa [m/s]
+    f2(:,16) = f(:,14); lb2(:,16) = lb(:,14)             ! Uvel @ 500 hPa [m/s]
+    f2(:,17) = f(:,15); lb2(:,17) = lb(:,15)             ! Uvel @ 250 hPa [m/s]
+    f2(:,18) = f(:,16); lb2(:,18) = lb(:,16)             ! Vvel @ 850 hPa [m/s]
+    f2(:,19) = f(:,17); lb2(:,19) = lb(:,17)             ! Vvel @ 500 hPa [m/s]
+    f2(:,20) = f(:,18); lb2(:,20) = lb(:,18)             ! Vvel @ 250 hPa [m/s]
+    f2(:,21) = f(:,19); lb2(:,21) = lb(:,19)             ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]     
+    f2(:,22) = f(:,20); lb2(:,22) = lb(:,20)             ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]   
+    DeAllocate(lb)
     DeAllocate(f)
 
     !
     ! padronizando pontos com undef
     !
 
-    where(.not.lb) f2 = scamtec%udef
+    where(.not.lb2) f2 = scamtec%udef
 
     !
     ! Interpolando para a grade do SCAMTEC
@@ -378,7 +407,7 @@ CONTAINS
 
     DO iv=1,scamtec%nvar
 
-       call interp_agcm( kpds, agcm_struc%npts,f2(:,iv),lb(:,iv), scamtec%gridDesc,&
+       call interp_agcm( kpds, agcm_struc%npts,f2(:,iv),lb2(:,iv), scamtec%gridDesc,&
                          scamtec%nxpt,scamtec%nypt, varfield, iret)    
 
     !
