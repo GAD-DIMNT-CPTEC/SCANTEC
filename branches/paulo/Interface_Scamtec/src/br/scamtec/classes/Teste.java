@@ -4,32 +4,63 @@
  */
 package br.scamtec.classes;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author paulo.henrique
  */
 public class Teste {  
   
+    
+    public boolean procura() {  
+    boolean achou = false;  
+    String NomeArq="scamtec.conf";  
+    String linha="";
+    String [] vetor=null;
+    String pal = JOptionPane.showInputDialog("Digite o nome da palavra a procurar:");       
+    try {  
+        BufferedReader in = new BufferedReader(new FileReader("scamtec.conf"));  
+        while ((linha = in.readLine()) != null) {  
+            if (linha.contains(pal)) {  
+                vetor = linha.split(" ");
+                System.out.println(linha);  
+                achou = true;  
+            }  
+        }       
+        
+    } catch (Exception e) {  
+        System.err.println("Erro na abertura do arquivo " + NomeArq);  
+        return achou;  
+    }  
+    return achou;  
+}   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /** 
      * @param args 
      */  
     public static void main(String[] args) {  
-        try{       
-            
- 
-            
-               //Process p = Runtime.getRuntime().exec(new String[] { System.getProperty("/br/scamtec/classes") + "/"+ "scamtec.x"});  
-               //Process p = Runtime.getRuntime().exec("/home2/paulo.henrique/NetBeansProjects/Scamtec/scamtec.x");  
-               Runtime.getRuntime().exec("/home2/paulo.henrique/NetBeansProjects/Scamtec/scamtec.x");
-               //System.out.println(p.exitValue());
-              // if(p.exitValue()==0){       
-                //  System.out.println("Programa terminou normalmente");       
-               //}       
-            }catch(Exception e){ 
-                System.out.println("caiu no catch\n");
-                e.printStackTrace();
-                       
-            }    
+        new Teste().procura();
+        
   
     }  
 }  

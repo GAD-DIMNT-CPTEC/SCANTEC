@@ -11,6 +11,14 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import java.util.Date;
+import br.scamtec.classes.UtilData;
+import java.io.FileReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JProgressBar;
+import sun.awt.windows.ThemeReader;
 
 /**
  *
@@ -21,6 +29,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
     int contExp = 0;
     int useClima = 1;
     int usePrecip = 0;
+    String endArq = "";
 
     /**
      * Creates new form teste
@@ -61,22 +70,591 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
         //parametro do tempo
         txtHistoriaTempo.setText("48");
+        txtAnaliseTempo.setText("06");
+        txtPrevisaoTempo.setText("06");
+        txtPrevisaoTempoTotal.setText("120");
 
+    }
+
+    public class Carregar implements Runnable {
+
+        @Override
+        public void run() {
+            for (int i = 0; i <= 100; i++) {
+                jProgressBar1.setValue(i);
+                try {
+                    Thread.sleep(50);
+
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ScamtecConfiguracao.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }
 
     public void cmdExec(String cmdline) {
         try {
             String line;
+            String line2 = "";
+            txtResult.setText("");
             Process p = Runtime.getRuntime().exec(cmdline);
-            BufferedReader input =
-                    new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((line = input.readLine()) != null) {
-                System.out.println(line);
+            try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+
+                while ((line = input.readLine()) != null) {
+                    line2 = line2 + line + "\n";
+                    txtResult.setText(line2);
+                    System.out.println(line);
+                    // jProgressBar1.setValue(p.waitFor());
+                }
             }
-            input.close();
         } catch (Exception err) {
             err.printStackTrace();
         }
+    }
+
+    //Metodo para procurar palavras
+    public void procura(String arq) {
+        boolean achou = false;
+        String NomeArq = arq;
+
+        //String pal = "Starting Time:";
+
+        //Starting Time:
+        try {
+
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Starting Time:")) {
+                    vetor = linha.split(" ");
+                    // System.out.println(linha);
+                    achou = true;
+                }
+            }
+            String hora = "";
+            Date dataIni;
+            dataIni = UtilData.stringToDateSemBarra(vetor[2]);
+
+            for (int i = 8; i < 10; i++) {
+                Character charc = vetor[2].charAt(i);
+                hora = hora + charc;
+            }
+            jDateDataIni.setDate(dataIni);
+            jComboBoxHoraIni.setSelectedItem(hora);
+
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Ending Time:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Ending Time:")) {
+                    vetor = linha.split(" ");
+                    //  System.out.println(linha);
+                    achou = true;
+                }
+            }
+            String hora = "";
+            Date dataIni;
+            dataIni = UtilData.stringToDateSemBarra(vetor[2]);
+
+            for (int i = 8; i < 10; i++) {
+                Character charc = vetor[2].charAt(i);
+                hora = hora + charc;
+            }
+            jDateDataFinal.setDate(dataIni);
+            jComboBoxHoraFinal.setSelectedItem(hora);
+
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Analisys Time Step:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Analisys Time Step:")) {
+                    vetor = linha.split(" ");
+                    // System.out.println(linha);
+                    achou = true;
+                }
+            }
+            txtAnaliseTempo.setText(vetor[3]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Forecast Time Step:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Forecast Time Step:")) {
+                    vetor = linha.split(" ");
+                    // System.out.println(linha);
+                    achou = true;
+                }
+            }
+            txtPrevisaoTempo.setText(vetor[3]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Forecast Total Time:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Forecast Total Time:")) {
+                    vetor = linha.split(" ");
+                    // System.out.println(linha);
+                    achou = true;
+                }
+            }
+            txtPrevisaoTempoTotal.setText(vetor[3]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //History Time:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("History Time:")) {
+                    vetor = linha.split(" ");
+                    //  System.out.println(linha);
+                    achou = true;
+                }
+            }
+            txtHistoriaTempo.setText(vetor[2]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //run domain lower left lat:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("run domain lower left lat:")) {
+                    vetor = linha.split(" ");
+                    //  System.out.println(linha);
+                    achou = true;
+                }
+            }
+            txtLatEsq.setText(vetor[5]);
+            if (vetor[5].equals("-49.875")) {
+                jComboBoxRegiao.setSelectedIndex(0);
+            } else if (vetor[5].equals("-80")) {
+                jComboBoxRegiao.setSelectedIndex(1);
+            } else if (vetor[5].equals("-35")) {
+                jComboBoxRegiao.setSelectedIndex(2);
+            } else if (vetor[5].equals("-27")) {
+                jComboBoxRegiao.setSelectedIndex(3);
+            } else {
+                jComboBoxRegiao.setSelectedIndex(4);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //run domain lower left lon:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("run domain lower left lon:")) {
+                    vetor = linha.split(" ");
+                    // System.out.println(linha);
+                    achou = true;
+                }
+            }
+            txtLongInf.setText(vetor[5]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //run domain upper right lat:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("run domain upper right lat:")) {
+                    vetor = linha.split(" ");
+                    // System.out.println(linha);
+                    achou = true;
+                }
+            }
+            txtLatDireta.setText(vetor[5]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //run domain upper right lon:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("run domain upper right lon:")) {
+                    vetor = linha.split(" ");
+                    // System.out.println(linha);
+                    achou = true;
+                }
+            }
+            txtLongSup.setText(vetor[5]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //run domain resolution dx:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("run domain resolution dx:")) {
+                    vetor = linha.split(" ");
+                    // System.out.println(linha);
+                    achou = true;
+                }
+            }
+            txtResolucaoX.setText(vetor[4]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //run domain resolution dy:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("run domain resolution dy:")) {
+                    vetor = linha.split(" ");
+                    //System.out.println(linha);
+                    achou = true;
+                }
+            }
+            txtResolucaoY.setText(vetor[4]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Reference model:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Reference model:")) {
+                    vetor = linha.split(" ");
+                    //  System.out.println(linha);
+                    achou = true;
+                }
+            }
+            int index = Integer.parseInt(vetor[2]) - 1;
+            jComboBoxRefModelAnlise.setSelectedIndex(index);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Reference file:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Reference file:")) {
+                    vetor = linha.split(" ");
+                    // System.out.println(linha);
+                    achou = true;
+                }
+            }
+            txtEndAnalise.setText(vetor[2]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Number of Experiments:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Number of Experiments:")) {
+                    vetor = linha.split(" ");
+                    //System.out.println(linha);
+                    achou = true;
+                }
+            }
+            txtQauntExp.setText(vetor[3]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Experiments:
+        int nunExp = Integer.parseInt(txtQauntExp.getText());
+        for (int i = 1; i <= nunExp; i++) {
+            try {
+                String linha = "";
+                String[] vetor = null;
+                BufferedReader in = new BufferedReader(new FileReader(arq));
+                while ((linha = in.readLine()) != null) {
+                    if (linha.contains("EXP0" + i)) {
+                        vetor = linha.split(" ");
+                        // System.out.println(linha);
+                    }
+                }
+
+                DefaultTableModel modelo = ((DefaultTableModel) tabelaEXP.getModel());
+
+                int contLinhaTabela = modelo.getRowCount() + 1;
+                if (contLinhaTabela > Integer.parseInt(txtQauntExp.getText())) {
+                    JOptionPane.showMessageDialog(rootPane, "QUANTIDADE NÃO PERMITIDA!!!");
+                    txtEndExp.setText("");
+                } else {
+                    String[] dados = new String[13];
+                    dados[0] = vetor[0];
+                    jComboBoxRefModelExp.setSelectedIndex(Integer.parseInt(vetor[0]) - 1);
+                    dados[1] = "" + jComboBoxRefModelExp.getSelectedItem();
+                    dados[2] = vetor[1];
+                    dados[3] = vetor[2];
+                    modelo.addRow(dados);
+
+                }
+
+            } catch (Exception e) {
+                System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+            }
+        }
+
+        //Use Climatology:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Use Climatology:")) {
+                    vetor = linha.split(" ");
+                    //System.out.println(linha);                    
+                }
+            }
+            if (vetor[2].equals("0")) {
+                jRadioButtonUseClima.setSelected(false);
+            } else {
+                jRadioButtonUseClima.setSelected(true);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Climatology file:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Climatology file:")) {
+                    vetor = linha.split(" ");
+                    //System.out.println(linha);                    
+                }
+            }
+            txtEndClima.setText(vetor[2]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Use Precipitation:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Use Precipitation:")) {
+                    vetor = linha.split(" ");
+                    //System.out.println(linha);                    
+                }
+            }
+            if (vetor[2].equals("0")) {
+                jRadioButtonUsePrecip.setSelected(false);
+            } else {
+                jRadioButtonUsePrecip.setSelected(true);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Precipitation file: 
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Precipitation file:")) {
+                    vetor = linha.split(" ");
+                    //System.out.println(linha);                    
+                }
+            }
+            txtEndPrecip.setText(vetor[2]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Define o Range do Histograma:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Define o Range do Histograma:")) {
+                    vetor = linha.split(" ");
+                    //System.out.println(linha);                    
+                }
+            }
+            txtPrecipRange.setText(vetor[5]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Define valor do limite inferior da ultima classe do histograma:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Define valor do limite inferior da ultima classe do histograma:")) {
+                    vetor = linha.split(" ");
+                    //System.out.println(linha);                    
+                }
+            }
+            txtPrecipLimite.setText(vetor[10]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Define valor do minimo inferior da primeira classe do histograma:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Define valor do minimo inferior da primeira classe do histograma:")) {
+                    vetor = linha.split(" ");
+                    //System.out.println(linha);                    
+                }
+            }
+            txtPrecipMinimo.setText(vetor[10]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Define qual Precipitacao deseja avaliar:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Define qual Precipitacao deseja avaliar:")) {
+                    vetor = linha.split(" ");
+                    //System.out.println(linha);                    
+                }
+            }
+            txtPrecipTipo.setText(vetor[5]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Define o periodo de acumulo de precpitacao da observacao:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Define o periodo de acumulo de precpitacao da observacao:")) {
+                    vetor = linha.split(" ");
+                    //System.out.println(linha);                    
+                }
+            }
+            txtPrecipAcumuloObs.setText(vetor[9]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Define o periodo de acumulo de precpitacao do experimento:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Define o periodo de acumulo de precpitacao do experimento:")) {
+                    vetor = linha.split(" ");
+                    //System.out.println(linha);                    
+                }
+            }
+            txtPrecipAcumuloExp.setText(vetor[9]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+        //Output directory:
+        try {
+            String linha = "";
+            String[] vetor = null;
+            BufferedReader in = new BufferedReader(new FileReader(arq));
+            while ((linha = in.readLine()) != null) {
+                if (linha.contains("Output directory:")) {
+                    vetor = linha.split(" ");
+                    //System.out.println(linha);                    
+                }
+            }
+            txtEndSaida.setText(vetor[2]);
+
+        } catch (Exception e) {
+            System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
+        }
+
+
+
     }
 
     /**
@@ -94,15 +672,24 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         txtHistoriaTempo = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         txtPrevisaoTempoTotal = new javax.swing.JTextField();
-        txtDataFinal = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         txtPrevisaoTempo = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         txtAnaliseTempo = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        txtDataIni = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+        jDateDataIni = new com.toedter.calendar.JDateChooser();
+        jComboBoxHoraIni = new javax.swing.JComboBox();
+        jDateDataFinal = new com.toedter.calendar.JDateChooser();
+        jComboBoxHoraFinal = new javax.swing.JComboBox();
+        jLabel41 = new javax.swing.JLabel();
+        jLabel44 = new javax.swing.JLabel();
+        jLabel45 = new javax.swing.JLabel();
+        jLabel46 = new javax.swing.JLabel();
+        jLabel47 = new javax.swing.JLabel();
+        jLabel48 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         txtResolucaoY = new javax.swing.JTextField();
@@ -118,8 +705,6 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         txtLongSup = new javax.swing.JTextField();
         jComboBoxRegiao = new javax.swing.JComboBox();
         jLabel16 = new javax.swing.JLabel();
-        jPanel12 = new javax.swing.JPanel();
-        jLabelMapa = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jComboBoxRefModelAnlise = new javax.swing.JComboBox();
@@ -180,8 +765,21 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         jLabel42 = new javax.swing.JLabel();
         txtEndExecutavel = new javax.swing.JTextField();
         jLabel43 = new javax.swing.JLabel();
+        jProgressBar1 = new javax.swing.JProgressBar();
+        jPanel12 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtResult = new javax.swing.JTextArea();
+
+        setClosable(true);
+        setTitle("SCAMTEC CONFIGURAÇÕES");
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "PROPRIEDADE DO TEMPO", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 12), java.awt.Color.blue)); // NOI18N
+
+        txtHistoriaTempo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtHistoriaTempoActionPerformed(evt);
+            }
+        });
 
         jLabel6.setText("HISTORIA TEMPO:");
 
@@ -195,55 +793,129 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
         jLabel1.setText("DATA INICIAL:");
 
+        jDateDataIni.setDateFormatString("yyyyMMdd");
+
+        jComboBoxHoraIni.setEditable(true);
+        jComboBoxHoraIni.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24" }));
+
+        jDateDataFinal.setDateFormatString("yyyyMMdd");
+
+        jComboBoxHoraFinal.setEditable(true);
+        jComboBoxHoraFinal.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24" }));
+        jComboBoxHoraFinal.setSelectedIndex(18);
+
+        jLabel41.setText("hh");
+
+        jLabel44.setText("hh");
+
+        jLabel45.setText("hh");
+
+        jLabel46.setText("hh");
+
+        jLabel47.setText("hh");
+
+        jLabel48.setText("hh");
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/text.png"))); // NOI18N
+        jButton1.setText("LOADER");
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel1))
+                .addGap(4, 4, 4)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(12, 12, 12)
+                    .addComponent(jDateDataIni, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jDateDataFinal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtDataIni, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jComboBoxHoraIni, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBoxHoraFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(4, 4, 4)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel44)
+                    .addComponent(jLabel41))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(3, 3, 3)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtAnaliseTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtPrevisaoTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(4, 4, 4)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel48)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel6))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel45)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5)))
+                .addGap(4, 4, 4)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtPrevisaoTempoTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtHistoriaTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(4, 4, 4)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel47)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel46)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtDataIni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(txtAnaliseTempo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(txtPrevisaoTempoTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(txtPrevisaoTempo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6)
-                    .addComponent(txtHistoriaTempo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(15, 15, 15)
+                        .addComponent(jLabel2))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jDateDataIni, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(jDateDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jComboBoxHoraIni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(jComboBoxHoraFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel41)
+                        .addGap(15, 15, 15)
+                        .addComponent(jLabel44))
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jButton1)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel3)
+                                .addComponent(txtAnaliseTempo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel5)
+                                .addComponent(txtPrevisaoTempoTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel45)
+                                .addComponent(jLabel46))
+                            .addGap(11, 11, 11)
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel4)
+                                .addComponent(txtPrevisaoTempo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel6)
+                                .addComponent(txtHistoriaTempo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel47)
+                                .addComponent(jLabel48)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -270,27 +942,6 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
         jLabel16.setText("REGIÕES PRÉ CONFIGURADO");
 
-        jPanel12.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        jLabelMapa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/frame/America do SUL.jpg"))); // NOI18N
-
-        javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
-        jPanel12.setLayout(jPanel12Layout);
-        jPanel12Layout.setHorizontalGroup(
-            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel12Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabelMapa, javax.swing.GroupLayout.DEFAULT_SIZE, 908, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel12Layout.setVerticalGroup(
-            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel12Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabelMapa, javax.swing.GroupLayout.PREFERRED_SIZE, 499, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -298,41 +949,33 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtLatEsq, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtLatDireta, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtLongInf, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtLongSup, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addGap(1, 1, 1)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtResolucaoX, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtResolucaoY, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel16)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jComboBoxRegiao, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 624, Short.MAX_VALUE))))
+                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtLatEsq, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtLatDireta, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtLongInf, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtLongSup, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(1, 1, 1)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtResolucaoX, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtResolucaoY, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel16)
+                    .addComponent(jComboBoxRegiao, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(650, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -354,9 +997,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     .addComponent(jLabel12)
                     .addComponent(txtResolucaoY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBoxRegiao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(585, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -366,13 +1007,14 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -404,7 +1046,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 1207, Short.MAX_VALUE)
+                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtEndAnalise))
                 .addContainerGap())
         );
@@ -474,7 +1116,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                         .addComponent(jLabel19)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, 1194, Short.MAX_VALUE)
                             .addComponent(txtEndExp)))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel17)
@@ -502,7 +1144,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     .addComponent(jLabel19)
                     .addComponent(txtEndExp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -682,7 +1324,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                         .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel9Layout.createSequentialGroup()
                                 .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 792, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 463, Short.MAX_VALUE))
+                                .addGap(0, 489, Short.MAX_VALUE))
                             .addComponent(txtEndPrecip)))
                     .addGroup(jPanel9Layout.createSequentialGroup()
                         .addGap(12, 12, 12)
@@ -726,18 +1368,17 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     .addComponent(jLabel31)
                     .addComponent(txtPrecipAcumuloObs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel37))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel32)
                         .addComponent(txtPrecipAcumuloExp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel38))
-                    .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel29)
-                            .addComponent(txtPrecipMinimo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel35))
-                        .addGap(48, 48, 48))))
+                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel29)
+                        .addComponent(txtPrecipMinimo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel35)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel10.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "DIRETORIO DE SAÍDA", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 12), java.awt.Color.blue)); // NOI18N
@@ -811,6 +1452,31 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jProgressBar1.setStringPainted(true);
+
+        jPanel12.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "RESULTADO", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 12), java.awt.Color.blue)); // NOI18N
+
+        txtResult.setColumns(20);
+        txtResult.setRows(5);
+        jScrollPane1.setViewportView(txtResult);
+
+        javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
+        jPanel12.setLayout(jPanel12Layout);
+        jPanel12Layout.setHorizontalGroup(
+            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel12Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
+        );
+        jPanel12Layout.setVerticalGroup(
+            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel12Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
@@ -822,9 +1488,11 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btSalvar))
-                    .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
@@ -833,13 +1501,17 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 226, Short.MAX_VALUE)
-                .addComponent(btSalvar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btSalvar)
+                    .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -849,7 +1521,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1609, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -875,7 +1547,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             txtLongSup.setText("-35.375");
             txtResolucaoX.setText("0.25");
             txtResolucaoY.setText("0.25");
-            jLabelMapa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/frame/America do SUL.jpg")));
+            //jLabelMapa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/frame/America do SUL.jpg")));
         } else if (jComboBoxRegiao.getSelectedIndex() == 1) {//HEMISFERIO SUL
             txtLatEsq.setText("-80");
             txtLongInf.setText("0");
@@ -897,7 +1569,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             txtLongSup.setText("-40");
             txtResolucaoX.setText("0.4");
             txtResolucaoY.setText("0.4");
-            jLabelMapa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/frame/mapa-rodoviario-sao-paulo.jpg")));
+            //jLabelMapa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/frame/mapa-rodoviario-sao-paulo.jpg")));
         } else if (jComboBoxRegiao.getSelectedIndex() == 4) {//NOVO
             txtLatEsq.setText("");
             txtLongInf.setText("");
@@ -965,6 +1637,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
     private void btSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalvarActionPerformed
         try {
+
             DefaultTableModel modelo = (DefaultTableModel) tabelaEXP.getModel();
             File arquivo;
 
@@ -978,22 +1651,26 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     + "\n#";
             // Configuracao do tempo
             fos.write(texto.getBytes());
-            texto = "\nStarting Time: " + txtDataIni.getText() + " #Format  :: YYYYMMDDHH";
+            Date dataI = jDateDataIni.getDate();
+            String dataIni = UtilData.dateToStringSemBarra(dataI) + jComboBoxHoraIni.getSelectedItem();
+            texto = "\nStarting Time: " + dataIni + " #Format  :: YYYYMMDDHH";
             fos.write(texto.getBytes());
 
-            texto = "\nEnding Time:   " + txtDataFinal.getText() + " #Format  :: YYYYMMDDHH";
+            Date dataF = jDateDataFinal.getDate();
+            String dataFinal = UtilData.dateToStringSemBarra(dataF) + jComboBoxHoraFinal.getSelectedItem();
+            texto = "\nEnding Time: " + dataFinal + " #Format  :: YYYYMMDDHH";
             fos.write(texto.getBytes());
 
-            texto = "\nAnalisys Time Step:  " + txtAnaliseTempo.getText() + " #Format  :: HH";
+            texto = "\nAnalisys Time Step: " + txtAnaliseTempo.getText() + " #Format  :: HH";
             fos.write(texto.getBytes());
 
-            texto = "\nForecast Time Step:  " + txtPrevisaoTempo.getText() + " #Format  :: HH";
+            texto = "\nForecast Time Step: " + txtPrevisaoTempo.getText() + " #Format  :: HH";
             fos.write(texto.getBytes());
 
-            texto = "\nForecast Total Time: " + txtPrevisaoTempoTotal.getText() + "#Format  :: HH";
+            texto = "\nForecast Total Time: " + txtPrevisaoTempoTotal.getText() + " #Format  :: HH";
             fos.write(texto.getBytes());
 
-            texto = "\nHistory Time:        " + txtHistoriaTempo.getText() + "#Format  :: HH";
+            texto = "\nHistory Time: " + txtHistoriaTempo.getText() + " #Format  :: HH";
             fos.write(texto.getBytes());
 
             texto = "\n\n#======================================================================"
@@ -1031,9 +1708,9 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             fos.write(texto.getBytes());
             texto = "\nrun domain upper right lon: " + txtLongSup.getText();
             fos.write(texto.getBytes());
-            texto = "\nrun domain resolution dx:   " + txtResolucaoX.getText();
+            texto = "\nrun domain resolution dx: " + txtResolucaoX.getText();
             fos.write(texto.getBytes());
-            texto = "\nrun domain resolution dy:   " + txtResolucaoY.getText();
+            texto = "\nrun domain resolution dy: " + txtResolucaoY.getText();
             fos.write(texto.getBytes());
 
             texto = "\n\n#======================================================================"
@@ -1151,7 +1828,15 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             }
 
             fis.close();
-            cmdExec(txtEndExecutavel.getText() + "scamtec.x");
+
+            new Thread(new Carregar()).start();
+
+
+           cmdExec(txtEndExecutavel.getText() + "scamtec.x");
+
+
+
+
             JOptionPane.showMessageDialog(rootPane, "CONFIGURACAO REALIZADA COM SUCESSO");
 
 
@@ -1159,14 +1844,37 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             ee.printStackTrace();
         }
     }//GEN-LAST:event_btSalvarActionPerformed
+
+    private void txtHistoriaTempoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtHistoriaTempoActionPerformed
+    }//GEN-LAST:event_txtHistoriaTempoActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        JFileChooser file = new JFileChooser();
+        file.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int i = file.showSaveDialog(null);
+        if (i == 1) {
+            endArq = "";
+            JOptionPane.showMessageDialog(rootPane, "Arquivo inválido");
+        } else {
+            File arquivo = file.getSelectedFile();
+            endArq = arquivo.getPath();
+            procura(endArq);
+
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdicionar;
     private javax.swing.JButton btSalvar;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JComboBox jComboBoxHoraFinal;
+    private javax.swing.JComboBox jComboBoxHoraIni;
     private javax.swing.JComboBox jComboBoxRefModelAnlise;
     private javax.swing.JComboBox jComboBoxRefModelExp;
     private javax.swing.JComboBox jComboBoxRefModelxClima;
     private javax.swing.JComboBox jComboBoxRefModelxPrecip;
     private javax.swing.JComboBox jComboBoxRegiao;
+    private com.toedter.calendar.JDateChooser jDateDataFinal;
+    private com.toedter.calendar.JDateChooser jDateDataIni;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1202,14 +1910,19 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel40;
+    private javax.swing.JLabel jLabel41;
     private javax.swing.JLabel jLabel42;
     private javax.swing.JLabel jLabel43;
+    private javax.swing.JLabel jLabel44;
+    private javax.swing.JLabel jLabel45;
+    private javax.swing.JLabel jLabel46;
+    private javax.swing.JLabel jLabel47;
+    private javax.swing.JLabel jLabel48;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JLabel jLabelMapa;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -1222,14 +1935,14 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
+    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JRadioButton jRadioButtonUseClima;
     private javax.swing.JRadioButton jRadioButtonUsePrecip;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable tabelaEXP;
     private javax.swing.JTextField txtAnaliseTempo;
-    private javax.swing.JTextField txtDataFinal;
-    private javax.swing.JTextField txtDataIni;
     private javax.swing.JTextField txtEndAnalise;
     private javax.swing.JTextField txtEndClima;
     private javax.swing.JTextField txtEndExecutavel;
@@ -1252,5 +1965,6 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtQauntExp;
     private javax.swing.JTextField txtResolucaoX;
     private javax.swing.JTextField txtResolucaoY;
+    private javax.swing.JTextArea txtResult;
     // End of variables declaration//GEN-END:variables
 }
