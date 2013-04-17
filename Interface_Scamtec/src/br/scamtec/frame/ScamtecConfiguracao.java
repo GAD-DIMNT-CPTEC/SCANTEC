@@ -76,6 +76,39 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
     }
 
+    
+
+    public class ExecutaScamtec implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                String line;
+                String line2 = "";
+                txtResult.setText("");
+                Process p = Runtime.getRuntime().exec(txtEndExecutavel.getText() + "scamtec.x");
+                
+                try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+                    int cont=0;
+                    
+                    while ((line = input.readLine()) != null) {
+                        
+                        line2 = line2 + line + "\n";
+                        cont=cont+1;
+                        jProgressBar1.setValue(cont);
+                        
+                        txtResult.setText(line2);
+                        System.out.println(line);
+                        // jProgressBar1.setValue(p.waitFor());
+                    }
+                }
+            } catch (Exception err) {
+                err.printStackTrace();
+            }
+
+        }
+    }
+    
     public class Carregar implements Runnable {
 
         @Override
@@ -89,26 +122,6 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     Logger.getLogger(ScamtecConfiguracao.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        }
-    }
-
-    public void cmdExec(String cmdline) {
-        try {
-            String line;
-            String line2 = "";
-            txtResult.setText("");
-            Process p = Runtime.getRuntime().exec(cmdline);
-            try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
-
-                while ((line = input.readLine()) != null) {
-                    line2 = line2 + line + "\n";
-                    txtResult.setText(line2);
-                    System.out.println(line);
-                    // jProgressBar1.setValue(p.waitFor());
-                }
-            }
-        } catch (Exception err) {
-            err.printStackTrace();
         }
     }
 
@@ -1452,8 +1465,6 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jProgressBar1.setStringPainted(true);
-
         jPanel12.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "RESULTADO", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 12), java.awt.Color.blue)); // NOI18N
 
         txtResult.setColumns(20);
@@ -1829,15 +1840,16 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
             fis.close();
 
-            new Thread(new Carregar()).start();
+            //new Thread(new Carregar()).start();
 
 
-           cmdExec(txtEndExecutavel.getText() + "scamtec.x");
+            ExecutaScamtec exe = new ExecutaScamtec();
+            Thread theradExe = new Thread(exe);
+            theradExe.start();
+            
 
 
-
-
-            JOptionPane.showMessageDialog(rootPane, "CONFIGURACAO REALIZADA COM SUCESSO");
+           // JOptionPane.showMessageDialog(rootPane, "CONFIGURACAO REALIZADA COM SUCESSO");
 
 
         } catch (Exception ee) {

@@ -1324,9 +1324,6 @@
               </SubComponents>
             </Container>
             <Component class="javax.swing.JProgressBar" name="jProgressBar1">
-              <Properties>
-                <Property name="stringPainted" type="boolean" value="true"/>
-              </Properties>
             </Component>
             <Container class="javax.swing.JPanel" name="jPanel12">
               <Properties>
