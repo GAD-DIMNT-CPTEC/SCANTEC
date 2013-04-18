@@ -1,0 +1,56 @@
+Corrigido o bug no local onde salva o arquivo scamtec.conf
+--Esta linha, e as abaixo, serão ignoradas--
+
+M    src/br/scamtec/frame/ScamtecConfiguracao.java
+M    src/br/scamtec/frame/ScamtecConfiguracao.form
+M    src/br/scamtec/classes/UtilData.java
+R    build
+A    build/classes
+A    build/classes/br
+A    build/classes/br/scamtec
+A    build/classes/br/scamtec/classes
+AM   build/classes/br/scamtec/classes/scamtec.x
+AM   build/classes/br/scamtec/classes/Teste.class
+AM   build/classes/br/scamtec/classes/UtilData.class
+A    build/classes/br/scamtec/imagens
+AM   build/classes/br/scamtec/imagens/scamtec.png
+AM   build/classes/br/scamtec/imagens/mapa-rodoviario-sao-paulo.jpg
+AM   build/classes/br/scamtec/imagens/text.png
+AM   build/classes/br/scamtec/imagens/America do SUL.jpg
+AM   build/classes/br/scamtec/imagens/wrench.png
+AM   build/classes/br/scamtec/imagens/America do SUL.png
+A    build/classes/br/scamtec/frame
+AM   build/classes/br/scamtec/frame/Main$3.class
+AM   build/classes/br/scamtec/frame/ScamtecConfiguracao$Carregar.class
+AM   build/classes/br/scamtec/frame/ScamtecConf$2.class
+AM   build/classes/br/scamtec/frame/ScamtecConf$3.class
+AM   build/classes/br/scamtec/frame/ScamtecConf$4.class
+AM   build/classes/br/scamtec/frame/ScamtecConf$5.class
+AM   build/classes/br/scamtec/frame/ScamtecConf$6.class
+AM   build/classes/br/scamtec/frame/ScamtecConfiguracao$ExecutaScamtec.class
+AM   build/classes/br/scamtec/frame/Main.class
+AM   build/classes/br/scamtec/frame/ScamtecConf.class
+AM   build/classes/br/scamtec/frame/ScamtecConfiguracao$1.class
+AM   build/classes/br/scamtec/frame/ScamtecConfiguracao$2.class
+AM   build/classes/br/scamtec/frame/ScamtecConfiguracao$3.class
+AM   build/classes/br/scamtec/frame/ScamtecConfiguracao$4.class
+AM   build/classes/br/scamtec/frame/ScamtecConfiguracao$5.class
+AM   build/classes/br/scamtec/frame/ScamtecConfiguracao$6.class
+AM   build/classes/br/scamtec/frame/ScamtecConfiguracao$7.class
+AM   build/classes/br/scamtec/frame/ScamtecConfiguracao$8.class
+AM   build/classes/br/scamtec/frame/ScamtecConfiguracao.class
+AM   build/classes/br/scamtec/frame/Main$1.class
+AM   build/classes/br/scamtec/frame/ScamtecConf$1.class
+AM   build/classes/br/scamtec/frame/Main$2.class
+AM   build/classes/gmon.out
+A    build/empty
+A    build/generated-sources
+A    build/generated-sources/ap-source-output
+A    build/built-jar.properties
+R    dist
+A    dist/lib
+AM   dist/lib/jcalendar-1.4.jar
+AM   dist/Scamtec.jar
+A    dist/README.TXT
+M    scamtec.conf
+D    gmon.out
