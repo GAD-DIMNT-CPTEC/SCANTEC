@@ -802,7 +802,7 @@
                           <Component id="jPanel9" alignment="0" max="32767" attributes="0"/>
                           <Component id="jPanel10" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jProgressBar1" min="-2" pref="396" max="-2" attributes="0"/>
+                              <Component id="barraProcesso" min="-2" pref="396" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="btSalvar" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -829,7 +829,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btSalvar" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jProgressBar1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="barraProcesso" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -1323,7 +1323,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JProgressBar" name="jProgressBar1">
+            <Component class="javax.swing.JProgressBar" name="barraProcesso">
               <Properties>
                 <Property name="stringPainted" type="boolean" value="true"/>
               </Properties>

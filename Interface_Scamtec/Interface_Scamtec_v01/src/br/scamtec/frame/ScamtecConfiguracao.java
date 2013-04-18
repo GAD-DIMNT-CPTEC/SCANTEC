@@ -84,24 +84,40 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 String line;
                 String line2 = "";
                 txtResult.setText("");
-                System.out.println("teste "+txtEndExecutavel.getText() + "scamtec.x");
-                Process p = Runtime.getRuntime().exec(txtEndExecutavel.getText() + "scamtec.x");
                 
+                Process p = Runtime.getRuntime().exec(txtEndExecutavel.getText() + "scamtec.x");
+
                 try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
                     int cont = 0;
-                    jProgressBar1.setMaximum(difDatas());
-                    System.out.println("HELLO " + difDatas());
+
+                    //setando o tamanho total da barra
+                    barraProcesso.setMaximum(difDatas());
+
+                    // variavel para verificar se é commentario
+                    Character inicio = '!';
 
                     while ((line = input.readLine()) != null) {
-
+                        //variavel que é escriva no jtextarea
                         line2 = line2 + line + "\n";
-                        cont = cont + 1;
-                        jProgressBar1.setValue(cont);
+
+                        //variavel para pegar uma letra da linha
+                        Character comentario = line.charAt(1);
+
+                        //verifica se é comentario para nao somar na barra de progresso
+                        if (comentario.equals(inicio)) {
+                            //System.out.println("nao faz nada \n");
+                            //nao faz nada   
+                        } else {
+                            cont = cont + 1;
+                            barraProcesso.setValue(cont);
+                            // barraProcesso.setIndeterminate(true);
+                        }
+                        //escrebendo no jtextarea
                         txtResult.setText(line2);
                         txtResult.selectAll();
                         System.out.println(line);
-                        // jProgressBar1.setValue(p.waitFor());
                     }
+                    //barraProcesso.setIndeterminate(false);
                 }
             } catch (Exception err) {
                 err.printStackTrace();
@@ -115,33 +131,27 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         Date dataA = UtilData.getDataCalendario(jDateDataIni.getDate());
         Date dataVenc = UtilData.getDataCalendario(jDateDataFinal.getDate());
 
-        System.out.print("data " + dataA);
-
         int horaPrev = Integer.parseInt(txtPrevisaoTempo.getText());
+        int horaAna = Integer.parseInt(txtAnaliseTempo.getText());
 
         int horaIni = Integer.parseInt("" + jComboBoxHoraIni.getSelectedItem());
         int horaFinal = Integer.parseInt("" + jComboBoxHoraFinal.getSelectedItem());
-        int difHora = horaFinal - horaIni;
-
+        int difHora = ((horaFinal + horaAna) - horaIni);
+        
+        difHora = difHora / horaPrev;
+        System.out.println("\nHELLO3 " + difHora);
         int horaPrevTotal = Integer.parseInt(txtPrevisaoTempoTotal.getText());
 
         int quantPrev = (horaPrevTotal / horaPrev) + 1;
 
         int difData = dataDiff(dataA, dataVenc);
-        //if (vencimento == 0) {
-        //   vencimento = 1;
-        //}
 
-
-        //int tempo=24/difHora;
-
-
+        int tempo = 24 / horaAna;
 
         int total = 0;
-        System.out.println("\nHELLO2 " + difData + " " + difHora + ' ' + (horaPrevTotal / horaPrev));
 
-        total = difData + difHora + quantPrev + 3;
-        System.out.println("\nHELLO " + difData + " " + total + ' ' + difHora);
+        total = (difData * (tempo) * quantPrev) + quantPrev * difHora;
+        System.out.println("\nRESULT " + difData + " " + tempo + " " + quantPrev + quantPrev + " " + difHora + " " + total);
         return total;
     }
 
@@ -198,7 +208,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         @Override
         public void run() {
             for (int i = 0; i <= 100; i++) {
-                jProgressBar1.setValue(i);
+                barraProcesso.setValue(i);
                 try {
                     Thread.sleep(50);
 
@@ -846,7 +856,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         jLabel42 = new javax.swing.JLabel();
         txtEndExecutavel = new javax.swing.JTextField();
         jLabel43 = new javax.swing.JLabel();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        barraProcesso = new javax.swing.JProgressBar();
         jPanel12 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtResult = new javax.swing.JTextArea();
@@ -1533,7 +1543,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jProgressBar1.setStringPainted(true);
+        barraProcesso.setStringPainted(true);
 
         jPanel12.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "RESULTADO", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 12), java.awt.Color.blue)); // NOI18N
 
@@ -1570,7 +1580,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(barraProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btSalvar))
                     .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1593,7 +1603,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btSalvar)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(barraProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -1991,6 +2001,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JProgressBar barraProcesso;
     private javax.swing.JButton btAdicionar;
     private javax.swing.JButton btSalvar;
     private javax.swing.JButton jButton1;
@@ -2063,7 +2074,6 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JRadioButton jRadioButtonUseClima;
     private javax.swing.JRadioButton jRadioButtonUsePrecip;
     private javax.swing.JScrollPane jScrollPane1;
