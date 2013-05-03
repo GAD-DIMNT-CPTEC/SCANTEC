@@ -22,6 +22,8 @@ import javax.swing.UIManager;
 public class Main extends javax.swing.JFrame {
 
     private JLabel jLabelLogo;
+    static int totalPrev, passoPrev; 
+    static String endSaida;
 
     /**
      * Creates new form Main
@@ -45,8 +47,6 @@ public class Main extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jMenuItem2 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SISTEMA COMUNITÁRIO DE AVALIAÇÕES DE MODELOS TEMPO E CLIMA (SCAMTEC)");
@@ -61,8 +61,10 @@ public class Main extends javax.swing.JFrame {
         jLabelTitulo.setBounds(50, 40, 860, 29);
         telaPrincipal.add(jLabelTitulo, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        jMenu1.setText("File");
+        jMenu1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/preferences.png"))); // NOI18N
+        jMenu1.setText("Arquivos");
 
+        jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/wrench.png"))); // NOI18N
         jMenuItem1.setText("Configurações");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -72,18 +74,6 @@ public class Main extends javax.swing.JFrame {
         jMenu1.add(jMenuItem1);
 
         jMenuBar1.add(jMenu1);
-
-        jMenu2.setText("Edit");
-
-        jMenuItem2.setText("Configurações");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
-            }
-        });
-        jMenu2.add(jMenuItem2);
-
-        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -95,7 +85,7 @@ public class Main extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(telaPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)
+            .addComponent(telaPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
         );
 
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
@@ -106,18 +96,18 @@ public class Main extends javax.swing.JFrame {
         ScamtecConfiguracao scamConf = new ScamtecConfiguracao();
         scamConf.setVisible(true);
         telaPrincipal.removeAll();
-                
+
         jLabelLogo = new javax.swing.JLabel();
         jLabelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/scamtec.png")));
         jLabelLogo.setBounds(110, 60, 490, 250);
         telaPrincipal.add(jLabelLogo, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        
+
         jLabelTitulo.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         jLabelTitulo.setForeground(new java.awt.Color(255, 255, 255));
         jLabelTitulo.setText("SISTEMA COMUNITÁRIO DE AVALIAÇÃO DE MODELOS E CLIMA");
         jLabelTitulo.setBounds(50, 40, 860, 29);
         telaPrincipal.add(jLabelTitulo, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        
+
         telaPrincipal.add(scamConf);
         try {
             scamConf.setMaximum(true);
@@ -125,18 +115,6 @@ public class Main extends javax.swing.JFrame {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
-
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        ScamtecConf scamConf = new ScamtecConf();
-        telaPrincipal.removeAll();
-        telaPrincipal.add(scamConf);
-        scamConf.setVisible(true);
-        try {
-            scamConf.setMaximum(true);
-        } catch (PropertyVetoException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -183,10 +161,8 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelTitulo;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
     public static javax.swing.JDesktopPane telaPrincipal;
     // End of variables declaration//GEN-END:variables
 }
