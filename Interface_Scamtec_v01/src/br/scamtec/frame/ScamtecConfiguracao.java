@@ -4,20 +4,40 @@
  */
 package br.scamtec.frame;
 
+import br.scamtec.classes.UtilData;
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
-import java.util.Date;
-import br.scamtec.classes.UtilData;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.plot.Marker;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.ValueMarker;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  *
@@ -29,6 +49,16 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
     int useClima = 1;
     int usePrecip = 0;
     String endArq = "";
+    List<String> nomeExp = new ArrayList<>();
+    //Grafico ------------------------------------------
+    //String linha = "";
+    List<String> umaLinha = new ArrayList<>();
+    String[] cabecalho = null;
+    String[] val = null;
+    String[][][] valores;
+    int qauntExp = 1;
+    private XYSeriesCollection dataset;
+    //---------------------------------------------------
 
     /**
      * Creates new form teste
@@ -40,6 +70,12 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         jRadioButtonUseClima.setSelected(true);
         parametrosPrecip();
         txtResult.setText("");
+
+        //Grafico------------------------------
+        jRadioButtonAcor.setSelected(true);
+
+        //--------------------------------------
+
     }
 
     private void tabelaPadrao() {
@@ -52,12 +88,13 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         modelo.addColumn("MODELO");
         modelo.addColumn("EXP");
         modelo.addColumn("ENDEREÇO");
-
+        modelo.addColumn("NOME");
 
         tabelaEXP.getColumnModel().getColumn(0).setPreferredWidth(10);
         tabelaEXP.getColumnModel().getColumn(1).setPreferredWidth(20);
         tabelaEXP.getColumnModel().getColumn(2).setPreferredWidth(10);
-        tabelaEXP.getColumnModel().getColumn(3).setPreferredWidth(1000);
+        tabelaEXP.getColumnModel().getColumn(3).setPreferredWidth(800);
+        tabelaEXP.getColumnModel().getColumn(4).setPreferredWidth(200);
     }
 
     private void parametrosPrecip() {
@@ -72,7 +109,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         txtHistoriaTempo.setText("48");
         txtAnaliseTempo.setText("06");
         txtPrevisaoTempo.setText("06");
-        txtPrevisaoTempoTotal.setText("120");
+        txtPrevisaoTempoTotal.setText("72");
 
     }
 
@@ -84,7 +121,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 String line;
                 String line2 = "";
                 txtResult.setText("");
-                
+
                 Process p = Runtime.getRuntime().exec(txtEndExecutavel.getText() + "scamtec.x");
 
                 try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
@@ -92,7 +129,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
                     //setando o tamanho total da barra
                     barraProcesso.setMaximum(difDatas());
-
+                    //barraProcesso.setIndeterminate(true);
                     // variavel para verificar se é commentario
                     Character inicio = '!';
 
@@ -137,7 +174,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         int horaIni = Integer.parseInt("" + jComboBoxHoraIni.getSelectedItem());
         int horaFinal = Integer.parseInt("" + jComboBoxHoraFinal.getSelectedItem());
         int difHora = ((horaFinal + horaAna) - horaIni);
-        
+
         difHora = difHora / horaPrev;
         System.out.println("\nHELLO3 " + difHora);
         int horaPrevTotal = Integer.parseInt(txtPrevisaoTempoTotal.getText());
@@ -519,11 +556,14 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             try {
                 String linha = "";
                 String[] vetor = null;
+                String[] nomeEx = null;
                 BufferedReader in = new BufferedReader(new FileReader(arq));
                 while ((linha = in.readLine()) != null) {
                     if (linha.contains("EXP0" + i)) {
                         vetor = linha.split(" ");
-                        // System.out.println(linha);
+                        nomeEx = linha.split("#");
+                        System.out.println(vetor[i]);
+
                     }
                 }
 
@@ -540,6 +580,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     dados[1] = "" + jComboBoxRefModelExp.getSelectedItem();
                     dados[2] = vetor[1];
                     dados[3] = vetor[2];
+                    dados[4] = nomeEx[1];
                     modelo.addRow(dados);
 
                 }
@@ -748,6 +789,222 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
     }
 
+    //------------------------------------------------------------------------------------------------
+    // ::: GRAFICOS :::
+    private void leituraArqSaida() {
+        String nomeArq = "";
+        String linha;
+        int nExp = Integer.parseInt(txtQauntExp.getText());
+        int totalPrev = Integer.parseInt(txtPrevisaoTempoTotal.getText());
+        int horaPrev = Integer.parseInt(txtPrevisaoTempo.getText());
+        int quatHoras = (totalPrev / horaPrev) + 2;//porque + 2 para somar a zero horas e o cabeçalho
+        valores = new String[nExp][quatHoras][23]; // = new String[][][];//[quantExp][quantHoras][quantVariaveis]
+        //System.out.println("VALORES "+nExp+" "+quatHoras);
+
+        //pegando data inicial e final
+        Date dataI = jDateDataIni.getDate();
+        String dataIni = UtilData.dateToStringSemBarra(dataI) + jComboBoxHoraIni.getSelectedItem();
+        Date dataF = jDateDataFinal.getDate();
+        String dataFinal = UtilData.dateToStringSemBarra(dataF) + jComboBoxHoraFinal.getSelectedItem();
+        Main.endSaida = txtEndSaida.getText();
+        qauntExp = Integer.parseInt(txtQauntExp.getText());
+
+        for (int w = 0; w < qauntExp; w++) {// loop qauntidade de arquivos
+
+            if (jRadioButtonAcor.isSelected() == true) {
+                int exp = w + 1;
+                nomeArq = Main.endSaida + "ACOREXP0" + exp + "_" + dataIni + dataFinal + ".scam";
+            } else if (jRadioButtonRmse.isSelected() == true) {
+                int exp = w + 1;
+                nomeArq = Main.endSaida + "RMSEEXP0" + exp + "_" + dataIni + dataFinal + ".scam";
+            } else if (jRadioButtonVies.isSelected() == true) {
+                int exp = w + 1;
+                nomeArq = Main.endSaida + "VIESEXP0" + exp + "_" + dataIni + dataFinal + ".scam";
+            }
+            txtArqSaida.setText(nomeArq);
+            umaLinha.clear();
+            // System.out.println("ARQ= " + nomeArq);
+            try {
+                BufferedReader in = new BufferedReader(new FileReader(nomeArq));
+
+                while ((linha = in.readLine()) != null) {
+                    umaLinha.add(linha);
+                    //System.out.println(linha);
+
+                }
+
+                //   System.out.println(teste.get(0));
+
+                for (int i = 0; i < umaLinha.size(); i++) {
+
+                    if (umaLinha.get(i).contains("%")) {
+                        cabecalho = umaLinha.get(i).trim().split(" ");
+                        //System.out.println(cabecalho[1]);
+
+                    } else {
+
+                        //tirando os espacos da linha 
+                        linha = umaLinha.get(i);
+                        linha = linha.trim().replace("    ", " ");
+                        linha = linha.trim().replace("   ", " ");
+                        linha = linha.trim().replace("  ", " ");
+
+                        val = linha.trim().split(" ");
+                        for (int j = 0; j < val.length; j++) {
+                            valores[w][i][j] = val[j];
+                            //System.out.println(valores[w][i][j] + " w= " + w + " i= " + i + " j= " + j);
+                        }
+
+
+                    }
+
+                }
+
+
+            } catch (Exception e) {
+                System.err.println("Erro na abertura do arquivo " + nomeArq + '\n');
+                e.printStackTrace();
+            }
+            // System.out.println("parou aqui");
+        }
+        tabelaPadraoValores();
+        setVariaveis();
+
+
+    }
+
+    private void tabelaPadraoValores() {
+        //leituraArqSaida();
+        DefaultTableModel modelo = ((DefaultTableModel) tabelaValores.getModel());
+        modelo.setRowCount(0);
+        modelo.setColumnCount(0);
+
+        //  int totalIntegracao = ScamtecConfiguracao.totalPrev / ScamtecConfiguracao.passoPrev + 1;
+        for (int i = 1; i <= 13; i++) { // nomenclatura das colunas da tabela
+            modelo.addColumn(valores[0][i][0]);
+            //System.out.println(valores[0][i][0]);
+        }
+        //System.out.println("parou aqui");
+
+    }
+
+    private void setVariaveis() {//metodo para adicionar as variaveis no jcomboBox
+        //leituraArqSaida();
+
+        DefaultComboBoxModel modelo = ((DefaultComboBoxModel) jComboBoxVariavel.getModel());
+        modelo.removeAllElements();
+        for (int i = 1; i < cabecalho.length; i++) {
+            modelo.addElement(cabecalho[i]);
+        }
+
+    }
+
+    public void PlotTest() throws FileNotFoundException, IOException {
+
+        // leituraArqSaida();
+        dataset = new XYSeriesCollection();
+        //Quantidade de Arquivos
+        String nomeTipo = "";
+        for (int w = 0; w < qauntExp; w++) { //loop quantidade de arquivos
+            int nExp = w + 1;
+            System.out.println("HELLO " + nomeExp.get(w));
+
+            XYSeries data = new XYSeries(nomeExp.get(w));
+
+            int cont = 0;
+            for (int j = 1; j <= 13; j++) {
+                if (jRadioButtonAcor.isSelected() == true) {
+                    //System.out.println("cont "+cont);
+                    data.add(cont, Double.parseDouble(valores[w][j][jComboBoxVariavel.getSelectedIndex() + 1]) * 100); //Point 1  
+                    cont = cont + 6;
+                } else {
+                    data.add(cont, Double.parseDouble(valores[w][j][jComboBoxVariavel.getSelectedIndex() + 1])); //Point 1  
+                    cont = cont + 6;
+                }
+
+            }
+
+            dataset.addSeries(data);
+
+            if (jRadioButtonAcor.isSelected() == true) {
+                nomeTipo = "ACOR - ";
+            } else if (jRadioButtonRmse.isSelected() == true) {
+                nomeTipo = "RMSE - ";
+            } else if (jRadioButtonVies.isSelected() == true) {
+                nomeTipo = "VIES - ";
+            }
+        }
+        showGraph(nomeTipo + cabecalho[jComboBoxVariavel.getSelectedIndex() + 1]);
+    }
+
+    private void showGraph(String titulo) throws FileNotFoundException, IOException {
+        final JFreeChart chart = createChart(dataset, titulo);
+        final ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new java.awt.Dimension(900, 700));
+        JFrame frame = new JFrame(titulo);//Nome no topo do Frame
+        frame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        frame.setContentPane(chartPanel);
+        frame.pack();
+        frame.setVisible(true);
+
+
+
+
+
+
+    }
+
+    private JFreeChart createChart(final XYDataset dataset, String titulo) throws FileNotFoundException, IOException {
+        final JFreeChart chart = ChartFactory.createScatterPlot(
+                titulo, // chart title  
+                "HORAS DE INTEGRAÇÃO", // x axis label  
+                "VALORES", // y axis label  
+                dataset, // data  
+                PlotOrientation.VERTICAL,
+                true, // include legend  
+                true, // tooltips  
+                false // urls  
+                );
+
+        // Comentando essas linhas abaixo;  
+        XYPlot plot = (XYPlot) chart.getPlot();
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        renderer.setSeriesLinesVisible(0, true);
+        plot.setRenderer(renderer);
+
+        //Defenir range
+        final NumberAxis rangeAxis = (NumberAxis) plot.getDomainAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+        double valMin = Double.parseDouble(valores[0][1][0]);//primeira hora
+        rangeAxis.setLowerBound(valMin);
+
+        double valPasso = Double.parseDouble(valores[0][2][0]);//passo de horas
+        rangeAxis.setUpperMargin(valPasso);
+
+        double valMax = valPasso + Double.parseDouble(valores[0][13][0]);//passo de horas
+        rangeAxis.setUpperBound(valMax);
+        rangeAxis.setTickUnit(new NumberTickUnit(valPasso)); //traça o intervalo entre valores   
+        //System.out.println("VALORES " + valMin + " " + valPasso + " " + valMax);
+
+        //marcando um linha reta
+        double valor = 0.0;
+        if (jRadioButtonAcor.isSelected() == true) {
+            valor = 60.0;
+        }
+        Marker marcador = new ValueMarker(valor);
+        chart.getXYPlot().addRangeMarker(marcador);
+        marcador.setPaint(Color.BLACK);
+
+        //salvando os arquivos
+        //OutputStream arquivo = new FileOutputStream("grafico.png");
+        //ChartUtilities.writeChartAsPNG(arquivo, chart, 800, 700);
+
+
+        return chart;
+    }
+    //------------------------------------------------------------------------------------------------
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -757,8 +1014,9 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        jTabbedPaneGrafico = new javax.swing.JTabbedPane();
+        jPanelTempoDominio = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         txtHistoriaTempo = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
@@ -796,7 +1054,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         txtLongSup = new javax.swing.JTextField();
         jComboBoxRegiao = new javax.swing.JComboBox();
         jLabel16 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        jPanelPropArq = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jComboBoxRefModelAnlise = new javax.swing.JComboBox();
         jLabel13 = new javax.swing.JLabel();
@@ -814,7 +1072,11 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         txtEndExp = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
         btAdicionar = new javax.swing.JButton();
-        jPanel7 = new javax.swing.JPanel();
+        btDeletar = new javax.swing.JButton();
+        txtNomeEXP = new javax.swing.JTextField();
+        jLabel49 = new javax.swing.JLabel();
+        jLabel50 = new javax.swing.JLabel();
+        jPanelPropOpcao = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         jRadioButtonUseClima = new javax.swing.JRadioButton();
         jLabel21 = new javax.swing.JLabel();
@@ -860,9 +1122,25 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         jPanel12 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtResult = new javax.swing.JTextArea();
+        jPanelGrafico = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tabelaValores = new javax.swing.JTable();
+        btGrafico = new javax.swing.JButton();
+        jRadioButtonAcor = new javax.swing.JRadioButton();
+        jComboBoxVariavel = new javax.swing.JComboBox();
+        jRadioButtonVies = new javax.swing.JRadioButton();
+        jRadioButtonRmse = new javax.swing.JRadioButton();
+        txtArqSaida = new javax.swing.JTextField();
+        jButton2 = new javax.swing.JButton();
 
         setClosable(true);
         setTitle("SCAMTEC CONFIGURAÇÕES");
+
+        jTabbedPaneGrafico.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTabbedPaneGraficoMouseClicked(evt);
+            }
+        });
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "PROPRIEDADE DO TEMPO", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 12), java.awt.Color.blue)); // NOI18N
 
@@ -909,8 +1187,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/text.png"))); // NOI18N
         jButton1.setText("LOADER");
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -963,34 +1240,32 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addGap(4, 4, 4)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel47)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel46)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)))
+                    .addComponent(jLabel46))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(15, 15, 15)
-                        .addComponent(jLabel2))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jDateDataIni, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)
-                        .addComponent(jDateDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jComboBoxHoraIni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)
-                        .addComponent(jComboBoxHoraFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel41)
-                        .addGap(15, 15, 15)
-                        .addComponent(jLabel44))
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jButton1)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addGap(15, 15, 15)
+                            .addComponent(jLabel2))
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                            .addComponent(jDateDataIni, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(6, 6, 6)
+                            .addComponent(jDateDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                            .addComponent(jComboBoxHoraIni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(6, 6, 6)
+                            .addComponent(jComboBoxHoraFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                            .addComponent(jLabel41)
+                            .addGap(15, 15, 15)
+                            .addComponent(jLabel44))
                         .addGroup(jPanel3Layout.createSequentialGroup()
                             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel3)
@@ -1006,7 +1281,10 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                                 .addComponent(jLabel6)
                                 .addComponent(txtHistoriaTempo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel47)
-                                .addComponent(jLabel48)))))
+                                .addComponent(jLabel48))))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton1)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1091,20 +1369,20 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addContainerGap(585, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelTempoDominioLayout = new javax.swing.GroupLayout(jPanelTempoDominio);
+        jPanelTempoDominio.setLayout(jPanelTempoDominioLayout);
+        jPanelTempoDominioLayout.setHorizontalGroup(
+            jPanelTempoDominioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelTempoDominioLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelTempoDominioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        jPanelTempoDominioLayout.setVerticalGroup(
+            jPanelTempoDominioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelTempoDominioLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1112,7 +1390,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("PROPRIEDADES DO TEMPO E DOMINIO", jPanel1);
+        jTabbedPaneGrafico.addTab("PROPRIEDADES DO TEMPO E DOMINIO", jPanelTempoDominio);
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "PROPRIEDADES DO ARQUIVO DE ANALISE", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 12), java.awt.Color.blue)); // NOI18N
 
@@ -1185,12 +1463,25 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
         jLabel20.setText("/stornext/online6/assim_dados/paulo.dias/pos_G3DVAR_GPS_C_SAT/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb");
 
+        btAdicionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/check.png"))); // NOI18N
         btAdicionar.setText("ADCIONAR");
         btAdicionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btAdicionarActionPerformed(evt);
             }
         });
+
+        btDeletar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/delete.png"))); // NOI18N
+        btDeletar.setText("DELETAR");
+        btDeletar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btDeletarActionPerformed(evt);
+            }
+        });
+
+        jLabel49.setText("NOME:");
+
+        jLabel50.setText("EX: C/GPS");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -1202,20 +1493,30 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     .addComponent(jScrollPane2)
                     .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jComboBoxRefModelExp, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel19)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, 1194, Short.MAX_VALUE)
-                            .addComponent(txtEndExp)))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel17)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtQauntExp, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btAdicionar)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btDeletar)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addComponent(jComboBoxRefModelExp, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel19))
+                            .addComponent(jLabel49))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, 1194, Short.MAX_VALUE)
+                            .addComponent(txtEndExp)
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addComponent(txtNomeEXP, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel50)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -1224,7 +1525,8 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel17)
                     .addComponent(txtQauntExp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btAdicionar))
+                    .addComponent(btAdicionar)
+                    .addComponent(btDeletar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel18)
@@ -1235,24 +1537,29 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     .addComponent(jLabel19)
                     .addComponent(txtEndExp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtNomeEXP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel49)
+                    .addComponent(jLabel50))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelPropArqLayout = new javax.swing.GroupLayout(jPanelPropArq);
+        jPanelPropArq.setLayout(jPanelPropArqLayout);
+        jPanelPropArqLayout.setHorizontalGroup(
+            jPanelPropArqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelPropArqLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelPropArqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        jPanelPropArqLayout.setVerticalGroup(
+            jPanelPropArqLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelPropArqLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1260,7 +1567,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("PROPRIEDADES DOS ARQUIVOS", jPanel2);
+        jTabbedPaneGrafico.addTab("PROPRIEDADES DOS ARQUIVOS", jPanelPropArq);
 
         jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "ARQUIVO DE CLIMATOLOGIA", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 12), java.awt.Color.blue)); // NOI18N
 
@@ -1476,6 +1783,12 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
         jLabel39.setText("ENDEREÇO:");
 
+        txtEndSaida.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtEndSaidaFocusLost(evt);
+            }
+        });
+
         jLabel40.setText("/stornext/home/paulo.dias/SCAMTEC_Paulo_New_Variaveis/SCAMTEC_v0.1/core/results/");
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
@@ -1504,7 +1817,8 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        btSalvar.setText("SALVAR");
+        btSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/gear.png"))); // NOI18N
+        btSalvar.setText("RUN");
         btSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btSalvarActionPerformed(evt);
@@ -1565,21 +1879,21 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel12Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelPropOpcaoLayout = new javax.swing.GroupLayout(jPanelPropOpcao);
+        jPanelPropOpcao.setLayout(jPanelPropOpcaoLayout);
+        jPanelPropOpcaoLayout.setHorizontalGroup(
+            jPanelPropOpcaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelPropOpcaoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelPropOpcaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelPropOpcaoLayout.createSequentialGroup()
                         .addComponent(barraProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btSalvar))
@@ -1587,9 +1901,9 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
+        jPanelPropOpcaoLayout.setVerticalGroup(
+            jPanelPropOpcaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelPropOpcaoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1601,23 +1915,133 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanelPropOpcaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btSalvar)
                     .addComponent(barraProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("PROPRIEDADES DE OPÇÃO", jPanel7);
+        jTabbedPaneGrafico.addTab("PROPRIEDADES DE OPÇÃO", jPanelPropOpcao);
+
+        tabelaValores.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane3.setViewportView(tabelaValores);
+
+        btGrafico.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/line-chart.png"))); // NOI18N
+        btGrafico.setText("Grafico");
+        btGrafico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btGraficoActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(jRadioButtonAcor);
+        jRadioButtonAcor.setText("ACOR");
+        jRadioButtonAcor.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jRadioButtonAcorMouseClicked(evt);
+            }
+        });
+
+        jComboBoxVariavel.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxVariavel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jComboBoxVariavelMouseClicked(evt);
+            }
+        });
+        jComboBoxVariavel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxVariavelActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(jRadioButtonVies);
+        jRadioButtonVies.setText("VIES");
+        jRadioButtonVies.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jRadioButtonViesMouseClicked(evt);
+            }
+        });
+
+        buttonGroup1.add(jRadioButtonRmse);
+        jRadioButtonRmse.setText("RMSE");
+        jRadioButtonRmse.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jRadioButtonRmseMouseClicked(evt);
+            }
+        });
+
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/text.png"))); // NOI18N
+        jButton2.setText("LOAD");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanelGraficoLayout = new javax.swing.GroupLayout(jPanelGrafico);
+        jPanelGrafico.setLayout(jPanelGraficoLayout);
+        jPanelGraficoLayout.setHorizontalGroup(
+            jPanelGraficoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelGraficoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelGraficoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1606, Short.MAX_VALUE)
+                    .addGroup(jPanelGraficoLayout.createSequentialGroup()
+                        .addComponent(jRadioButtonVies)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioButtonRmse)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioButtonAcor)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBoxVariavel, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtArqSaida))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelGraficoLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btGrafico)))
+                .addContainerGap())
+        );
+        jPanelGraficoLayout.setVerticalGroup(
+            jPanelGraficoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelGraficoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelGraficoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jRadioButtonVies)
+                    .addComponent(jRadioButtonRmse)
+                    .addComponent(jRadioButtonAcor)
+                    .addComponent(jComboBoxVariavel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtArqSaida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btGrafico)
+                .addContainerGap())
+        );
+
+        jTabbedPaneGrafico.addTab("GRÁFICOS", jPanelGrafico);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(jTabbedPaneGrafico)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(jTabbedPaneGrafico)
         );
 
         pack();
@@ -1678,7 +2102,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         String id = modelo.getValueAt(linha, 0).toString();
 
         txtEndExp.setText(modelo.getValueAt(linha, 3).toString());
-
+        txtNomeEXP.setText(modelo.getValueAt(linha, 4).toString());
         String tabelaIdModelo = modelo.getValueAt(linha, 0).toString();
         int idModelo = Integer.parseInt(tabelaIdModelo) - 1;
 
@@ -1693,17 +2117,34 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(rootPane, "QUANTIDADE NÃO PERMITIDA!!!");
             txtEndExp.setText("");
         } else {
-            String[] dados = new String[13];
-            int idModel = jComboBoxRefModelExp.getSelectedIndex() + 1;
 
-            dados[0] = "" + idModel;
-            dados[1] = "" + jComboBoxRefModelExp.getSelectedItem();
-            contExp = contExp + 1;
-            dados[2] = "EXP0" + contExp;
-            dados[3] = txtEndExp.getText();
+            if (txtQauntExp.getText().equals("")) {
+                JOptionPane.showMessageDialog(rootPane, "INFORME A QUANTIDADE DE EXPERIMENTO");
+                txtQauntExp.requestFocus();
+            } else if (txtEndExp.getText().equals("")) {
+                JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DO EXPERIMENTO");
+                txtEndExp.requestFocus();
+            } else if (txtNomeEXP.getText().equals("")) {
+                JOptionPane.showMessageDialog(rootPane, "INFORME O NOME DO EXPERIMENTO");
+                txtNomeEXP.requestFocus();
+            } else {
+                contExp = modelo.getRowCount();
+                String[] dados = new String[13];
+                int idModel = jComboBoxRefModelExp.getSelectedIndex() + 1;
 
-            modelo.addRow(dados);
-            txtEndExp.setText("");
+                dados[0] = "" + idModel;
+                dados[1] = "" + jComboBoxRefModelExp.getSelectedItem();
+                contExp = contExp + 1;
+                dados[2] = "EXP0" + contExp;
+                dados[3] = txtEndExp.getText();
+                dados[4] = txtNomeEXP.getText();
+                nomeExp.add(txtNomeEXP.getText());
+
+                modelo.addRow(dados);
+                txtEndExp.setText("");
+                txtNomeEXP.setText("");
+            }
+
         }
     }//GEN-LAST:event_btAdicionarActionPerformed
 
@@ -1732,39 +2173,39 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
         if (jDateDataIni.getDate() == null) {
             JOptionPane.showMessageDialog(rootPane, "INFORME A DATA INICIAL");
-            jTabbedPane1.setSelectedIndex(0);
+            jTabbedPaneGrafico.setSelectedIndex(0);
             jDateDataIni.requestFocus();
         } else if (jDateDataFinal.getDate() == null) {
             JOptionPane.showMessageDialog(rootPane, "INFORME A DATA FINAL");
-            jTabbedPane1.setSelectedIndex(0);
+            jTabbedPaneGrafico.setSelectedIndex(0);
             jDateDataFinal.requestFocus();
         } else if (txtEndAnalise.getText().equals("")) {
             JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DO ARQUIVO DE ANALISE");
-            jTabbedPane1.setSelectedIndex(1);
+            jTabbedPaneGrafico.setSelectedIndex(1);
             txtEndAnalise.requestFocus();
         } else if (txtQauntExp.getText().equals("")) {
             JOptionPane.showMessageDialog(rootPane, "INFORME A QUANTIDADE DE EXPERIMENTO");
-            jTabbedPane1.setSelectedIndex(1);
+            jTabbedPaneGrafico.setSelectedIndex(1);
             txtQauntExp.requestFocus();
         } else if (modelo.getRowCount() == 0) {
             JOptionPane.showMessageDialog(rootPane, "INFORME O ARQUIVO DE EXPERIMENTO");
-            jTabbedPane1.setSelectedIndex(1);
+            jTabbedPaneGrafico.setSelectedIndex(1);
             txtEndExp.requestFocus();
         } else if (jRadioButtonUseClima.isSelected() == true && txtEndClima.getText().equals("")) {
             JOptionPane.showMessageDialog(rootPane, "INFORME O ARQUIVO DE CLIMATOLOGIA");
-            jTabbedPane1.setSelectedIndex(2);
+            jTabbedPaneGrafico.setSelectedIndex(2);
             txtEndClima.requestFocus();
         } else if (jRadioButtonUsePrecip.isSelected() == true && txtEndPrecip.getText().equals("")) {
             JOptionPane.showMessageDialog(rootPane, "INFORME O ARQUIVO DE PRECIPITAÇÃO");
-            jTabbedPane1.setSelectedIndex(2);
+            jTabbedPaneGrafico.setSelectedIndex(2);
             txtEndPrecip.requestFocus();
         } else if (txtEndSaida.getText().equals("")) {
             JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DE SAÍDA");
-            jTabbedPane1.setSelectedIndex(2);
+            jTabbedPaneGrafico.setSelectedIndex(2);
             txtEndSaida.requestFocus();
         } else if (txtEndExecutavel.getText().equals("")) {
             JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DO EXECUTÁVEL");
-            jTabbedPane1.setSelectedIndex(2);
+            jTabbedPaneGrafico.setSelectedIndex(2);
             txtEndExecutavel.requestFocus();
         } else {
 
@@ -1885,6 +2326,9 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     fos.write(texto.getBytes());
                     texto = " " + modelo.getValueAt(i - 1, 3).toString();
                     fos.write(texto.getBytes());
+                    nomeExp.add(modelo.getValueAt(i - 1, 4).toString());
+                    texto = " # " + modelo.getValueAt(i - 1, 4).toString();
+                    fos.write(texto.getBytes());
                 }
                 texto = "\n::";
                 fos.write(texto.getBytes());
@@ -1946,6 +2390,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                         + "\n#";
                 fos.write(texto.getBytes());
                 texto = "\n\nOutput directory: " + txtEndSaida.getText();
+                Main.endSaida = txtEndSaida.getText();
                 fos.write(texto.getBytes());
 
                 fos.close();
@@ -1994,17 +2439,108 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             endArq = "";
             JOptionPane.showMessageDialog(rootPane, "Arquivo inválido");
         } else {
+            //abrindo arquivo
             File arquivo = file.getSelectedFile();
             endArq = arquivo.getPath();
             procura(endArq);
+            //pegando o nome de cada experimento
+            DefaultTableModel modelo = (DefaultTableModel) tabelaEXP.getModel();
+            int quantExp = Integer.parseInt(txtQauntExp.getText());
+            for (int j = 1; j < quantExp + 1; j++) {
+                nomeExp.add(modelo.getValueAt(j - 1, 4).toString());
+            }
+            //leitura de arquivo de saida
+            leituraArqSaida();
 
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btGraficoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGraficoActionPerformed
+        try {
+            //leituraArqSaida();          
+            PlotTest();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ScamtecConfiguracao.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ScamtecConfiguracao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+
+    }//GEN-LAST:event_btGraficoActionPerformed
+
+    private void jComboBoxVariavelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jComboBoxVariavelMouseClicked
+    }//GEN-LAST:event_jComboBoxVariavelMouseClicked
+
+    private void jComboBoxVariavelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxVariavelActionPerformed
+        //leituraArqSaida();
+        DefaultTableModel modelo = ((DefaultTableModel) tabelaValores.getModel());
+        //System.out.println("TESTE " + jComboBoxVariavel.getSelectedIndex());
+
+        modelo.setNumRows(0);
+        tabelaValores.updateUI();
+
+        String[] dados = new String[13];
+        for (int w = 0; w < qauntExp; w++) { //loop quantidade de arquivos
+            for (int j = 1; j <= 13; j++) {
+                if (jRadioButtonAcor.isSelected() == true) {
+                    float valor = Float.parseFloat(valores[w][j][jComboBoxVariavel.getSelectedIndex() + 1]) * 100;
+                    dados[j - 1] = "" + valor;
+                } else {
+                    dados[j - 1] = valores[w][j][jComboBoxVariavel.getSelectedIndex() + 1];
+                }
+
+
+            }
+            modelo.addRow(dados);
+        }
+
+    }//GEN-LAST:event_jComboBoxVariavelActionPerformed
+
+    private void jTabbedPaneGraficoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTabbedPaneGraficoMouseClicked
+        // System.out.println("EVENTO");
+        //leituraArqSaida();
+        //setVariaveis();
+        //tabelaPadraoValores();
+    }//GEN-LAST:event_jTabbedPaneGraficoMouseClicked
+
+    private void txtEndSaidaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtEndSaidaFocusLost
+        Main.endSaida = txtEndSaida.getText();
+    }//GEN-LAST:event_txtEndSaidaFocusLost
+
+    private void jRadioButtonViesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButtonViesMouseClicked
+        leituraArqSaida();
+    }//GEN-LAST:event_jRadioButtonViesMouseClicked
+
+    private void jRadioButtonRmseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButtonRmseMouseClicked
+        leituraArqSaida();
+    }//GEN-LAST:event_jRadioButtonRmseMouseClicked
+
+    private void jRadioButtonAcorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButtonAcorMouseClicked
+        leituraArqSaida();
+    }//GEN-LAST:event_jRadioButtonAcorMouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        leituraArqSaida();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void btDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDeletarActionPerformed
+        DefaultTableModel modelo = (DefaultTableModel) tabelaEXP.getModel();
+        int linha = tabelaEXP.getSelectedRow();
+        String id = modelo.getValueAt(linha, 0).toString();
+        modelo.removeRow(linha);
+        txtEndExp.setText("");
+
+    }//GEN-LAST:event_btDeletarActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JProgressBar barraProcesso;
     private javax.swing.JButton btAdicionar;
+    private javax.swing.JButton btDeletar;
+    private javax.swing.JButton btGrafico;
     private javax.swing.JButton btSalvar;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JComboBox jComboBoxHoraFinal;
     private javax.swing.JComboBox jComboBoxHoraIni;
     private javax.swing.JComboBox jComboBoxRefModelAnlise;
@@ -2012,6 +2548,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox jComboBoxRefModelxClima;
     private javax.swing.JComboBox jComboBoxRefModelxPrecip;
     private javax.swing.JComboBox jComboBoxRegiao;
+    private javax.swing.JComboBox jComboBoxVariavel;
     private com.toedter.calendar.JDateChooser jDateDataFinal;
     private com.toedter.calendar.JDateChooser jDateDataIni;
     private javax.swing.JLabel jLabel1;
@@ -2057,30 +2594,39 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel46;
     private javax.swing.JLabel jLabel47;
     private javax.swing.JLabel jLabel48;
+    private javax.swing.JLabel jLabel49;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel50;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
+    private javax.swing.JPanel jPanelGrafico;
+    private javax.swing.JPanel jPanelPropArq;
+    private javax.swing.JPanel jPanelPropOpcao;
+    private javax.swing.JPanel jPanelTempoDominio;
+    private javax.swing.JRadioButton jRadioButtonAcor;
+    private javax.swing.JRadioButton jRadioButtonRmse;
     private javax.swing.JRadioButton jRadioButtonUseClima;
     private javax.swing.JRadioButton jRadioButtonUsePrecip;
+    private javax.swing.JRadioButton jRadioButtonVies;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTabbedPane jTabbedPaneGrafico;
     private javax.swing.JTable tabelaEXP;
+    private javax.swing.JTable tabelaValores;
     private javax.swing.JTextField txtAnaliseTempo;
+    private javax.swing.JTextField txtArqSaida;
     private javax.swing.JTextField txtEndAnalise;
     private javax.swing.JTextField txtEndClima;
     private javax.swing.JTextField txtEndExecutavel;
@@ -2092,6 +2638,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtLatEsq;
     private javax.swing.JTextField txtLongInf;
     private javax.swing.JTextField txtLongSup;
+    private javax.swing.JTextField txtNomeEXP;
     private javax.swing.JTextField txtPrecipAcumuloExp;
     private javax.swing.JTextField txtPrecipAcumuloObs;
     private javax.swing.JTextField txtPrecipLimite;
