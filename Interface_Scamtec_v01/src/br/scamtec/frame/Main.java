@@ -4,16 +4,13 @@
  */
 package br.scamtec.frame;
 
-import java.awt.Menu;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.beans.PropertyVetoException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.UIManager;
 
 /**
  *
@@ -22,7 +19,7 @@ import javax.swing.UIManager;
 public class Main extends javax.swing.JFrame {
 
     private JLabel jLabelLogo;
-    static int totalPrev, passoPrev; 
+    static int totalPrev, passoPrev;
     static String endSaida;
 
     /**
@@ -30,6 +27,23 @@ public class Main extends javax.swing.JFrame {
      */
     public Main() {
         initComponents();
+        logo();
+
+    }
+
+    private void logo() {
+        Dimension dimensao = Toolkit.getDefaultToolkit().getScreenSize();
+        
+        jLabelLogo = new javax.swing.JLabel();
+        jLabelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/scamtec.png")));
+        int tamLogo = 746;
+        System.out.println(dimensao.width+" "+this.getWidth());
+        System.out.println(dimensao.height+" "+this.getHeight());
+
+        //System.out.println(this.getWidth() / 2 - (tamLogo / 2), 0, this.getWidth(), this.getHeight());
+        jLabelLogo.setBounds(dimensao.width / 2 - (tamLogo / 2), 0, dimensao.width, dimensao.height);
+        //jLabelLogo.setBounds(this.getWidth() / 2 - (tamLogo / 2), 0, this.getWidth(), this.getHeight());
+        telaPrincipal.add(jLabelLogo, javax.swing.JLayeredPane.DEFAULT_LAYER);
     }
 
     /**
@@ -42,8 +56,6 @@ public class Main extends javax.swing.JFrame {
     private void initComponents() {
 
         telaPrincipal = new javax.swing.JDesktopPane();
-        jLabel1 = new javax.swing.JLabel();
-        jLabelTitulo = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -51,15 +63,7 @@ public class Main extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SISTEMA COMUNITÁRIO DE AVALIAÇÕES DE MODELOS TEMPO E CLIMA (SCAMTEC)");
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/scamtec.png"))); // NOI18N
-        jLabel1.setBounds(110, 60, 490, 250);
-        telaPrincipal.add(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        jLabelTitulo.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
-        jLabelTitulo.setForeground(new java.awt.Color(255, 255, 255));
-        jLabelTitulo.setText("SISTEMA COMUNITÁRIO DE AVALIAÇÃO DE MODELOS E CLIMA");
-        jLabelTitulo.setBounds(50, 40, 860, 29);
-        telaPrincipal.add(jLabelTitulo, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        telaPrincipal.setBackground(new java.awt.Color(0, 0, 204));
 
         jMenu1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/preferences.png"))); // NOI18N
         jMenu1.setText("Arquivos");
@@ -85,28 +89,18 @@ public class Main extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(telaPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
+            .addComponent(telaPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
         );
 
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-1026)/2, (screenSize.height-403)/2, 1026, 403);
+        setBounds((screenSize.width-1026)/2, (screenSize.height-511)/2, 1026, 511);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         ScamtecConfiguracao scamConf = new ScamtecConfiguracao();
         scamConf.setVisible(true);
         telaPrincipal.removeAll();
-
-        jLabelLogo = new javax.swing.JLabel();
-        jLabelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/scamtec.png")));
-        jLabelLogo.setBounds(110, 60, 490, 250);
-        telaPrincipal.add(jLabelLogo, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        jLabelTitulo.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
-        jLabelTitulo.setForeground(new java.awt.Color(255, 255, 255));
-        jLabelTitulo.setText("SISTEMA COMUNITÁRIO DE AVALIAÇÃO DE MODELOS E CLIMA");
-        jLabelTitulo.setBounds(50, 40, 860, 29);
-        telaPrincipal.add(jLabelTitulo, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        logo();
 
         telaPrincipal.add(scamConf);
         try {
@@ -158,8 +152,6 @@ public class Main extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabelTitulo;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
