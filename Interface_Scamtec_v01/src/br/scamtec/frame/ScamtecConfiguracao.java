@@ -14,12 +14,14 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.print.attribute.standard.MediaSize;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -27,6 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
@@ -153,14 +156,14 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                         //escrebendo no jtextarea
                         txtResult.setText(line2);
                         txtResult.selectAll();
-                        System.out.println(line);
+                        //System.out.println(line);
                     }
                     //barraProcesso.setIndeterminate(false);
                 }
             } catch (Exception err) {
                 err.printStackTrace();
             }
-
+            leituraArqSaida();
         }
     }
 
@@ -177,7 +180,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         int difHora = ((horaFinal + horaAna) - horaIni);
 
         difHora = difHora / horaPrev;
-        System.out.println("\nHELLO3 " + difHora);
+        //System.out.println("\nHELLO3 " + difHora);
         int horaPrevTotal = Integer.parseInt(txtPrevisaoTempoTotal.getText());
 
         int quantPrev = (horaPrevTotal / horaPrev) + 1;
@@ -189,7 +192,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         int total = 0;
 
         total = (difData * (tempo) * quantPrev) + quantPrev * difHora;
-        System.out.println("\nRESULT " + difData + " " + tempo + " " + quantPrev + quantPrev + " " + difHora + " " + total);
+        //System.out.println("\nRESULT " + difData + " " + tempo + " " + quantPrev + quantPrev + " " + difHora + " " + total);
         return total;
     }
 
@@ -241,19 +244,24 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         return result_years + result_months + result_days;
     }
 
+    //metodo para mostrar a barra de progresso que salva os graficos
     public class Carregar implements Runnable {
 
         @Override
         public void run() {
+            BarraProgressoSalvaGraficos barra = new BarraProgressoSalvaGraficos();
+            barra.setVisible(true);
             for (int i = 0; i <= 100; i++) {
-                barraProcesso.setValue(i);
+                barra.barraGraficos.setValue(i);
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(150);
 
                 } catch (InterruptedException ex) {
                     Logger.getLogger(ScamtecConfiguracao.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            barra.dispose();
+            JOptionPane.showMessageDialog(rootPane, "TODAS OS GRÁFICOS GRAVADOS COM SUCESSO!!!");
         }
     }
 
@@ -563,7 +571,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     if (linha.contains("EXP0" + i)) {
                         vetor = linha.split(" ");
                         nomeEx = linha.split("#");
-                        System.out.println(vetor[i]);
+                        //System.out.println(vetor[i]);
 
                     }
                 }
@@ -824,7 +832,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             }
             txtArqSaida.setText(nomeArq);
             umaLinha.clear();
-            // System.out.println("ARQ= " + nomeArq);
+            //System.out.println("ARQ= " + nomeArq);
             try {
                 BufferedReader in = new BufferedReader(new FileReader(nomeArq));
 
@@ -870,7 +878,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         }
         tabelaPadraoValores();
         setVariaveis();
-
+        jComboBoxVariavelItemStateChanged(null);
 
     }
 
@@ -879,9 +887,12 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         DefaultTableModel modelo = ((DefaultTableModel) tabelaValores.getModel());
         modelo.setRowCount(0);
         modelo.setColumnCount(0);
+        int totalPrev = Integer.parseInt(txtPrevisaoTempoTotal.getText());
+        int horaPrev = Integer.parseInt(txtPrevisaoTempo.getText());
+        int quatHoras = (totalPrev / horaPrev) + 2;//porque + 2 para somar a zero horas e o cabeçalho
+        //System.out.println("quatHoras= "+quatHoras);
 
-        //  int totalIntegracao = ScamtecConfiguracao.totalPrev / ScamtecConfiguracao.passoPrev + 1;
-        for (int i = 1; i <= 13; i++) { // nomenclatura das colunas da tabela
+        for (int i = 1; i < quatHoras; i++) { // nomenclatura das colunas da tabela
             modelo.addColumn(valores[0][i][0]);
             //System.out.println(valores[0][i][0]);
         }
@@ -901,26 +912,26 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
     }
 
     public void PlotTest() throws FileNotFoundException, IOException {
-
         // leituraArqSaida();
         dataset = new XYSeriesCollection();
         //Quantidade de Arquivos
         String nomeTipo = "";
         for (int w = 0; w < qauntExp; w++) { //loop quantidade de arquivos
-            int nExp = w + 1;
-            System.out.println("HELLO " + nomeExp.get(w));
+            //System.out.println("HELLO " + nomeExp.get(w));
 
             XYSeries data = new XYSeries(nomeExp.get(w));
-
+            int totalPrev = Integer.parseInt(txtPrevisaoTempoTotal.getText());
+            int horaPrev = Integer.parseInt(txtPrevisaoTempo.getText());
+            int quatHoras = (totalPrev / horaPrev) + 2;//porque + 2 para somar a zero horas e o cabeçalho
             int cont = 0;
-            for (int j = 1; j <= 13; j++) {
+            for (int j = 1; j < quatHoras; j++) {
                 if (jRadioButtonAcor.isSelected() == true) {
                     //System.out.println("cont "+cont);
                     data.add(cont, Double.parseDouble(valores[w][j][jComboBoxVariavel.getSelectedIndex() + 1]) * 100); //Point 1  
-                    cont = cont + 6;
+                    cont = cont + horaPrev;
                 } else {
                     data.add(cont, Double.parseDouble(valores[w][j][jComboBoxVariavel.getSelectedIndex() + 1])); //Point 1  
-                    cont = cont + 6;
+                    cont = cont + horaPrev;
                 }
 
             }
@@ -928,11 +939,11 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             dataset.addSeries(data);
 
             if (jRadioButtonAcor.isSelected() == true) {
-                nomeTipo = "ACOR - ";
+                nomeTipo = "ACOR_";
             } else if (jRadioButtonRmse.isSelected() == true) {
-                nomeTipo = "RMSE - ";
+                nomeTipo = "RMSE_";
             } else if (jRadioButtonVies.isSelected() == true) {
-                nomeTipo = "VIES - ";
+                nomeTipo = "VIES_";
             }
         }
         showGraph(nomeTipo + cabecalho[jComboBoxVariavel.getSelectedIndex() + 1]);
@@ -948,11 +959,6 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-
-
-
-
-
 
     }
 
@@ -984,7 +990,11 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         double valPasso = Double.parseDouble(valores[0][2][0]);//passo de horas
         rangeAxis.setUpperMargin(valPasso);
 
-        double valMax = valPasso + Double.parseDouble(valores[0][13][0]);//passo de horas
+        int totalPrev = Integer.parseInt(txtPrevisaoTempoTotal.getText());
+        int horaPrev = Integer.parseInt(txtPrevisaoTempo.getText());
+        int quatHoras = (totalPrev / horaPrev) + 1;//porque + 2 para somar a zero 
+        //System.out.println("quatHoras= "+quatHoras);
+        double valMax = valPasso + Double.parseDouble(valores[0][quatHoras][0]);//passo de horas
         rangeAxis.setUpperBound(valMax);
         rangeAxis.setTickUnit(new NumberTickUnit(valPasso)); //traça o intervalo entre valores   
         //System.out.println("VALORES " + valMin + " " + valPasso + " " + valMax);
@@ -999,14 +1009,179 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         marcador.setPaint(Color.BLACK);
 
         //salvando os arquivos
-        //OutputStream arquivo = new FileOutputStream("grafico.png");
-        //ChartUtilities.writeChartAsPNG(arquivo, chart, 800, 700);
+        OutputStream arquivo = new FileOutputStream(titulo + ".png");
+        ChartUtilities.writeChartAsPNG(arquivo, chart, 1000, 800);
 
 
         return chart;
     }
-    //------------------------------------------------------------------------------------------------
 
+    //----------------------------------------------------------------------------------------------------
+    //parte para salvar as figuras em disco
+    public void PlotTest2(int metri) throws FileNotFoundException, IOException {
+        // leituraArqSaida();
+
+        //Quantidade de Arquivos
+        String nomeTipo = "";
+        for (int i = 1; i <= 22; i++) {//loop de variaveis
+            dataset = new XYSeriesCollection();
+            for (int w = 0; w < qauntExp; w++) { //loop quantidade de arquivos
+                //System.out.println("HELLO " + nomeExp.get(w));
+
+                XYSeries data = new XYSeries(nomeExp.get(w));
+                int totalPrev = Integer.parseInt(txtPrevisaoTempoTotal.getText());
+                int horaPrev = Integer.parseInt(txtPrevisaoTempo.getText());
+                int quatHoras = (totalPrev / horaPrev) + 2;//porque + 2 para somar a zero horas e o cabeçalho
+                int cont = 0;
+
+                for (int j = 1; j < quatHoras; j++) {
+                    if (metri == 1) {//significa que é ACOR
+                        //System.out.println("W= " + w + "j= " + j + "i= " + i);
+                        data.add(cont, Double.parseDouble(valores[w][j][i]) * 100); //Point 1  
+                        cont = cont + horaPrev;
+                    } else {
+                        data.add(cont, Double.parseDouble(valores[w][j][i])); //Point 1  
+                        cont = cont + horaPrev;
+                    }
+
+                }
+
+                dataset.addSeries(data);
+
+                if (metri == 1) {
+                    nomeTipo = "ACOR_";
+                } else if (metri == 2) {
+                    nomeTipo = "RMSE_";
+                } else if (metri == 3) {
+                    nomeTipo = "VIES_";
+                }
+            }
+            showGraph2(nomeTipo + cabecalho[i]);
+        }//Fim do loop de variaveis
+    }
+
+    private void showGraph2(String titulo) throws FileNotFoundException, IOException {
+        final JFreeChart chart = createChart(dataset, titulo);
+        final ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new java.awt.Dimension(900, 700));
+        JFrame frame = new JFrame(titulo);//Nome no topo do Frame
+        //frame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        //frame.setContentPane(chartPanel);
+        //frame.pack();
+        //frame.setLocationRelativeTo(null);
+        //frame.setVisible(true);
+
+    }
+
+    public class salvaGraficosAll implements Runnable {
+
+        @Override
+        public void run() {
+            //BarraProgressoSalvaGraficos barra = new BarraProgressoSalvaGraficos();
+
+
+            //barra.barraGraficos.setIndeterminate(true);
+            try {
+
+                // gera todas as figuras 
+                String nomeArq = "";
+                String linha;
+                int nExp = Integer.parseInt(txtQauntExp.getText());
+                int totalPrev = Integer.parseInt(txtPrevisaoTempoTotal.getText());
+                int horaPrev = Integer.parseInt(txtPrevisaoTempo.getText());
+                int quatHoras = (totalPrev / horaPrev) + 2;//porque + 2 para somar a zero horas e o cabeçalho
+                valores = new String[nExp][quatHoras][23]; // = new String[][][];//[quantExp][quantHoras][quantVariaveis]
+                //System.out.println("VALORES "+nExp+" "+quatHoras);
+
+                //pegando data inicial e final
+                Date dataI = jDateDataIni.getDate();
+                String dataIni = UtilData.dateToStringSemBarra(dataI) + jComboBoxHoraIni.getSelectedItem();
+                Date dataF = jDateDataFinal.getDate();
+                String dataFinal = UtilData.dateToStringSemBarra(dataF) + jComboBoxHoraFinal.getSelectedItem();
+                Main.endSaida = txtEndSaida.getText();
+                qauntExp = Integer.parseInt(txtQauntExp.getText());
+
+                for (int metrica = 1; metrica <= 3; metrica++) {
+                    for (int w = 0; w < qauntExp; w++) {// loop qauntidade de arquivos
+
+                        if (metrica == 1) {
+                            int exp = w + 1;
+                            nomeArq = Main.endSaida + "ACOREXP0" + exp + "_" + dataIni + dataFinal + ".scam";
+                        } else if (metrica == 2) {
+                            int exp = w + 1;
+                            nomeArq = Main.endSaida + "RMSEEXP0" + exp + "_" + dataIni + dataFinal + ".scam";
+                        } else if (metrica == 3) {
+                            int exp = w + 1;
+                            nomeArq = Main.endSaida + "VIESEXP0" + exp + "_" + dataIni + dataFinal + ".scam";
+                        }
+                        txtArqSaida.setText(nomeArq);
+                        umaLinha.clear();
+                        //System.out.println("ARQ= " + nomeArq);
+                        try {
+                            BufferedReader in = new BufferedReader(new FileReader(nomeArq));
+
+                            while ((linha = in.readLine()) != null) {
+                                umaLinha.add(linha);
+                                //System.out.println(linha);
+
+                            }
+
+                            //   System.out.println(teste.get(0));
+
+                            for (int i = 0; i < umaLinha.size(); i++) {
+
+                                if (umaLinha.get(i).contains("%")) {
+                                    cabecalho = umaLinha.get(i).trim().split(" ");
+                                    //System.out.println(cabecalho[1]);
+
+                                } else {
+
+                                    //tirando os espacos da linha 
+                                    linha = umaLinha.get(i);
+                                    linha = linha.trim().replace("    ", " ");
+                                    linha = linha.trim().replace("   ", " ");
+                                    linha = linha.trim().replace("  ", " ");
+
+                                    val = linha.trim().split(" ");
+                                    for (int j = 0; j < val.length; j++) {
+                                        valores[w][i][j] = val[j];
+                                        //System.out.println(valores[w][i][j] + " w= " + w + " i= " + i + " j= " + j);
+                                    }
+
+
+                                }
+
+                            }
+
+
+                        } catch (Exception e) {
+                            System.err.println("Erro na abertura do arquivo " + nomeArq + '\n');
+                            e.printStackTrace();
+                        }
+                        // System.out.println("parou aqui");
+                    }
+                    try {
+                        PlotTest2(metrica);
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(ScamtecConfiguracao.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(ScamtecConfiguracao.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+
+            } catch (Exception err) {
+                err.printStackTrace();
+            }
+            //barra.barraGraficos.setIndeterminate(false);
+            //barra.dispose();
+
+        }
+    }
+
+    // Fim da parte para salvar em disco
+    //----------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1040,7 +1215,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         jLabel46 = new javax.swing.JLabel();
         jLabel47 = new javax.swing.JLabel();
         jLabel48 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btLoaderScamConf = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         txtResolucaoY = new javax.swing.JTextField();
@@ -1124,7 +1299,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         txtResult = new javax.swing.JTextArea();
         barraProcesso = new javax.swing.JProgressBar();
-        btSalvar = new javax.swing.JButton();
+        btRun = new javax.swing.JButton();
         jPanelGrafico = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tabelaValores = new javax.swing.JTable();
@@ -1134,7 +1309,8 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         jRadioButtonVies = new javax.swing.JRadioButton();
         jRadioButtonRmse = new javax.swing.JRadioButton();
         txtArqSaida = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        btLoadArqSaida = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setClosable(true);
         setTitle("SCAMTEC CONFIGURAÇÕES");
@@ -1188,12 +1364,12 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
         jLabel48.setText("hh");
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/text.png"))); // NOI18N
-        jButton1.setText("LOADER");
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btLoaderScamConf.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/text.png"))); // NOI18N
+        btLoaderScamConf.setText("LOADER");
+        btLoaderScamConf.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        btLoaderScamConf.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btLoaderScamConfActionPerformed(evt);
             }
         });
 
@@ -1246,7 +1422,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                         .addGap(4, 4, 4)
                         .addComponent(jLabel41)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(btLoaderScamConf)
                 .addContainerGap(264, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -1274,7 +1450,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                             .addComponent(jLabel44)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButton1))
+                        .addComponent(btLoaderScamConf))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(3, 3, 3)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
@@ -1905,11 +2081,11 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
         barraProcesso.setStringPainted(true);
 
-        btSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/gear.png"))); // NOI18N
-        btSalvar.setText("RUN");
-        btSalvar.addActionListener(new java.awt.event.ActionListener() {
+        btRun.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/gear.png"))); // NOI18N
+        btRun.setText("RUN");
+        btRun.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btSalvarActionPerformed(evt);
+                btRunActionPerformed(evt);
             }
         });
 
@@ -1924,7 +2100,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelRunLayout.createSequentialGroup()
                         .addComponent(barraProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btSalvar)))
+                        .addComponent(btRun)))
                 .addContainerGap())
         );
         jPanelRunLayout.setVerticalGroup(
@@ -1934,7 +2110,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelRunLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btSalvar)
+                    .addComponent(btRun)
                     .addComponent(barraProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -1971,14 +2147,9 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         });
 
         jComboBoxVariavel.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBoxVariavel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jComboBoxVariavelMouseClicked(evt);
-            }
-        });
-        jComboBoxVariavel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBoxVariavelActionPerformed(evt);
+        jComboBoxVariavel.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBoxVariavelItemStateChanged(evt);
             }
         });
 
@@ -1998,11 +2169,19 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             }
         });
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/text.png"))); // NOI18N
-        jButton2.setText("LOAD");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btLoadArqSaida.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/text.png"))); // NOI18N
+        btLoadArqSaida.setText("LOAD");
+        btLoadArqSaida.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btLoadArqSaidaActionPerformed(evt);
+            }
+        });
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/disk_blue.png"))); // NOI18N
+        jButton1.setText("Gerar todas Figuras");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -2023,11 +2202,13 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jComboBoxVariavel, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
+                        .addComponent(btLoadArqSaida)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtArqSaida))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelGraficoLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btGrafico)))
                 .addContainerGap())
         );
@@ -2041,11 +2222,13 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     .addComponent(jRadioButtonAcor)
                     .addComponent(jComboBoxVariavel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtArqSaida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2))
+                    .addComponent(btLoadArqSaida))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btGrafico)
+                .addGroup(jPanelGraficoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btGrafico)
+                    .addComponent(jButton1))
                 .addContainerGap())
         );
 
@@ -2213,7 +2396,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_jRadioButtonUsePrecipMouseClicked
 
-    private void btSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalvarActionPerformed
+    private void btRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRunActionPerformed
         DefaultTableModel modelo = (DefaultTableModel) tabelaEXP.getModel();
 
         if (jDateDataIni.getDate() == null) {
@@ -2458,9 +2641,6 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 ExecutaScamtec exe = new ExecutaScamtec();
                 Thread theradExe = new Thread(exe);
                 theradExe.start();
-
-
-
                 // JOptionPane.showMessageDialog(rootPane, "CONFIGURACAO REALIZADA COM SUCESSO");
 
 
@@ -2470,13 +2650,13 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         }
 
 
-    }//GEN-LAST:event_btSalvarActionPerformed
+    }//GEN-LAST:event_btRunActionPerformed
 
     private void txtHistoriaTempoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtHistoriaTempoActionPerformed
         int teste = difDatas();
     }//GEN-LAST:event_txtHistoriaTempoActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btLoaderScamConfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btLoaderScamConfActionPerformed
         JFileChooser file = new JFileChooser();
         file.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int i = file.showSaveDialog(null);
@@ -2494,11 +2674,9 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             for (int j = 1; j < quantExp + 1; j++) {
                 nomeExp.add(modelo.getValueAt(j - 1, 4).toString());
             }
-            //leitura de arquivo de saida
-            leituraArqSaida();
 
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btLoaderScamConfActionPerformed
 
     private void btGraficoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGraficoActionPerformed
         try {
@@ -2513,34 +2691,6 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
 
     }//GEN-LAST:event_btGraficoActionPerformed
-
-    private void jComboBoxVariavelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jComboBoxVariavelMouseClicked
-    }//GEN-LAST:event_jComboBoxVariavelMouseClicked
-
-    private void jComboBoxVariavelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxVariavelActionPerformed
-        //leituraArqSaida();
-        DefaultTableModel modelo = ((DefaultTableModel) tabelaValores.getModel());
-        //System.out.println("TESTE " + jComboBoxVariavel.getSelectedIndex());
-
-        modelo.setNumRows(0);
-        tabelaValores.updateUI();
-
-        String[] dados = new String[13];
-        for (int w = 0; w < qauntExp; w++) { //loop quantidade de arquivos
-            for (int j = 1; j <= 13; j++) {
-                if (jRadioButtonAcor.isSelected() == true) {
-                    float valor = Float.parseFloat(valores[w][j][jComboBoxVariavel.getSelectedIndex() + 1]) * 100;
-                    dados[j - 1] = "" + valor;
-                } else {
-                    dados[j - 1] = valores[w][j][jComboBoxVariavel.getSelectedIndex() + 1];
-                }
-
-
-            }
-            modelo.addRow(dados);
-        }
-
-    }//GEN-LAST:event_jComboBoxVariavelActionPerformed
 
     private void jTabbedPaneGraficoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTabbedPaneGraficoMouseClicked
         // System.out.println("EVENTO");
@@ -2565,9 +2715,9 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         leituraArqSaida();
     }//GEN-LAST:event_jRadioButtonAcorMouseClicked
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btLoadArqSaidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btLoadArqSaidaActionPerformed
         leituraArqSaida();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btLoadArqSaidaActionPerformed
 
     private void btDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDeletarActionPerformed
         DefaultTableModel modelo = (DefaultTableModel) tabelaEXP.getModel();
@@ -2578,15 +2728,61 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         txtNomeEXP.setText("");
 
     }//GEN-LAST:event_btDeletarActionPerformed
+
+    private void jComboBoxVariavelItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxVariavelItemStateChanged
+        //leituraArqSaida();
+        DefaultTableModel modelo = ((DefaultTableModel) tabelaValores.getModel());
+
+
+        modelo.setNumRows(0);
+        tabelaValores.updateUI();
+        int totalPrev = Integer.parseInt(txtPrevisaoTempoTotal.getText());
+        int horaPrev = Integer.parseInt(txtPrevisaoTempo.getText());
+        int quatHoras = (totalPrev / horaPrev) + 2;//porque + 2 para somar a zero horas e o cabeçalho
+        //System.out.println("quatHoras= "+quatHoras);
+        String[] dados = new String[quatHoras];
+        for (int w = 0; w < qauntExp; w++) { //loop quantidade de arquivos
+            for (int j = 1; j < quatHoras; j++) {
+                if (jRadioButtonAcor.isSelected() == true) {
+                    float valor = Float.parseFloat(valores[w][j][jComboBoxVariavel.getSelectedIndex() + 1]) * 100;
+                    dados[j - 1] = "" + valor;
+                } else {
+                    dados[j - 1] = valores[w][j][jComboBoxVariavel.getSelectedIndex() + 1];
+                }
+
+
+            }
+            modelo.addRow(dados);
+        }
+    }//GEN-LAST:event_jComboBoxVariavelItemStateChanged
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (jComboBoxVariavel.getSelectedItem().equals("Item 1")) {
+            JOptionPane.showMessageDialog(rootPane, "FAVOR CARREGAR FIGURAS!!!");
+        } else {
+            salvaGraficosAll salva = new salvaGraficosAll();
+            Thread theradExe = new Thread(salva);
+            theradExe.start();
+            new Thread(new Carregar()).start();
+
+
+        }
+
+
+
+
+
+    }//GEN-LAST:event_jButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JProgressBar barraProcesso;
     private javax.swing.JButton btAdicionar;
     private javax.swing.JButton btDeletar;
     private javax.swing.JButton btGrafico;
-    private javax.swing.JButton btSalvar;
+    private javax.swing.JButton btLoadArqSaida;
+    private javax.swing.JButton btLoaderScamConf;
+    private javax.swing.JButton btRun;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JComboBox jComboBoxHoraFinal;
     private javax.swing.JComboBox jComboBoxHoraIni;
     private javax.swing.JComboBox jComboBoxRefModelAnlise;
