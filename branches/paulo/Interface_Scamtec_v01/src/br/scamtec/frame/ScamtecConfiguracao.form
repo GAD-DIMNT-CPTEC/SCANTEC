@@ -151,7 +151,7 @@
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                          <Component id="btLoaderScamConf" min="-2" max="-2" attributes="0"/>
                           <EmptySpace pref="264" max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -184,7 +184,7 @@
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btLoaderScamConf" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" attributes="0">
                                   <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
@@ -360,7 +360,7 @@
                     <Property name="text" type="java.lang.String" value="hh"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JButton" name="jButton1">
+                <Component class="javax.swing.JButton" name="btLoaderScamConf">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                       <Image iconType="3" name="/br/scamtec/imagens/text.png"/>
@@ -369,7 +369,7 @@
                     <Property name="horizontalTextPosition" type="int" value="4"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btLoaderScamConfActionPerformed"/>
                   </Events>
                 </Component>
               </SubComponents>
@@ -1376,7 +1376,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="barraProcesso" min="-2" pref="396" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="btSalvar" min="-2" max="-2" attributes="0"/>
+                              <Component id="btRun" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -1390,7 +1390,7 @@
                       <Component id="jPanel12" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="btSalvar" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btRun" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="barraProcesso" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -1455,7 +1455,7 @@
                 <Property name="stringPainted" type="boolean" value="true"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="btSalvar">
+            <Component class="javax.swing.JButton" name="btRun">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/br/scamtec/imagens/gear.png"/>
@@ -1463,7 +1463,7 @@
                 <Property name="text" type="java.lang.String" value="RUN"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btSalvarActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btRunActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
@@ -1493,12 +1493,14 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jComboBoxVariavel" min="-2" pref="114" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton2" min="-2" max="-2" attributes="0"/>
+                              <Component id="btLoadArqSaida" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtArqSaida" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="btGrafico" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -1516,12 +1518,15 @@
                           <Component id="jRadioButtonAcor" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jComboBoxVariavel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="txtArqSaida" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btLoadArqSaida" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane3" pref="387" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btGrafico" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="btGrafico" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -1583,8 +1588,7 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jComboBoxVariavelMouseClicked"/>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBoxVariavelActionPerformed"/>
+                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jComboBoxVariavelItemStateChanged"/>
               </Events>
             </Component>
             <Component class="javax.swing.JRadioButton" name="jRadioButtonVies">
@@ -1611,7 +1615,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="txtArqSaida">
             </Component>
-            <Component class="javax.swing.JButton" name="jButton2">
+            <Component class="javax.swing.JButton" name="btLoadArqSaida">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/br/scamtec/imagens/text.png"/>
@@ -1619,7 +1623,18 @@
                 <Property name="text" type="java.lang.String" value="LOAD"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btLoadArqSaidaActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="jButton1">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/br/scamtec/imagens/disk_blue.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Gerar todas Figuras"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

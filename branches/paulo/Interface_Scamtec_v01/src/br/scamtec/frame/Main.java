@@ -37,12 +37,10 @@ public class Main extends javax.swing.JFrame {
         jLabelLogo = new javax.swing.JLabel();
         jLabelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/scamtec.png")));
         int tamLogo = 746;
-        System.out.println(dimensao.width+" "+this.getWidth());
-        System.out.println(dimensao.height+" "+this.getHeight());
-
-        //System.out.println(this.getWidth() / 2 - (tamLogo / 2), 0, this.getWidth(), this.getHeight());
-        jLabelLogo.setBounds(dimensao.width / 2 - (tamLogo / 2), 0, dimensao.width, dimensao.height);
-        //jLabelLogo.setBounds(this.getWidth() / 2 - (tamLogo / 2), 0, this.getWidth(), this.getHeight());
+        //System.out.println(dimensao.width+" "+this.getWidth());
+        //System.out.println(dimensao.height+" "+this.getHeight());
+        
+        jLabelLogo.setBounds(dimensao.width / 2 - (tamLogo / 2), 0, dimensao.width, dimensao.height);       
         telaPrincipal.add(jLabelLogo, javax.swing.JLayeredPane.DEFAULT_LAYER);
     }
 
