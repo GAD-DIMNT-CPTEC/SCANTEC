@@ -271,7 +271,7 @@ CONTAINS
     !
 
      DO WHILE (.NOT.is_last_step())
-        write(*,'(2(1x,I10.10),1x,I3.2)')scamtec%atime, scamtec%ftime, int(abs(cal2jul(scamtec%atime)-cal2jul(scamtec%ftime))*24)
+        write(*,'(2(1x,I10.10),1x,2I3.2)')scamtec%atime, scamtec%ftime, int(abs(cal2jul(scamtec%atime)-cal2jul(scamtec%ftime))*24),scamtec%ftime_idx
         DO NExp=1,scamtec%nexp
            CALL SCAM_ModelData ( NExp )  ! Load Files: Analisys, Forecast and Climatology
            CALL CalcBstat ( NExp )       ! Calculate Basic Statistics: Bias, RMSE, Anomaly Correlation
