@@ -283,7 +283,7 @@ CONTAINS
 !Verifica se é analise incial o index z que é da leitura começa com 208
 ! Pensar como fazer isso de forma mais adequada	
 		
-	    do w=1, 300	
+	    do w=1, 500	
 		
 		    if(trim(fname(w:w+6)) .eq. 'GPOSDAO')then
 			    dataini=trim(fname(w+7:w+16))
@@ -297,7 +297,7 @@ CONTAINS
 	    else
 		    y=214
 	    endif
-		
+		print*, '::: Y :::', y	
 !-------------------------------------------------------------------------------------------	
        ! abrindo binario T126_Seq
 	    OPEN (UNIT=lugb,FILE=trim(fname),FORM='unformatted', CONVERT='BIG_ENDIAN',STATUS ='Unknown')  

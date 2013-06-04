@@ -407,7 +407,7 @@ MODULE SCAM_Utils
 !
 ! Precipitation
 !
-    print*, '::: Lendo arquivos de Precipitacao :::' 
+    !print*, '::: Lendo arquivos de Precipitacao :::' 
          call i90_label ( 'Use Precipitation:', iret )
          if(iret == -2) then
             call perr(myname_,'Preciptarion Not Found')

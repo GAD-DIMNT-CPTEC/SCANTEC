@@ -183,20 +183,20 @@ Contains
        ! Allocando Memoria para o calculo dos Indices
        !
 
-       Allocate(dado(scamtec%nexp))
-       Do i=1,scamtec%nexp
+       if(.NOT.Allocated(dado))Allocate(dado(scamtec%nexp))
+       !Do i=1,scamtec%nexp
 
-          Allocate(dado(i)%rmse(scamtec%nvar,scamtec%ntime_forecast))
-          Allocate(dado(i)%vies(scamtec%nvar,scamtec%ntime_forecast))
-          Allocate(dado(i)%acor(scamtec%nvar,scamtec%ntime_forecast))
+          Allocate(dado(run)%rmse(scamtec%nvar,scamtec%ntime_forecast))
+          Allocate(dado(run)%vies(scamtec%nvar,scamtec%ntime_forecast))
+          Allocate(dado(run)%acor(scamtec%nvar,scamtec%ntime_forecast))
           !Allocate(dado(i)%desp(scamtec%nvar,scamtec%ntime_forecast))! paulo dias
 
-          dado(i)%rmse = 0.0
-          dado(i)%vies = 0.0
-          dado(i)%acor = 0.0
+          dado(run)%rmse = 0.0
+          dado(run)%vies = 0.0
+          dado(run)%acor = 0.0
          ! dado(i)%desp = 0.0 ! paulo dias
 
-       Enddo
+       !Enddo
 
 
     endif
@@ -318,7 +318,7 @@ Contains
     j = scamtec%ftime_idx
            
     Do i = 1, scamtec%nvar
-
+       if (j.eq.1)print*,minval(diffield(Idx,i)),maxval(diffield(Idx,i))
        dado(run)%rmse(i,j) = dado(run)%rmse(i,j) + sum (diffield(Idx,i)*diffield(Idx,i)) / size(Idx)
        dado(run)%vies(i,j) = dado(run)%vies(i,j) + sum (diffield(Idx,i)) / size(Idx)
     !   dado(run)%desp(i,j) = dado(run)%desp(i,j) + sum (diffield(Idx,i)-dado(run)%vies(i,j)) !paulo dias

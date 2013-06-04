@@ -385,8 +385,14 @@ CONTAINS
     f2(:,18) = f(:,16); lb2(:,18) = lb(:,16)             ! Vvel @ 850 hPa [m/s]
     f2(:,19) = f(:,17); lb2(:,19) = lb(:,17)             ! Vvel @ 500 hPa [m/s]
     f2(:,20) = f(:,18); lb2(:,20) = lb(:,18)             ! Vvel @ 250 hPa [m/s]
+           
+    if (y .eq. size(pds5)-2)then
+    f2(:,21) = 0.0; lb2(:,21) = .false.             ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]     
+    f2(:,22) = 0.0; lb2(:,22) = .false.             ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]   
+    else
     f2(:,21) = f(:,19); lb2(:,21) = lb(:,19)             ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]     
     f2(:,22) = f(:,20); lb2(:,22) = lb(:,20)             ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]   
+    endif
     DeAllocate(lb)
     DeAllocate(f)
 

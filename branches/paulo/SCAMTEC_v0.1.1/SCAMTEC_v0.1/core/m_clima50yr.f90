@@ -352,9 +352,9 @@ CONTAINS
     allocate(f2(clima50yr_struc%npts,scamtec%nvar))
 
     do i=1,clima50yr_struc%npts
-       f2(i,1) = tv(f(i,1)-273.16,f(i,4),92500.0) + 273.16 ; lb2(i, 1) = lb(i,1)! Vtmp @ 925 hPa [K]
-       f2(i,2) = tv(f(i,2)-273.16,f(i,5),85000.0) + 273.16 ; lb2(i, 2) = lb(i,2)! Vtmp @ 850 hPa [K]
-       f2(i,3) = tv(f(i,3)-273.16,f(i,3),50000.0) + 273.16 ; lb2(i, 3) = lb(i,3)! Vtmp @ 500 hPa [K]
+       f2(i,1) = tv(f(i,1)-273.16,f(i,5),92500.0) + 273.16 ; lb2(i, 1) = lb(i,1)! Vtmp @ 925 hPa [K]
+       f2(i,2) = tv(f(i,2)-273.16,f(i,6),85000.0) + 273.16 ; lb2(i, 2) = lb(i,2)! Vtmp @ 850 hPa [K]
+       f2(i,3) = tv(f(i,3)-273.16,f(i,7),50000.0) + 273.16 ; lb2(i, 3) = lb(i,3)! Vtmp @ 500 hPa [K]
        f2(i,8)  = q(92500.0,f(i,1)-273.16,f(i,5)) * 1000.00; lb2(i, 8) = lb(i,5) ! Umes @ 925 hPa [g/Kg]
        f2(i,9)  = q(92500.0,f(i,2)-273.16,f(i,6)) * 1000.00; lb2(i, 9) = lb(i,6) ! Umes @ 850 hPa [g/Kg]
        f2(i,10) = q(92500.0,f(i,3)-273.16,f(i,7)) * 1000.00; lb2(i,10) = lb(i,7) ! Umes @ 500 hPa [g/Kg]
