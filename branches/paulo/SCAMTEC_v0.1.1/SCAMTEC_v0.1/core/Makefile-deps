@@ -8,6 +8,7 @@ $(srcdir)/Ftable.o Ftable.o: \
 $(srcdir)/SCAM_ModelPlugin.o SCAM_ModelPlugin.o: \
 	$(srcdir)/SCAM_ModelPlugin.f90 \
 	$(srcdir)/m_agcm.o \
+	$(srcdir)/m_agcm_T213.o \
 	$(srcdir)/m_clima50yr.o \
 	$(srcdir)/m_T126_Seq.o \
 	$(srcdir)/obs_Precipitation.o
@@ -64,10 +65,17 @@ $(srcdir)/eta_read.o eta_read.o: \
 	$(srcdir)/eta_read.f90
 
 ftn_drv.h: \
-	
+
 
 $(srcdir)/m_agcm.o m_agcm.o: \
 	$(srcdir)/m_agcm.f90 \
+	$(srcdir)/bilinear_interpolation.o \
+	$(srcdir)/SCAM_dataMOD.o \
+	$(srcdir)/SCAM_MetForm.o \
+	$(srcdir)/scamtec_module.o
+
+$(srcdir)/m_agcm_T213.o m_agcm_T213.o: \
+	$(srcdir)/m_agcm_T213.f90 \
 	$(srcdir)/bilinear_interpolation.o \
 	$(srcdir)/SCAM_dataMOD.o \
 	$(srcdir)/SCAM_MetForm.o \
