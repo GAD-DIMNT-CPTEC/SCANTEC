@@ -15,6 +15,7 @@ OBJS = \
 	$(srcdir)/bilinear_interpolation.o \
 	$(srcdir)/eta_read.o \
 	$(srcdir)/m_agcm.o \
+	$(srcdir)/m_agcm_T213.o \
 	$(srcdir)/m_clima50yr.o \
 	$(srcdir)/m_T126_Seq.o \
 	$(srcdir)/obs_Precipitation.o \

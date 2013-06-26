@@ -3,6 +3,7 @@ MODULE SCAM_Modelplugin
   USE m_clima50yr
   USE m_T126_Seq !paulo dias
   USE obs_Precipitation !Paulo Dias
+  USE m_agcm_T213 !Paulo Dias
   
   IMPLICIT NONE
   !BOP
@@ -39,6 +40,7 @@ MODULE SCAM_Modelplugin
   integer, public, parameter :: clima50yrId      = 3  ! 50yr Climatology / CPTEC
   integer, public, parameter :: T126_SeqId       = 4  ! IWV-PSAS T126 !Paulo Dias
   integer, public, parameter :: PrecipitationId  = 5  ! Precipitation !Paulo Dias
+  integer, public, parameter :: AGCM_T213Id      = 6  ! AGCM_T213/CPTEC !Paulo Dias
 
   !-------------------------------------------------------------------
   ! !PUBLIC MEMBER FUNCTIONS:
@@ -113,7 +115,9 @@ Contains
     ! Precipitation
     call registermodelinit(PrecipitationId,Precipitation_init) !Paulo Dias 
     call registermodelread(PrecipitationId,Precipitation_read)
-    
+    ! AGCM/CPTEC
+    call registermodelinit(AGCM_T213Id,agcmT213_init)
+    call registermodelread(AGCM_T213Id,agcmT213_read)
   END SUBROUTINE scam_models_plugin
   !EOC
   !-------------------------------------------------------------------
