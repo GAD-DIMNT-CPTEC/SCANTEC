@@ -100,7 +100,7 @@ Contains
     !
     ! !REVISION HISTORY: 
     !  31 January 2013 - J. G. de Mattos - Initial Version
-    !
+    !  03     May 2013 - J. G. de Mattos - Bug in allocate matrix (dado)
     !
     !EOP
     !-----------------------------------------------------------------------------!
@@ -176,18 +176,18 @@ Contains
        ! Allocando Memoria para o calculo dos Indices
        !
 
-       Allocate(dado(scamtec%nexp))
-       Do i=1,scamtec%nexp
+       if(.not.allocated(dado))Allocate(dado(scamtec%nexp))
+!       Do i=1,scamtec%nexp
 
-          Allocate(dado(i)%rmse(scamtec%nvar,scamtec%ntime_forecast))
-          Allocate(dado(i)%vies(scamtec%nvar,scamtec%ntime_forecast))
-          Allocate(dado(i)%acor(scamtec%nvar,scamtec%ntime_forecast))
+          Allocate(dado(run)%rmse(scamtec%nvar,scamtec%ntime_forecast))
+          Allocate(dado(run)%vies(scamtec%nvar,scamtec%ntime_forecast))
+          Allocate(dado(run)%acor(scamtec%nvar,scamtec%ntime_forecast))
 
-          dado(i)%rmse = 0.0
-          dado(i)%vies = 0.0
-          dado(i)%acor = 0.0
+          dado(run)%rmse = 0.0
+          dado(run)%vies = 0.0
+          dado(run)%acor = 0.0
 
-       Enddo
+!       Enddo
 
 
     endif
@@ -307,6 +307,7 @@ Contains
     Allocate(anomfield(size(Idx),2))
 
     j = scamtec%ftime_idx
+
 
     Do i = 1, scamtec%nvar
 
@@ -430,9 +431,9 @@ Contains
     dado(run)%vies(:,i) = dado(run)%vies(:,i) / scamtec%ftime_count(i)
     dado(run)%acor(:,i) = dado(run)%acor(:,i) / scamtec%ftime_count(i)
 
-    write(FunitOut+0,fmt)(i-1)*scamtec%time_step,(dado(run)%rmse(j,i),j=1,scamtec%nvar)
-    write(FunitOut+1,fmt)(i-1)*scamtec%time_step,(dado(run)%vies(j,i),j=1,scamtec%nvar)
-    write(FunitOut+2,fmt)(i-1)*scamtec%time_step,(dado(run)%acor(j,i),j=1,scamtec%nvar)
+    write(FunitOut+0,fmt)(i-1)*scamtec%ftime_step,(dado(run)%rmse(j,i),j=1,scamtec%nvar)
+    write(FunitOut+1,fmt)(i-1)*scamtec%ftime_step,(dado(run)%vies(j,i),j=1,scamtec%nvar)
+    write(FunitOut+2,fmt)(i-1)*scamtec%ftime_step,(dado(run)%acor(j,i),j=1,scamtec%nvar)
 
     Close(FUnitOut)
 
