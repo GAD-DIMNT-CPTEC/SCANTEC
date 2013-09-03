@@ -60,6 +60,8 @@ MODULE m_clima50yr
 !  18 Oct 2012 - J. G. de Mattos - change UMES to g/kg
 !  20 Feb 2013 - J. G. de Mattos - include SCAM_MetForm.f90 
 !                                - and use it to make conversions
+!  03 May 2013 - J. G. de Mattos - Removed Bug at read_clima50yr
+!
 ! !SEE ALSO:
 !   
 !
@@ -229,7 +231,7 @@ CONTAINS
 !
 ! !REVISION HISTORY: 
 !  03 May 2012 - J. G. de Mattos - Initial Version
-!
+!  03 May 2013 - J. G. de Mattos - Bug at conversion
 !
 !EOP
 !-----------------------------------------------------------------------------!
@@ -353,8 +355,8 @@ CONTAINS
     do i=1,clima50yr_struc%npts
        f2(i,1) = tv(f(i,1)-273.16,f(i,4),92500.0) + 273.16 ! Vtmp @ 925 hPa [K]
        f2(i,2) = tv(f(i,2)-273.16,f(i,5),85000.0) + 273.16 ! Vtmp @ 850 hPa [K]
-       f2(i,3) = tv(f(i,3)-273.16,f(i,3),50000.0) + 273.16 ! Vtmp @ 500 hPa [K]
-       f2(i,5) = q(92500.0,f(i,1)-273.16,f(i,5)) * 1000.00 ! Umes @ 925 hPa [g/Kg]
+       f2(i,3) = tv(f(i,3)-273.16,f(i,6),50000.0) + 273.16 ! Vtmp @ 500 hPa [K]
+       f2(i,5) = q(92500.0,f(i,1)-273.16,f(i,4)) * 1000.00 ! Umes @ 925 hPa [g/Kg]
     enddo
 
     f2(:, 4) = f(:, 7)                            ! PSNM [hPa]
