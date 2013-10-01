@@ -157,10 +157,10 @@ contains
     !----------------------------------------------------------------!
     ! misc variables
 
-    integer :: i, t
-    integer :: nt, np
+    integer :: i, j, t
+    integer :: ni, nt, np
     integer :: iret
-    integer, allocatable, dimension(:) :: Idx
+    integer, allocatable, dimension(:,:) :: Idx
 
     character(len=*),parameter :: myname_=myname//'::BCtable'
 
@@ -181,32 +181,37 @@ contains
     End if
 
     np = min(size(Fct),size(Obs))
-    ni = count (scamdata(run)%UdfIdx)
+!    ni = count (scamdata(run)%UdfIdx)
     nt = size(thres)
 
     ALLOCATE(Idx(np))
 
+    DO j=1,scamtec%nvar
+       ni = count (scamdata(run)%UdfIdx(:,j))
+
     !
     ! Creating mask to only compute contingency table for valid grid points
     !
-
-    Idx(1:ni) = PACK ( (/(i,i=1,np)/), mask = scamdata(run)%UdfIdx)
-
-    !
-    ! loop over all thresholds
-    !
-
-    DO t=1,nt
+       Idx = -1
+       Idx(1:ni(j)) = PACK ( (/(i,i=1,np)/), mask = scamdata(run)%UdfIdx(:,j)
 
        !
-       ! Os thresholds sao pontos de corte para chuva e não chuva. Valores iguais ou
-       ! superiores ao threshold são considerados chuva e computados como tal.
+       ! loop over all thresholds
        !
 
-       A(t) = count(fct(Idx)>=Thres(t).and.Obs(Idx)>=Thres(t))
-       B(t) = count(fct(Idx)>=Thres(t).and.Obs(Idx)< Thres(t))
-       C(t) = count(fct(Idx)< Thres(t).and.Obs(Idx)>=Thres(t))
-       D(t) = count(fct(Idx)< Thres(t).and.Obs(Idx)< Thres(t))
+       DO t=1,nt
+
+          !
+          ! Os thresholds sao pontos de corte para chuva e não chuva. Valores iguais ou
+          ! superiores ao threshold são considerados chuva e computados como tal.
+          !
+
+          A(t) = count(fct(Idx(1:ni(j)))>=Thres(t).and.Obs(Idx(1:ni(j)))>=Thres(t))
+          B(t) = count(fct(Idx(1:ni(j)))>=Thres(t).and.Obs(Idx(1:ni(j)))< Thres(t))
+          C(t) = count(fct(Idx(1:ni(j)))< Thres(t).and.Obs(Idx(1:ni(j)))>=Thres(t))
+          D(t) = count(fct(Idx(1:ni(j)))< Thres(t).and.Obs(Idx(1:ni(j)))< Thres(t))
+
+       ENDDO
 
     ENDDO
 

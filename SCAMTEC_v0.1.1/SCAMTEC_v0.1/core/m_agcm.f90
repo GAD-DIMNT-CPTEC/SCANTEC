@@ -339,7 +339,7 @@ CONTAINS
 
           deallocate(f)
           deallocate(lb)
-
+          
           call perr(myname_,'File Not Found: '//trim(fname),stat)
           return
 

@@ -67,7 +67,7 @@ MODULE SCAM_dataMOD
      real, allocatable :: clmfield(:,:) ! climatology field
      real, allocatable :: prefield(:,:) ! preciptation field (paulo dias)
 
-     logical, allocatable :: UdfIdx (:)
+     logical, allocatable :: UdfIdx (:,:)
 !     real, allocatable :: diffield(:,:,:) ! diference field
 !     real, allocatable :: rmsfield(:,:,:)
 !     real, allocatable :: time_rmse(:,:)
@@ -173,7 +173,7 @@ CONTAINS
     
     DO I=1,scamtec%nexp
        allocate(scamdata(I)%expfield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
-       allocate(scamdata(I)%UdfIdx(scamtec%nxpt*scamtec%nypt))
+       allocate(scamdata(I)%UdfIdx(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
        
        
        !IF(Precipitation_Flag.EQ.1)allocate(scamdata(I)%time_histo(tam_hist,scamtec%ntime_forecast))!paulo dias
@@ -234,23 +234,26 @@ CONTAINS
     INTEGER,          INTENT(IN) :: e
     CHARACTER(LEN=*), INTENT(IN) :: name
     INTEGER   :: stat
+    INTEGER   :: I
 
 
     call load_data(Id, name//char(0))
 
-
 #ifdef DEBUG  
     write(6,'(A,1x,A,1x,2F15.3)')                              &
                                  trim(type),': [MIN/MAX]::',   &
-                                 minval(scamdata(1)%tmpfield), &
-                                 maxval(scamdata(1)%tmpfield)
+                                 minval(scamdata(1)%tmpfield,mask=scamdata(1)%tmpfield .ne. scamtec%udef), &
+                                 maxval(scamdata(1)%tmpfield,mask=scamdata(1)%tmpfield .ne. scamtec%udef)
 #endif
 
     !
     ! Definindo pontos onde nao calcular indices estatisticos
     !
 
-    where (scamdata(1)%tmpfield(:,1) .eq. scamtec%udef) scamdata(e)%UdfIdx = .false.
+    DO I=1,scamtec%nvar
+       where (scamdata(1)%tmpfield(:,I) .eq. scamtec%udef) scamdata(e)%UdfIdx(:,I) = .false.
+    ENDDO
+    
 
     !
     ! Selecionando qual eh o campo que esta sendo lido
@@ -324,11 +327,17 @@ CONTAINS
      !
      ! 1.3 Experiment Data File
      !
-
+     
+     !Joao adicionou para verificar quando nao tem o link das 0h
      Experiment = TRIM(Exper(NExp)%file)
+     
+     if (Exper(NExp)%id.eq.1.and.(scamtec%atime.eq.scamtec%ftime))then
+        CALL replace_(Experiment, 'fct','icn')
+     end if
+     
      CALL str_template(Experiment, aymd, ahms, fymd, fhms)
      CALL ldata('E',NExp,Exper(NExp)%Id, Experiment)
-     
+
      !
      ! 1.4 Precipitation data file 
      !
