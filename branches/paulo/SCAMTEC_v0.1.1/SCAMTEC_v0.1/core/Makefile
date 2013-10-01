@@ -33,14 +33,14 @@ incdir = ./
 srcdir = ./
 
 # default mode (max. optimization)
-mode = dbg
+mode =  
 
 # header file directories
 CCFLAGS = -I$(incdir) -I$(MPEU_INC)
-FFLAGS  += -I$(incdir) -I$(MPEU_INC)
+FFLAGS  += -I$(incdir) -I$(MPEU_INC) -DDEBUG
 
 # default flags
-FPPFLAGS = -C -E
+FPPFLAGS = -C -E 
 CCFLAGS += -DIFC
 LDFLAGS  = 
 ARFLAGS  = -r
@@ -88,7 +88,7 @@ ifeq ($(SCAM_ARCH),cray_pgi)
 # add flags for debugging if requested
    ifeq (dbg,$(findstring dbg,$(mode)))
       CCFLAGS += 
-      FFLAGS  += -g -O0 -traceback -Ktrap=inv,divz,ovf -Mbounds -DDEBUG
+      FFLAGS  += -g -gopt -Mchkfpstk -Mchkptr -Mchkstk -Mcoff -Mdwarf1 -Mdwarf2 -Mdwarf3 -Melf -Mpgicoff -traceback -DDEBUG
       LDFLAGS += -g -pg
    endif
 

@@ -10,8 +10,7 @@ $(srcdir)/SCAM_ModelPlugin.o SCAM_ModelPlugin.o: \
 	$(srcdir)/m_agcm.o \
 	$(srcdir)/m_agcm_T213.o \
 	$(srcdir)/m_clima50yr.o \
-	$(srcdir)/m_T126_Seq.o \
-	$(srcdir)/obs_Precipitation.o
+	$(srcdir)/m_T126_Seq.o 
 
 $(srcdir)/SCAM_Plugin.o SCAM_Plugin.o: \
 	$(srcdir)/SCAM_Plugin.c
@@ -29,7 +28,6 @@ $(srcdir)/SCAM_coreMOD.o SCAM_coreMOD.o: \
 	$(srcdir)/SCAM_coreMOD.f90 \
 	$(srcdir)/m_string.o \
 	$(srcdir)/SCAM_bstatistic.o \
-	$(srcdir)/m_metri_precip.o \
 	$(srcdir)/SCAM_dataMOD.o \
 	$(srcdir)/SCAM_ModelPlugin.o \
 	$(srcdir)/SCAM_outputMOD.o \
@@ -53,12 +51,12 @@ $(srcdir)/SCAM_outputMOD.o SCAM_outputMOD.o: \
 $(srcdir)/bilinear_interpolation.o bilinear_interpolation.o: \
 	$(srcdir)/bilinear_interpolation.f90
 
-$(srcdir)/m_metri_precip.o m_metri_precip.o: \
-	$(srcdir)/m_metri_precip.f90 \
-	$(srcdir)/SCAM_bstatistic.o \
-	$(srcdir)/SCAM_dataMOD.o \
-	$(srcdir)/SCAM_UtilsMOD.o \
-	$(srcdir)/m_time.o
+#$(srcdir)/m_metri_precip.o m_metri_precip.o: \
+#	$(srcdir)/m_metri_precip.f90 \
+#	$(srcdir)/SCAM_bstatistic.o \
+#	$(srcdir)/SCAM_dataMOD.o \
+#	$(srcdir)/SCAM_UtilsMOD.o \
+#	$(srcdir)/m_time.o
 
 
 $(srcdir)/eta_read.o eta_read.o: \
@@ -95,14 +93,14 @@ $(srcdir)/m_T126_Seq.o m_T126_Seq.o: \
 	$(srcdir)/SCAM_MetForm.o \
 	$(srcdir)/scamtec_module.o
 
-$(srcdir)/obs_Precipitation.o obs_Precipitation.o: \
-	$(srcdir)/m_string.o \
-	$(srcdir)/obs_Precipitation.f90 \
-	$(srcdir)/bilinear_interpolation.o \
-	$(srcdir)/SCAM_dataMOD.o \
-	$(srcdir)/SCAM_UtilsMOD.o \
-	$(srcdir)/m_time.o \
-	$(srcdir)/scamtec_module.o
+#$(srcdir)/obs_Precipitation.o obs_Precipitation.o: \
+#	$(srcdir)/m_string.o \
+#	$(srcdir)/obs_Precipitation.f90 \
+#	$(srcdir)/bilinear_interpolation.o \
+#	$(srcdir)/SCAM_dataMOD.o \
+#	$(srcdir)/SCAM_UtilsMOD.o \
+#	$(srcdir)/m_time.o \
+#	$(srcdir)/scamtec_module.o
 
 $(srcdir)/m_string.o m_string.o: \
 	$(srcdir)/m_string.f90

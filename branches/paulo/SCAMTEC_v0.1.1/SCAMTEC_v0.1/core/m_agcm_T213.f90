@@ -193,7 +193,7 @@ CONTAINS
     agcm_struc%gridDesc( 7) = -89.57009 !Latitude of extreme point
     agcm_struc%gridDesc( 8) = -0.5625    !Longitude of extreme point
     agcm_struc%gridDesc( 9) = 0.5625     !N/S direction increment
-    agcm_struc%gridDesc(10) = 225       !(Gaussian) # lat circles pole-equator
+    agcm_struc%gridDesc(10) = 160       !(Gaussian) # lat circles pole-equator
     agcm_struc%gridDesc(20) = 0.0  
 
     agcm_struc%npts = agcm_struc%gridDesc(2)*agcm_struc%gridDesc(3)
@@ -282,8 +282,8 @@ CONTAINS
     inquire (file=trim(fname), exist=file_exists)
     
     do i=1, 300	
-		
-		    if(trim(fname(i:i+6)) .eq. 'GPOSNMC')then
+		   !Para o PSAS colocar 'GPOSCPT' e compilar novamente
+		    if(trim(fname(i:i+6)) .eq. 'GPOSNMC' .or. trim(fname(i:i+6)) .eq. 'GPOSCPT')then
 			    dataini=trim(fname(i+7:i+16))
 			    datafinal=trim(fname(i+17:i+26))
 		    endif			

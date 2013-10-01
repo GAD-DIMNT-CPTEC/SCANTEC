@@ -47,12 +47,13 @@ Module SCAM_bstatistic
      real, allocatable :: rmse(:,:)
      real, allocatable :: vies(:,:)
      real, allocatable :: acor(:,:)
+     real, allocatable :: rmse_field(:,:,:)
   !   real, allocatable :: desp(:,:) ! desvio padrao paulo dias
   end type bstat
 
   type(bstat), allocatable :: dado(:)
 
-  integer, allocatable :: Idx(:)
+  integer, allocatable :: Idx(:,:)
   integer              :: nidx
 
 
@@ -108,22 +109,32 @@ Contains
     !BOC
     !
 
-    integer            :: i, npts
+    integer            :: i, j, npts
     character(len=512) :: fname, fmt
     integer            :: nymd, nhms
     integer            :: fymd, fhms
+
+    character(len=*),parameter :: myname_=myname//'::InitBstat'
+
+#ifdef DEBUG
+    WRITE(stdout,'(     2A)')'Hello from ', myname_
+#endif
 
 
     !
     ! Identificando Indice dos pontos validos
     !
 
-    nidx = count (scamdata(run)%UdfIdx)
     npts = scamtec%nxpt*scamtec%nypt
 
-    Allocate(Idx(nidx))
+    Allocate(Idx(npts,scamtec%nvar))
+    Idx = -1
 
-    Idx(1:nidx) = PACK ( (/(i,i=1,npts)/), mask = scamdata(run)%UdfIdx)
+    DO i=1,scamtec%nvar
+       nidx = count (scamdata(run)%UdfIdx(1:npts,i))
+       Idx(1:nidx,i) = PACK ( (/(j,j=1,npts)/), mask = scamdata(run)%UdfIdx(1:npts,i))
+    ENDDO
+
 
     !
     ! transferindo dados para o calculo dos indices
@@ -147,31 +158,32 @@ Contains
 
        fname = FNameOut
        CALL str_template(FName, nymd, nhms, fymd, fhms, int2str(run,'(I2.2)'))
-	
+
        open(unit   = FUnitOut+0,      &
-            File   = trim(scamtec%output_dir)//'RMSE'//Trim(FName),   &
+            File   = trim(scamtec%output_dir)//'/RMSE'//Trim(FName),   &
             access = 'sequential',  &
             Form   = 'formatted', &
             Status = 'replace'      &
             )
        open(unit   = FUnitOut+1,      &
-            File   = trim(scamtec%output_dir)//'VIES'//Trim(FName),   &
+            File   = trim(scamtec%output_dir)//'/VIES'//Trim(FName),   &
             access = 'sequential',  &
             Form   = 'formatted', &
             Status = 'replace'      &
             )
        open(unit   = FUnitOut+2,      &
-            File   = trim(scamtec%output_dir)//'ACOR'//Trim(FName),   &
+            File   = trim(scamtec%output_dir)//'/ACOR'//Trim(FName),   &
             access = 'sequential',  &
             Form   = 'formatted', &
             Status = 'replace'      &
             )
-   !    open(unit   = FUnitOut+3,      &
-    !        File   = trim(scamtec%output_dir)//'DESP'//Trim(FName),   &
-     !       access = 'sequential',  &
-      !      Form   = 'formatted', &
-       !     Status = 'replace'      &
-        !    )! paulo dias
+       open(unit   = FUnitOut+3,      &
+            File   = trim(scamtec%output_dir)//'/RMSEF'//Trim(FName),   &
+            access = 'sequential',  &
+            Form   = 'unformatted', &
+            Status = 'replace'      &
+            )
+            
 
        write(fmt,'(A4,I3.3,A5)')'(A9,',scamtec%nvar,'A9)'
        write(FUnitOut+0,fmt)'%Previsao',(scamtec%VarName(i),i=1,scamtec%nvar)
@@ -189,15 +201,21 @@ Contains
           Allocate(dado(run)%rmse(scamtec%nvar,scamtec%ntime_forecast))
           Allocate(dado(run)%vies(scamtec%nvar,scamtec%ntime_forecast))
           Allocate(dado(run)%acor(scamtec%nvar,scamtec%ntime_forecast))
+          Allocate(dado(run)%rmse_field(npts,scamtec%nvar,scamtec%ntime_forecast))
           !Allocate(dado(i)%desp(scamtec%nvar,scamtec%ntime_forecast))! paulo dias
 
           dado(run)%rmse = 0.0
           dado(run)%vies = 0.0
           dado(run)%acor = 0.0
+
+          dado(run)%rmse_field = 0.0
+          DO i = 1, scamtec%nvar
+             dado(run)%rmse_field(Idx(1:nidx,i),i,:) = scamtec%udef
+          ENDDO
+
          ! dado(i)%desp = 0.0 ! paulo dias
 
        !Enddo
-
 
     endif
 
@@ -290,9 +308,12 @@ Contains
     !BOC
     !
 
-    integer             :: i, j
+    integer             :: i, j, v
+    integer             :: npts
     real                :: tmp
     real, allocatable   :: anomfield(:,:)
+        
+    integer :: ier
 
 
 
@@ -304,52 +325,63 @@ Contains
 
     CALL InitBstat( run )
 
-    Allocate(diffield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
+    npts = scamtec%nxpt*scamtec%nypt
+
+    Allocate(diffield(npts,scamtec%nvar),stat=ier)
     diffield = scamtec%udef
-            
-    diffield = expfield(Idx,:) - reffield(Idx,:)
+
+    DO i = 1, scamtec%nvar
+       nidx = count(Idx(:,i).gt.0)
+
+       diffield(Idx(1:nidx,i),i) = expfield(Idx(1:nidx,i),i) - reffield(Idx(1:nidx,i),i)
+       
+
 
     !    Allocate(rmse(scamtec%nvar))
     !    Allocate(vies(scamtec%nvar))
     !    Allocate(acor(scamtec%nvar))
 
-    Allocate(anomfield(size(Idx),2))
+       Allocate(anomfield(npts,2))
+       j = scamtec%ftime_idx
+       
+      
+       dado(run)%rmse_field(Idx(1:nidx,i),i,j) = dado(run)%rmse_field(Idx(1:nidx,i),i,j) + & 
+                                                (diffield(Idx(1:nidx,i),i)*diffield(Idx(1:nidx,i),i))
+                                                 
 
-    j = scamtec%ftime_idx
-           
-    Do i = 1, scamtec%nvar
-       if (j.eq.1)print*,minval(diffield(Idx,i)),maxval(diffield(Idx,i))
-       dado(run)%rmse(i,j) = dado(run)%rmse(i,j) + sum (diffield(Idx,i)*diffield(Idx,i)) / size(Idx)
-       dado(run)%vies(i,j) = dado(run)%vies(i,j) + sum (diffield(Idx,i)) / size(Idx)
-    !   dado(run)%desp(i,j) = dado(run)%desp(i,j) + sum (diffield(Idx,i)-dado(run)%vies(i,j)) !paulo dias
+       dado(run)%rmse(i,j) = dado(run)%rmse(i,j) + sum (diffield(Idx(1:nidx,i),i)*diffield(Idx(1:nidx,i),i)) / nidx
+       dado(run)%vies(i,j) = dado(run)%vies(i,j) + sum (diffield(Idx(1:nidx,i),i)) / nidx
+
 
        if (scamtec%cflag.eq.1)then
 
-          anomfield(:,1) = expfield(Idx,i)-clmfield(Idx,i)
-          anomfield(:,2) = reffield(Idx,i)-clmfield(Idx,i)
+          anomfield(Idx(1:nidx,i),1) = expfield(Idx(1:nidx,i),i)-clmfield(Idx(1:nidx,i),i)
+          anomfield(Idx(1:nidx,i),2) = reffield(Idx(1:nidx,i),i)-clmfield(Idx(1:nidx,i),i)
 
-          CALL corr(anomfield(Idx,1),&
-               anomfield(IdX,2),&
+          CALL corr(anomfield(Idx(1:nidx,i),1),&
+               anomfield(IdX(1:nidx,i),2),&
                tmp              &
-               )
+              )
 
        else
-          CALL corr(expfield(Idx,i),&
-               reffield(Idx,i),&
+          CALL corr(expfield(Idx(1:nidx,i),i),&
+               reffield(Idx(1:nidx,i),i),&
                tmp             &
-               )
+              )
        endif
 
        dado(run)%acor(i,j) = dado(run)%acor(i,j) + tmp
+!
+!       EndDo
 
-    EndDo
+       DeAllocate(anomfield)
 
+    ENDDO
+    
     if ( scamtec%time_step.eq.scamtec%ntime_steps )then
        CALL WriteBstat( run )
     endif
-
-
-    DeAllocate(anomfield)
+    
     DeAllocate(diffield)
     !    DeAllocate(rmse)
     !    DeAllocate(vies)
@@ -397,6 +429,7 @@ Contains
     character(len=512) :: fname, fmt
     integer            :: nymd, nhms
     integer            :: fymd, fhms
+    integer            :: nidx
     real               :: k
 
     inquire(unit=FUnitOut, opened=iret)
@@ -413,51 +446,63 @@ Contains
 
 
        Open( unit   = FUnitOut+0,      &
-            file   = trim(scamtec%output_dir)//'RMSE'//trim(Fname),   &
+            file   = trim(scamtec%output_dir)//'/RMSE'//trim(Fname),   &
             form   = 'formatted', &
             access = 'sequential',  &
             position = 'append'   &
             )
        Open( unit   = FUnitOut+1,      &
-            file   = trim(scamtec%output_dir)//'VIES'//trim(Fname),   &
+            file   = trim(scamtec%output_dir)//'/VIES'//trim(Fname),   &
             form   = 'formatted', &
             access = 'sequential',  &
             position = 'append'   &
             )
        Open( unit   = FUnitOut+2,      &
-            file   = trim(scamtec%output_dir)//'ACOR'//trim(Fname),   &
+            file   = trim(scamtec%output_dir)//'/ACOR'//trim(Fname),   &
             form   = 'formatted', &
             access = 'sequential',  &
             position = 'append'   &
             )
-    !   Open( unit   = FUnitOut+3,      &
-     !       file   = trim(scamtec%output_dir)//'DESP'//trim(Fname),   &
-      !      form   = 'formatted', &
-       !     access = 'sequential',  &
-        !    position = 'append'   &
-         !   )! paulo dias
+       Open( unit   = FUnitOut+3,      &
+            file   = trim(scamtec%output_dir)//'/RMSEF'//trim(Fname),   &
+            form   = 'unformatted', &
+            access = 'sequential',  &
+            position = 'append'   &
+           )
+           
     endif
 
     write(fmt,'(A9,I3.3,A5)')'(6x,I3.3,',scamtec%nvar,'F9.3)'
 
-    i = scamtec%ftime_idx
+    j = scamtec%ftime_idx
 
-    dado(run)%rmse(:,i) = sqrt(dado(run)%rmse(:,i) / scamtec%ftime_count(i))
-    dado(run)%vies(:,i) = dado(run)%vies(:,i) / scamtec%ftime_count(i)
-    dado(run)%acor(:,i) = dado(run)%acor(:,i) / scamtec%ftime_count(i)
+    dado(run)%rmse(:,j) = sqrt(dado(run)%rmse(:,j) / scamtec%ftime_count(j))
+    dado(run)%vies(:,j) = dado(run)%vies(:,j) / scamtec%ftime_count(j)
+    dado(run)%acor(:,j) = dado(run)%acor(:,j) / scamtec%ftime_count(j)
+    
+
+    
     !dado(run)%desp(:,i) = sqrt(dado(run)%desp(:,i) / (scamtec%ftime_count(i)-1)) ! paulo dias
 
-    write(FunitOut+0,fmt)(i-1)*scamtec%ftime_step,(dado(run)%rmse(j,i),j=1,scamtec%nvar)
-    write(FunitOut+1,fmt)(i-1)*scamtec%ftime_step,(dado(run)%vies(j,i),j=1,scamtec%nvar)
-    write(FunitOut+2,fmt)(i-1)*scamtec%ftime_step,(dado(run)%acor(j,i),j=1,scamtec%nvar)
-    !write(FunitOut+3,fmt)(i-1)*scamtec%time_step,(dado(run)%desp(j,i),j=1,scamtec%nvar) ! paulo dias
+    write(FunitOut+0,fmt)(j-1)*scamtec%ftime_step,(dado(run)%rmse(i,j),i=1,scamtec%nvar)
+    write(FunitOut+1,fmt)(j-1)*scamtec%ftime_step,(dado(run)%vies(i,j),i=1,scamtec%nvar)
+    write(FunitOut+2,fmt)(j-1)*scamtec%ftime_step,(dado(run)%acor(i,j),i=1,scamtec%nvar)
+
+    DO i=1,scamtec%nvar
+        nidx = count(Idx(:,i).gt.0)
+
+        dado(run)%rmse_Field(Idx(1:nidx,i),i,j) = sqrt(dado(run)%rmse_Field(Idx(1:nidx,i),i,j)/ scamtec%ftime_count(j))
+       
+        write(FunitOut+3)dado(run)%rmse_Field(:,i,j)
+        
+    ENDDO
 
 
 
-
-    Close(FUnitOut)
-
-
+    Close(FUnitOut+0)
+    Close(FUnitOut+1)
+    Close(FUnitOut+2)
+    Close(FUnitOut+3)
 
 
   End Subroutine WriteBstat
