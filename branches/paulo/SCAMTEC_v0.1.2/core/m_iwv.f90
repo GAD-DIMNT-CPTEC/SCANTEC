@@ -26,7 +26,7 @@ MODULE m_iwv
 	Private
 
 	INTEGER :: H,G,Z,I,F,Nest,ni0,ni6,ni12,ni18,ce
-	INTEGER :: PR0,PR6,PR12,PR18,TEMP0,TEMP6,TEMP12,TEMP18,HUM0,HUM6,HUM12,HUM18
+	INTEGER :: PR0,PR6,PR12,PR18,TEMP0,TEMP6,TEMP12,TEMP18,HUM0,HUM6,HUM12,HUM18,nlin
 	INTEGER(8),DIMENSION(:), ALLOCATABLE :: segjul
 	REAL, DIMENSION(:), ALLOCATABLE :: iwv0,iwv6,iwv12,iwv18
 	REAL, DIMENSION(:), ALLOCATABLE :: MedIWV0,MedIWV6,MedIWV12,MedIWV18,MedPR0,MedPR6,MedPR12,MedPR18,MedTEMP0,MedTEMP6,MedTEMP12,MedTEMP18, MedHUM0,MedHUM6,MedHUM12,MedHUM18
@@ -40,7 +40,7 @@ MODULE m_iwv
 	CHARACTER(LEN=8), DIMENSION(9999) :: altGPS
 	CHARACTER(LEN=150) :: TEXTO
 	CHARACTER(LEN=12), DIMENSION(:), ALLOCATABLE :: latIWV,lonIWV
-  	CHARACTER(LEN=180) :: cabec
+  	CHARACTER(LEN=180) :: cabec, cabec1
         CHARACTER(LEN=5) :: interval, prim_esta
         CHARACTER(LEN=4), DIMENSION(5) :: esta
     	
@@ -114,8 +114,6 @@ CONTAINS
  
        READ(2,'(A150)')cabec
 
-
-
        if(cabec(2:19) .eq. 'SAMPLING INTERVAL') interval= cabec(50:57)
           
        if(cabec(1:6) .eq. '*SITE') then
@@ -141,39 +139,25 @@ CONTAINS
 
 !Aqui termina a leitura do cabeçalho.
 
-     
- 		
 
-
-
-
-! Loop da leitura para saber a quantidade de linhas corretas 
-    
-    DO H=1,5000
-!                           Esta    ano       dia jul    seg jul     ztd      sig      iwv     press    temp     humid
-          READ(2,32, END=15) id(H),times(H,1),times(H,2),times(H,3),obs(H,1),obs(H,2),obs(H,3),obs(H,4),obs(H,5),obs(H,6)
+! Loop da leitura 
+   
+    DO H=1,15000 
+      
+  !                          Esta    ano       dia jul    seg jul     ztd      sig      iwv     press    temp     humid
+         READ(2,32,ERR=20,END=15 ) id(H),times(H,1),times(H,2),times(H,3),obs(H,1),obs(H,2),obs(H,3),obs(H,4),obs(H,5),obs(H,6)
 32        FORMAT (1x,A4,1x,I2,1x,I3,1x,I5,1x,F6.1,2x,F4.2,2x,F7.4,2x,F6.2,2x,F5.2,2x,F5.2)         
+          !print*,id(H),times(H,1),times(H,3)
           
 15 Continue       
-         
-         !print*,id(H),times(H,1),times(H,2),times(H,3)       
-         !print*,obs(H,1),obs(H,2),obs(H,3),obs(H,4),obs(H,5),obs(H,6)
-
-          
-
-    END DO
-  
-
-
-   
+20 Continue
+  End do
 ! contadores de observacao equivale as 0,6,12,18 h	
      	ni0=0
      	ni6=0
      	ni12=0
      	ni18=0
-
-	
-     
+    
      	Z=1
 	
 ! loop da quantidade de estaçoes

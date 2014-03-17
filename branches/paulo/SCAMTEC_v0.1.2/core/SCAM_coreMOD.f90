@@ -279,11 +279,12 @@ CONTAINS
     !
     !  1. Loop over time and experiments
     !
-
+	
+	CALL SCAM_ObsData( )
      DO WHILE (.NOT.is_last_step())
         write(*,'(2(1x,I10.10),1x,2I3.2)')scamtec%atime, scamtec%ftime, int(abs(cal2jul(scamtec%atime)-cal2jul(scamtec%ftime))*24),scamtec%ftime_idx
         
-        CALL SCAM_ObsData( )
+        
 
         DO NExp=1,scamtec%nexp
         
@@ -381,7 +382,8 @@ CONTAINS
      integer :: I, Nx, Ny
      integer :: ii, jj
      INTEGER :: atimebufr
-
+     LOGICAL :: obs_flag
+     
      scamtec%loop_count = scamtec%loop_count + 1
 
      I  = scamtec%loop_count
@@ -401,6 +403,10 @@ CONTAINS
      scamtec%ftime_idx       = jj
      scamtec%ftime_count(jj) = scamtec%ftime_count(jj) + 1
      scamtec%atime_flag      = (atimebufr.ne.scamtec%atime)
+
+	!if (aincr .eq. 1) then
+	!obs_flag= .true.
+	!end if
 
      if (scamtec%atime_flag)scamtec%time_step = scamtec%time_step + 1
 
