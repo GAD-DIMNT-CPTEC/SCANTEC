@@ -246,8 +246,11 @@ CONTAINS
 
 
     if (type .eq. 'O')then
+    print*, 'Entrando no loadobs'
        call loadobs_data(Id, name//char(0))
+       
     else
+    print*, 'Entrando no load_data'
        call load_data(Id, name//char(0))
     endif
 
@@ -296,14 +299,19 @@ CONTAINS
      character(len=1024) :: Experiment   ! Experiment File Name
      character(len=1024) :: Climatology  ! Climatology File Name
      character(len=1024) :: Precipitation  ! Precipitation File Name (Paulo dias)
-     
+     logical             :: obs_flag
      
 
      aymd = scamtec%atime/100
      ahms = MOD(scamtec%atime,100) * 10000
      fymd = scamtec%ftime/100
      fhms = MOD(scamtec%ftime,100) * 10000
-
+	
+	!if (.not.obs_flag)return
+	
+	!obs_flag = .false.
+	!call SCAM_ObsData()
+	
      !
      ! 1. Create file name and Open 
      !
@@ -372,15 +380,18 @@ CONTAINS
      
 
      	character(len=1024) :: observation
-     	integer             :: aymd, ahms
-     	integer             :: fymd, fhms
      	
+     	integer             :: nymd, nhms
+     	nymd = scamtec%atime/100
+     	observation=TRIM(OBS%file)
 #ifdef DEBUG
     WRITE(6,'(     2A)')'Entrando no OBSDATA do data mod '
 #endif
- print*, 'o endereço do documento é : ', observation
-     	observation=TRIM(OBS%file)
-     	CALL str_template(observation, fymd,fhms)
+ 
+ !print*, 'o valor do nymd no obsData é : ', nymd
+     	
+     	CALL str_template(observation, nymd)
+     	!print*, 'o endereço do documento é : ', observation
      	CALL ldata('O', 1, OBS%Id, observation)
       	call iwv_init(observation)
 
