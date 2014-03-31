@@ -48,6 +48,8 @@ Module SCAM_bstatistic
      real, allocatable :: vies(:,:)
      real, allocatable :: acor(:,:)
      real, allocatable :: rmse_field(:,:,:)
+     real, allocatable :: vies_field(:,:,:)
+     real, allocatable :: exp_mean_field(:,:,:)
   !   real, allocatable :: desp(:,:) ! desvio padrao paulo dias
   end type bstat
 
@@ -184,6 +186,19 @@ Contains
             Status = 'replace'      &
             )
             
+       open(unit   = FUnitOut+4,      &
+            File   = trim(scamtec%output_dir)//'/VIESF'//Trim(FName),   &
+            access = 'sequential',  &
+            Form   = 'unformatted', &
+            Status = 'replace'      &
+            )
+
+       open(unit   = FUnitOut+5,      &
+            File   = trim(scamtec%output_dir)//'/MEANF'//Trim(FName),   &
+            access = 'sequential',  &
+            Form   = 'unformatted', &
+            Status = 'replace'      &
+            )
 
        write(fmt,'(A4,I3.3,A5)')'(A9,',scamtec%nvar,'A9)'
        write(FUnitOut+0,fmt)'%Previsao',(scamtec%VarName(i),i=1,scamtec%nvar)
@@ -202,6 +217,9 @@ Contains
           Allocate(dado(run)%vies(scamtec%nvar,scamtec%ntime_forecast))
           Allocate(dado(run)%acor(scamtec%nvar,scamtec%ntime_forecast))
           Allocate(dado(run)%rmse_field(npts,scamtec%nvar,scamtec%ntime_forecast))
+          Allocate(dado(run)%vies_field(npts,scamtec%nvar,scamtec%ntime_forecast))
+          Allocate(dado(run)%exp_mean_field(npts,scamtec%nvar,scamtec%ntime_forecast))
+
           !Allocate(dado(i)%desp(scamtec%nvar,scamtec%ntime_forecast))! paulo dias
 
           dado(run)%rmse = 0.0
@@ -209,8 +227,12 @@ Contains
           dado(run)%acor = 0.0
 
           dado(run)%rmse_field = 0.0
+          dado(run)%vies_field = 0.0
+          dado(run)%exp_mean_field = 0.0
           DO i = 1, scamtec%nvar
              dado(run)%rmse_field(Idx(1:nidx,i),i,:) = scamtec%udef
+             dado(run)%vies_field(Idx(1:nidx,i),i,:) = scamtec%udef
+             dado(run)%exp_mean_field(Idx(1:nidx,i),i,:) = scamtec%udef
           ENDDO
 
          ! dado(i)%desp = 0.0 ! paulo dias
@@ -344,10 +366,17 @@ Contains
        Allocate(anomfield(npts,2))
        j = scamtec%ftime_idx
        
+
+
       
        dado(run)%rmse_field(Idx(1:nidx,i),i,j) = dado(run)%rmse_field(Idx(1:nidx,i),i,j) + & 
                                                 (diffield(Idx(1:nidx,i),i)*diffield(Idx(1:nidx,i),i))
-                                                 
+
+       dado(run)%vies_field(Idx(1:nidx,i),i,j) = dado(run)%vies_field(Idx(1:nidx,i),i,j) + & 
+                                                (diffield(Idx(1:nidx,i),i))
+
+       dado(run)%exp_mean_field(Idx(1:nidx,i),i,j) = dado(run)%exp_mean_field(Idx(1:nidx,i),i,j) + & 
+                                                (expfield(Idx(1:nidx,i),i))
 
        dado(run)%rmse(i,j) = dado(run)%rmse(i,j) + sum (diffield(Idx(1:nidx,i),i)*diffield(Idx(1:nidx,i),i)) / nidx
        dado(run)%vies(i,j) = dado(run)%vies(i,j) + sum (diffield(Idx(1:nidx,i),i)) / nidx
@@ -430,6 +459,7 @@ Contains
     integer            :: nymd, nhms
     integer            :: fymd, fhms
     integer            :: nidx
+    integer            :: npts
     real               :: k
 
     inquire(unit=FUnitOut, opened=iret)
@@ -469,7 +499,18 @@ Contains
             access = 'sequential',  &
             position = 'append'   &
            )
-           
+       Open( unit   = FUnitOut+4,      &
+            file   = trim(scamtec%output_dir)//'/VIESF'//trim(Fname),   &
+            form   = 'unformatted', &
+            access = 'sequential',  &
+            position = 'append'   &
+           )
+       Open( unit   = FUnitOut+5,      &
+            file   = trim(scamtec%output_dir)//'/MEANF'//trim(Fname),   &
+            form   = 'unformatted', &
+            access = 'sequential',  &
+            position = 'append'   &
+           )           
     endif
 
     write(fmt,'(A9,I3.3,A5)')'(6x,I3.3,',scamtec%nvar,'F9.3)'
@@ -488,13 +529,19 @@ Contains
     write(FunitOut+1,fmt)(j-1)*scamtec%ftime_step,(dado(run)%vies(i,j),i=1,scamtec%nvar)
     write(FunitOut+2,fmt)(j-1)*scamtec%ftime_step,(dado(run)%acor(i,j),i=1,scamtec%nvar)
 
+    npts = scamtec%nxpt*scamtec%nypt
+
     DO i=1,scamtec%nvar
-        nidx = count(Idx(:,i).gt.0)
+        nidx = count (scamdata(run)%UdfIdx(1:npts,i))
 
         dado(run)%rmse_Field(Idx(1:nidx,i),i,j) = sqrt(dado(run)%rmse_Field(Idx(1:nidx,i),i,j)/ scamtec%ftime_count(j))
+        dado(run)%vies_Field(Idx(1:nidx,i),i,j) = dado(run)%vies_Field(Idx(1:nidx,i),i,j)/ scamtec%ftime_count(j)
+        dado(run)%exp_mean_Field(Idx(1:nidx,i),i,j) = dado(run)%exp_mean_Field(Idx(1:nidx,i),i,j)/ scamtec%ftime_count(j)
        
         write(FunitOut+3)dado(run)%rmse_Field(:,i,j)
-        
+        write(FunitOut+4)dado(run)%vies_Field(:,i,j)
+        write(FunitOut+5)dado(run)%exp_mean_Field(:,i,j)
+!print*,minval(dado(run)%rmse_Field(:,i,j)),maxval(dado(run)%rmse_Field(:,i,j))
     ENDDO
 
 
@@ -503,7 +550,8 @@ Contains
     Close(FUnitOut+1)
     Close(FUnitOut+2)
     Close(FUnitOut+3)
-
+    Close(FUnitOut+4)
+    Close(FUnitOut+5)
 
   End Subroutine WriteBstat
   !EOC
