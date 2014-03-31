@@ -253,6 +253,7 @@ CONTAINS
     DO I=1,scamtec%nvar
        where (scamdata(1)%tmpfield(:,I) .eq. scamtec%udef) scamdata(e)%UdfIdx(:,I) = .false.
     ENDDO
+
     
 
     !
