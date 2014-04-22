@@ -1,4 +1,7 @@
 MODULE SCAM_Modelplugin
+  USE m_agcm
+  USE m_clima50yr
+
   IMPLICIT NONE
   !BOP
   !
@@ -28,15 +31,21 @@ MODULE SCAM_Modelplugin
   ! Available Models
   !-------------------------------------------------------------------
 
-  integer, public, parameter :: templateId = 0  ! Template
-  integer, public, parameter :: AGCMId     = 1  ! AGCM/CPTEC
-  integer, public, parameter :: EtaId      = 2  ! Eta/CPTEC
+  integer, public, parameter :: templateId  = 0  ! Template
+  integer, public, parameter :: AGCMId      = 1  ! AGCM/CPTEC
+  integer, public, parameter :: EtaId       = 2  ! Eta/CPTEC
+  integer, public, parameter :: clima50yrId = 3  ! 50yr Climatology / CPTEC
 
   !-------------------------------------------------------------------
   ! !PUBLIC MEMBER FUNCTIONS:
   !-------------------------------------------------------------------
 
   public :: SCAM_Models_Plugin  
+
+  !---------------------------------------------------------------------
+  !
+  !---------------------------------------------------------------------
+  character(len=*),parameter :: myname='SCAM_Modelplugin'
 
 Contains
   !-------------------------------------------------------------------
@@ -60,6 +69,7 @@ Contains
     !
     !------------------------------------------------------------------
     !BOC
+    character(len=*),parameter :: myname_=myname//'::SCAM_Models_Plugin'
 
     !------------------------------------------------------------------
     ! External Functions to read models
@@ -69,10 +79,14 @@ Contains
     external template_read
     ! AGCM/CPTEC
 !    external agcm_init
-    external agcm_read
+!    external agcm_read
     ! Eta/CPTEC
 !    external eta_init
     external eta_read
+
+#ifdef DEBUG
+    WRITE(6,'(     2A)')'Hello from ', myname_
+#endif
 
     !------------------------------------------------------------------
     ! Registering models
@@ -81,11 +95,14 @@ Contains
 !    call registermodelinit(templateId,template_init)
     call registermodelread(templateId,template_read)
     ! AGCM/CPTEC
-!    call registermodelinit(AGCMId,agcm_init)
+    call registermodelinit(AGCMId,agcm_init)
     call registermodelread(AGCMId,agcm_read)
     ! Eta/CPTEC
 !    call registermodelinit(EtaId,eta_init)
     call registermodelread(EtaId,eta_read)
+    ! clima50yr/CPTEC
+    call registermodelinit(Clima50yrId,clima50yr_init)
+    call registermodelread(Clima50yrId,clima50yr_read)
 
   END SUBROUTINE scam_models_plugin
   !EOC

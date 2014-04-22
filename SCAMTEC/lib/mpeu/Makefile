@@ -1,6 +1,9 @@
 # Automatically generated GNU Makefile. Qui Nov  3 15:38:45 BRST 2011
 # fgen v0.3 (C) 1997,98 Beroud Jean-Marc
 
+# Determine platform
+UMACHINE := $(shell uname -m)
+
 # simultaneous parallel jobs & load average limit
 MAXJOBS = 1
 MAXLOAD = 1
@@ -28,11 +31,21 @@ INSTALL = install
 libdir = ./
 
 # preprocessor, compilers, linker & archiver
-FPP = gcc
-CC  = gcc
-FC  = ifort
-LD  = ifort
-AR  = ar
+ifeq ($(SCAM_ARCH),Darwin_intel)
+   FPP = gcc
+   CC  = gcc
+   FC  = ifort
+   LD  = ifort
+   AR  = ar
+endif
+
+ifeq ($(SCAM_ARCH),cray_pgi)
+   FPP = cc
+   CC  = cc
+   FC  = ftn
+   LD  = ftn
+   AR  = ar
+endif
 
 # default mode (max. optimization)
 mode = opt
