@@ -27,57 +27,72 @@ INSTALL = install
 # dirs
 MPEU_LIB = ../lib/mpeu
 MPEU_INC = ../lib/mpeu
+GRIB_LIB = ../lib/w3lib
+GRIB_INC = ../lib/w3lib
 incdir = ./
 srcdir = ./
-
-# preprocessor, compilers, linker & archiver
-FPP = gcc
-CC  = gcc
-FC  = ifort
-LD  = ifort
-AR  = ar
 
 # default mode (max. optimization)
 mode = dbg
 
 # header file directories
 CCFLAGS = -I$(incdir) -I$(MPEU_INC)
-FFLAGS  = -I$(incdir) -I$(MPEU_INC)
+FFLAGS  += -I$(incdir) -I$(MPEU_INC)
 
 # default flags
 FPPFLAGS = -C -E
 CCFLAGS += -DIFC
-FFLAGS  += -fpp
 LDFLAGS  = 
 ARFLAGS  = -r
 
+# preprocessor, compilers, linker & archiver
+ifeq ($(SCAM_ARCH),Darwin_intel)
+FPP = gcc
+CC  = gcc
+FC  = ifort
+LD  = ifort
+AR  = ar
+FFLAGS += -fpp -assume byterecl -traceback
+endif
+
+ifeq ($(SCAM_ARCH),cray_pgi)
+FPP = cc
+CC  = cc
+FC  = ftn
+LD  = ftn
+AR  = ar
+FFLAGS += -Mpreprocess -traceback -DDEBUG
+endif
+
 # add flags for debugging if requested
 ifeq (dbg,$(findstring dbg,$(mode)))
-   CCFLAGS += -g -Wall 
-   FFLAGS  += -g -traceback -DDEBUG
-   LDFLAGS += -g
+   CCFLAGS += 
+   FFLAGS  += -g -pg -check all -fpe0 -warn -traceback -debug extended -DDEBUG
+   LDFLAGS += -g -pg
 endif
+
 
 # add flags for profiling if requested
 ifeq (pro,$(findstring pro,$(mode)))
-   CCFLAGS += -pg
-   FFLAGS  += 
+   CCFLAGS += 
+   FFLAGS  += -O3
    LDFLAGS += 
 endif
 
 # add flags for optimization if requested
 ifeq (opt,$(findstring opt,$(mode)))
-   CCFLAGS += -O2
-   FFLAGS  += -O2
+   CCFLAGS += 
+   FFLAGS  += 
    LDFLAGS += 
 endif
+
 
 # objectlist file
 include Makefile-objs
 
 # additionnal libraries
-LIBDIRS = -L$(MPEU_LIB)  
-LIBS    = -lmpeu  
+LIBDIRS = -L$(MPEU_LIB) -L$(GRIB_LIB) 
+LIBS    = -lmpeu  -lw3
 
 # target names
 BIN = scamtec.x
