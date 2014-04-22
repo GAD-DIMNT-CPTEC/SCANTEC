@@ -94,20 +94,6 @@ CC    = gcc
 ARFLAGS    = r
 endif
 
-ifeq ($(SCAM_ARCH),cray_pgi)
-# OPTIONS FOR CRAY pgi
-ifeq ($(UMACHINE), x86_64)
-BIT_FLAG = -DLINUX64
-else
-BIT_FLAG =
-endif
-F77    = ftn
-FFLAGS    = -Mbyteswapio -Mpreprocess $(BIT_FLAG)
-CFLAGS    = -O -DLINUX
-CC    = cc
-ARFLAGS    = r
-endif
-
 # OPTIONS FOR VPP5000
 #F77     = frt
 #FFLAGS  = -X9 -Ad -Sw -Am -Of -Wv,-Of

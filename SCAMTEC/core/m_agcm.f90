@@ -1,110 +1,44 @@
-!-----------------------------------------------------------------------------!
-!           Group on Data Assimilation Development - GDAD/CPTEC/INPE          !
-!-----------------------------------------------------------------------------!
-!BOP
-!
-! !MODULE: m_agcm.f90
-!
-! !DESCRIPTON: This module contains routines and functions to configure,
-!              read and interpolate fields of the model to use in SCAMTEC.
-!                 
-!\\
-!\\
-! !INTERFACE:
-!
-
 MODULE m_agcm
-
-!
-! !USES:
-!
-  USE scamtec_module                ! SCAMTEC types
-  USE SCAM_dataMOD, only : scamdata ! SCAMTEC data matrix
-  USE interp_mod                    ! Interpolation module
-  USE m_die                         ! Error Messages
-  USE m_stdio                       ! Module to defines std. I/O parameters
-
+  USE scamtec_module
+  USE SCAM_dataMOD, only : scamdata
+  USE interp_mod
 
   IMPLICIT NONE
   PRIVATE
-!
-! !PUBLIC TYPES:  
-!
   type agcm_type_dec 
 
-     integer                :: npts
-     real, allocatable      :: gridDesc(:)
-     real, allocatable      :: rlat1(:)
-     real, allocatable      :: rlon1(:)
-     integer, allocatable   :: n111(:)
-     integer, allocatable   :: n121(:)
-     integer, allocatable   :: n211(:)
-     integer, allocatable   :: n221(:)
-     real, allocatable      :: w111(:),w121(:)
-     real, allocatable      :: w211(:),w221(:)
+     integer            :: npts
+     real, pointer      :: gridDesc(:)
+     real, pointer      :: rlat1(:)
+     real, pointer      :: rlon1(:)
+     integer, pointer   :: n111(:)
+     integer, pointer   :: n121(:)
+     integer, pointer   :: n211(:)
+     integer, pointer   :: n221(:)
+     real, pointer      :: w111(:),w121(:)
+     real, pointer      :: w211(:),w221(:)
 
   end type agcm_type_dec
 
   type(agcm_type_dec) :: agcm_struc
-!
-! !PUBLIC MEMBER FUNCTIONS:
-!
-  public :: agcm_read ! Function to read files from agcm model
-  public :: agcm_init ! Function to initilize weights to interpolate fields
-!
-!
-! !REVISION HISTORY:
-!  03 May 2012 - J. G. de Mattos - Initial Version
-!  06 May 2012 - J. G. de Mattos - Include new fields read
-!  17 Oct 2012 - J. G. de Mattos - change UMES to g/kg
-!
-!
-!
-! !SEE ALSO:
-!   
-!
-!EOP
-!-----------------------------------------------------------------------------!
-!
-  character(len=*),parameter :: myname='m_agcm' 
+
+  public :: agcm_read
+  public :: agcm_init
+
+  !---------------------------------------------------------------------
+  !
+  !---------------------------------------------------------------------
+  character(len=*),parameter :: myname='m_agcm'
 
 CONTAINS
-!
-!-----------------------------------------------------------------------------!
-!BOP
-!
-! !IROUTINE:  agcm_init
-!
-! !DESCRIPTION: This function initialize the matrices used to read 
-!               and export fields to SCAMTEC
-!\\
-!\\
-! !INTERFACE:
-!
 
   SUBROUTINE agcm_init()
-
-!
-!
-! !REVISION HISTORY: 
-!  03 May 2012 - J. G. de Mattos - Initial Version
-!
-!
-!EOP
-!-----------------------------------------------------------------------------!
-!BOC
-!
-  
     IMPLICIT NONE
     integer :: nx, ny
     character(len=*),parameter :: myname_=myname//'::agcm_init'
 
-    !
-    ! DEBUG print
-    !
-
 #ifdef DEBUG
-    WRITE(stdout,'(     2A)')'Hello from ', myname_
+    WRITE(6,'(     2A)')'Hello from ', myname_
 #endif
 
     Allocate(agcm_struc%gridDesc(50))
@@ -125,9 +59,7 @@ CONTAINS
     Allocate(agcm_struc%w211(nx*ny))
     Allocate(agcm_struc%w221(nx*ny))
 
-   !
-   ! Initializing arrays of weights for interpolation in the field of SCAMTEC
-   !
+
 
     call bilinear_interp_input(agcm_struc%gridDesc, scamtec%gridDesc,        &
                                int(scamtec%gridDesc(2)*scamtec%gridDesc(3)), &
@@ -139,43 +71,13 @@ CONTAINS
 
 
   END SUBROUTINE agcm_init
-!
-!EOC
-!
-!-----------------------------------------------------------------------------!
-!BOP
-!
-! !IROUTINE:  agcm_domain
-!
-! !DESCRIPTION: This routine initilize domain parameters of agcm model
-!               
-!\\
-!\\
-! !INTERFACE:
-!
 
   SUBROUTINE agcm_domain()
-
-!
-!
-! !REVISION HISTORY: 
-!  03 May 2012 - J. G. de Mattos - Initial Version
-!
-!
-!EOP
-!-----------------------------------------------------------------------------!
-!BOC
-!
-  
     IMPLICIT NONE
     character(len=*),parameter :: myname_=myname//'::agcm_domain'
 
-    !
-    ! DEBUG print
-    !
-
 #ifdef DEBUG
-    WRITE(stdout,'(     2A)')'Hello from ', myname_
+    WRITE(6,'(     2A)')'Hello from ', myname_
 #endif
 
     agcm_struc%gridDesc     = 0 
@@ -196,49 +98,19 @@ CONTAINS
     agcm_struc%npts = agcm_struc%gridDesc(2)*agcm_struc%gridDesc(3)
 
   END SUBROUTINE agcm_domain
-!
-!EOC
-!
-!-----------------------------------------------------------------------------!
-!BOP
-!
-! !IROUTINE:  agcm_read
-!
-! !DESCRIPTION: For a given file name, read fields from a agcm model,
-!               interpolates to the SCAMTEC domain and export to SCAMTEC
-!               matrices.                
-!               
-!\\
-!\\
-! !INTERFACE:
-!
 
   SUBROUTINE agcm_read(fname)
     IMPLICIT NONE
-!
-! !INPUT PARAMETERS:
-!
-  
-    character(len=*), intent(IN) :: fname ! File name of the agcm model
+    character(len=*), intent(IN) :: fname
 
-!
-!
-! !REVISION HISTORY: 
-!  03 May 2012 - J. G. de Mattos - Initial Version
-!
-!
-!EOP
-!-----------------------------------------------------------------------------!
-!BOC
-!
+    integer :: ferror
+
     character(len=*),parameter :: myname_=myname//'::agcm_read'
 
-    integer :: iret, jret, gbret, stat
+    integer :: iret,lugb
     logical :: file_exists
-    integer :: jpds(200),jgds(200),gridDesc(200),kpds(200)
-    integer :: lugb
-    real    :: lubi
-    real    :: kf,k
+    integer :: gbret,jret,jpds(200),jgds(200),gridDesc(200),kpds(200)
+    real :: lubi,kf,k
     integer :: i,j,iv
     integer :: npts
     integer :: nx
@@ -255,8 +127,8 @@ CONTAINS
     !
 
 #ifdef DEBUG
-    WRITE(stdout,'(     2A)')'Hello from ', myname_
-    WRITE(stdout,'( A,1X,A)')'Open File ::', trim(fname)
+    WRITE(6,'(     2A)')'Hello from ', myname_
+    WRITE(6,'( A,1X,A)')'Open File ::', trim(fname)
 #endif
 
     !
@@ -290,36 +162,17 @@ CONTAINS
              call getgb(lugb,lubi,agcm_struc%npts,j,jpds,jgds,kf,k,kpds, &
                   gridDesc,lb(:,iv),f(:,iv),gbret)
 
-             if (gbret.ne.0)then
-                stat = gbret
-                call perr(myname_,'getgb("'//	  &
-                          trim(fname)//'")',gbret &
-                         )
-                return
-             endif
-
           else
-             stat = iret
-             call perr(myname_,'baopenr("'//	 &
-                       trim(fname)//'")',iret &
-                      )
-             return
+             gbret = 99
           endif
 
           call baclose(lugb,jret)
-          if(jret.ne.0) then
-            stat = jret
-            call perr(myname_,'deallocate()',jret)
-            return
-	       endif
-       else
-          stat = -1
 
+       else
+
+          ferror = 0
           deallocate(f)
           deallocate(lb)
-
-	       call perr(myname_,'File Not Found: '//trim(fname),stat)
-          return
 
        endif
 
@@ -337,7 +190,7 @@ CONTAINS
     f2(:, 2) = f(:, 5)*(1 + 0.61*(f(:,2)/(1-f(:,2)))) ! Vtmp @ 850 hPa [K]
     f2(:, 3) = f(:, 6)*(1 + 0.61*(f(:,3)/(1-f(:,3)))) ! Vtmp @ 500 hPa [K]
     f2(:, 4) = f(:, 7)                                ! PSNM [hPa]
-    f2(:, 5) = f(:, 1)/1000.0                         ! Umes @ 925 hPa [g/Kg]
+    f2(:, 5) = f(:, 1)                                ! Umes @ 925 hPa [Kg/Kg]
     f2(:, 6) = f(:, 8)                                ! Agpl @ 925 hPa [Kg/m2]
     f2(:, 7) = f(:, 9)                                ! Zgeo @ 850 hPa [gpm]
     f2(:, 8) = f(:,10)                                ! Zgeo @ 500 hPa [gpm]
@@ -363,7 +216,7 @@ CONTAINS
     DO iv=1,scamtec%nvar
 
        call interp_agcm( kpds, agcm_struc%npts,f2(:,iv),lb(:,iv), scamtec%gridDesc,&
-                         scamtec%nxpt,scamtec%nypt, varfield, iret)    
+                         scamtec%nxpt,scamtec%nypt, varfield)    
 
     !
     ! Transferindo para matriz temporaria do SCAMTEC
@@ -376,64 +229,33 @@ CONTAINS
     DeAllocate(varfield)
 
   END SUBROUTINE agcm_read
-!
-!EOC
-!
-!-----------------------------------------------------------------------------!
-!BOP
-!
-! !IROUTINE:  interp_agcm
-!
-! !DESCRIPTION: this routine interpolates a givem field to the SCAMTEC domain 
-!
-!\\
-!\\
-! !INTERFACE:
-!
 
-  SUBROUTINE interp_agcm( kpds, npts,f,lb,gridDesc, nxpt, nypt, varfield, iret)  
+  SUBROUTINE interp_agcm( kpds, npts,f,lb,gridDesc, nxpt, nypt, varfield)  
 
-!
-! !INPUT PARAMETERS:
-!
+    ! !ARGUMENTS:   
+    integer, intent(in)   :: kpds(:)
+    integer, intent(in)   :: npts
+    real, intent(out)     :: f(:)
+    logical*1, intent(in) :: lb(:)
+    real, intent(in)      :: gridDesc(:)
+    integer, intent(in)   :: nxpt
+    integer, intent(in)   :: nypt
+    real, intent(out)     :: varfield(:,:)
 
-    integer, intent(in)   :: kpds(:)     ! grid deconding array information
-    integer, intent(in)   :: npts        ! number of points in the input grid
-    real, intent(out)     :: f(:)        ! input field to be interpolated
-    logical*1, intent(in) :: lb(:)       ! input bitmap
-    real, intent(in)      :: gridDesc(:) ! array description of the SCAMTEC grid
-    integer, intent(in)   :: nxpt        ! number of columns (in the east-west dimension) in the SCAMTEC grid
-    integer, intent(in)   :: nypt        ! number of rows (in the north-south dimension) in the SCAMTEC grid
-!
-! !OUTPUT PARAMETERS:
-!
-    real, intent(out)     :: varfield(:,:) ! output interpolated field
-    integer, intent(out)  :: iret          ! error code
-
-!
-! !REVISION HISTORY: 
-!  03 May 2012 - J. G. de Mattos - Initial Version
-!
-!
-!EOP
-!-----------------------------------------------------------------------------!
-!BOC
-!
+    !
+    !
+    !
 
     real, dimension(nxpt*nypt) :: field1d
     logical*1, dimension(nxpt,nypt) :: lo
 
-    integer :: ip, ipopt(20),ibi,km
+    integer :: ip, ipopt(20),ibi,km,iret
     integer :: ibo
     integer :: i,j,k
     character(len=*),parameter :: myname_=myname//'::interp_agcm'
 
-    !
-    ! DEBUG print
-    !
-
 #ifdef DEBUG
-    WRITE(stdout,'(     2A)')'Hello from ', myname_
+    WRITE(6,'(     2A)')'Hello from ', myname_
 #endif
 
     ip    = 0
@@ -450,11 +272,6 @@ CONTAINS
                          agcm_struc%n111, agcm_struc%n121,   &
                          agcm_struc%n211, agcm_struc%n221,scamtec%udef,iret)
 
-    if (iret.ne.0)then
-       call perr(myname_,'bilinear_interp ( ... ) ',iret)
-       return
-    endif
-
     k = 0
     do j = 1, nypt
        do i = 1, nxpt
@@ -464,8 +281,5 @@ CONTAINS
     enddo
 
   END SUBROUTINE interp_agcm
-!
-!EOC
-!-----------------------------------------------------------------------------!
 
 END MODULE m_agcm

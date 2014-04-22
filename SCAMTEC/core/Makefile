@@ -27,6 +27,8 @@ INSTALL = install
 # dirs
 MPEU_LIB = ../lib/mpeu
 MPEU_INC = ../lib/mpeu
+GRIB_LIB = ../lib/w3lib
+GRIB_INC = ../lib/w3lib
 incdir = ./
 srcdir = ./
 
@@ -38,7 +40,7 @@ LD  = ifort
 AR  = ar
 
 # default mode (max. optimization)
-mode = dbg
+mode = pro
 
 # header file directories
 CCFLAGS = -I$(incdir) -I$(MPEU_INC)
@@ -47,37 +49,39 @@ FFLAGS  = -I$(incdir) -I$(MPEU_INC)
 # default flags
 FPPFLAGS = -C -E
 CCFLAGS += -DIFC
-FFLAGS  += -fpp
+FFLAGS  += -fpp -assume byterecl -traceback
 LDFLAGS  = 
 ARFLAGS  = -r
 
 # add flags for debugging if requested
 ifeq (dbg,$(findstring dbg,$(mode)))
-   CCFLAGS += -g -Wall 
-   FFLAGS  += -g -traceback -DDEBUG
-   LDFLAGS += -g
+   CCFLAGS += 
+   FFLAGS  += -g -pg -check all -fpe0 -warn -traceback -debug extended -DDEBUG
+   LDFLAGS += -g -pg
 endif
+
 
 # add flags for profiling if requested
 ifeq (pro,$(findstring pro,$(mode)))
-   CCFLAGS += -pg
-   FFLAGS  += 
+   CCFLAGS += 
+   FFLAGS  += -O3
    LDFLAGS += 
 endif
 
 # add flags for optimization if requested
 ifeq (opt,$(findstring opt,$(mode)))
-   CCFLAGS += -O2
-   FFLAGS  += -O2
+   CCFLAGS += 
+   FFLAGS  += 
    LDFLAGS += 
 endif
+
 
 # objectlist file
 include Makefile-objs
 
 # additionnal libraries
-LIBDIRS = -L$(MPEU_LIB)  
-LIBS    = -lmpeu  
+LIBDIRS = -L$(MPEU_LIB) -L$(GRIB_LIB) 
+LIBS    = -lmpeu  -lw3
 
 # target names
 BIN = scamtec.x

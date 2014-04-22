@@ -22,6 +22,7 @@
 !
 MODULE SCAM_Utils
    ! Modules from INPAK90 lib
+   USE scamtec_module
    USE m_inpak90
    USE m_die, only : perr
    !
@@ -39,11 +40,11 @@ MODULE SCAM_Utils
 ! KINDS
 !
 
-   INTEGER, PUBLIC, PARAMETER :: I4B = SELECTED_INT_KIND(9)
-   INTEGER, PUBLIC, PARAMETER :: I2B = SELECTED_INT_KIND(4)
-   INTEGER, PUBLIC, PARAMETER :: I1B = SELECTED_INT_KIND(2)
-   INTEGER, PUBLIC, PARAMETER :: SP  = KIND(1.0)
-   INTEGER, PUBLIC, PARAMETER :: DP  = KIND(1.0D0)
+!   INTEGER, PUBLIC, PARAMETER :: I4B = SELECTED_INT_KIND(9)
+!   INTEGER, PUBLIC, PARAMETER :: I2B = SELECTED_INT_KIND(4)
+!   INTEGER, PUBLIC, PARAMETER :: I1B = SELECTED_INT_KIND(2)
+!   INTEGER, PUBLIC, PARAMETER :: SP  = KIND(1.0)
+!   INTEGER, PUBLIC, PARAMETER :: DP  = KIND(1.0D0)
 
 !
 ! PARAMETERS
@@ -69,12 +70,14 @@ MODULE SCAM_Utils
 !
 
    TYPE, PUBLIC  :: domain
-      REAL  :: ll_lat   !Lower Left Latitude
-      REAL  :: ll_lon   !Lower Left Longitude
-      REAL  :: ur_lat   !Upper Right Latitude
-      REAL  :: ur_lon   !Upper Right Longitude
-      REAL  :: dx
-      REAL  :: dy
+      REAL    :: ll_lat   !Lower Left Latitude
+      REAL    :: ll_lon   !Lower Left Longitude
+      REAL    :: ur_lat   !Upper Right Latitude
+      REAL    :: ur_lon   !Upper Right Longitude
+      REAL    :: dx
+      REAL    :: dy
+      INTEGER :: nx
+      INTEGER :: ny
    END TYPE
 
    TYPE, PUBLIC  :: variable
@@ -109,7 +112,6 @@ MODULE SCAM_Utils
    TYPE(RUNS), PUBLIC                            :: Clima
    INTEGER   , PUBLIC                            :: Clima_Flag
    TYPE(RUNS), PUBLIC, DIMENSION(:), ALLOCATABLE :: Exper
-   INTEGER   , PUBLIC                            :: nexper
 !   TYPE(RUNS), 
 
 
@@ -134,6 +136,7 @@ MODULE SCAM_Utils
       INTEGER, OPTIONAL,INTENT(OUT) :: istat
       CHARACTER(len=300)            :: config, formato
       LOGICAL                       :: exists
+      INTEGER, ALLOCATABLE          :: tmp(:)
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 ! !DESCRIPTION:
 !
@@ -150,7 +153,6 @@ MODULE SCAM_Utils
          WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
          WRITE(*,'(1x,a10,a8,a8,44x,a1)')'! INSIDE :', TRIM(myname_),' Routine','!'
          WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
-
 #endif
 
          if(present(istat)) istat=0
@@ -298,6 +300,11 @@ MODULE SCAM_Utils
             return
          endif
 
+         DO I=1,ndom
+            dom(I)%nx = ((dom(I)%ur_lon-dom(I)%ll_lon)/dom(I)%dx ) + 1
+            dom(I)%ny = ((dom(I)%ur_lat-dom(I)%ll_lat)/dom(I)%dy ) + 1
+         ENDDO
+         
 #ifdef DEBUG         
          DO I=1,ndom
             WRITE(*,'(A,I2.2,A)')'Grid ',I,' Specification'
@@ -307,6 +314,8 @@ MODULE SCAM_Utils
             WRITE(*,'(A,F9.3)')'upper right longitude:',dom(I)%ur_lon
             WRITE(*,'(A,F9.3)')'resolution dx        :',dom(I)%dx
             WRITE(*,'(A,F9.3)')'resolution dy        :',dom(I)%dy
+            WRITE(*,'(A,I9.3)')'number of points (X) :',dom(I)%nx
+            WRITE(*,'(A,I9.3)')'number of points (Y) :',dom(I)%ny            
          ENDDO
 #endif
 !
@@ -352,14 +361,14 @@ MODULE SCAM_Utils
 ! Experiments
 !
          call i90_label ( 'Number of Experiments:', iret )
-         nexper=i90_gint(iret)
+         scamtec%nexp=i90_gint(iret)
          if(iret /= 0) then
             call perr(myname_,'i90_label("Number of Experiments:")',iret)
             if(present(istat))istat=iret
             return
          endif
 
-         ALLOCATE(Exper(nexper),STAT=iret)
+         ALLOCATE(Exper(scamtec%nexp),STAT=iret)
 
          call i90_label ( 'Experiments:', iret )
          if(iret /= 0) then
@@ -370,7 +379,7 @@ MODULE SCAM_Utils
 
          call i90_gline(iret)
 
-         DO I=1,nexper
+         DO I=1,scamtec%nexp
             Exper(I)%Id = i90_gint(iret)
             if(iret /= 0) then
                call perr(myname_,'i90_gint("Experiment model:")',iret)
@@ -401,7 +410,6 @@ MODULE SCAM_Utils
          ENDDO
 
 
-
 !
 ! Climatology
 !
@@ -423,10 +431,10 @@ MODULE SCAM_Utils
 
          IF(Clima_Flag.EQ.1)THEN
             Clima%name='Climatology'
-            call i90_label ( 'Climatology:', iret )
+            call i90_label ( 'Climatology Model Id:', iret )
             Clima%Id = i90_gint(iret)
             if(iret /= 0) then
-               call perr(myname_,'i90_gint("Climatology:")',iret)
+               call perr(myname_,'i90_gint("Climatology Model Id:")',iret)
                if(present(istat))istat=iret
                return
             endif
@@ -445,13 +453,38 @@ MODULE SCAM_Utils
             WRITE(*,'(2A)')    '  |---- Dir    :',TRIM(Clima%name)
             WRITE(*,'(2A)')    '  |---- File   :',TRIM(Clima%file)
 #endif
-
          ELSE
+
+
             WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
             WRITE(*,'(a72)')'!                         Climatology Not Found                       !'
             WRITE(*,'(a72)')'!         The mean reference field will be used as climatology        !'
             WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
          ENDIF
+!
+! ïndices dos modelos
+!
+         IF(Clima_Flag.eq.1)then
+
+            Allocate(tmp(scamtec%nexp+1))
+            call unique((/Exper(:)%Id,Clima%Id/),tmp,I)
+
+            Allocate(scamtec%Init_ModelID(I))
+            scamtec%Init_ModelID(1:I) = tmp(1:I)
+
+            DeAllocate(tmp)
+
+         else
+            Allocate(tmp(scamtec%nexp))
+            call unique(Exper(:)%Id,tmp,I)
+
+            Allocate(scamtec%Init_ModelID(I))
+            scamtec%Init_ModelID(1:I) = tmp(1:I)
+
+            DeAllocate(tmp)
+         endif
+
+
 
    END SUBROUTINE
 
@@ -495,5 +528,27 @@ MODULE SCAM_Utils
       int2str = adjustl(str)
    end function int2str
 
+   subroutine unique(input,output,nelem)
+     
+     integer, intent(in)  :: input(:)   ! The input
+     integer, intent(out) :: output(:)  ! The output
+     integer, intent(out) :: nelem      ! The number of unique elements
+     integer :: i, j
+ 
+  nelem = 1
+  output(1) = input(1)
+  outer: do i=2,size(input)
+     do j=1,nelem
+        if (output(j) == input(i)) then
+           ! Found a match so start looking again
+           cycle outer
+        end if
+     end do
+     ! No match found so add it to the output
+     nelem = nelem + 1
+     output(nelem) = input(i)
+  end do outer
+
+  end subroutine
 
 END MODULE
