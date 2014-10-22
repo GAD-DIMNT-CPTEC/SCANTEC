@@ -1,0 +1,29 @@
+
+** Instrucoes para compilacao e execucao do SCAMTEC_v0.1 **
+
+
+* Atualmente o SCAMTEC está sendo compilado com o IFORT. Para compila-lo siga os seguintes passos (ao final será gerado o arquivo scamtec.x):
+
+A T E N C A O: O SCAMTEC foi originalmente compilado com o ifort versao 10.1
+
+A. Entre no diretório SCAMTEC_v0.1:
+1. export SCAM_ARCH=Darwin_intel
+2. cd lib/w3lib
+3. make clean & make
+4. cd ../mpeu 
+5. make clean & make
+6. cd ../../core
+7. make clean & make
+
+B. Obtencao dos dados para execucao:
+1. Um conjunto de testes será disponibilizado no seguinte endereço ftp://ftp1.cptec.inpe.br/jgerd/PUB/SCAMTeC/testcase
+2. Configure o arquivo scamtec.conf que encontra-se no diretório SCAMTEC_v0.1/core para apontar para o diretório onde estão os dados de testcase
+* execute o scamtec com o comando ./scamtec.x
+* serão gerados arquivos txt com o formato estatisticaNOMEEXPERIMENTO.txt
+* onde estatistica = vies, rmse, acor
+ * NOMEEXPERIMENTO = EXP01, EXP02 ....
+ * exemplo viesEXP01.txt
+ * Posteriormente será disponibilizado um tutorial para o uso e desenvolvimento do SCAMTEC no endereço: https://projetos.cptec.inpe.br/projects/scamtec/wiki
+ 
+
+
