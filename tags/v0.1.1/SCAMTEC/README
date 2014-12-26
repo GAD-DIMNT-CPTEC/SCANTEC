@@ -1,0 +1,29 @@
+SCAMTEC - Sistema de Avaliacao de Modelos de Tempo e Clima
+http://assimila.cptec.inpe.br/scamtec
+
+--------
+
+Instrucoes para compilacao e execucao do SCAMTEC_v0.1.1:
+
+- Compilacao em PCs/Macs:
+
+Execute o script "install" desta pasta e selecione a opcao "3".
+
+- Compilacao na Tupa:
+
+Execute o script "install" desta pasta e selecione a opcao "2".
+
+- Obtencao dos dados para execucao:
+
+1. Um conjunto de testes esta disponibilizado no seguinte em /scratchin/grupos/assim_dados/home/gdad/public/SCAMTEC
+2. Configure o arquivo scamtec.conf que encontra-se no diretorio SCAMTEC_v0.1.1/core para apontar para o diretório onde estão os dados de testcase
+ * execute o scamtec com o comando ./scamtec.x
+ * serão gerados arquivos txt com o formato estatisticaNOMEEXPERIMENO.scam
+ * onde estatistica = vies, rmse, acor
+ * NOMEEXPERIMENTO = EXP01, EXP02 ....
+ * exemplo viesEXP01.scam
+ * Posteriormente será disponibilizado um tutorial para o uso e desenvolvimento do SCAMTEC no endereço: https://projetos.cptec.inpe.br/projects/scamtec/wiki
+
+--------
+
+Ultima atualizacao: equipe SCAMTEC (26/12/2014)
