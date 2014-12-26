@@ -6,7 +6,7 @@ MODULE m_die
       public :: perr,warn  ! message(s) to stderr
 
       interface die
-         module procedure die0_    ! die(where)
+	 module procedure die0_    ! die(where)
          module procedure die1_    ! die(where,message)
          module procedure die1_r1  ! die(where,message) where message is an array of rank 1
          module procedure die2_    ! die(where,proc,ier)
@@ -14,17 +14,18 @@ MODULE m_die
       end interface
 
       interface perr
-         module procedure perr1_    ! perr(where,message)
+	 module procedure perr1_    ! perr(where,message)
          module procedure perr1_r1  ! perr(where,message) where message is an array of rank 1
          module procedure perr2_    ! perr(where,proc,ier)
          module procedure perr4_    ! perr(where,mesg1,ival1,mesg2,ival2)
       end interface
       interface warn
-         module procedure perr1_    ! perr(where,message)
+	 module procedure perr1_    ! perr(where,message)
          module procedure perr1_r1  ! perr(where,message) where message is an array of rank 1
          module procedure perr2_    ! perr(where,proc,ier)
          module procedure perr4_    ! perr(where,mesg1,ival1,mesg2,ival2)
       end interface
+
 
       character(len=*),parameter :: myname='m_die'
 !_______________________________________________________________________

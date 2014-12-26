@@ -20,8 +20,9 @@ MODULE SCAM_dataMOD
 
   USE scamtec_module    ! SCAMTEC types
   USE m_string          ! String Manipulation
-  USE SCAM_Utils, only: dom, nvmx, Clima_Flag, Refer, Clima, Exper
-
+  USE SCAM_Utils, only: dom, nvmx, Refer, Clima, Exper
+  USE SCAM_Utils, only: Precipitation_Flag,hist,Precip !Paulo Dias
+  
   IMPLICIT NONE
   PRIVATE
 
@@ -29,23 +30,30 @@ MODULE SCAM_dataMOD
 ! !PARAMETERS:
 !
 
-  integer, public, Parameter :: NumVarAval = 15
+  integer, public, Parameter :: NumVarAval = 22
   character(len=8), public, parameter ::   VarName(1:NumVarAval) = (/ &
-                                           'VTMP:925',& ! Virtual Temperature @ 925 hPa [K]
-                                           'VTMP:850',& ! Virtual Temperature @ 850 hPa [K]
-                                           'VTMP:500',& ! Virtual Temperature @ 500 hPa [K]
-                                           'PSNM:000',& ! Pressure reduced to MSL [hPa]
-                                           'UMES:925',& ! Specific Humidity @ 925 hPa [g/Kg]
-                                           'AGPL:925',& ! Inst. Precipitable Water @ 925 hPa [Kg/m2]
-                                           'ZGEO:850',& ! Geopotential height @ 850 hPa [gpm]
-                                           'ZGEO:500',& ! Geopotential height @ 500 hPa [gpm]
-                                           'ZGEO:250',& ! Geopotential height @ 250 hPa [gpm]
-                                           'UVEL:850',& ! Zonal Wind @ 850 hPa [m/s]
-                                           'UVEL:500',& ! Zonal Wind @ 500 hPa [m/s]
-                                           'UVEL:250',& ! Zonal Wind @ 250 hPa [m/s]
-                                           'VVEL:850',& ! Meridional Wind @ 850 hPa [m/s]
-                                           'VVEL:500',& ! Meridional Wind @ 500 hPa [m/s]
-                                           'VVEL:250' & ! Meridional Wind @  250 hPa [m/s]
+                                           'VTMP-925',& ! Virtual Temperature @ 925 hPa [K]
+                                           'VTMP-850',& ! Virtual Temperature @ 850 hPa [K]
+                                           'VTMP-500',& ! Virtual Temperature @ 500 hPa [K]                                           
+                                           'TEMP-850',& ! Absolute Temperature @ 850 hPa [K]             4 paulo dias
+                                           'TEMP-500',& ! Absolute Temperature @ 500 hPa [K]		 5 paulo dias
+                                           'TEMP-250',& ! Absolute Temperature @ 250 hPa [K]		 6 paulo dias                                           
+                                           'PSNM-000',& ! Pressure reduced to MSL [hPa]                                           
+                                           'UMES-925',& ! Specific Humidity @ 925 hPa [g/Kg]
+                                           'UMES-850',& ! Specific Humidity @ 850 hPa [g/Kg]		 9 paulo dias
+                                           'UMES-500',& ! Specific Humidity @ 500 hPa [g/Kg]		10 paulo dias                                           
+                                           'AGPL-925',& ! Inst. Precipitable Water @ 925 hPa [Kg/m2]
+                                           'ZGEO-850',& ! Geopotential height @ 850 hPa [gpm]
+                                           'ZGEO-500',& ! Geopotential height @ 500 hPa [gpm]
+                                           'ZGEO-250',& ! Geopotential height @ 250 hPa [gpm]
+                                           'UVEL-850',& ! Zonal Wind @ 850 hPa [m/s]
+                                           'UVEL-500',& ! Zonal Wind @ 500 hPa [m/s]
+                                           'UVEL-250',& ! Zonal Wind @ 250 hPa [m/s]
+                                           'VVEL-850',& ! Meridional Wind @ 850 hPa [m/s]
+                                           'VVEL-500',& ! Meridional Wind @ 500 hPa [m/s]
+                                           'VVEL-250',& ! Meridional Wind @  250 hPa [m/s]
+                                           'PREC-000',& ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]           21 paulo dias
+                                           'PREV-000' & ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]      22 paulo dias
                                           /)
 
 !
@@ -53,15 +61,18 @@ MODULE SCAM_dataMOD
 !
 
   type model_dec_type
-     real, allocatable :: tmpfield(:,:,:) ! data from model read
-     real, allocatable :: expfield(:,:,:) ! experiment model field
-     real, allocatable :: reffield(:,:,:) ! reference model field
-     real, allocatable :: clmfield(:,:,:) ! climatology field
-     real, allocatable :: diffield(:,:,:) ! diference field
-     real, allocatable :: rmsfield(:,:,:)
-     real, allocatable :: time_rmse(:,:)
-     real, allocatable :: time_vies(:,:)
-     real, allocatable :: time_acor(:,:)
+     real, allocatable :: tmpfield(:,:) ! data from model read
+     real, allocatable :: expfield(:,:) ! experiment model field
+     real, allocatable :: reffield(:,:) ! reference model field
+     real, allocatable :: clmfield(:,:) ! climatology field
+     real, allocatable :: prefield(:,:) ! preciptation field (paulo dias)
+
+     logical, allocatable :: UdfIdx (:,:)
+!     real, allocatable :: diffield(:,:,:) ! diference field
+!     real, allocatable :: rmsfield(:,:,:)
+!     real, allocatable :: time_rmse(:,:)
+!     real, allocatable :: time_vies(:,:)
+!     real, allocatable :: time_acor(:,:)
   end type model_dec_type
 
   TYPE obs_dec_type
@@ -69,6 +80,7 @@ MODULE SCAM_dataMOD
      real, allocatable :: expfield(:) ! experiment model field
      real, allocatable :: reffield(:) ! reference model field
      real, allocatable :: clmfield(:) ! climatology field
+     real, allocatable :: prefield(:) ! preciptation field (paulo dias)
      real, allocatable :: diffield(:) ! diference field
   END TYPE obs_dec_type
 
@@ -79,7 +91,7 @@ MODULE SCAM_dataMOD
 ! !PUBLIC DATA MEMBERS:
 !
 
-  type(model_dec_type), public, allocatable :: scamdata(:)
+  type(model_dec_type), public, Target, allocatable :: scamdata(:)
 
 !
 ! !PUBLIC MEMBER FUNCTIONS:
@@ -133,6 +145,9 @@ CONTAINS
     scamtec%udef = -999.9
 
     scamtec%nvar = NumVarAval
+    
+    Allocate(scamtec%VarName(NumVarAval))
+    scamtec%VarName = VarName
 
 #ifdef DEBUG  
     write(6, FMT=123)'xdef',scamtec%nxpt,'linear', scamtec%gridDesc(5), scamtec%gridDesc(10)
@@ -151,17 +166,24 @@ CONTAINS
 
     allocate(scamdata(scamtec%nexp))
 
-    allocate(scamdata(1)%reffield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
-    allocate(scamdata(1)%tmpfield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
-    IF(clima_Flag.EQ.1)allocate(scamdata(1)%clmfield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
-
+    allocate(scamdata(1)%reffield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
+    allocate(scamdata(1)%tmpfield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
+    IF(scamtec%cflag.EQ.1)allocate(scamdata(1)%clmfield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
+    IF(Precipitation_Flag.EQ.1)allocate(scamdata(1)%prefield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))!paulo dias
+    
     DO I=1,scamtec%nexp
-       allocate(scamdata(I)%expfield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
-       allocate(scamdata(I)%diffield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
-       allocate(scamdata(I)%rmsfield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
-       allocate(scamdata(I)%time_rmse(scamtec%ntime_forecast,scamtec%nvar))
-       allocate(scamdata(I)%time_vies(scamtec%ntime_forecast,scamtec%nvar))
-       allocate(scamdata(I)%time_acor(scamtec%ntime_forecast,scamtec%nvar))
+       allocate(scamdata(I)%expfield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
+       allocate(scamdata(I)%UdfIdx(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
+       
+       
+       !IF(Precipitation_Flag.EQ.1)allocate(scamdata(I)%time_histo(tam_hist,scamtec%ntime_forecast))!paulo dias
+       
+       
+!      allocate(scamdata(I)%diffield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
+!      allocate(scamdata(I)%rmsfield(scamtec%nxpt,scamtec%nypt,scamtec%nvar))
+!      allocate(scamdata(I)%time_rmse(scamtec%ntime_forecast,scamtec%nvar))
+!      allocate(scamdata(I)%time_vies(scamtec%ntime_forecast,scamtec%nvar))
+!      allocate(scamdata(I)%time_acor(scamtec%ntime_forecast,scamtec%nvar))
     ENDDO
 
 
@@ -173,11 +195,13 @@ CONTAINS
 
     DO I=1,scamtec%nexp
 
-      scamdata(I)%diffield  = 0.0
-      scamdata(I)%rmsfield  = 0.0
-      scamdata(I)%time_rmse = 0.0
-      scamdata(I)%time_vies = 0.0
-      scamdata(I)%time_acor = 0.0
+      scamdata(I)%UdfIdx    = .true.
+
+!     scamdata(I)%diffield  = 0.0
+!     scamdata(I)%rmsfield  = 0.0
+!     scamdata(I)%time_rmse = 0.0
+!     scamdata(I)%time_vies = 0.0
+!     scamdata(I)%time_acor = 0.0
 
     ENDDO
 
@@ -190,11 +214,14 @@ CONTAINS
     IF (Allocated(scamdata(1)%reffield))DeAllocate(scamdata(1)%reffield)
     IF (Allocated(scamdata(1)%clmfield))DeAllocate(scamdata(1)%clmfield)
     IF (Allocated(scamdata(1)%tmpfield))DeAllocate(scamdata(1)%tmpfield)
-
+    IF (Allocated(scamdata(I)%prefield))DeAllocate(scamdata(1)%prefield)!paulo dias
+     
     DO I=1,scamtec%nexp
        IF (Allocated(scamdata(I)%expfield))DeAllocate(scamdata(I)%expfield)
-       IF (Allocated(scamdata(I)%diffield))DeAllocate(scamdata(I)%diffield)
-       IF (Allocated(scamdata(I)%rmsfield))DeAllocate(scamdata(I)%rmsfield)
+       IF (Allocated(scamdata(I)%UdfIdx))Deallocate(scamdata(I)%UdfIdx)
+
+!      IF (Allocated(scamdata(I)%diffield))DeAllocate(scamdata(I)%diffield)
+!      IF (Allocated(scamdata(I)%rmsfield))DeAllocate(scamdata(I)%rmsfield)
     ENDDO
 
   END SUBROUTINE release_data_mem
@@ -207,17 +234,31 @@ CONTAINS
     INTEGER,          INTENT(IN) :: e
     CHARACTER(LEN=*), INTENT(IN) :: name
     INTEGER   :: stat
+    INTEGER   :: I
 
 
     call load_data(Id, name//char(0))
 
-
 #ifdef DEBUG  
     write(6,'(A,1x,A,1x,2F15.3)')                              &
                                  trim(type),': [MIN/MAX]::',   &
-                                 minval(scamdata(1)%tmpfield), &
-                                 maxval(scamdata(1)%tmpfield)
+                                 minval(scamdata(1)%tmpfield,mask=scamdata(1)%tmpfield .ne. scamtec%udef), &
+                                 maxval(scamdata(1)%tmpfield,mask=scamdata(1)%tmpfield .ne. scamtec%udef)
 #endif
+
+    !
+    ! Definindo pontos onde nao calcular indices estatisticos
+    !
+
+    DO I=1,scamtec%nvar
+       where (scamdata(1)%tmpfield(:,I) .eq. scamtec%udef) scamdata(e)%UdfIdx(:,I) = .false.
+    ENDDO
+
+    
+
+    !
+    ! Selecionando qual eh o campo que esta sendo lido
+    !
 
     SELECT CASE(trim(type))
     CASE('R')
@@ -226,6 +267,8 @@ CONTAINS
        scamdata(e)%expfield = scamdata(1)%tmpfield
     CASE('C')
        scamdata(e)%clmfield = scamdata(1)%tmpfield
+    CASE('P')       
+       scamdata(e)%prefield = scamdata(1)%tmpfield !paulo dias
     END SELECT
 
 
@@ -234,49 +277,77 @@ CONTAINS
   SUBROUTINE SCAM_ModelData( NExp )
      IMPLICIT NONE
      integer, intent(in) :: NExp
-     integer             :: nymd, nhms
+     integer             :: aymd, ahms
      integer             :: fymd, fhms
      character(len=1024) :: Reference    ! Reference File Name
      character(len=1024) :: Experiment   ! Experiment File Name
      character(len=1024) :: Climatology  ! Climatology File Name
+     character(len=1024) :: Precipitation  ! Precipitation File Name (Paulo dias)
+     
 
-     nymd = scamtec%atime/100
-     nhms = MOD(scamtec%atime,100) * 10000
+     aymd = scamtec%atime/100
+     ahms = MOD(scamtec%atime,100) * 10000
      fymd = scamtec%ftime/100
      fhms = MOD(scamtec%ftime,100) * 10000
 
      !
      ! 1. Create file name and Open 
-   
-     !
-     ! 1.1 Reference data file 
      !
 
-     Reference=TRIM(Refer%file)
-     CALL str_template(Reference, nymd,nhms)
-     CALL ldata('R', 1, Refer%Id, Reference)
+!     if (scamtec%atime_flag)then
 
-     !
-     ! 1.2 Climatology data file
-     !
-       
-     IF(clima_Flag.EQ.1)THEN
-        Climatology=TRIM(Clima%file)
-        CALL str_template(Climatology, nymd,nhms)
-        CALL ldata('C', 1, Clima%Id, Climatology)
-     END IF
+        !
+        ! 1.1 Reference data file 
+        !
+	
+        Reference=TRIM(Refer%file)
+        CALL str_template(Reference, fymd,fhms)
+        CALL ldata('R', 1, Refer%Id, Reference)
+
+        !
+        ! 1.2 Climatology data file
+        !
+
+     if (scamtec%atime_flag)then
+      
+        IF(scamtec%cflag.EQ.1)THEN
+           Climatology=TRIM(Clima%file)
+           CALL str_template(Climatology, fymd,fhms)
+           CALL ldata('C', 1, Clima%Id, Climatology)
+        END IF
+
+        !
+        ! 1.3 definindo flag = .false. para inibir a reabertura do arquivo de
+        ! referencia e de climatologia para o mesmo tempo
+        !
+
+        scamtec%atime_flag = .false.
+
+     endif
 
      !
      ! 1.3 Experiment Data File
      !
-
+     
+     !Joao adicionou para verificar quando nao tem o link das 0h
      Experiment = TRIM(Exper(NExp)%file)
-     CALL str_template(Experiment, fymd, fhms, nymd, nhms)
+     
+     if (Exper(NExp)%id.eq.1.and.(scamtec%atime.eq.scamtec%ftime))then
+        CALL replace_(Experiment, 'fct','icn')
+     end if
+     
+     CALL str_template(Experiment, aymd, ahms, fymd, fhms)
      CALL ldata('E',NExp,Exper(NExp)%Id, Experiment)
 
-!    write(*,'(2(x,A))')'R',TRIM(Reference)
-!    write(*,'(2(x,A))')'C',TRIM(Climatology)
-!    write(*,'(2(x,A))')'E',TRIM(Experiment)
+     !
+     ! 1.4 Precipitation data file 
+     !
+     IF(Precipitation_Flag .EQ. 1)THEN
+     
+        Precipitation=TRIM(Precip%file)
+        CALL str_template(Precipitation, fymd,fhms)
+        CALL ldata('P', 1, Precip%Id, Precipitation)
+     END IF
 
 
   END SUBROUTINE

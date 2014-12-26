@@ -3,7 +3,7 @@
 !-----------------------------------------------------------------------------!
 !BOP
 !
-! !MODULE: m_agcm.f90
+! !MODULE: m_agcm_T213.f90
 !
 ! !DESCRIPTON: This module contains routines and functions to configure,
 !              read and interpolate fields of the model to use in SCAMTEC.
@@ -13,7 +13,7 @@
 ! !INTERFACE:
 !
 
-MODULE m_agcm
+MODULE m_agcm_T213
 
 !
 ! !USES:
@@ -50,8 +50,8 @@ MODULE m_agcm
 !
 ! !PUBLIC MEMBER FUNCTIONS:
 !
-  public :: agcm_read ! Function to read files from agcm model
-  public :: agcm_init ! Function to initilize weights to interpolate fields
+  public :: agcmT213_read ! Function to read files from agcm model
+  public :: agcmT213_init ! Function to initilize weights to interpolate fields
 !
 !
 ! !REVISION HISTORY:
@@ -69,14 +69,14 @@ MODULE m_agcm
 !EOP
 !-----------------------------------------------------------------------------!
 !
-  character(len=*),parameter :: myname='m_agcm' 
+  character(len=*),parameter :: myname='m_agcm_T213' 
 
 CONTAINS
 !
 !-----------------------------------------------------------------------------!
 !BOP
 !
-! !IROUTINE:  agcm_init
+! !IROUTINE:  agcmT213_init
 !
 ! !DESCRIPTION: This function initialize the matrices used to read 
 !               and export fields to SCAMTEC
@@ -85,7 +85,7 @@ CONTAINS
 ! !INTERFACE:
 !
 
-  SUBROUTINE agcm_init()
+  SUBROUTINE agcmT213_init()
 
 !
 !
@@ -100,7 +100,7 @@ CONTAINS
   
     IMPLICIT NONE
     integer :: nx, ny
-    character(len=*),parameter :: myname_=myname//'::agcm_init'
+    character(len=*),parameter :: myname_=myname//'::agcmT213_init'
 
     !
     ! DEBUG print
@@ -141,7 +141,7 @@ CONTAINS
                                      agcm_struc%w211,agcm_struc%w221)
 
 
-  END SUBROUTINE agcm_init
+  END SUBROUTINE agcmT213_init
 !
 !EOC
 !
@@ -184,16 +184,16 @@ CONTAINS
     agcm_struc%gridDesc     = 0 
 
     agcm_struc%gridDesc( 1) = 4         !Input grid type (4=Gaussian)
-    agcm_struc%gridDesc( 2) = 900       !Number of points on a lat circle
-    agcm_struc%gridDesc( 3) = 450       !Number of points on a meridian
-    agcm_struc%gridDesc( 4) = 89.69415  !Latitude of origin
+    agcm_struc%gridDesc( 2) = 640       !Number of points on a lat circle
+    agcm_struc%gridDesc( 3) = 320       !Number of points on a meridian
+    agcm_struc%gridDesc( 4) = 89.57009  !Latitude of origin
     agcm_struc%gridDesc( 5) = 0.0       !Longitude of origin
     agcm_struc%gridDesc( 6) = 128       !8 bits (1 byte) related to resolution
                                         !(recall that 10000000 = 128), Table 7
-    agcm_struc%gridDesc( 7) = -89.69415 !Latitude of extreme point
-    agcm_struc%gridDesc( 8) = -0.400    !Longitude of extreme point
-    agcm_struc%gridDesc( 9) = 0.400     !N/S direction increment
-    agcm_struc%gridDesc(10) = 225       !(Gaussian) # lat circles pole-equator
+    agcm_struc%gridDesc( 7) = -89.57009 !Latitude of extreme point
+    agcm_struc%gridDesc( 8) = -0.5625    !Longitude of extreme point
+    agcm_struc%gridDesc( 9) = 0.5625     !N/S direction increment
+    agcm_struc%gridDesc(10) = 160       !(Gaussian) # lat circles pole-equator
     agcm_struc%gridDesc(20) = 0.0  
 
     agcm_struc%npts = agcm_struc%gridDesc(2)*agcm_struc%gridDesc(3)
@@ -205,7 +205,7 @@ CONTAINS
 !-----------------------------------------------------------------------------!
 !BOP
 !
-! !IROUTINE:  agcm_read
+! !IROUTINE:  agcmT213_read
 !
 ! !DESCRIPTION: For a given file name, read fields from a agcm model,
 !               interpolates to the SCAMTEC domain and export to SCAMTEC
@@ -216,7 +216,7 @@ CONTAINS
 ! !INTERFACE:
 !
 
-  SUBROUTINE agcm_read(fname)
+  SUBROUTINE agcmT213_read(fname)
     IMPLICIT NONE
 !
 ! !INPUT PARAMETERS:
@@ -234,7 +234,7 @@ CONTAINS
 !-----------------------------------------------------------------------------!
 !BOC
 !
-    character(len=*),parameter :: myname_=myname//'::agcm_read'
+    character(len=*),parameter :: myname_=myname//'::agcmT213_read'
 
     integer :: iret, jret, gbret, stat
     logical :: file_exists
@@ -282,8 +282,8 @@ CONTAINS
     inquire (file=trim(fname), exist=file_exists)
     
     do i=1, 300	
-		
-		    if(trim(fname(i:i+6)) .eq. 'GPOSNMC')then
+		   !Para o PSAS colocar 'GPOSCPT' e compilar novamente
+		    if(trim(fname(i:i+6)) .eq. 'GPOSNMC' .or. trim(fname(i:i+6)) .eq. 'GPOSCPT')then
 			    dataini=trim(fname(i+7:i+16))
 			    datafinal=trim(fname(i+17:i+26))
 		    endif			
@@ -339,7 +339,7 @@ CONTAINS
 
           deallocate(f)
           deallocate(lb)
-          
+
           call perr(myname_,'File Not Found: '//trim(fname),stat)
           return
 
@@ -410,7 +410,6 @@ CONTAINS
     ny = int(scamtec%gridDesc(3))
     
     allocate(varfield(nx*ny))
-write(98)f2(:,1)
 
     DO iv=1,scamtec%nvar
 
@@ -425,12 +424,10 @@ write(98)f2(:,1)
 
 
     Enddo
-    write(99)scamdata(1)%tmpfield(:,1)
-
 
     DeAllocate(varfield)
 
-  END SUBROUTINE agcm_read
+  END SUBROUTINE agcmT213_read
 !
 !EOC
 !
@@ -526,4 +523,4 @@ write(98)f2(:,1)
 !EOC
 !-----------------------------------------------------------------------------!
 
-END MODULE m_agcm
+END MODULE m_agcm_T213

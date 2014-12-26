@@ -24,6 +24,7 @@ MODULE m_clima50yr
   USE interp_mod                    ! Interpolation module
   USE m_die                         ! Error Messages
   USE m_stdio                       ! Module to defines std. I/O parameters
+  USE SCAM_MetForm                  ! Module to convert meteorological variables
 
   IMPLICIT NONE
   PRIVATE
@@ -57,7 +58,8 @@ MODULE m_clima50yr
 ! !REVISION HISTORY:
 !  06 May 2012 - J. G. de Mattos - Initial Version
 !  18 Oct 2012 - J. G. de Mattos - change UMES to g/kg
-!
+!  20 Feb 2013 - J. G. de Mattos - include SCAM_MetForm.f90 
+!                                - and use it to make conversions
 ! !SEE ALSO:
 !   
 !
@@ -245,11 +247,11 @@ CONTAINS
     integer :: npts
     integer :: nx
     integer :: ny
-    integer, dimension(17) :: pds5, pds7
-    logical*1, dimension(:), allocatable :: lb
+    integer, dimension(20) :: pds5, pds7
+    logical*1, dimension(:,:), allocatable :: lb, lb2
     real, dimension(:,:), allocatable :: f
     real, dimension(:,:), allocatable :: f2
-    real, dimension(:,:), allocatable :: varfield
+    real, dimension(:), allocatable :: varfield
 
     !
     ! Parametros para ler os dados do arquivo de Climatologia
@@ -257,12 +259,13 @@ CONTAINS
 
     integer :: NV1lev = 43 ! Numero de Variaveis com 1 Nivel
     integer :: NLev   = 18 ! Numero de Niveis
+    real    :: undef  = 1e+20
 
     !
     ! Variaveis temporarias utilizadas para conversao de umidades e variaveis
     !
     
-    real, allocatable, dimension(:) :: ee, es, rv, qq
+!    real, allocatable, dimension(:) :: ee, es, rv, qq
 
     !
     !  0. Hello
@@ -280,15 +283,18 @@ CONTAINS
     lugb = 10
     lubi = 0
     j    = 0
-    jpds = -1 
-    !          1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17
-    !          T   T   T  rh  rh  rh   P   A   Z   Z   Z   U   U   U   V   V   V
-    !        925 850 500 925 850 500 000 000 850 500 250 850 500 250 850 500 250
-    pds5 = (/ 49, 49, 49, 50, 50, 50, 10, 18, 48, 48, 48, 44, 44, 44, 45, 45, 45/) !parameter
-    pds7 = (/002,003,006,002,003,006,000,000,003,006,009,003,006,009,003,006,009/) !htlev2
+    jpds = -1
+
+    !          1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16  17  18 19 20
+    !          T   T   T   T  rh  rh  rh   P   A   Z   Z   Z   U   U   U   V   V   V PRE PRC
+    !        925 850 500 250 925 850 500 000 000 850 500 250 850 500 250 850 500 250 000 000
+    pds5 = (/ 49, 49, 49, 49, 50, 50, 50, 10, 18, 48, 48, 48, 44, 44, 44, 45, 45, 45, 14, 15/) !parameter
+    pds7 = (/002,003,006,009,002,003,006,000,000,003,006,009,003,006,009,003,006,009,000,000/) !htlev2
      
-    allocate(lb(clima50yr_struc%npts))
+    allocate(lb2(clima50yr_struc%npts,scamtec%nvar))
+    allocate(lb(clima50yr_struc%npts,size(pds5)))
     allocate(f(clima50yr_struc%npts,size(pds5)))
+    lb = .true.
 
     inquire (file=trim(fname), exist=file_exists)
     if (file_exists) then 
@@ -308,13 +314,14 @@ CONTAINS
                   max0(1-mod(pds5(iv),NV1Lev+1),0)
 
              read(lugb,rec=rc)f(:,iv)
-             lb = .true.
+             where(f(:,iv).eq.undef) lb(:,iv) = .false.
+
           enddo
 
        else
           gbret = 99
-          call perr(myname_,'baopenr("'//	&
-                    trim(fname)//'")',iret		)
+          call perr(myname_,'baopenr("'//   &
+                    trim(fname)//'")',iret      )
           return          
        endif
 
@@ -330,7 +337,7 @@ CONTAINS
        deallocate(f)
        deallocate(lb)
        
-	    call perr(myname_,'File Not Found: '//trim(fname),ferror)
+       call perr(myname_,'File Not Found: '//trim(fname),ferror)
        return
 
     endif
@@ -341,46 +348,35 @@ CONTAINS
     ! * A lista de variaveis e as unidades utilizadas podem ser
     !   obtidas no modulo SCAM_dataMOD.f90
     !
+
     allocate(f2(clima50yr_struc%npts,scamtec%nvar))
-    allocate(es(clima50yr_struc%npts))
-    allocate(ee(clima50yr_struc%npts))
-    allocate(rv(clima50yr_struc%npts))
 
-
-    es       = 6.1078*exp((17.2693882*(f(:,1)-273.16))/(f(:,1)-35.86))
-    ee       = f(:,4)*es
-    rv       = (0.622*ee)/(925.0-ee)
-
-    f2(:, 5) = rv/(1+rv)/1000.                     ! Umes @ 925 hPa [g/Kg]
-
-    f2(:, 1) = f(:,1)*(1 + 0.61*rv)                ! Vtmp @ 925 hPa [K]
-
-    es       = 6.1078*exp((17.2693882*(f(:,2)-273.16))/(f(:,2)-35.86))
-    ee       = f(:,5)*es
-    rv       = (0.622*ee)/(925.0-ee)
-    f2(:, 2) = f(:,2)*(1 + 0.61*rv)                ! Vtmp @ 850 hPa [K]
-
-    es       = 6.1078*exp((17.2693882*(f(:,3)-273.16))/(f(:,3)-35.86))
-    ee       = f(:,6)*es
-    rv       = (0.622*ee)/(925.0-ee)
-    f2(:, 3) = f(:,3)*(1 + 0.61*rv)                ! Vtmp @ 500 hPa [K]
-
-    DeAllocate(es)
-    DeAllocate(ee)
-    DeAllocate(rv)
-
-    f2(:, 4) = f(:, 7)                            ! PSNM [hPa]
-    f2(:, 6) = f(:, 8)                            ! Agpl @ 925 hPa [Kg/m2]
-    f2(:, 7) = f(:, 9)                            ! Zgeo @ 850 hPa [gpm]
-    f2(:, 8) = f(:,10)                            ! Zgeo @ 500 hPa [gpm]
-    f2(:, 9) = f(:,11)                            ! Zgeo @ 250 hPa [gpm]
-    f2(:,10) = f(:,12)                            ! Uvel @ 850 hPa [m/s]
-    f2(:,11) = f(:,13)                            ! Uvel @ 500 hPa [m/s]
-    f2(:,12) = f(:,14)                            ! Uvel @ 250 hPa [m/s]
-    f2(:,13) = f(:,15)                            ! Vvel @ 850 hPa [m/s]
-    f2(:,14) = f(:,16)                            ! Vvel @ 500 hPa [m/s]
-    f2(:,15) = f(:,17)                            ! Vvel @ 250 hPa [m/s]
-
+    do i=1,clima50yr_struc%npts
+       f2(i,1) = tv(f(i,1)-273.16,f(i,5),92500.0) + 273.16 ; lb2(i, 1) = lb(i,1)! Vtmp @ 925 hPa [K]
+       f2(i,2) = tv(f(i,2)-273.16,f(i,6),85000.0) + 273.16 ; lb2(i, 2) = lb(i,2)! Vtmp @ 850 hPa [K]
+       f2(i,3) = tv(f(i,3)-273.16,f(i,7),50000.0) + 273.16 ; lb2(i, 3) = lb(i,3)! Vtmp @ 500 hPa [K]
+       f2(i,8)  = q(92500.0,f(i,1)-273.16,f(i,5)) * 1000.00; lb2(i, 8) = lb(i,5) ! Umes @ 925 hPa [g/Kg]
+       f2(i,9)  = q(92500.0,f(i,2)-273.16,f(i,6)) * 1000.00; lb2(i, 9) = lb(i,6) ! Umes @ 850 hPa [g/Kg]
+       f2(i,10) = q(92500.0,f(i,3)-273.16,f(i,7)) * 1000.00; lb2(i,10) = lb(i,7) ! Umes @ 500 hPa [g/Kg]
+    enddo
+    
+    f2(:, 4) = f(:, 2); lb2(:, 4) = lb(:, 2)                          ! Absolute Temperature @ 850 hPa [K]             4 paulo dias
+    f2(:, 5) = f(:, 3); lb2(:, 5) = lb(:, 3)                          ! Absolute Temperature @ 500 hPa [K]             5 paulo dias
+    f2(:, 6) = f(:, 4); lb2(:, 6) = lb(:, 4)                          ! Absolute Temperature @ 250 hPa [K]             6 paulo dias
+    	
+    f2(:, 7) = f(:, 8); lb2(:, 7) = lb(:, 8)                          ! PSNM [hPa]
+    f2(:,11) = f(:, 9); lb2(:,11) = lb(:, 9)                          ! Agpl @ 925 hPa [Kg/m2]
+    f2(:,12) = f(:,10); lb2(:,12) = lb(:,10)                          ! Zgeo @ 850 hPa [gpm]
+    f2(:,13) = f(:,11); lb2(:,13) = lb(:,11)                          ! Zgeo @ 500 hPa [gpm]
+    f2(:,14) = f(:,12); lb2(:,14) = lb(:,12)                          ! Zgeo @ 250 hPa [gpm]
+    f2(:,15) = f(:,13); lb2(:,15) = lb(:,13)                          ! Uvel @ 850 hPa [m/s]
+    f2(:,16) = f(:,14); lb2(:,16) = lb(:,14)                          ! Uvel @ 500 hPa [m/s]
+    f2(:,17) = f(:,15); lb2(:,17) = lb(:,15)                          ! Uvel @ 250 hPa [m/s]
+    f2(:,18) = f(:,16); lb2(:,18) = lb(:,16)                          ! Vvel @ 850 hPa [m/s]
+    f2(:,19) = f(:,17); lb2(:,19) = lb(:,17)                          ! Vvel @ 500 hPa [m/s]
+    f2(:,20) = f(:,18); lb2(:,20) = lb(:,18)                          ! Vvel @ 250 hPa [m/s]
+    f2(:,21) = f(:,19); lb2(:,21) = lb(:,19)                          ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]     
+    f2(:,22) = f(:,20); lb2(:,22) = lb(:,20)                          ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]   
     DeAllocate(f)
 
     !
@@ -410,16 +406,22 @@ CONTAINS
     nx = int(scamtec%gridDesc(2))
     ny = int(scamtec%gridDesc(3))
     
-    allocate(varfield(nx,ny))
+    allocate(varfield(nx*ny))
     DO iv = 1, scamtec%nvar
 
-       call interp_clima50yr( kpds, clima50yr_struc%npts,f(:,iv),lb, scamtec%gridDesc,&
+       call interp_clima50yr( kpds, clima50yr_struc%npts,f(:,iv),lb2(:,iv), scamtec%gridDesc,&
                               scamtec%nxpt,scamtec%nypt, varfield)    
+
+    !
+    ! padronizando pontos com undef
+    !
+
+       where( varfield .eq. undef ) varfield = scamtec%udef
 
     !
     ! Transferindo para matriz temporaria do SCAMTEC
     !
-       scamdata(1)%tmpfield(:,:,iv) = varfield(:,:)
+       scamdata(1)%tmpfield(:,iv) = varfield
 
     enddo
 
@@ -440,7 +442,7 @@ CONTAINS
 ! !INTERFACE:
 !
 
-  SUBROUTINE interp_clima50yr( kpds, npts,f,lb,gridDesc, nxpt, nypt, varfield)  
+  SUBROUTINE interp_clima50yr( kpds, npts,f,lb,gridDesc, nxpt, nypt, field1d)  
 
 !
 ! !INPUT PARAMETERS:
@@ -456,7 +458,7 @@ CONTAINS
 !
 ! !OUTPUT PARAMETERS:
 !
-    real, intent(out)     :: varfield(:,:) ! output interpolated field
+    real, intent(out)     :: field1d(:) ! output interpolated field
 
 !
 ! !REVISION HISTORY: 
@@ -468,7 +470,7 @@ CONTAINS
 !BOC
 !
 
-    real, dimension(nxpt*nypt) :: field1d
+!    real, dimension(nxpt*nypt) :: field1d
     logical*1, dimension(nxpt,nypt) :: lo
 
     integer :: ip, ipopt(20),ibi,km,iret
@@ -502,13 +504,13 @@ CONTAINS
        return
     endif
 
-    k = 0
-    do j = 1, nypt
-       do i = 1, nxpt
-          varfield(i,j) = field1d(i+k)
-       enddo
-       k = k + nxpt
-    enddo
+!   k = 0
+!   do j = 1, nypt
+!      do i = 1, nxpt
+!         varfield(i,j) = field1d(i+k)
+!      enddo
+!      k = k + nxpt
+!   enddo
 
   END SUBROUTINE interp_clima50yr
 

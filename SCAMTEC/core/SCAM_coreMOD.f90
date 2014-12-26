@@ -43,14 +43,15 @@ MODULE SCAM_coreMOD
   ! !USES:
 
   USE scamtec_module
-  USE SCAM_Utils       ! Utilities for SCAMTeC running
-  USE SCAM_dataMOD     ! Grid Data Structure
-  USE time_module      ! Time operations
-  USE m_string         ! String Manipulation
-  USE SCAM_ModelPlugin ! A model register 
-  USE SCAM_OutputMOD , only: write_2d   !
-  USE SCAM_bstatistic  !
+  USE SCAM_Utils                          ! Utilities for SCAMTeC running
+  USE SCAM_dataMOD                        ! Grid Data Structure
+  USE time_module, only: jul2cal, cal2jul ! Time operations
+  USE m_string                            ! String Manipulation
+  USE SCAM_ModelPlugin                    ! A model register 
+  USE SCAM_OutputMOD , only: write_2d     !
+  USE SCAM_bstatistic                     !
   USE m_ioutil
+!  USE m_metri_precip
 
   IMPLICIT NONE
   PRIVATE
@@ -122,25 +123,33 @@ CONTAINS
     !
 
     scamtec%atime          = scamtec%starting_time
-    scamtec%atime_step     = 1
     scamtec%ftime          = scamtec%starting_time
-    scamtec%atime_step     = 1
-    scamtec%tfileptime     = 1
 
+    scamtec%time_step      = 1
+    scamtec%ftime_idx      = 1
+    scamtec%loop_count     = 1
+    scamtec%atime_flag     = .true.
 
 
     scamtec%hist_incr      = real(scamtec%hist_time/24.0d0)
-    scamtec%incr           = real(scamtec%time_step/24.0d0)
+    scamtec%aincr          = real(scamtec%atime_step/24.0d0)
+    scamtec%fincr          = real(scamtec%ftime_step/24.0d0)
+
 
     scamtec%ntime_steps    = ( ( cal2jul(scamtec%ending_time) - &
                               cal2jul(scamtec%starting_time) +  &
-                              scamtec%incr ) / scamtec%incr )
+                              scamtec%aincr ) / scamtec%aincr )
 
-    scamtec%ntime_forecast = ( scamtec%Forecast_time / scamtec%time_step ) + 1
+    scamtec%ntime_forecast = ( scamtec%Forecast_time / scamtec%ftime_step ) + 1
+
+    Allocate(scamtec%ftime_count(scamtec%ntime_forecast))
+    scamtec%ftime_count    = 0
+    scamtec%ftime_count(1) = 1
 
 #ifdef DEBUG    
    write(6,'(A,F9.3)')'history increment    :',scamtec%hist_incr
-   write(6,'(A,F9.3)')'increment time       :',scamtec%incr
+   write(6,'(A,F9.3)')'Analisys increment   :',scamtec%aincr
+   write(6,'(A,F9.3)')'Forecast increment   :',scamtec%aincr
    write(6,'(A,I9.3)')'N time steps         :',scamtec%ntime_steps
    write(6,'(A,I9.3)')'N forecat time steps :',scamtec%ntime_forecast
 #endif
@@ -236,7 +245,7 @@ CONTAINS
   !
   ! !INTERFACE:
 
-  SUBROUTINE SCAM_RUN1()
+  SUBROUTINE SCAM_RUN()
 
     implicit none
 
@@ -262,231 +271,20 @@ CONTAINS
     !
 
      DO WHILE (.NOT.is_last_step())
+        write(*,'(2(1x,I10.10),1x,2I3.2)')scamtec%atime, scamtec%ftime, int(abs(cal2jul(scamtec%atime)-cal2jul(scamtec%ftime))*24),scamtec%ftime_idx
         DO NExp=1,scamtec%nexp
-!            print*,scamtec%atime, scamtec%ftime
            CALL SCAM_ModelData ( NExp )  ! Load Files: Analisys, Forecast and Climatology
-           CALL CalcBstat ( NExp )   ! Calculate Basic Statistics: Bias, RMSE, Anomaly Correlation
-!           CALL PrecStat ( )    ! Calculate Precipitation Statistics
+           CALL CalcBstat ( NExp )       ! Calculate Basic Statistics: Bias, RMSE, Anomaly Correlation
+           !CALL PrecStat ( NExp )       ! Calculate Precipitation Statistics
+!           IF(Precipitation_Flag .EQ. 1)CALL HistoStat ( NExp )  ! Calculate histogram 
 
         ENDDO
         call SCAM_NextStep( )
      ENDDO
 
 
-  END SUBROUTINE SCAM_RUN1
-
-  !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  !               INPE/CPTEC Data Assimilation Group                   !
-  !---------------------------------------------------------------------
-  !BOP
-  !
-  ! !IROUTINE: SCAM_RUN - Run SCAMTeC
-  !
-  ! !DESCRIPTION:
-  !
-  ! !INTERFACE:
-
-  SUBROUTINE SCAM_RUN()
-
-    implicit none
-
-    ! !REVISION HISTORY:
-    !       07ct10 - Joao Gerd
-    !           Initial prototaype Code
-    !EOP
-    !------------------------------------------------------------------
-
-    character(len=*),parameter :: myname_=myname//'::SCAM_RUN'
-    integer             :: t, i, e, f, v
-    integer             :: time
-    integer             :: ftime
-    integer             :: nymd, nhms
-    integer             :: fymd, fhms
-    character(len=1024) :: Reference    ! Reference File Name
-    character(len=1024) :: Experiment   ! Experiment File Name
-    character(len=1024) :: Climatology  ! Climatology File Name
-    character(len=1024) :: OutFName
-    integer             :: ier
-    character(len=1024) :: formato
-    real                :: tmp
-
-    !
-    !  0. Hello
-    !
-
-#ifdef DEBUG
-    WRITE(6,'(     2A)')'Hello from ', myname_
-#endif
-
-    !
-    !  1. Time Running
-    !
-    
-    time=scamtec%starting_time
-
-    i=1
-    DO t=1,scamtec%ntime_steps
-
-       nymd = time/100
-       nhms = MOD(time,100) * 10000
-
-       !
-       ! 1.1 Create file name and Open Reference data file 
-       !
-
-       Reference=TRIM(Refer%file)
-       CALL str_template(Reference, nymd,nhms)
-       CALL ldata('R', 1, Refer%Id, Reference)
-
-       !
-       ! 1.2 Create file name and Open Climatology data file
-       !
-       
-       IF(clima_Flag.EQ.1)THEN
-          Climatology=TRIM(Clima%file)
-          CALL str_template(Climatology, nymd,nhms)
-          CALL ldata('C', 1, Clima%Id, Climatology)
-       END IF
-
-       !
-       ! 1.3 Loop over time forecast
-       !
-
-       ftime = time 
-
-       DO f = 1, scamtec%ntime_forecast
-
-          fymd = ftime/100
-          fhms = MOD(ftime,100) * 10000
-
-          DO e = 1, scamtec%nexp
-
-             !
-             ! 1.3.1 Create Experiment File Names
-             !
-
-             Experiment = TRIM(Exper(e)%file)
-             CALL str_template(Experiment, fymd, fhms, nymd, nhms)
-
-             !
-             ! 1.3.2 Open Experiment Data Files
-             !
-             
-             CALL ldata('E',e,Exper(e)%Id, Experiment)
-
-             DO v=1,scamtec%nvar
-
-             !
-             ! 1.3.3 Basic Statistic Analisys
-             !
-             
-             !
-             ! Bias
-             !
-             scamdata(e)%diffield(:,:,v) = scamdata(e)%expfield(:,:,v) - scamdata(1)%reffield(:,:,v)
-             scamdata(e)%time_vies(f,v)  = scamdata(e)%time_vies(f,v) + &
-                                        (sum(scamdata(e)%diffield(:,:,v))/scamtec%npts)/scamtec%ntime_steps
-
-!             OutFName = "B"//Exper(e)%name//"%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2.gs4r"
-!             CALL str_template(OutFName, fymd, fhms, nymd, nhms)
-!             CALL write_2d(scamdata(e)%diffield,OutFName)
-
-             !
-             ! RMSE
-             !
-             scamdata(e)%rmsfield(:,:,v) = scamdata(e)%diffield(:,:,v)*scamdata(e)%diffield(:,:,v)
-             scamdata(e)%time_rmse(f,v)  = scamdata(e)%time_rmse(f,v) + &
-                                        (sum(scamdata(e)%rmsfield(:,:,v))/scamtec%npts)/scamtec%ntime_steps
-
-!             OutFName = "R"//Exper(e)%name//"%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2.gs4r"
-!             CALL str_template(OutFName, fymd, fhms, nymd, nhms)
-!             CALL write_2d(scamdata(e)%diffield,OutFName)
- 
-             !
-             ! Anomaly Correlation
-             !
-
-             if(Clima_Flag.eq.1)then
-
-!             OutFName = "A"//Exper(e)%name//"%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2.gs4r"
-!             CALL str_template(OutFName, fymd, fhms, nymd, nhms)
-!             CALL write_2d(scamdata(e)%anofield,OutFName)
-
-
-                CALL corr(scamdata(e)%expfield(:,:,v)-scamdata(1)%clmfield(:,:,v),&
-                          scamdata(1)%reffield(:,:,v)-scamdata(1)%clmfield(:,:,v),&
-                          tmp)
-                scamdata(e)%time_acor(f,v) = scamdata(e)%time_acor(f,v) + &
-                                          tmp/float(scamtec%ntime_steps)
-             endif
-
-             !
-             ! 1.3.4 Other statistics metrics
-             !
-
-             ENDDO
-
-          ENDDO
-
-
-          ftime = jul2cal(cal2jul(ftime)-scamtec%incr)
-
-       ENDDO
-
-
-       !
-       !  1.3. History output
-       !
-
-       if ( time .EQ. jul2cal(cal2jul(starting_time)+scamtec%hist_incr*i) )then
-          print*,'Writing History file : ',time,starting_time
-
-          !         CALL HISTORY(time)
-
-          i=i+1
-       endif
-
-       !
-       ! 1.4 Write output
-       !
-
-       if (t.eq.scamtec%ntime_steps)then
-          print*, 'Writing result files ....'
-          DO e=1,scamtec%nexp
-
-             scamdata(e)%time_rmse = sqrt(scamdata(e)%time_rmse)
-
-
-             call opntext(e+0,'vies'//trim(Exper(e)%name)//'.txt','unknown',ier)
-             call opntext(e+1,'rmse'//trim(Exper(e)%name)//'.txt','unknown',ier)
-             if(clima_flag.eq.1)call opntext(e+2,'acor'//Trim(Exper(e)%name)//'.txt','unknown',ier)
-             
-             write(formato,'(A4,I3.3,A5)')'(A9,',scamtec%nvar,'A9)'
-             write(e+0,formato)'%Previsao',(VarName(v),v=1,scamtec%nvar)
-             write(e+1,formato)'%Previsao',(VarName(v),v=1,scamtec%nvar)
-             if(clima_flag.eq.1)write(e+2,formato)'%Previsao',(VarName(v),v=1,scamtec%nvar)
-
-
-             write(formato,'(A9,I3.3,A5)')'(6x,I3.3,',scamtec%nvar,'F9.3)'
-             DO f=1,scamtec%ntime_forecast
-               write(e+0,formato)(f-1)*time_step,(scamdata(e)%time_vies(f,v),v=1,scamtec%nvar)
-               write(e+1,formato)(f-1)*time_step,(scamdata(e)%time_rmse(f,v),v=1,scamtec%nvar)
-               if(clima_flag.eq.1)write(e+2,formato)(f-1)*time_step,(scamdata(e)%time_acor(f,v),v=1,scamtec%nvar)
-             ENDDO
-
-             call clstext(e+0,ier)
-             call clstext(e+1,ier)
-             if(clima_flag.eq.1)call clstext(e+2,ier)
-          ENDDO
-
-       endif
-
-
-       time=jul2cal(cal2jul(time)+scamtec%incr)
-    ENDDO
-
-
   END SUBROUTINE SCAM_RUN
+
 
   !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   !               INPE/CPTEC Data Assimilation Group                   !
@@ -554,9 +352,9 @@ CONTAINS
 !    WRITE(6,'(     2A)')'Hello from ', myname_
 !#endif
     
-    scamtec%atime=jul2cal(cal2jul(scamtec%atime)+scamtec%incr)
-    print*,scamtec%atime,scamtec%ending_time
-    if (scamtec%atime.ge.scamtec%ending_time) call exit()
+!   scamtec%atime=jul2cal(cal2jul(scamtec%atime)+scamtec%incr)
+!   print*,scamtec%atime,scamtec%ending_time
+!   if (scamtec%atime.ge.scamtec%ending_time) call exit()
 
   END SUBROUTINE SCAM_EndRun
 
@@ -567,21 +365,30 @@ CONTAINS
      REAL(DP) :: fincr
      integer :: I, Nx, Ny
      integer :: ii, jj
+     INTEGER :: atimebufr
 
-     scamtec%tfileptime = scamtec%tfileptime + 1
+     scamtec%loop_count = scamtec%loop_count + 1
 
-     I  = scamtec%tfileptime
+     I  = scamtec%loop_count
      Nx = scamtec%ntime_steps
      Ny = scamtec%ntime_forecast
 
      ii = ceiling((I)/float(Ny))
      jj = ( I + Ny ) - Ny * ii
+    
+               
+     aincr = (ii-1) * scamtec%aincr
+     fincr = (jj-1) * scamtec%fincr
+     
+     atimebufr               = scamtec%atime
+     scamtec%atime           = jul2cal(cal2jul(scamtec%starting_time)+aincr)
+     scamtec%ftime           = jul2cal(cal2jul(scamtec%atime)+fincr)
+     scamtec%ftime_idx       = jj
+     scamtec%ftime_count(jj) = scamtec%ftime_count(jj) + 1
+     scamtec%atime_flag      = (atimebufr.ne.scamtec%atime)
 
-     aincr = (ii-1) * scamtec%incr
-     fincr = (jj-1) * scamtec%incr
+     if (scamtec%atime_flag)scamtec%time_step = scamtec%time_step + 1
 
-     scamtec%atime = jul2cal(cal2jul(scamtec%starting_time)+aincr)
-     scamtec%ftime = jul2cal(cal2jul(scamtec%atime)+fincr)
 
   END SUBROUTINE
 

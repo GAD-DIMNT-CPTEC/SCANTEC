@@ -11,12 +11,16 @@ OBJS = \
 	$(srcdir)/SCAM_dataMOD.o \
 	$(srcdir)/SCAM_gridMOD.o \
 	$(srcdir)/SCAM_outputMOD.o \
+	$(srcdir)/SCAM_MetForm.o \
 	$(srcdir)/bilinear_interpolation.o \
 	$(srcdir)/eta_read.o \
 	$(srcdir)/m_agcm.o \
+	$(srcdir)/m_agcm_T213.o \
 	$(srcdir)/m_clima50yr.o \
+	$(srcdir)/m_T126_Seq.o \
 	$(srcdir)/m_string.o \
 	$(srcdir)/m_time.o \
 	$(srcdir)/scamdrv.o \
 	$(srcdir)/scamtec_module.o \
+	$(srcdir)/eof.o \
 	$(srcdir)/template_read.o

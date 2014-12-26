@@ -1,33 +1,29 @@
+SCAMTEC - Sistema de Avaliacao de Modelos de Tempo e Clima
+http://assimila.cptec.inpe.br/scamtec
 
-** Instrucoes para compilacao e execucao do SCAMTEC_v0.1 **
+--------
 
-* Atualmente o SCAMTEC está sendo compilado com o IFORT. Para compila-lo siga os seguintes passos (ao final será gerado o arquivo scamtec.x):
+Instrucoes para compilacao e execucao do SCAMTEC_v0.1.1:
 
-A T E N C A O: O SCAMTEC foi originalmente compilado com o ifort versao 10.1
-               O SCAMTEC também está compilando com a versão 12.1.0 do ifort
+- Compilacao em PCs/Macs:
 
-A. Entre no diretório SCAMTEC_v0.1:
-1. export SCAM_ARCH=Darwin_intel
-2. cd lib/w3lib
-3. make clean & make
-4. cd ../mpeu 
-5. make clean & make
-6. cd ../../core
-7. make clean & make
+Execute o script "install" desta pasta e selecione a opcao "3".
 
-B. Obtencao dos dados para execucao:
-1. Um conjunto de testes será disponibilizado no seguinte endereço ftp://ftp1.cptec.inpe.br/jgerd/PUB/SCAMTeC/testcase (via ncftp)
-2. Configure o arquivo scamtec.conf que encontra-se no diretório SCAMTEC_v0.1/core para apontar para o diretório onde estão os dados de testcase
-* execute o scamtec com o comando ./scamtec.x
-* serão gerados arquivos txt com o formato estatisticaNOMEEXPERIMENTO.txt
-* onde estatistica = vies, rmse, acor
+- Compilacao na Tupa:
+
+Execute o script "install" desta pasta e selecione a opcao "2".
+
+- Obtencao dos dados para execucao:
+
+1. Um conjunto de testes esta disponibilizado no seguinte em /scratchin/grupos/assim_dados/home/gdad/public/SCAMTEC
+2. Configure o arquivo scamtec.conf que encontra-se no diretorio SCAMTEC_v0.1.1/core para apontar para o diretório onde estão os dados de testcase
+ * execute o scamtec com o comando ./scamtec.x
+ * serão gerados arquivos txt com o formato estatisticaNOMEEXPERIMENO.scam
+ * onde estatistica = vies, rmse, acor
  * NOMEEXPERIMENTO = EXP01, EXP02 ....
- * exemplo viesEXP01.txt
+ * exemplo viesEXP01.scam
  * Posteriormente será disponibilizado um tutorial para o uso e desenvolvimento do SCAMTEC no endereço: https://projetos.cptec.inpe.br/projects/scamtec/wiki
- 
-C. Documentação via linha de comando (estilo man):
-1. adicione a pasta docs/man à variável MANPATH
-* Exemplo: se o SCAMTEC estiver instalado na pasta /home/usuario/SCAMTEC_V0.1/docs/man, faca:
-* export MANPATH="/home/usuario/SCAMTEC_V0.1/docs/man":${MANPATH}
-2. Com isso, pode-se acessar a documentação das rotinas (quando a documentação existir):
-* Exemplo: man scamdrv.f90
+
+--------
+
+Ultima atualizacao: equipe SCAMTEC (26/12/2014)
