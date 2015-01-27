@@ -4,6 +4,7 @@ MODULE SCAM_Modelplugin
   USE m_T126_Seq !paulo dias
 !  USE obs_Precipitation !Paulo Dias
   USE m_agcm_T213 !Paulo Dias
+  USE m_Ensemble_T126
   
   IMPLICIT NONE
   !BOP
@@ -41,6 +42,7 @@ MODULE SCAM_Modelplugin
   integer, public, parameter :: T126_SeqId       = 4  ! IWV-PSAS T126 !Paulo Dias
  ! integer, public, parameter :: PrecipitationId  = 5  ! Precipitation !Paulo Dias
   integer, public, parameter :: AGCM_T213Id      = 6  ! AGCM_T213/CPTEC !Paulo Dias
+  integer, public, parameter :: Ensemble_T126Id  = 7  ! T126 Ensemble 
 
   !-------------------------------------------------------------------
   ! !PUBLIC MEMBER FUNCTIONS:
@@ -118,6 +120,10 @@ Contains
     ! AGCM/CPTEC
     call registermodelinit(AGCM_T213Id,agcmT213_init)
     call registermodelread(AGCM_T213Id,agcmT213_read)
+    ! T126 Ensemble
+    call registermodelinit(Ensemble_T126Id,Ensemble_T126_init) !
+    call registermodelread(Ensemble_T126Id,Ensemble_T126_read) !
+    
   END SUBROUTINE scam_models_plugin
   !EOC
   !-------------------------------------------------------------------
