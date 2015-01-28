@@ -1,0 +1,14 @@
+#!/bin/bash
+#PBS -o /stornext/home/lucas.amarante/SCAMTEC_v0.1/core/log.run.out
+#PBS -joe
+#PBS -V
+#PBS -lselect=1:ncpus=1
+#PBS -l walltime=01:30:00
+#PBS -N jobscam
+#PBS -A CPTEC
+#PBS -q pesq.q
+
+exec=/stornext/home/lucas.amarante/SCAMTEC_v0.1/core
+
+cd ${exec}
+./scamtec.x >& ${exec}/log_scamtec.log
