@@ -19,6 +19,7 @@ OBJS = \
 	$(srcdir)/m_clima50yr.o \
 	$(srcdir)/m_T126_Seq.o \
 	$(srcdir)/m_Ensemble_T126.o \
+	$(srcdir)/m_Grb_ensemble_t126.o \
 	$(srcdir)/m_string.o \
 	$(srcdir)/m_time.o \
 	$(srcdir)/scamdrv.o \
