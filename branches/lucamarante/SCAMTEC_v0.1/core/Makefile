@@ -33,7 +33,7 @@ incdir = ./
 srcdir = ./
 
 # default mode (max. optimization)
-mode = dbg 
+mode =
 
 # header file directories
 CCFLAGS = -I$(incdir) -I$(MPEU_INC)
