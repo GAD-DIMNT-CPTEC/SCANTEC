@@ -583,9 +583,13 @@ Contains
 
     NPts  = size(A,1)
 
-    Ma  = sum(A)/float(NPts)
-    Mb  = sum(B)/float(NPts)
+    !Ma  = sum(A)/float(NPts)
+    !Mb  = sum(B)/float(NPts)
 
+!Estatistica de correlacao de anomalia alterada pelo Joao
+     Ma  = 0.0
+     Mb  = 0.0
+    
     Sab = sum( (A-Ma)*(B-Mb) )
     Saa = sum( (A-Ma)*(A-Ma) )
     Sbb = sum( (B-Mb)*(B-Mb) )

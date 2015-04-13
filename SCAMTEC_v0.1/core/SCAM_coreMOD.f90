@@ -261,6 +261,11 @@ CONTAINS
     !
     !  0. Hello
     !
+    
+       WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
+       WRITE(*,'(a72)')'!                          Running SCAMTEC                            !'
+       WRITE(*,'(a72)')'!     Please wait while the system is performing the statistics       !'
+       WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
 
 #ifdef DEBUG
     WRITE(6,'(     2A)')'Hello from ', myname_
