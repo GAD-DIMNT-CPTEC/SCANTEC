@@ -5,13 +5,13 @@
 
 A T E N C A O: O SCAMTEC foi originalmente compilado com o ifort versao 10.1
 
-Ultima atualizacao do README: 17/03/2015
+Ultima atualizacao do README: 10/06/2015
 
 *************************************************************************************************************************
 Para instalação no supercomputador TUPA:
 *************************************************************************************************************************
 
-1º Login no TUPA 
+1º Logar no TUPA 
 
 ------
 2º Carregar os modulos do TUPA com o comando:
@@ -20,33 +20,29 @@ source /usr/bin/development_config
 Escolher a opcao 6
 
 ------
-3º Carregar o modulo pgi com o comando:
-module load pgi
+3º Escolher um diretorio para a instalação do SCAMTEC
+Obs. Pode ser nas areas $HOME/ ou $SUBMIT_HOME/ ou online6/ 
 
 ------
-4º Entrar em um diretorio de preferencia do usuario para realizar a instalação do SCAMTEC
-Obs. Pode ser nas areas $HOME - $SUBMIT_HOME - online6/ 
+4º Baixar a versao do SCAMTEC do repositorio svn (projetos.cptec.inpe.br)
+svn export https://svn.cptec.inpe.br/scamtec/branches/lucamarante/SCAMTEC
 
 ------
-5º Baixar a versao do SCAMTEC do repositorio svn (projetos.cptec.inpe.br)
-svn export https://svn.cptec.inpe.br/scamtec/branches/lucamarante/SCAMTEC_v0.1@139
+5º Entrar no diretorio do SCAMTEC
+cd SCAMTEC
 
 ------
-6º Entrar no diretorio do SCAMTEC
-cd SCAMTEC_v0.1/
-
-------
-7º Para compilar o SCAMTEC execute o script install com o comando:
+6º Para compilar o SCAMTEC execute o script install com o comando:
 ./install
 
 Escolha a opção 2 para o compilador pgi do TUPA
 
 ------
-8º Entrar no diretorio core/ onde estão os códigos do SCAMTEC:
+7º Entrar no diretorio core/ onde estão os códigos do SCAMTEC:
 cd core/
 
 ------
-9º Editar o arquivo de configuração de acordo com os experimentos:
+8º Editar o arquivo de configuração de acordo com os experimentos:
 gedit scamtec.conf&
 
 É necessário:
@@ -57,9 +53,13 @@ gedit scamtec.conf&
 -Configurar o diretorio da saida dos dados
 
 ------
-10º Executar o SCAMTEC
+9º Executar o SCAMTEC (scamtec.conf já está pré-configurado para rodada TestCase)
 ./scamtec.x
 
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+2ª opção para executar o SCAMTEC:
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 Para executar o SCAMTEC em um nó auxiliar com qsub é necessário ajustar o script: 
 gedit submete_scamtec.qsub&
 
@@ -79,7 +79,7 @@ qstat -u ${USER} @aux20-eth4
 Rodada TestCase
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Para realizar um TesteCase (de apenas 1 dia) com o SCAMTEC segue abaixo os parametros para serem modificados no arquivo scamtec.conf:
+Para realizar um TesteCase (de apenas 1 dia) com o SCAMTEC segue abaixo os parametros do arquivo scamtec.conf:
 Obs.: **Apenas os parametros abaixo devem ser modificados no scamtec.conf.
 
 Starting Time: 2014080100    
