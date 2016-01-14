@@ -180,15 +180,15 @@ CONTAINS
     agcm_struc%gridDesc     = 0 
 
     agcm_struc%gridDesc( 1) = 4         !Input grid type (4=Gaussian)
-    agcm_struc%gridDesc( 2) = 900       !Number of points on a lat circle
-    agcm_struc%gridDesc( 3) = 450       !Number of points on a meridian
-    agcm_struc%gridDesc( 4) = 89.69415  !Latitude of origin
+    agcm_struc%gridDesc( 2) = 720       !Number of points on a lat circle
+    agcm_struc%gridDesc( 3) = 360       !Number of points on a meridian
+    agcm_struc%gridDesc( 4) = 90.00000 !Latitude of origin
     agcm_struc%gridDesc( 5) = 0.0       !Longitude of origin
     agcm_struc%gridDesc( 6) = 128       !8 bits (1 byte) related to resolution
                                         !(recall that 10000000 = 128), Table 7
-    agcm_struc%gridDesc( 7) = -89.69415 !Latitude of extreme point
-    agcm_struc%gridDesc( 8) = -0.400    !Longitude of extreme point
-    agcm_struc%gridDesc( 9) = 0.400     !N/S direction increment
+    agcm_struc%gridDesc( 7) = -90.00000 !Latitude of extreme point
+    agcm_struc%gridDesc( 8) = 359.500  !Longitude of extreme point
+    agcm_struc%gridDesc( 9) = 0.500     !N/S direction increment
     agcm_struc%gridDesc(10) = 225       !(Gaussian) # lat circles pole-equator
     agcm_struc%gridDesc(20) = 0.0  
 
@@ -266,9 +266,9 @@ CONTAINS
     lubi = 0
     j    = 0
     jpds = -1 
-    !          Q   Q   Q   T   T   T   P   A   Z   Z   Z   U   U   U   V   V   V
-    pds5 = (/ 51, 51, 51, 11, 11, 11,  2, 54,  7,  7,  7, 33, 33, 33, 34, 34, 34/) !parameter
-    pds7 = (/925,850,500,925,850,500,000,000,850,500,250,850,500,250,850,500,250/) !htlev2
+    !          Q   Q   Q   T   T   T   P   A   Z   Z   Z   U   U   U   V   P   V
+    pds5 = (/ 51, 51, 51, 11, 11, 11,  2, 54,  7,  7,  7, 33, 33, 33, 34, 61, 34/) !parameter
+    pds7 = (/925,850,500,925,850,500,000,000,850,500,250,850,500,250,850,000,250/) !htlev2
 
     allocate(lb(agcm_struc%npts,size(pds5)))
     allocate(f(agcm_struc%npts,size(pds5)))
@@ -360,7 +360,7 @@ CONTAINS
     allocate(varfield(nx,ny))
 
     DO iv=1,scamtec%nvar
-
+       write(88) f2(:,iv)
        call interp_agcm( kpds, agcm_struc%npts,f2(:,iv),lb(:,iv), scamtec%gridDesc,&
                          scamtec%nxpt,scamtec%nypt, varfield, iret)    
 
@@ -369,9 +369,12 @@ CONTAINS
     !
 
        scamdata(1)%tmpfield(:,:,iv) = varfield(:,:)
+        write(99) varfield
+       
 
     Enddo
 
+      print*,'ENTROU AQUI >>> ',minval(scamdata(1)%tmpfield(:,:,14)),maxval(scamdata(1)%tmpfield(:,:,14))
     DeAllocate(varfield)
 
   END SUBROUTINE agcm_read

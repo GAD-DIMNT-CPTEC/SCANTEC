@@ -97,7 +97,7 @@ CONTAINS
     Precipitation_struc%gridDesc( 7) = 11.375    !Latitude of extreme point
     Precipitation_struc%gridDesc( 8) = -35.375   !Longitude of extreme point
     Precipitation_struc%gridDesc( 9) = 0.250     !N/S direction increment
-    Precipitation_struc%gridDesc(10) = 0.250     !(Gaussian) # lat circles pole-equator
+    Precipitation_struc%gridDesc(10) = 225     !(Gaussian) # lat circles pole-equator
     Precipitation_struc%gridDesc(20) = 0.0  
 
     Precipitation_struc%npts = Precipitation_struc%gridDesc(2)*Precipitation_struc%gridDesc(3)

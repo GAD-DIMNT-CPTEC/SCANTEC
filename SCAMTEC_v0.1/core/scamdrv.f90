@@ -76,7 +76,7 @@ PROGRAM SCANTeC
 !
 !  3. RUN SCAMTeC
 !  
-   CALL SCAM_RUN()
+   !CALL SCAM_RUN()
     
 !
 !  4. Precipitation
