@@ -25,6 +25,7 @@ CONTAINS
   INTEGER, ALLOCATABLE :: total_histo(:,:,:,:)                !variavel do histograma
   INTEGER, ALLOCATABLE :: tempo(:)                            !Intervalo de tempo ex(00,06,12...)
   REAL,ALLOCATABLE     :: obs_precip(:,:), ant_obs_precip(:,:)!Variavel de precipitation
+  integer              :: contaex
   
   tam_hist=((hist%valor_limit-hist%valor_min)/hist%rang)+2    !Calculando o tamanho do histograma
   quant_arq_ant=hist%acumulo_exp/hist%acumulo_obs     !Calculando quantidade de arquivos anterior para abrir
@@ -42,16 +43,11 @@ CONTAINS
   tempo(:)=0
   total_histo(:,:,:,:)=0
   
-  
+  contaex=0
   
   !Iniciando os loops de tempos
   time=starting_time
-  
-  
- 
- 
-    
-  
+   
   DO t=1,scamtec%ntime_steps !quantidade de diasnymd
       time_ant=jul2cal(cal2jul(time)-(scamtec%incr/2)*7)
       nymd = time/100
@@ -80,24 +76,23 @@ CONTAINS
       CALL str_template(Precipi, nymd_ant,nhms_ant)
       CALL ldata('P', 1, precip%Id, Precipi)
       
-      ant_obs_precip(:,:)=scamdata(1)%prefield(:,:,16)
-      
+      ant_obs_precip(:,:)=scamdata(1)%prefield(:,:,16) 
+             
       obs_precip(:,:)=obs_precip(:,:)+ant_obs_precip(:,:)
       
       time_ant=jul2cal(cal2jul(time_ant)+(scamtec%incr/2))
     
-    
-    
-    
-    
-   
-      enddo
+     enddo
       
-          
+      !gravar matriz observacao
+        OPEN(45,file=trim(output_dir)//'/'//'soma_obs_precip'//'.bin',form='unformatted',status='unknown',convert='big_endian')  
+           
+        write(45)obs_precip(:,:)
             
       obs_histo(:)=0
       histo(:)=0
       
+      !stop
       CALL histograma(obs_precip(:,:),hist%rang,hist%valor_min,hist%valor_limit,histo)
           
       obs_histo(:)=histo(:)
@@ -131,6 +126,21 @@ CONTAINS
      
              histo(:)=0
              tempo(f)=(f-1)*time_step
+             
+             
+              contaex=contaex+1      
+                    
+              if(contaex.eq.2) then
+                                               
+                  OPEN(46,file=trim(output_dir)//'/'//'EXP_precip'//'.bin',form='unformatted',status='unknown',access = 'sequential')         
+         
+                  write(46)scamdata(e)%expfield(:,:,14)   
+                  !print*,minval(scamdata(e)%expfield(:,:,hist%tipo_precip)),maxval(scamdata(e)%expfield(:,:,hist%tipo_precip))   
+                   print*,'MIN E MAX >> ',minval(scamdata(e)%expfield(:,:,14)),maxval(scamdata(e)%expfield(:,:,14))
+                  stop
+              endif    
+                          
+                          
                           
              CALL histograma(scamdata(e)%expfield(:,:,hist%tipo_precip),hist%rang,hist%valor_min,hist%valor_limit,histo)    
                   			
