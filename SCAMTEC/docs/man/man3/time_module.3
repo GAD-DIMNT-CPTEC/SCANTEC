@@ -1,0 +1,59 @@
+.TH "time_module" 3 "Wed May 9 2012" "Version v0.1" "SCAMTEC" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+time_module \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions/Subroutines"
+
+.in +1c
+.ti -1c
+.RI "INTEGER, public \fBeom\fP (year, month)"
+.br
+.ti -1c
+.RI "INTEGER, public \fBnoh\fP (di, df)"
+.br
+.ti -1c
+.RI "INTEGER, public \fBnod\fP (di, df)"
+.br
+.ti -1c
+.RI "INTEGER, public \fBnom\fP (di, df)"
+.br
+.ti -1c
+.RI "INTEGER, public \fBnoy\fP (di, df)"
+.br
+.ti -1c
+.RI "REAL(kind=8), public \fBcal2jul\fP (CalDate)"
+.br
+.ti -1c
+.RI "INTEGER(kind=8), public \fBjul2cal\fP (jd)"
+.br
+.in -1c
+.SH "Function/Subroutine Documentation"
+.PP 
+.SS "REAL(kind=8),public time_module::cal2jul (INTEGER,intent(in)CalDate)"
+.PP
+Definition at line 256 of file m_time.f90.
+.SS "INTEGER,public time_module::eom (INTEGER,intent(in)year, INTEGER,intent(in)month)"
+.PP
+Definition at line 55 of file m_time.f90.
+.SS "INTEGER(kind=8),public time_module::jul2cal (REAL (kind=8),intent(in)jd)"
+.PP
+Definition at line 323 of file m_time.f90.
+.SS "INTEGER,public time_module::nod (INTEGER,intent(in)di, INTEGER,intent(in)df)"
+.PP
+Definition at line 136 of file m_time.f90.
+.SS "INTEGER,public time_module::noh (INTEGER,intent(in)di, INTEGER,intent(in)df)"
+.PP
+Definition at line 97 of file m_time.f90.
+.SS "INTEGER,public time_module::nom (INTEGER,intent(in)di, INTEGER,intent(in)df)"
+.PP
+Definition at line 175 of file m_time.f90.
+.SS "INTEGER,public time_module::noy (INTEGER,intent(in)di, INTEGER,intent(in)df)"
+.PP
+Definition at line 218 of file m_time.f90.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for SCAMTEC from the source code.
