@@ -1,0 +1,192 @@
+.TH "SCAM_Utils" 3 "Wed May 9 2012" "Version v0.1" "SCAMTEC" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SCAM_Utils \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Data Types"
+
+.in +1c
+.ti -1c
+.RI "type \fBdomain\fP"
+.br
+.ti -1c
+.RI "type \fBvariable\fP"
+.br
+.ti -1c
+.RI "type \fBRUNS\fP"
+.br
+.in -1c
+.SS "Functions/Subroutines"
+
+.in +1c
+.ti -1c
+.RI "subroutine, public \fBreadcard\fP (istat)"
+.br
+.ti -1c
+.RI "subroutine, public \fBBANNER\fP ()"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "INTEGER, parameter, public \fBnvmx\fP = 50"
+.br
+.ti -1c
+.RI "INTEGER, parameter, public \fBnlmx\fP = 50"
+.br
+.ti -1c
+.RI "REAL(SP), parameter, public \fBPI\fP = 3.141592653589793238462643383279502884197_sp"
+.br
+.ti -1c
+.RI "REAL(SP), parameter, public \fBPIO2\fP = 1.57079632679489661923132169163975144209858_sp"
+.br
+.ti -1c
+.RI "REAL(SP), parameter, public \fBTWOPI\fP = 6.283185307179586476925286766559005768394_sp"
+.br
+.ti -1c
+.RI "REAL(SP), parameter, public \fBSQRT2\fP = 1.41421356237309504880168872420969807856967_sp"
+.br
+.ti -1c
+.RI "REAL(SP), parameter, public \fBEULER\fP = 0.5772156649015328606065120900824024310422_sp"
+.br
+.ti -1c
+.RI "REAL(DP), parameter, public \fBPI_D\fP = 3.141592653589793238462643383279502884197_dp"
+.br
+.ti -1c
+.RI "REAL(DP), parameter, public \fBPIO2_D\fP = 1.57079632679489661923132169163975144209858_dp"
+.br
+.ti -1c
+.RI "REAL(DP), parameter, public \fBTWOPI_D\fP = 6.283185307179586476925286766559005768394_dp"
+.br
+.ti -1c
+.RI "INTEGER, public \fBstarting_time\fP"
+.br
+.ti -1c
+.RI "INTEGER, public \fBending_time\fP"
+.br
+.ti -1c
+.RI "INTEGER, public \fBtime_step\fP"
+.br
+.ti -1c
+.RI "INTEGER, public \fBForecast_time\fP"
+.br
+.ti -1c
+.RI "INTEGER, public \fBntime_forecast\fP"
+.br
+.ti -1c
+.RI "INTEGER, public \fBntime_steps\fP"
+.br
+.ti -1c
+.RI "REAL(DP), public \fBincr\fP"
+.br
+.ti -1c
+.RI "INTEGER, public \fBhist_time\fP"
+.br
+.ti -1c
+.RI "REAL(DP), public \fBhist_incr\fP"
+.br
+.ti -1c
+.RI "TYPE(domain), dimension(:), allocatable, public \fBdom\fP"
+.br
+.ti -1c
+.RI "TYPE(RUNS), public \fBRefer\fP"
+.br
+.ti -1c
+.RI "TYPE(RUNS), public \fBClima\fP"
+.br
+.ti -1c
+.RI "INTEGER, public \fBClima_Flag\fP"
+.br
+.ti -1c
+.RI "TYPE(RUNS), dimension(:), allocatable, public \fBExper\fP"
+.br
+.in -1c
+.SH "Function/Subroutine Documentation"
+.PP 
+.SS "subroutine,public SCAM_Utils::BANNER ()"
+.PP
+Definition at line 491 of file SCAM_UtilsMOD.f90.
+.SS "subroutine,public SCAM_Utils::readcard (INTEGER,intent(out),optionalistat)"
+.PP
+Definition at line 132 of file SCAM_UtilsMOD.f90.
+.SH "Variable Documentation"
+.PP 
+.SS "TYPE(RUNS),public \fBSCAM_Utils::Clima\fP"
+.PP
+Definition at line 112 of file SCAM_UtilsMOD.f90.
+.SS "INTEGER,public \fBSCAM_Utils::Clima_Flag\fP"
+.PP
+Definition at line 113 of file SCAM_UtilsMOD.f90.
+.SS "TYPE(domain),dimension(:),allocatable,public \fBSCAM_Utils::dom\fP"
+.PP
+Definition at line 108 of file SCAM_UtilsMOD.f90.
+.SS "INTEGER,public \fBSCAM_Utils::ending_time\fP"
+.PP
+Definition at line 99 of file SCAM_UtilsMOD.f90.
+.SS "REAL(SP),parameter,public \fBSCAM_Utils::EULER\fP = 0.5772156649015328606065120900824024310422_sp"
+.PP
+Definition at line 63 of file SCAM_UtilsMOD.f90.
+.SS "TYPE(RUNS),dimension(:),allocatable,public \fBSCAM_Utils::Exper\fP"
+.PP
+Definition at line 114 of file SCAM_UtilsMOD.f90.
+.SS "INTEGER,public \fBSCAM_Utils::Forecast_time\fP"
+.PP
+Definition at line 101 of file SCAM_UtilsMOD.f90.
+.SS "REAL(DP),public \fBSCAM_Utils::hist_incr\fP"
+.PP
+Definition at line 106 of file SCAM_UtilsMOD.f90.
+.SS "INTEGER,public \fBSCAM_Utils::hist_time\fP"
+.PP
+Definition at line 105 of file SCAM_UtilsMOD.f90.
+.SS "REAL(DP),public \fBSCAM_Utils::incr\fP"
+.PP
+Definition at line 104 of file SCAM_UtilsMOD.f90.
+.SS "INTEGER,parameter,public \fBSCAM_Utils::nlmx\fP = 50"
+.PP
+Definition at line 54 of file SCAM_UtilsMOD.f90.
+.SS "INTEGER,public \fBSCAM_Utils::ntime_forecast\fP"
+.PP
+Definition at line 102 of file SCAM_UtilsMOD.f90.
+.SS "INTEGER,public \fBSCAM_Utils::ntime_steps\fP"
+.PP
+Definition at line 103 of file SCAM_UtilsMOD.f90.
+.SS "INTEGER,parameter,public \fBSCAM_Utils::nvmx\fP = 50"
+.PP
+Definition at line 53 of file SCAM_UtilsMOD.f90.
+.SS "REAL(SP),parameter,public \fBSCAM_Utils::PI\fP = 3.141592653589793238462643383279502884197_sp"
+.PP
+Definition at line 59 of file SCAM_UtilsMOD.f90.
+.SS "REAL(DP),parameter,public \fBSCAM_Utils::PI_D\fP = 3.141592653589793238462643383279502884197_dp"
+.PP
+Definition at line 64 of file SCAM_UtilsMOD.f90.
+.SS "REAL(SP),parameter,public \fBSCAM_Utils::PIO2\fP = 1.57079632679489661923132169163975144209858_sp"
+.PP
+Definition at line 60 of file SCAM_UtilsMOD.f90.
+.SS "REAL(DP),parameter,public \fBSCAM_Utils::PIO2_D\fP = 1.57079632679489661923132169163975144209858_dp"
+.PP
+Definition at line 65 of file SCAM_UtilsMOD.f90.
+.SS "TYPE(RUNS),public \fBSCAM_Utils::Refer\fP"
+.PP
+Definition at line 111 of file SCAM_UtilsMOD.f90.
+.SS "REAL(SP),parameter,public \fBSCAM_Utils::SQRT2\fP = 1.41421356237309504880168872420969807856967_sp"
+.PP
+Definition at line 62 of file SCAM_UtilsMOD.f90.
+.SS "INTEGER,public \fBSCAM_Utils::starting_time\fP"
+.PP
+Definition at line 98 of file SCAM_UtilsMOD.f90.
+.SS "INTEGER,public \fBSCAM_Utils::time_step\fP"
+.PP
+Definition at line 100 of file SCAM_UtilsMOD.f90.
+.SS "REAL(SP),parameter,public \fBSCAM_Utils::TWOPI\fP = 6.283185307179586476925286766559005768394_sp"
+.PP
+Definition at line 61 of file SCAM_UtilsMOD.f90.
+.SS "REAL(DP),parameter,public \fBSCAM_Utils::TWOPI_D\fP = 6.283185307179586476925286766559005768394_dp"
+.PP
+Definition at line 66 of file SCAM_UtilsMOD.f90.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for SCAMTEC from the source code.
