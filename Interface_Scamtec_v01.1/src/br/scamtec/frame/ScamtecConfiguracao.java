@@ -32,6 +32,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.io.FileWriter;
 import java.nio.channels.FileChannel;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
@@ -341,7 +342,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     File dir = new File(txtEndSaida.getText() + Recorte.ReplaceEspacoPorAnderline(listaRecorte.get(j).getRegiao()));
                     if (dir.mkdir()) {
                     } else {
-                        System.out.println("Erro ao criar diretorio, o diretório ja existia, arquivos serão sobrescritos");
+                        System.out.println("Erro ao criar diretório, o diretório ja existia, arquivos serão sobrescritos");
                     }
                     Main.endSaida = txtEndSaida.getText() + Recorte.ReplaceEspacoPorAnderline(listaRecorte.get(j).getRegiao()) + "/";
                     fos.write(texto.getBytes());
@@ -1969,13 +1970,13 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
         jTabbedPaneGrafico.addTab("PROPRIEDADES DO TEMPO E DOMINIO", jPanelTempoDominio);
 
-        jComboBoxRefModelAnlise.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AGCM/CPTEC", "ETA/CPTEC", "50yr Climatology", "IWV-PSAS T126", "Precipitation", " " }));
+        jComboBoxRefModelAnlise.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AGCM/CPTEC", "IWV-PSAS T126", "Precipitation", " " }));
 
-        jLabel13.setText("SELECIONE O MODELO DE ANALISE");
+        jLabel13.setText("SELECIONE O MODELO DE ANALISE (REFERENCIA)");
 
-        jLabel14.setText("ENDEREÇO:");
+        jLabel14.setText("DIRETÓRIO:");
 
-        jLabel15.setText("/enderco/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb");
+        jLabel15.setText("Exemplo: /diretório/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.grb");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -2030,14 +2031,14 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
         jLabel18.setText("SELECIONE O MODELO DO EXPERIMENTO");
 
-        jComboBoxRefModelExp.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AGCM/CPTEC", "ETA/CPTEC", "50yr Climatology", "IWV-PSAS T126", "Precipitation", " " }));
+        jComboBoxRefModelExp.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AGCM/CPTEC", "IWV-PSAS T126", "Precipitation", " " }));
 
-        jLabel19.setText("ENDEREÇO:");
+        jLabel19.setText("DIRETÓRIO:");
 
-        jLabel20.setText("/endereco/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb");
+        jLabel20.setText("Exemplo: /diretório/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb");
 
         btAdicionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/check.png"))); // NOI18N
-        btAdicionar.setText("ADCIONAR");
+        btAdicionar.setText("ADICIONAR");
         btAdicionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btAdicionarActionPerformed(evt);
@@ -2154,9 +2155,9 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         jComboBoxRefModelxClima.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "50yr Climatology" }));
         jComboBoxRefModelxClima.setFocusable(false);
 
-        jLabel22.setText("ENDEREÇO:");
+        jLabel22.setText("DIRETÓRIO:");
 
-        jLabel23.setText("/endereco/climatologiaJGM/climatologia50yr.%mc.bin");
+        jLabel23.setText("/diretório/climatologiaJGM/climatologia50yr.%mc.bin");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -2205,12 +2206,12 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             }
         });
 
-        jLabel24.setText("MODELO DE CLIMATOLOGIA");
+         jLabel24.setText("ARQUIVO PRECIPITAÇÃO");
 
         jComboBoxRefModelxPrecip.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Precipitation" }));
         jComboBoxRefModelxPrecip.setFocusable(false);
 
-        jLabel25.setText("ENDEREÇO:");
+        jLabel25.setText("DIRETÓRIO:");
 
         jLabel26.setText("/endereco/preciptacao/%y4/3B42RT_SA.%y4%m2%d2%h200.bin");
 
@@ -2348,7 +2349,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel39.setText("ENDEREÇO:");
+        jLabel39.setText("RESULTADOS:");
 
         txtEndSaida.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -2356,7 +2357,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             }
         });
 
-        jLabel40.setText("/stornext/home/paulo.dias/SCAMTEC_Paulo_New_Variaveis/SCAMTEC_v0.1/core/results/");
+        jLabel40.setText("Exemplo: /scratchout/grupos/assim_dados/home/lucas.amarante/resultados_scamtec/");
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -2384,9 +2385,9 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel42.setText("ENDEREÇO:");
+        jLabel42.setText("EXECUTÁVEL (local do arquivo scamtec.x):");
 
-        jLabel43.setText("/stornext/home/paulo.dias/SCAMTEC_Paulo_New_Variaveis/SCAMTEC_v0.1/core/");
+        jLabel43.setText("Exemplo: /scratchin/grupos/assim_dados/home/lucas.amarante/projeto_scamtec/SCAMTEC/core/");
 
         javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
         jPanel11.setLayout(jPanel11Layout);
@@ -2588,7 +2589,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(-16777216,true)));
 
-        txtVIES2.setToolTipText("Escreva o diretorio do experimento VIES2 com .scam no final");
+        txtVIES2.setToolTipText("Escreva o diretório do experimento VIES2 com .scam no final");
         txtVIES2.setAutoscrolls(false);
         txtVIES2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2596,10 +2597,10 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             }
         });
 
-        txtRMS2.setToolTipText("Escreva o diretorio do experimento RMS2 com .scam no final");
+        txtRMS2.setToolTipText("Escreva o diretório do experimento RMS2 com .scam no final");
         txtRMS2.setAutoscrolls(false);
 
-        txtACOR2.setToolTipText("Escreva o diretorio do experimento ACOR2 com .scam no final");
+        txtACOR2.setToolTipText("Escreva o diretório do experimento ACOR2 com .scam no final");
         txtACOR2.setAutoscrolls(false);
         txtACOR2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2607,9 +2608,9 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             }
         });
 
-        txtACOR1.setToolTipText("Escreva o diretorio do experimento ACOR1 com .scam no final");
+        txtACOR1.setToolTipText("Escreva o diretório do experimento ACOR1 com .scam no final");
 
-        txtRMS1.setToolTipText("Escreva o diretorio do experimento RMS1 com .scam no final");
+        txtRMS1.setToolTipText("Escreva o diretório do experimento RMS1 com .scam no final");
         txtRMS1.setAutoscrolls(false);
         txtRMS1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2617,7 +2618,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             }
         });
 
-        txtVIES1.setToolTipText("Escreva o diretorio do experimento VIES1 com .scam no final");
+        txtVIES1.setToolTipText("Escreva o diretório do experimento VIES1 com .scam no final");
         txtVIES1.setAutoscrolls(false);
 
         jLabel52.setText("ACOR");
@@ -2810,36 +2811,51 @@ private void jRadioButtonUseClimaMouseClicked(java.awt.event.MouseEvent evt) {//
     }
 }//GEN-LAST:event_jRadioButtonUseClimaMouseClicked
 
+
 private void btDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDeletarActionPerformed
     DefaultTableModel modelo = (DefaultTableModel) tabelaEXP.getModel();
     int linha = tabelaEXP.getSelectedRow();
-    //String id = modelo.getValueAt(linha, 0).toString();
-    modelo.removeRow(linha);
-    id_linhaTabelaExp = 0;
-    txtEndExp.setText("");
-    txtNomeEXP.setText("");
+        
+    
+	if(linha == -1) {
+      JOptionPane.showMessageDialog(rootPane, "NENHUM EXPERIMENTO SELECIONADO PARA DELETAR");
+    } 
+	else{
+    
+      //String id = modelo.getValueAt(linha, 0).toString();
+      modelo.removeRow(linha);
+      //id_linhaTabelaExp = 0;
+      txtEndExp.setText("");
+      txtNomeEXP.setText("");
+	}
+    
+    
 }//GEN-LAST:event_btDeletarActionPerformed
 
 private void btAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAdicionarActionPerformed
     DefaultTableModel modelo = ((DefaultTableModel) tabelaEXP.getModel());
 
     int contLinhaTabela = modelo.getRowCount() + 1;
-    if ((contLinhaTabela > Integer.parseInt(txtQauntExp.getText())) && (id_linhaTabelaExp == -1)) {
-        JOptionPane.showMessageDialog(rootPane, "QUANTIDADE NÃO PERMITIDA!!!");
-        txtEndExp.setText("");
-        txtNomeEXP.setText("");
-    } else {
+    //System.out.println("Contalinha "+contLinhaTabela+"id linha: "+id_linhaTabelaExp);
+    
+    boolean ehNumero = true;
+     
 
-        if (txtQauntExp.getText().equals("")) {
+   if (txtQauntExp.getText().equals("")) {
             JOptionPane.showMessageDialog(rootPane, "INFORME A QUANTIDADE DE EXPERIMENTO");
             txtQauntExp.requestFocus();
-        } else if (txtEndExp.getText().equals("")) {
+    } else if (txtEndExp.getText().equals("")) {
             JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DO EXPERIMENTO");
             txtEndExp.requestFocus();
-        } else if (txtNomeEXP.getText().equals("")) {
+    } else if (txtNomeEXP.getText().equals("")) {
             JOptionPane.showMessageDialog(rootPane, "INFORME O NOME DO EXPERIMENTO");
             txtNomeEXP.requestFocus();
-        } else if (id_linhaTabelaExp == -1) {
+    } else if (id_linhaTabelaExp == -1) {
+        	
+     //verificando se é numeros     	
+      try{
+            Integer.parseInt(txtQauntExp.getText());
+          	
             contExp = modelo.getRowCount();
             String[] dados = new String[13];
             int idModel = jComboBoxRefModelExp.getSelectedIndex() + 1;
@@ -2852,12 +2868,43 @@ private void btAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
             dados[4] = txtNomeEXP.getText();
             nomeExp.add(txtNomeEXP.getText());
 
-            modelo.addRow(dados);
-            id_linhaTabelaExp = -1;
-            txtEndExp.setText("");
-            txtNomeEXP.setText("");
-        } else {
-            contExp = id_linhaTabelaExp;
+            if ((contLinhaTabela > Integer.parseInt(txtQauntExp.getText())) && (id_linhaTabelaExp == -1)) {
+                  JOptionPane.showMessageDialog(rootPane, "JA INSERIDO TODOS OS EXPERIMENTOS");
+                  txtEndExp.setText("");
+                  txtNomeEXP.setText("");
+                    
+                }
+            else{
+                  modelo.addRow(dados);
+                  id_linhaTabelaExp = -1;
+                  txtEndExp.setText("");
+                  txtNomeEXP.setText("");
+                  
+                  System.out.println("ENTRA AQUI no addROW !!");
+             }
+            
+      }catch(Exception e){
+                ehNumero = false;
+                JOptionPane.showMessageDialog(rootPane, "CAMPO QUANTIDADE DE EXPERIMENTOS ACEITA SOMENTE NÚMEROS");
+                txtEndExp.setText("");
+                txtNomeEXP.setText("");
+                txtQauntExp.setText("");
+      }
+            
+            
+            
+   } else {
+                  
+       id_linhaTabelaExp = -1;
+	   if (txtEndExp.getText().equals("")) {
+              JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DO EXPERIMENTO");
+              txtEndExp.requestFocus();
+          } else if (txtNomeEXP.getText().equals("")) {
+              JOptionPane.showMessageDialog(rootPane, "INFORME O NOME DO EXPERIMENTO");
+              txtNomeEXP.requestFocus();
+          } else if (id_linhaTabelaExp == -1) {
+	   
+        	contExp = modelo.getRowCount();
             String[] dados = new String[13];
             int idModel = jComboBoxRefModelExp.getSelectedIndex() + 1;
 
@@ -2869,18 +2916,27 @@ private void btAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
             dados[4] = txtNomeEXP.getText();
             nomeExp.add(txtNomeEXP.getText());
 
-            modelo.setValueAt(dados[0], id_linhaTabelaExp, 0);
-            modelo.setValueAt(dados[1], id_linhaTabelaExp, 1);
-            modelo.setValueAt(dados[2], id_linhaTabelaExp, 2);
-            modelo.setValueAt(dados[3], id_linhaTabelaExp, 3);
-            modelo.setValueAt(dados[4], id_linhaTabelaExp, 4);
+            if ((contLinhaTabela > Integer.parseInt(txtQauntExp.getText())) && (id_linhaTabelaExp == -1)) {
+                  JOptionPane.showMessageDialog(rootPane, "JA INSERIDO TODOS OS EXPERIMENTOS");
+                  txtEndExp.setText("");
+                  txtNomeEXP.setText("");
+                    
+                }
+            else{
+                  modelo.addRow(dados);
+                  id_linhaTabelaExp = -1;
+                  txtEndExp.setText("");
+                  txtNomeEXP.setText("");
+                                    
+             }   
+	   
+       }
+	   
+  
+        	
+   }
 
-            txtEndExp.setText("");
-            txtNomeEXP.setText("");
-            id_linhaTabelaExp = -1;
-        }
 
-    }
 }//GEN-LAST:event_btAdicionarActionPerformed
 
 private void tabelaEXPMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaEXPMouseClicked
@@ -2901,15 +2957,28 @@ private void btnDeletarLinhaActionPerformed(java.awt.event.ActionEvent evt) {//G
 // TODO add your handling code here:
     DefaultTableModel modeloTabelaRecorte = ((DefaultTableModel) tabelaRecorte.getModel());
     int linha = tabelaRecorte.getSelectedRow();
-    String id = modeloTabelaRecorte.getValueAt(linha, 0).toString();
-    modeloTabelaRecorte.removeRow(linha);
-    listaRecorte.remove(linha);
+    
+        
+    	if(linha == -1) {
+          JOptionPane.showMessageDialog(rootPane, "NENHUM RECORTE SELECIONADO");
+        } 
+    	
+    	else{
+    	String id = modeloTabelaRecorte.getValueAt(linha, 0).toString();
+        modeloTabelaRecorte.removeRow(linha);
+        listaRecorte.remove(linha);
 
 
-    for (int i = 0; i < modeloTabelaRecorte.getRowCount(); i++) {
-        modeloTabelaRecorte.setValueAt(i + 1, i, contExp);
-
+        for (int i = 0; i < modeloTabelaRecorte.getRowCount(); i++) {
+            modeloTabelaRecorte.setValueAt(i + 1, i, contExp);
+        }   
+    
+        
     }
+    
+   
+   
+    
 }//GEN-LAST:event_btnDeletarLinhaActionPerformed
 
 private void btnAdicionarRecorteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarRecorteActionPerformed
