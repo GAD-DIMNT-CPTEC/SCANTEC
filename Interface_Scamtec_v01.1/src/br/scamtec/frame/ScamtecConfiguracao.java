@@ -369,7 +369,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
 
 
-                    new Thread(new Carregar()).start();
+                    //new Thread(new Carregar()).start();
                     ExecutaScamtec exe = new ExecutaScamtec();
                     Thread theradExe = new Thread(exe);
                     theradExe.start();
@@ -1150,20 +1150,23 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         String dataIni = UtilData.dateToStringSemBarra(dataI) + jComboBoxHoraIni.getSelectedItem();
         Date dataF = jDateDataFinal.getDate();
         String dataFinal = UtilData.dateToStringSemBarra(dataF) + jComboBoxHoraFinal.getSelectedItem();
-        Main.endSaida = txtEndSaida.getText();
+        
+        //diretorio saida das figuras
+        Main.endDirFigSaida = Main.endSaida ;
+                
         qauntExp = Integer.parseInt(txtQauntExp.getText());
 
         for (int w = 0; w < qauntExp; w++) {// loop qauntidade de arquivos
 
             if (jRadioButtonAcor.isSelected() == true) {
                 int exp = w + 1;
-                nomeArq = Main.endSaida + "ACOREXP0" + exp + "_" + dataIni + dataFinal + ".scam";
+                nomeArq = Main.endDirFigSaida + "ACOREXP0" + exp + "_" + dataIni + dataFinal + "T.scam";
             } else if (jRadioButtonRmse.isSelected() == true) {
                 int exp = w + 1;
-                nomeArq = Main.endSaida + "RMSEEXP0" + exp + "_" + dataIni + dataFinal + ".scam";
+                nomeArq = Main.endDirFigSaida + "RMSEEXP0" + exp + "_" + dataIni + dataFinal + "T.scam";
             } else if (jRadioButtonVies.isSelected() == true) {
                 int exp = w + 1;
-                nomeArq = Main.endSaida + "VIESEXP0" + exp + "_" + dataIni + dataFinal + ".scam";
+                nomeArq = Main.endDirFigSaida + "VIESEXP0" + exp + "_" + dataIni + dataFinal + "T.scam";
             }
             txtArqSaida.setText(nomeArq);
             umaLinha.clear();
@@ -1343,15 +1346,17 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         Marker marcador = new ValueMarker(valor);
         chart.getXYPlot().addRangeMarker(marcador);
         marcador.setPaint(Color.BLACK);
+        
+        Main.endDirFigSaida = Main.endSaida;
 
-        File pasta = new File(txtEndSaida.getText() + "images" + "/");
+        File pasta = new File(Main.endDirFigSaida + "images" + "/");
         if (!pasta.exists()) {
             pasta.mkdir();
         }
         
         //salvando os arquivos
         
-        OutputStream arquivo = new FileOutputStream(txtEndSaida.getText() + "images" + "/" + titulo + ".png");
+        OutputStream arquivo = new FileOutputStream(Main.endDirFigSaida + "images" + "/" + titulo + ".png");
         ChartUtilities.writeChartAsPNG(arquivo, chart, 1000, 800);
 
 
@@ -1422,7 +1427,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         public void run() {
             //BarraProgressoSalvaGraficos barra = new BarraProgressoSalvaGraficos();
 
-
+        	
             //barra.barraGraficos.setIndeterminate(true);
             try {
 
@@ -1441,7 +1446,10 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 String dataIni = UtilData.dateToStringSemBarra(dataI) + jComboBoxHoraIni.getSelectedItem();
                 Date dataF = jDateDataFinal.getDate();
                 String dataFinal = UtilData.dateToStringSemBarra(dataF) + jComboBoxHoraFinal.getSelectedItem();
-                Main.endSaida = txtEndSaida.getText();
+                
+             
+                Main.endDirFigSaida = Main.endSaida;
+                
                 qauntExp = Integer.parseInt(txtQauntExp.getText());
 
                 for (int metrica = 1; metrica <= 3; metrica++) {
@@ -1449,13 +1457,13 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
                         if (metrica == 1) {
                             int exp = w + 1;
-                            nomeArq = Main.endSaida + "ACOREXP0" + exp + "_" + dataIni + dataFinal + ".scam";
+                            nomeArq = Main.endDirFigSaida + "ACOREXP0" + exp + "_" + dataIni + dataFinal + "T.scam";
                         } else if (metrica == 2) {
                             int exp = w + 1;
-                            nomeArq = Main.endSaida + "RMSEEXP0" + exp + "_" + dataIni + dataFinal + ".scam";
+                            nomeArq = Main.endDirFigSaida + "RMSEEXP0" + exp + "_" + dataIni + dataFinal + "T.scam";
                         } else if (metrica == 3) {
                             int exp = w + 1;
-                            nomeArq = Main.endSaida + "VIESEXP0" + exp + "_" + dataIni + dataFinal + ".scam";
+                            nomeArq = Main.endDirFigSaida + "VIESEXP0" + exp + "_" + dataIni + dataFinal + "T.scam";
                         }
                         txtArqSaida.setText(nomeArq);
                         umaLinha.clear();
@@ -1725,6 +1733,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
         jLabel48.setText("hh");
 
+       /* Comentando o botao loader (carregamento de um conf pronto)
         btLoaderScamConf.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/text.png"))); // NOI18N
         btLoaderScamConf.setText("LOADER");
         btLoaderScamConf.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -1733,6 +1742,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 btLoaderScamConfActionPerformed(evt);
             }
         });
+         */
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -2880,7 +2890,7 @@ private void btAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
                   txtEndExp.setText("");
                   txtNomeEXP.setText("");
                   
-                  System.out.println("ENTRA AQUI no addROW !!");
+                  
              }
             
       }catch(Exception e){
@@ -3139,22 +3149,58 @@ private void geraGraficoGeralEmHtmlActionPerformed(java.awt.event.ActionEvent ev
 }//GEN-LAST:event_geraGraficoGeralEmHtmlActionPerformed
 
 private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    if (jComboBoxVariavel.getSelectedItem().equals("Item 1")) {
-        JOptionPane.showMessageDialog(rootPane, "FAVOR CARREGAR FIGURAS!!!");
+
+ try {	 
+	//botao Gerar todas as figuras
+	if (jComboBoxVariavel.getSelectedItem().equals("Item 1") || jComboBoxVariavel.getSelectedItem().equals("Item 2") || jComboBoxVariavel.getSelectedItem().equals("Item 3") || jComboBoxVariavel.getSelectedItem().equals("Item 4") ) {
+        JOptionPane.showMessageDialog(rootPane, "FAVOR CARREGAR FIGURAS CORRETAMENTE");
     } else if(jComboBoxRecorte.getSelectedItem().toString().contains("Recorte")){
         JOptionPane.showMessageDialog(rootPane, "Defina outro nome para região do Recorte!");
+    } else if(txtEndSaida.getText().equals("")) {
+        JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DOS RESULTADOS CORRETAMENTE");
+        txtEndSaida.requestFocus();
+    	    	
     }else{
         salvaGraficosAll salva = new salvaGraficosAll();
         Thread theradExe = new Thread(salva);
         theradExe.start();
         new Thread(new Carregar()).start();
 
-
     }
+	
+  } catch (Exception ex) {
+     System.out.println(ex.toString());
+     
+ }
+	
 }//GEN-LAST:event_jButton1ActionPerformed
 
+
+
+
 private void btLoadArqSaidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btLoadArqSaidaActionPerformed
-    leituraArqSaida();
+    
+			
+	try {
+                  
+    	if(txtEndSaida.getText().equals("")) {
+            JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DOS RESULTADOS CORRETAMENTE");
+            txtEndSaida.requestFocus();
+        	    	
+        }else{
+        	        	
+        	leituraArqSaida();
+        	
+        }
+    }  catch (Exception ex) {
+    	System.out.println(ex.toString());
+    	
+    }
+	
+		
+	
+	
+	
 }//GEN-LAST:event_btLoadArqSaidaActionPerformed
 
 private void jRadioButtonRmseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButtonRmseMouseClicked
@@ -3199,7 +3245,15 @@ private void jRadioButtonAcorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-
 private void btGraficoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGraficoActionPerformed
     try {
         //leituraArqSaida();          
-        PlotTest();
+    	if(txtEndSaida.getText().equals("")) {
+            JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DOS RESULTADOS CORRETAMENTE");
+            txtEndSaida.requestFocus();
+        	    	
+        }else{
+        	        	
+          PlotTest();
+        	
+        }
     } catch (FileNotFoundException ex) {
         Logger.getLogger(ScamtecConfiguracao.class.getName()).log(Level.SEVERE, null, ex);
     } catch (IOException ex) {
