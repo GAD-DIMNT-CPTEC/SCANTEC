@@ -20,7 +20,7 @@ public class Main extends javax.swing.JFrame {
 
     private JLabel jLabelLogo;
     static int totalPrev, passoPrev;
-    static String endSaida;
+    static String endSaida, endDirFigSaida;
 
     /**
      * Creates new form Main
