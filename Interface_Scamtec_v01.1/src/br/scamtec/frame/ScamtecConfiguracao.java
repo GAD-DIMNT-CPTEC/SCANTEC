@@ -379,7 +379,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
                 } catch (Exception ee) {
                     // ee.printStackTrace();
-                    JOptionPane.showMessageDialog(rootPane, "ocorreu um merro: " + ee);
+                    JOptionPane.showMessageDialog(rootPane, "ocorreu um erro: " + ee);
                 }
 
             }
@@ -1284,7 +1284,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 nomeTipo = "VIES_";
             }
         }
-        showGraph(nomeTipo + cabecalho[jComboBoxVariavel.getSelectedIndex() + 1]);
+        showGraph(nomeTipo + cabecalho[jComboBoxVariavel.getSelectedIndex() + 1 ]+ "_" + Recorte.ReplaceEspacoPorAnderline(jComboBoxRecorte.getSelectedItem().toString()));
     }
 
     private void showGraph(String titulo) throws FileNotFoundException, IOException {
@@ -1566,7 +1566,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         jLabel46 = new javax.swing.JLabel();
         jLabel47 = new javax.swing.JLabel();
         jLabel48 = new javax.swing.JLabel();
-        btLoaderScamConf = new javax.swing.JButton();
+        //btLoaderScamConf = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         txtResolucaoY = new javax.swing.JTextField();
@@ -1793,7 +1793,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                         .addGap(4, 4, 4)
                         .addComponent(jLabel41)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btLoaderScamConf)
+                //.addComponent(btLoaderScamConf)
                 .addContainerGap(384, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -1821,7 +1821,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                             .addComponent(jLabel44)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(btLoaderScamConf))
+                        //.addComponent(btLoaderScamConf))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(3, 3, 3)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
@@ -1833,8 +1833,8 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                             .addComponent(jLabel4)
                             .addComponent(txtPrevisaoTempo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel48))))
-                .addContainerGap(16, Short.MAX_VALUE))
-        );
+                //.addContainerGap(16, Short.MAX_VALUE))
+        )));
 
         jLabel7.setText("LATITUDE ESQUERDA:");
 
@@ -2590,7 +2590,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         });
 
         jComboBoxRecorte.setEditable(true);
-        jComboBoxRecorte.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Recorte", "AMERICA DO SUL", "HEMISFERIO SUL", "BRASIL", "SÃO PAULO", "NOVO" }));
+        jComboBoxRecorte.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AMERICA DO SUL", "HEMISFERIO SUL", "BRASIL", "SÃO PAULO", "NOVO" }));
         jComboBoxRecorte.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxRecorteActionPerformed(evt);
@@ -3087,6 +3087,7 @@ private void jComboBoxRegiaoActionPerformed(java.awt.event.ActionEvent evt) {//G
     }
 }//GEN-LAST:event_jComboBoxRegiaoActionPerformed
 
+/* Comentando o botao carregar arquivo ja pronto.
 private void btLoaderScamConfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btLoaderScamConfActionPerformed
     JFileChooser file = new JFileChooser();
     file.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -3108,6 +3109,8 @@ private void btLoaderScamConfActionPerformed(java.awt.event.ActionEvent evt) {//
 
     }
 }//GEN-LAST:event_btLoaderScamConfActionPerformed
+*/
+
 
 private void txtHistoriaTempoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtHistoriaTempoActionPerformed
     int teste = difDatas();
@@ -3288,7 +3291,7 @@ private void txtACOR2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JButton btDeletar;
     private javax.swing.JButton btGrafico;
     private javax.swing.JButton btLoadArqSaida;
-    private javax.swing.JButton btLoaderScamConf;
+    //private javax.swing.JButton btLoaderScamConf;
     private javax.swing.JButton btRun;
     private javax.swing.JButton btnAdicionarRecorte;
     private javax.swing.JButton btnDeletarLinha;
