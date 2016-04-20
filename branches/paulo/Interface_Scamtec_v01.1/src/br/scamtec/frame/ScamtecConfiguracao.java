@@ -47,6 +47,12 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import javax.swing.JScrollBar;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.GroupLayout;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 
 /**
  *
@@ -69,6 +75,15 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
     String[][][] valores;
     int qauntExp = 1;
     private XYSeriesCollection dataset;
+    int TotalLinhasExp;
+    
+    String[] vetNomeExp = new String[8];
+    int contNE = 0;
+    String tpExp;
+    String dataIni, dataFinal;
+    
+    
+    
     //---------------------------------------------------
     /*
      *  Autor:Rafael
@@ -119,10 +134,10 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DO ARQUIVO DE ANALISE");
                 jTabbedPaneGrafico.setSelectedIndex(1);
                 txtEndAnalise.requestFocus();
-            } else if (txtQauntExp.getText().equals("")) {
-                JOptionPane.showMessageDialog(rootPane, "INFORME A QUANTIDADE DE EXPERIMENTO");
-                jTabbedPaneGrafico.setSelectedIndex(1);
-                txtQauntExp.requestFocus();
+           // } //else if (txtQauntExp.getText().equals("")) {
+              //  JOptionPane.showMessageDialog(rootPane, "INFORME A QUANTIDADE DE EXPERIMENTO");
+              //  jTabbedPaneGrafico.setSelectedIndex(1);
+              //  txtQauntExp.requestFocus();
             } else if (modelo.getRowCount() == 0) {
                 JOptionPane.showMessageDialog(rootPane, "INFORME O ARQUIVO DE EXPERIMENTO");
                 jTabbedPaneGrafico.setSelectedIndex(1);
@@ -259,13 +274,13 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     fos.write(texto.getBytes());
 
                     //arquivos de experimento
-                    texto = "\nNumber of Experiments: " + txtQauntExp.getText();
+                    texto = "\nNumber of Experiments: " + Integer.parseInt((String) jComboBoxQuantExp.getSelectedItem());
                     fos.write(texto.getBytes());
                     texto = "\n\nExperiments:";
                     fos.write(texto.getBytes());
                     texto = "\n#ModelId Name Diretory File_Name_with_mask";
                     fos.write(texto.getBytes());
-                    int quantExp = Integer.parseInt(txtQauntExp.getText());
+                    int quantExp = Integer.parseInt((String) jComboBoxQuantExp.getSelectedItem());
                     for (int i = 1; i < quantExp + 1; i++) {
 
                         texto = "\n" + modelo.getValueAt(i - 1, 0).toString();
@@ -344,6 +359,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     } else {
                         System.out.println("Erro ao criar diretório, o diretório ja existia, arquivos serão sobrescritos");
                     }
+                    
                     Main.endSaida = txtEndSaida.getText() + Recorte.ReplaceEspacoPorAnderline(listaRecorte.get(j).getRegiao()) + "/";
                     fos.write(texto.getBytes());
 
@@ -888,14 +904,14 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     //System.out.println(linha);
                 }
             }
-            txtQauntExp.setText(vetor[3]);
+           // txtQauntExp.setText(vetor[3]);
 
         } catch (Exception e) {
             System.err.println("Erro na abertura do arquivo " + NomeArq + '\n' + e);
         }
 
         //Experiments:
-        int nunExp = Integer.parseInt(txtQauntExp.getText());
+        int nunExp = Integer.parseInt((String) jComboBoxQuantExp.getSelectedItem());
         for (int i = 1; i <= nunExp; i++) {
             try {
                 String linha = "";
@@ -914,7 +930,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 DefaultTableModel modelo = ((DefaultTableModel) tabelaEXP.getModel());
 
                 int contLinhaTabela = modelo.getRowCount() + 1;
-                if (contLinhaTabela > Integer.parseInt(txtQauntExp.getText())) {
+                if (contLinhaTabela > Integer.parseInt((String) jComboBoxQuantExp.getSelectedItem())) {
                     JOptionPane.showMessageDialog(rootPane, "QUANTIDADE NÃO PERMITIDA!!!");
                     txtEndExp.setText("");
                 } else {
@@ -1138,23 +1154,27 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
     private void leituraArqSaida() {
         String nomeArq = "";
         String linha;
-        int nExp = Integer.parseInt(txtQauntExp.getText());
+        int nExp = Integer.parseInt((String) jComboBoxQuantExp.getSelectedItem());
         int totalPrev = Integer.parseInt(txtPrevisaoTempoTotal.getText());
         int horaPrev = Integer.parseInt(txtPrevisaoTempo.getText());
         int quatHoras = (totalPrev / horaPrev) + 2;//porque + 2 para somar a zero horas e o cabeçalho
         valores = new String[nExp][quatHoras][23]; // = new String[][][];//[quantExp][quantHoras][quantVariaveis]
         //System.out.println("VALORES "+nExp+" "+quatHoras);
+        
+        
 
         //pegando data inicial e final
         Date dataI = jDateDataIni.getDate();
-        String dataIni = UtilData.dateToStringSemBarra(dataI) + jComboBoxHoraIni.getSelectedItem();
+        dataIni = UtilData.dateToStringSemBarra(dataI) + jComboBoxHoraIni.getSelectedItem();
         Date dataF = jDateDataFinal.getDate();
-        String dataFinal = UtilData.dateToStringSemBarra(dataF) + jComboBoxHoraFinal.getSelectedItem();
+        dataFinal = UtilData.dateToStringSemBarra(dataF) + jComboBoxHoraFinal.getSelectedItem();
         
         //diretorio saida das figuras
-        Main.endDirFigSaida = Main.endSaida ;
-                
-        qauntExp = Integer.parseInt(txtQauntExp.getText());
+        //Main.endDirFigSaida = Main.endSaida ;
+        Main.endDirFigSaida = Main.endSaida + Recorte.ReplaceEspacoPorAnderline(jComboBoxRecorte.getSelectedItem().toString())+"/";
+        
+                        
+        qauntExp = Integer.parseInt((String) jComboBoxQuantExp.getSelectedItem());
 
         for (int w = 0; w < qauntExp; w++) {// loop qauntidade de arquivos
 
@@ -1216,11 +1236,14 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         }
         tabelaPadraoValores();
         setVariaveis();
+        setExpCompara();
         jComboBoxVariavelItemStateChanged(null);
 
     }
 
-    private void tabelaPadraoValores() {
+    
+
+	private void tabelaPadraoValores() {
         //leituraArqSaida();
         DefaultTableModel modelo = ((DefaultTableModel) tabelaValores.getModel());
         modelo.setRowCount(0);
@@ -1248,6 +1271,45 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         }
 
     }
+    
+    private void setExpCompara() {
+		// mudanca de experimentos no jComboBox comparacao graficos
+    	
+    	DefaultComboBoxModel modeloe1 = ((DefaultComboBoxModel) jComboBoxExp1.getModel());
+        modeloe1.removeAllElements();
+        
+        int qtexp= Integer.parseInt((String) jComboBoxQuantExp.getSelectedItem()); 	
+       
+        String ms;
+        
+                
+        for (int i = 1; i <= qtexp; i++) {
+        	
+        	ms = Integer.toString(i);
+        	tpExp = "EXP0"+ms+"-"+ vetNomeExp[i-1];
+        	
+            modeloe1.addElement(tpExp);
+        }
+        
+        
+        DefaultComboBoxModel modeloe2 = ((DefaultComboBoxModel) jComboBoxExp2.getModel());
+        modeloe2.removeAllElements();
+        
+         for (int i = 1; i <= qtexp; i++) {
+        	
+        	ms = Integer.toString(i);
+        	tpExp = "EXP0"+ms+"-"+ vetNomeExp[i-1];
+        	
+            modeloe2.addElement(tpExp);
+        }
+        
+        
+        
+        
+        
+		
+	}
+    
 
     public void PlotTest() throws FileNotFoundException, IOException {
         // leituraArqSaida();
@@ -1347,7 +1409,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         chart.getXYPlot().addRangeMarker(marcador);
         marcador.setPaint(Color.BLACK);
         
-        Main.endDirFigSaida = Main.endSaida;
+        Main.endDirFigSaida = Main.endSaida + Recorte.ReplaceEspacoPorAnderline(jComboBoxRecorte.getSelectedItem().toString())+"/";;
 
         File pasta = new File(Main.endDirFigSaida + "images" + "/");
         if (!pasta.exists()) {
@@ -1434,7 +1496,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 // gera todas as figuras 
                 String nomeArq = "";
                 String linha;
-                int nExp = Integer.parseInt(txtQauntExp.getText());
+                int nExp = Integer.parseInt((String) jComboBoxQuantExp.getSelectedItem());
                 int totalPrev = Integer.parseInt(txtPrevisaoTempoTotal.getText());
                 int horaPrev = Integer.parseInt(txtPrevisaoTempo.getText());
                 int quatHoras = (totalPrev / horaPrev) + 2;//porque + 2 para somar a zero horas e o cabeçalho
@@ -1448,9 +1510,9 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 String dataFinal = UtilData.dateToStringSemBarra(dataF) + jComboBoxHoraFinal.getSelectedItem();
                 
              
-                Main.endDirFigSaida = Main.endSaida;
+                Main.endDirFigSaida = Main.endSaida + Recorte.ReplaceEspacoPorAnderline(jComboBoxRecorte.getSelectedItem().toString())+"/";
                 
-                qauntExp = Integer.parseInt(txtQauntExp.getText());
+                qauntExp = Integer.parseInt((String) jComboBoxQuantExp.getSelectedItem());
 
                 for (int metrica = 1; metrica <= 3; metrica++) {
                     for (int w = 0; w < qauntExp; w++) {// loop qauntidade de arquivos
@@ -1595,7 +1657,6 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         jLabel15 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jLabel17 = new javax.swing.JLabel();
-        txtQauntExp = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         tabelaEXP = new javax.swing.JTable();
         jLabel18 = new javax.swing.JLabel();
@@ -1668,19 +1729,6 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         jButton1 = new javax.swing.JButton();
         geraGraficoGeralEmHtml = new javax.swing.JButton();
         jComboBoxRecorte = new javax.swing.JComboBox();
-        jPanel1 = new javax.swing.JPanel();
-        txtVIES2 = new javax.swing.JTextField();
-        txtRMS2 = new javax.swing.JTextField();
-        txtACOR2 = new javax.swing.JTextField();
-        txtACOR1 = new javax.swing.JTextField();
-        txtRMS1 = new javax.swing.JTextField();
-        txtVIES1 = new javax.swing.JTextField();
-        jLabel52 = new javax.swing.JLabel();
-        jLabel56 = new javax.swing.JLabel();
-        jLabel54 = new javax.swing.JLabel();
-        jLabel51 = new javax.swing.JLabel();
-        jLabel53 = new javax.swing.JLabel();
-        jLabel55 = new javax.swing.JLabel();
 
         setClosable(true);
         setTitle("SCAMTEC CONFIGURAÇÕES");
@@ -2066,69 +2114,73 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         jLabel49.setText("NOME:");
 
         jLabel50.setText("EX: C/GPS");
+        
+        jComboBoxQuantExp = new JComboBox();
+        
+        jComboBoxQuantExp.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" }));
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1294, Short.MAX_VALUE)
-                    .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, 1294, Short.MAX_VALUE)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel17)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtQauntExp, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btAdicionar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btDeletar)
-                        .addGap(0, 851, Short.MAX_VALUE))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jComboBoxRefModelExp, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel19))
-                            .addComponent(jLabel49))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, 911, Short.MAX_VALUE)
-                            .addComponent(txtEndExp, javax.swing.GroupLayout.DEFAULT_SIZE, 911, Short.MAX_VALUE)
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(txtNomeEXP, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel50)
-                                .addGap(0, 423, Short.MAX_VALUE)))))
-                .addContainerGap())
+        	jPanel6Layout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(jPanel6Layout.createSequentialGroup()
+        			.addContainerGap()
+        			.addGroup(jPanel6Layout.createParallelGroup(Alignment.LEADING)
+        				.addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 1297, Short.MAX_VALUE)
+        				.addComponent(jLabel18, GroupLayout.DEFAULT_SIZE, 1297, Short.MAX_VALUE)
+        				.addGroup(jPanel6Layout.createSequentialGroup()
+        					.addComponent(jLabel17)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(jComboBoxQuantExp, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+        					.addGap(18)
+        					.addComponent(btAdicionar)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(btDeletar)
+        					.addGap(0, 833, Short.MAX_VALUE))
+        				.addGroup(jPanel6Layout.createSequentialGroup()
+        					.addGroup(jPanel6Layout.createParallelGroup(Alignment.TRAILING)
+        						.addGroup(jPanel6Layout.createSequentialGroup()
+        							.addComponent(jComboBoxRefModelExp, GroupLayout.PREFERRED_SIZE, 276, GroupLayout.PREFERRED_SIZE)
+        							.addPreferredGap(ComponentPlacement.RELATED)
+        							.addComponent(jLabel19))
+        						.addComponent(jLabel49))
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addGroup(jPanel6Layout.createParallelGroup(Alignment.LEADING)
+        						.addComponent(jLabel20, GroupLayout.DEFAULT_SIZE, 925, Short.MAX_VALUE)
+        						.addComponent(txtEndExp, GroupLayout.DEFAULT_SIZE, 925, Short.MAX_VALUE)
+        						.addGroup(jPanel6Layout.createSequentialGroup()
+        							.addComponent(txtNomeEXP, GroupLayout.PREFERRED_SIZE, 409, GroupLayout.PREFERRED_SIZE)
+        							.addPreferredGap(ComponentPlacement.RELATED)
+        							.addComponent(jLabel50)
+        							.addGap(0, 443, Short.MAX_VALUE)))))
+        			.addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17)
-                    .addComponent(txtQauntExp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btAdicionar)
-                    .addComponent(btDeletar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel18)
-                    .addComponent(jLabel20))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBoxRefModelExp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel19)
-                    .addComponent(txtEndExp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtNomeEXP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel49)
-                    .addComponent(jLabel50))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
-                .addContainerGap())
+        	jPanel6Layout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(jPanel6Layout.createSequentialGroup()
+        			.addGroup(jPanel6Layout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(jLabel17)
+        				.addComponent(btAdicionar)
+        				.addComponent(btDeletar)
+        				.addComponent(jComboBoxQuantExp, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
+        			.addPreferredGap(ComponentPlacement.UNRELATED)
+        			.addGroup(jPanel6Layout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(jLabel18)
+        				.addComponent(jLabel20))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(jPanel6Layout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(jComboBoxRefModelExp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(jLabel19)
+        				.addComponent(txtEndExp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(jPanel6Layout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(txtNomeEXP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(jLabel49)
+        				.addComponent(jLabel50))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
+        			.addContainerGap())
         );
+        jPanel6.setLayout(jPanel6Layout);
 
         javax.swing.GroupLayout jPanelPropArqLayout = new javax.swing.GroupLayout(jPanelPropArq);
         jPanelPropArq.setLayout(jPanelPropArqLayout);
@@ -2543,12 +2595,15 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             }
         });
 
-        jComboBoxVariavel.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxVariavel.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1" }));
         jComboBoxVariavel.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 jComboBoxVariavelItemStateChanged(evt);
             }
         });
+        
+        
+        
 
         buttonGroup1.add(jRadioButtonVies);
         jRadioButtonVies.setText("VIES");
@@ -2596,174 +2651,86 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 jComboBoxRecorteActionPerformed(evt);
             }
         });
-
-        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(-16777216,true)));
-
-        txtVIES2.setToolTipText("Escreva o diretório do experimento VIES2 com .scam no final");
-        txtVIES2.setAutoscrolls(false);
-        txtVIES2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtVIES2ActionPerformed(evt);
-            }
-        });
-
-        txtRMS2.setToolTipText("Escreva o diretório do experimento RMS2 com .scam no final");
-        txtRMS2.setAutoscrolls(false);
-
-        txtACOR2.setToolTipText("Escreva o diretório do experimento ACOR2 com .scam no final");
-        txtACOR2.setAutoscrolls(false);
-        txtACOR2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtACOR2ActionPerformed(evt);
-            }
-        });
-
-        txtACOR1.setToolTipText("Escreva o diretório do experimento ACOR1 com .scam no final");
-
-        txtRMS1.setToolTipText("Escreva o diretório do experimento RMS1 com .scam no final");
-        txtRMS1.setAutoscrolls(false);
-        txtRMS1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtRMS1ActionPerformed(evt);
-            }
-        });
-
-        txtVIES1.setToolTipText("Escreva o diretório do experimento VIES1 com .scam no final");
-        txtVIES1.setAutoscrolls(false);
-
-        jLabel52.setText("ACOR");
-
-        jLabel56.setText("VIES");
-
-        jLabel54.setText("RMS");
-
-        jLabel51.setText("Diretórios");
-
-        jLabel53.setText("Exp01");
-
-        jLabel55.setText("Exp02");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel52)
-                            .addComponent(jLabel54)
-                            .addComponent(jLabel56))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtVIES1)
-                            .addComponent(txtRMS1)
-                            .addComponent(txtACOR1, javax.swing.GroupLayout.PREFERRED_SIZE, 587, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtVIES2)
-                            .addComponent(txtRMS2)
-                            .addComponent(txtACOR2, javax.swing.GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE))
-                        .addContainerGap(78, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel51)
-                        .addGap(240, 240, 240)
-                        .addComponent(jLabel53)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 616, Short.MAX_VALUE)
-                        .addComponent(jLabel55)
-                        .addGap(297, 297, 297))))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(txtACOR2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtRMS2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtVIES2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel51)
-                            .addComponent(jLabel55)
-                            .addComponent(jLabel53))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel52)
-                            .addComponent(txtACOR1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel54)
-                            .addComponent(txtRMS1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel56)
-                            .addComponent(txtVIES1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap())
-        );
+        
+        JLabel lblSelecioneOsExperimentos = new JLabel("Selecione os experimentos para comparação:");
+        
+        jComboBoxExp1 = new JComboBox();
+        
+        jComboBoxExp2 = new JComboBox();
+        
+        lblX = new JLabel("X");
 
         javax.swing.GroupLayout jPanelGraficoLayout = new javax.swing.GroupLayout(jPanelGrafico);
-        jPanelGrafico.setLayout(jPanelGraficoLayout);
         jPanelGraficoLayout.setHorizontalGroup(
-            jPanelGraficoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelGraficoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelGraficoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelGraficoLayout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(jPanelGraficoLayout.createSequentialGroup()
-                        .addGroup(jPanelGraficoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 1330, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanelGraficoLayout.createSequentialGroup()
-                                .addComponent(jRadioButtonVies)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRadioButtonRmse)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRadioButtonAcor)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jComboBoxVariavel, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jComboBoxRecorte, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btLoadArqSaida)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtArqSaida, javax.swing.GroupLayout.PREFERRED_SIZE, 706, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())
-                    .addGroup(jPanelGraficoLayout.createSequentialGroup()
-                        .addComponent(geraGraficoGeralEmHtml)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 819, Short.MAX_VALUE)
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btGrafico)
-                        .addGap(41, 41, 41))))
+        	jPanelGraficoLayout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(jPanelGraficoLayout.createSequentialGroup()
+        			.addContainerGap()
+        			.addGroup(jPanelGraficoLayout.createParallelGroup(Alignment.LEADING)
+        				.addGroup(jPanelGraficoLayout.createSequentialGroup()
+        					.addGroup(jPanelGraficoLayout.createParallelGroup(Alignment.LEADING)
+        						.addComponent(jScrollPane3, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 1330, GroupLayout.PREFERRED_SIZE)
+        						.addGroup(jPanelGraficoLayout.createSequentialGroup()
+        							.addComponent(jRadioButtonVies)
+        							.addPreferredGap(ComponentPlacement.RELATED)
+        							.addComponent(jRadioButtonRmse)
+        							.addPreferredGap(ComponentPlacement.RELATED)
+        							.addComponent(jRadioButtonAcor)
+        							.addPreferredGap(ComponentPlacement.RELATED)
+        							.addComponent(jComboBoxVariavel, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
+        							.addPreferredGap(ComponentPlacement.RELATED)
+        							.addComponent(jComboBoxRecorte, GroupLayout.PREFERRED_SIZE, 206, GroupLayout.PREFERRED_SIZE)
+        							.addPreferredGap(ComponentPlacement.RELATED)
+        							.addComponent(btLoadArqSaida)
+        							.addPreferredGap(ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+        							.addComponent(txtArqSaida, GroupLayout.PREFERRED_SIZE, 706, GroupLayout.PREFERRED_SIZE)))
+        					.addContainerGap())
+        				.addGroup(jPanelGraficoLayout.createSequentialGroup()
+        					.addGroup(jPanelGraficoLayout.createParallelGroup(Alignment.LEADING)
+        						.addComponent(geraGraficoGeralEmHtml)
+        						.addComponent(lblSelecioneOsExperimentos))
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(jButton1)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(btGrafico)
+        					.addGap(41))
+        				.addGroup(jPanelGraficoLayout.createSequentialGroup()
+        					.addGap(12)
+        					.addComponent(jComboBoxExp1, GroupLayout.PREFERRED_SIZE, 157, GroupLayout.PREFERRED_SIZE)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(lblX)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(jComboBoxExp2, GroupLayout.PREFERRED_SIZE, 149, GroupLayout.PREFERRED_SIZE)
+        					.addContainerGap())))
         );
         jPanelGraficoLayout.setVerticalGroup(
-            jPanelGraficoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelGraficoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelGraficoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButtonVies)
-                    .addComponent(jRadioButtonRmse)
-                    .addComponent(jRadioButtonAcor)
-                    .addComponent(jComboBoxVariavel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtArqSaida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btLoadArqSaida)
-                    .addComponent(jComboBoxRecorte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
-                .addGroup(jPanelGraficoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(geraGraficoGeralEmHtml)
-                    .addComponent(btGrafico)
-                    .addComponent(jButton1))
-                .addGap(245, 245, 245))
+        	jPanelGraficoLayout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(jPanelGraficoLayout.createSequentialGroup()
+        			.addContainerGap()
+        			.addGroup(jPanelGraficoLayout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(jRadioButtonVies)
+        				.addComponent(jRadioButtonRmse)
+        				.addComponent(jRadioButtonAcor)
+        				.addComponent(jComboBoxVariavel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(txtArqSaida, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(btLoadArqSaida)
+        				.addComponent(jComboBoxRecorte, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addComponent(jScrollPane3, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
+        			.addGap(183)
+        			.addComponent(lblSelecioneOsExperimentos)
+        			.addPreferredGap(ComponentPlacement.UNRELATED)
+        			.addGroup(jPanelGraficoLayout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(jComboBoxExp1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(jComboBoxExp2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(lblX))
+        			.addPreferredGap(ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+        			.addGroup(jPanelGraficoLayout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(geraGraficoGeralEmHtml)
+        				.addComponent(btGrafico)
+        				.addComponent(jButton1))
+        			.addGap(245))
         );
+        jPanelGrafico.setLayout(jPanelGraficoLayout);
 
         jTabbedPaneGrafico.addTab("GRÁFICOS", jPanelGrafico);
 
@@ -2839,6 +2806,7 @@ private void btDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
       txtNomeEXP.setText("");
 	}
     
+
     
 }//GEN-LAST:event_btDeletarActionPerformed
 
@@ -2847,25 +2815,18 @@ private void btAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
 
     int contLinhaTabela = modelo.getRowCount() + 1;
     //System.out.println("Contalinha "+contLinhaTabela+"id linha: "+id_linhaTabelaExp);
+    int quantEXP = Integer.parseInt((String) jComboBoxQuantExp.getSelectedItem());
     
-    boolean ehNumero = true;
-     
-
-   if (txtQauntExp.getText().equals("")) {
-            JOptionPane.showMessageDialog(rootPane, "INFORME A QUANTIDADE DE EXPERIMENTO");
-            txtQauntExp.requestFocus();
-    } else if (txtEndExp.getText().equals("")) {
+    
+    
+   if (txtEndExp.getText().equals("")) {
             JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DO EXPERIMENTO");
             txtEndExp.requestFocus();
     } else if (txtNomeEXP.getText().equals("")) {
             JOptionPane.showMessageDialog(rootPane, "INFORME O NOME DO EXPERIMENTO");
             txtNomeEXP.requestFocus();
     } else if (id_linhaTabelaExp == -1) {
-        	
-     //verificando se é numeros     	
-      try{
-            Integer.parseInt(txtQauntExp.getText());
-          	
+        	    	         	
             contExp = modelo.getRowCount();
             String[] dados = new String[13];
             int idModel = jComboBoxRefModelExp.getSelectedIndex() + 1;
@@ -2878,7 +2839,7 @@ private void btAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
             dados[4] = txtNomeEXP.getText();
             nomeExp.add(txtNomeEXP.getText());
 
-            if ((contLinhaTabela > Integer.parseInt(txtQauntExp.getText())) && (id_linhaTabelaExp == -1)) {
+            if ((contLinhaTabela > quantEXP) && (id_linhaTabelaExp == -1)) {
                   JOptionPane.showMessageDialog(rootPane, "JA INSERIDO TODOS OS EXPERIMENTOS");
                   txtEndExp.setText("");
                   txtNomeEXP.setText("");
@@ -2889,19 +2850,9 @@ private void btAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
                   id_linhaTabelaExp = -1;
                   txtEndExp.setText("");
                   txtNomeEXP.setText("");
-                  
-                  
-             }
-            
-      }catch(Exception e){
-                ehNumero = false;
-                JOptionPane.showMessageDialog(rootPane, "CAMPO QUANTIDADE DE EXPERIMENTOS ACEITA SOMENTE NÚMEROS");
-                txtEndExp.setText("");
-                txtNomeEXP.setText("");
-                txtQauntExp.setText("");
-      }
-            
-            
+                                    
+             }            
+          
             
    } else {
                   
@@ -2926,7 +2877,7 @@ private void btAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
             dados[4] = txtNomeEXP.getText();
             nomeExp.add(txtNomeEXP.getText());
 
-            if ((contLinhaTabela > Integer.parseInt(txtQauntExp.getText())) && (id_linhaTabelaExp == -1)) {
+            if ((contLinhaTabela > quantEXP) && (id_linhaTabelaExp == -1)) {
                   JOptionPane.showMessageDialog(rootPane, "JA INSERIDO TODOS OS EXPERIMENTOS");
                   txtEndExp.setText("");
                   txtNomeEXP.setText("");
@@ -2945,8 +2896,18 @@ private void btAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
   
         	
    }
-
-
+   
+ 
+      vetNomeExp[contNE] = (String) modelo.getValueAt(contNE, 4);
+      
+      //System.out.println("Vendo nome do Experimento: "+vetNomeExp[contNE]);
+      
+      contNE = contNE+1;
+      
+           
+      //System.out.println("Funciona legal: "+modelo.getValueAt(0, 4));
+      
+   
 }//GEN-LAST:event_btAdicionarActionPerformed
 
 private void tabelaEXPMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaEXPMouseClicked
@@ -2992,7 +2953,6 @@ private void btnDeletarLinhaActionPerformed(java.awt.event.ActionEvent evt) {//G
 }//GEN-LAST:event_btnDeletarLinhaActionPerformed
 
 private void btnAdicionarRecorteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarRecorteActionPerformed
-
 
 
     /*Deixar as datas no padrão do scamtec*/
@@ -3116,38 +3076,71 @@ private void txtHistoriaTempoActionPerformed(java.awt.event.ActionEvent evt) {//
     int teste = difDatas();
 }//GEN-LAST:event_txtHistoriaTempoActionPerformed
 
+
 private void geraGraficoGeralEmHtmlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_geraGraficoGeralEmHtmlActionPerformed
 // TODO add your handling code here:
     GraficoComparativo grafico = new GraficoComparativo();
-    try {
+    
+    String acor1,acor2,rms1,rms2,vies1,vies2,saidaArq,recExp;
+        
+    String selCombExp1 = (String) jComboBoxExp1.getSelectedItem();
+    String selCombExp2 = (String) jComboBoxExp2.getSelectedItem();
+    
+    String selMeioExp1[] = selCombExp1.split("-");
+    String selMeioExp2[] = selCombExp2.split("-");
+    
+    String selFimExp1 = selMeioExp1[0];
+    String selFimExp2 = selMeioExp2[0];
+    
+    saidaArq=txtEndSaida.getText();
+    recExp=Recorte.ReplaceEspacoPorAnderline(jComboBoxRecorte.getSelectedItem().toString());
+    
+    System.out.println("Vamos ver qual experimento no compara: "+selFimExp1+" e "+selFimExp2);
+    
+    
+    acor1=saidaArq + recExp + "/" + "ACOR" + selFimExp1 + "_" + dataIni + dataFinal + "T.scam";
+    acor2=saidaArq + recExp + "/" + "ACOR" + selFimExp2 + "_" + dataIni + dataFinal + "T.scam";
+    
+    rms1=saidaArq + recExp + "/" + "RMSE" + selFimExp1 + "_" + dataIni + dataFinal + "T.scam";
+    rms2=saidaArq + recExp + "/" + "RMSE" + selFimExp2 + "_" + dataIni + dataFinal + "T.scam";
+    
+    vies1=saidaArq + recExp + "/" + "VIES" + selFimExp1 + "_" + dataIni + dataFinal + "T.scam";
+    vies2=saidaArq + recExp + "/" + "VIES" + selFimExp2 + "_" + dataIni + dataFinal + "T.scam";
+    
+    System.out.println("Vamos ver no compara: "+ acor1);
+    System.out.println("Vamos ver no compara: "+ acor2);
+    System.out.println("Vamos ver no compara: "+ rms1);
+    System.out.println("Vamos ver no compara: "+ rms2);
+    System.out.println("Vamos ver no compara: "+ vies1);
+    System.out.println("Vamos ver no compara: "+ vies2);
+    
+    
+
+//    try {
         /*java.io.File dirOrigem = new java.io.File("/home/rafael/Público/a/");  
         java.io.File dirDestino = new java.io.File("/home/rafael/Público/b/");
         grafico.copiarPastaDeImagens(dirOrigem, dirDestino, true);*/
         //grafico.copyDirectory(new File("./images/"),new File("/home/rafael/pastateste/"));
-        grafico.GerarHtmlComGraficoComparativo(
-                txtACOR1.getText(),
-                txtACOR2.getText(),
-                txtRMS1.getText(),
-                txtRMS2.getText(),
-                txtVIES1.getText(),
-                txtVIES2.getText(),
-                txtEndSaida.getText(),
-                jComboBoxRecorte.getSelectedItem().toString());
-        /*grafico.GerarHtmlComGraficoComparativo(
-                "/home/rafael/IMPACTO_scamtec/psasxtag_AS/ACOREXP01_20130101002013012612.scam",
-                "/home/rafael/IMPACTO_scamtec/psasxtag_AS/ACOREXP02_20130101002013012612.scam",
-                "/home/rafael/IMPACTO_scamtec/psasxtag_AS/RMSEEXP01_20130101002013012612.scam",
-                "/home/rafael/IMPACTO_scamtec/psasxtag_AS/RMSEEXP02_20130101002013012612.scam",
-                "/home/rafael/IMPACTO_scamtec/psasxtag_AS/VIESEXP01_20130101002013012612.scam",
-                "/home/rafael/IMPACTO_scamtec/psasxtag_AS/VIESEXP02_20130101002013012612.scam",
-                txtEndSaida.getText(),
-                jComboBoxRecorte.getSelectedItem().toString());*/
-        
-
+/*        grafico.GerarHtmlComGraficoComparativo(
+                acor1,
+                acor2,
+                rms1,
+                rms2,
+                vies1,
+                vies2,
+                saidaArq,
+                jComboBoxRecorte.getSelectedItem().toString()); */
+    
+                
+  /*
     } catch (Exception ex) {
         System.out.println(ex.toString());
         ex.printStackTrace();
     }
+  
+    */
+    
+    
 
 }//GEN-LAST:event_geraGraficoGeralEmHtmlActionPerformed
 
@@ -3155,7 +3148,7 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
  try {	 
 	//botao Gerar todas as figuras
-	if (jComboBoxVariavel.getSelectedItem().equals("Item 1") || jComboBoxVariavel.getSelectedItem().equals("Item 2") || jComboBoxVariavel.getSelectedItem().equals("Item 3") || jComboBoxVariavel.getSelectedItem().equals("Item 4") ) {
+	if (jComboBoxVariavel.getSelectedItem().equals("Item 1") ) {
         JOptionPane.showMessageDialog(rootPane, "FAVOR CARREGAR FIGURAS CORRETAMENTE");
     } else if(jComboBoxRecorte.getSelectedItem().toString().contains("Recorte")){
         JOptionPane.showMessageDialog(rootPane, "Defina outro nome para região do Recorte!");
@@ -3183,12 +3176,19 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
 private void btLoadArqSaidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btLoadArqSaidaActionPerformed
     
-			
+	File file1 = new File(txtEndSaida.getText());
+	
+  			
 	try {
                   
     	if(txtEndSaida.getText().equals("")) {
             JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DOS RESULTADOS CORRETAMENTE");
             txtEndSaida.requestFocus();
+        
+    	}else if(!file1.exists()){
+        	JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DOS RESULTADOS CORRETAMENTE"); 	
+        	txtEndSaida.requestFocus();
+            
         	    	
         }else{
         	        	
@@ -3197,7 +3197,7 @@ private void btLoadArqSaidaActionPerformed(java.awt.event.ActionEvent evt) {//GE
         }
     }  catch (Exception ex) {
     	System.out.println(ex.toString());
-    	
+    	JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DOS RESULTADOS CORRETAMENTE");
     }
 	
 		
@@ -3262,23 +3262,13 @@ private void btGraficoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     } catch (IOException ex) {
         Logger.getLogger(ScamtecConfiguracao.class.getName()).log(Level.SEVERE, null, ex);
     }
+    
+        
 }//GEN-LAST:event_btGraficoActionPerformed
 
 private void jComboBoxRecorteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxRecorteActionPerformed
 // TODO add your handling code here:
 }//GEN-LAST:event_jComboBoxRecorteActionPerformed
-
-private void txtVIES2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtVIES2ActionPerformed
-// TODO add your handling code here:
-}//GEN-LAST:event_txtVIES2ActionPerformed
-
-private void txtRMS1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRMS1ActionPerformed
-// TODO add your handling code here:
-}//GEN-LAST:event_txtRMS1ActionPerformed
-
-private void txtACOR2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtACOR2ActionPerformed
-// TODO add your handling code here:
-}//GEN-LAST:event_txtACOR2ActionPerformed
     /*
      *  Autor:Rafael
      *  Funcionalidade: Função para adicionar as váriaveis
@@ -3355,17 +3345,10 @@ private void txtACOR2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JLabel jLabel49;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel50;
-    private javax.swing.JLabel jLabel51;
-    private javax.swing.JLabel jLabel52;
-    private javax.swing.JLabel jLabel53;
-    private javax.swing.JLabel jLabel54;
-    private javax.swing.JLabel jLabel55;
-    private javax.swing.JLabel jLabel56;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
@@ -3393,8 +3376,6 @@ private void txtACOR2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JTable tabelaEXP;
     private javax.swing.JTable tabelaRecorte;
     private javax.swing.JTable tabelaValores;
-    private javax.swing.JTextField txtACOR1;
-    private javax.swing.JTextField txtACOR2;
     private javax.swing.JTextField txtAnaliseTempo;
     private javax.swing.JTextField txtArqSaida;
     private javax.swing.JTextField txtEndAnalise;
@@ -3417,13 +3398,11 @@ private void txtACOR2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JTextField txtPrecipTipo;
     private javax.swing.JTextField txtPrevisaoTempo;
     private javax.swing.JTextField txtPrevisaoTempoTotal;
-    private javax.swing.JTextField txtQauntExp;
-    private javax.swing.JTextField txtRMS1;
-    private javax.swing.JTextField txtRMS2;
     private javax.swing.JTextField txtResolucaoX;
     private javax.swing.JTextField txtResolucaoY;
     private javax.swing.JTextArea txtResult;
-    private javax.swing.JTextField txtVIES1;
-    private javax.swing.JTextField txtVIES2;
-    // End of variables declaration//GEN-END:variables
+    private JComboBox jComboBoxQuantExp;
+    private JComboBox jComboBoxExp1;
+    private JComboBox jComboBoxExp2;
+    private JLabel lblX;
 }
