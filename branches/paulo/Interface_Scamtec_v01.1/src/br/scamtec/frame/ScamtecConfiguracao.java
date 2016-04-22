@@ -53,6 +53,7 @@ import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import java.awt.Font;
 
 /**
  *
@@ -2658,12 +2659,14 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         });
         
         JLabel lblSelecioneOsExperimentos = new JLabel("Selecione os experimentos para comparação:");
+        lblSelecioneOsExperimentos.setFont(new Font("Dialog", Font.BOLD, 16));
         
         jComboBoxExp1 = new JComboBox();
         
         jComboBoxExp2 = new JComboBox();
         
         lblX = new JLabel("X");
+        lblX.setFont(new Font("Dialog", Font.BOLD, 16));
 
         javax.swing.GroupLayout jPanelGraficoLayout = new javax.swing.GroupLayout(jPanelGrafico);
         jPanelGraficoLayout.setHorizontalGroup(
@@ -2671,41 +2674,42 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         		.addGroup(jPanelGraficoLayout.createSequentialGroup()
         			.addContainerGap()
         			.addGroup(jPanelGraficoLayout.createParallelGroup(Alignment.LEADING)
-        				.addGroup(jPanelGraficoLayout.createSequentialGroup()
-        					.addGroup(jPanelGraficoLayout.createParallelGroup(Alignment.LEADING)
-        						.addComponent(jScrollPane3, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 1330, GroupLayout.PREFERRED_SIZE)
-        						.addGroup(jPanelGraficoLayout.createSequentialGroup()
-        							.addComponent(jRadioButtonVies)
-        							.addPreferredGap(ComponentPlacement.RELATED)
-        							.addComponent(jRadioButtonRmse)
-        							.addPreferredGap(ComponentPlacement.RELATED)
-        							.addComponent(jRadioButtonAcor)
-        							.addPreferredGap(ComponentPlacement.RELATED)
-        							.addComponent(jComboBoxVariavel, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
-        							.addPreferredGap(ComponentPlacement.RELATED)
-        							.addComponent(jComboBoxRecorte, GroupLayout.PREFERRED_SIZE, 206, GroupLayout.PREFERRED_SIZE)
-        							.addPreferredGap(ComponentPlacement.RELATED)
-        							.addComponent(btLoadArqSaida)
-        							.addPreferredGap(ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-        							.addComponent(txtArqSaida, GroupLayout.PREFERRED_SIZE, 706, GroupLayout.PREFERRED_SIZE)))
-        					.addContainerGap())
-        				.addGroup(jPanelGraficoLayout.createSequentialGroup()
-        					.addGroup(jPanelGraficoLayout.createParallelGroup(Alignment.LEADING)
+        				.addGroup(jPanelGraficoLayout.createParallelGroup(Alignment.LEADING)
+        					.addGroup(jPanelGraficoLayout.createSequentialGroup()
+        						.addGroup(jPanelGraficoLayout.createParallelGroup(Alignment.LEADING)
+        							.addComponent(jScrollPane3, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 1330, GroupLayout.PREFERRED_SIZE)
+        							.addGroup(jPanelGraficoLayout.createSequentialGroup()
+        								.addComponent(jRadioButtonVies)
+        								.addPreferredGap(ComponentPlacement.RELATED)
+        								.addComponent(jRadioButtonRmse)
+        								.addPreferredGap(ComponentPlacement.RELATED)
+        								.addComponent(jRadioButtonAcor)
+        								.addPreferredGap(ComponentPlacement.RELATED)
+        								.addComponent(jComboBoxVariavel, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
+        								.addPreferredGap(ComponentPlacement.RELATED)
+        								.addComponent(jComboBoxRecorte, GroupLayout.PREFERRED_SIZE, 206, GroupLayout.PREFERRED_SIZE)
+        								.addPreferredGap(ComponentPlacement.RELATED)
+        								.addComponent(btLoadArqSaida)
+        								.addPreferredGap(ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+        								.addComponent(txtArqSaida, GroupLayout.PREFERRED_SIZE, 706, GroupLayout.PREFERRED_SIZE)))
+        						.addContainerGap())
+        					.addGroup(jPanelGraficoLayout.createSequentialGroup()
+        						.addComponent(lblSelecioneOsExperimentos)
+        						.addContainerGap(968, Short.MAX_VALUE))
+        					.addGroup(Alignment.TRAILING, jPanelGraficoLayout.createSequentialGroup()
+        						.addComponent(jComboBoxExp1, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        						.addPreferredGap(ComponentPlacement.RELATED)
+        						.addComponent(lblX)
+        						.addPreferredGap(ComponentPlacement.RELATED)
+        						.addComponent(jComboBoxExp2, GroupLayout.PREFERRED_SIZE, 374, GroupLayout.PREFERRED_SIZE)
+        						.addGap(18)
         						.addComponent(geraGraficoGeralEmHtml)
-        						.addComponent(lblSelecioneOsExperimentos))
-        					.addPreferredGap(ComponentPlacement.RELATED)
+        						.addGap(326)))
+        				.addGroup(Alignment.TRAILING, jPanelGraficoLayout.createSequentialGroup()
         					.addComponent(jButton1)
-        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addPreferredGap(ComponentPlacement.UNRELATED)
         					.addComponent(btGrafico)
-        					.addGap(41))
-        				.addGroup(jPanelGraficoLayout.createSequentialGroup()
-        					.addGap(12)
-        					.addComponent(jComboBoxExp1, GroupLayout.PREFERRED_SIZE, 157, GroupLayout.PREFERRED_SIZE)
-        					.addPreferredGap(ComponentPlacement.RELATED)
-        					.addComponent(lblX)
-        					.addPreferredGap(ComponentPlacement.RELATED)
-        					.addComponent(jComboBoxExp2, GroupLayout.PREFERRED_SIZE, 149, GroupLayout.PREFERRED_SIZE)
-        					.addContainerGap())))
+        					.addGap(23))))
         );
         jPanelGraficoLayout.setVerticalGroup(
         	jPanelGraficoLayout.createParallelGroup(Alignment.LEADING)
@@ -2721,19 +2725,19 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         				.addComponent(jComboBoxRecorte, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         			.addPreferredGap(ComponentPlacement.RELATED)
         			.addComponent(jScrollPane3, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
-        			.addGap(183)
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(jPanelGraficoLayout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(btGrafico)
+        				.addComponent(jButton1))
+        			.addGap(21)
         			.addComponent(lblSelecioneOsExperimentos)
         			.addPreferredGap(ComponentPlacement.UNRELATED)
         			.addGroup(jPanelGraficoLayout.createParallelGroup(Alignment.BASELINE)
         				.addComponent(jComboBoxExp1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(lblX)
         				.addComponent(jComboBoxExp2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        				.addComponent(lblX))
-        			.addPreferredGap(ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
-        			.addGroup(jPanelGraficoLayout.createParallelGroup(Alignment.BASELINE)
-        				.addComponent(geraGraficoGeralEmHtml)
-        				.addComponent(btGrafico)
-        				.addComponent(jButton1))
-        			.addGap(245))
+        				.addComponent(geraGraficoGeralEmHtml))
+        			.addContainerGap(432, Short.MAX_VALUE))
         );
         jPanelGrafico.setLayout(jPanelGraficoLayout);
 
@@ -2765,8 +2769,29 @@ private void jTabbedPaneGraficoMouseClicked(java.awt.event.MouseEvent evt) {//GE
 }//GEN-LAST:event_jTabbedPaneGraficoMouseClicked
 
 private void btRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRunActionPerformed
-    indiceDaListaDeRecortes = listaRecorte.size() - 1;
-    ExecutarScamtec(indiceDaListaDeRecortes);
+    
+	try{
+	
+		if (txtEndExp.getText().equals("")) {
+			JOptionPane.showMessageDialog(rootPane, "FAVOR CONFIGURAR A RODADA CORRETAMENTE!");		
+	    
+		}else{
+			
+			indiceDaListaDeRecortes = listaRecorte.size() - 1;
+		    ExecutarScamtec(indiceDaListaDeRecortes);
+			
+		}
+		
+		
+	}catch (Exception ex) {
+    	System.out.println(ex.toString());
+    	//JOptionPane.showMessageDialog(rootPane, "FAVOR CONFIGURAR A RODADA CORRETAMENTE!");
+    }
+	
+	
+    
+    
+    
 }//GEN-LAST:event_btRunActionPerformed
 
 private void txtEndSaidaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtEndSaidaFocusLost
@@ -3178,11 +3203,7 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
  try {	 
 	//botao Gerar todas as figuras
-	if (jComboBoxVariavel.getSelectedItem().equals("Item 1") ) {
-        JOptionPane.showMessageDialog(rootPane, "FAVOR CARREGAR FIGURAS CORRETAMENTE");
-    } else if(jComboBoxRecorte.getSelectedItem().toString().contains("Recorte")){
-        JOptionPane.showMessageDialog(rootPane, "Defina outro nome para região do Recorte!");
-    } else if(txtEndSaida.getText().equals("")) {
+	if(txtEndSaida.getText().equals("")) {
         JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DOS RESULTADOS CORRETAMENTE");
         txtEndSaida.requestFocus();
     	    	
