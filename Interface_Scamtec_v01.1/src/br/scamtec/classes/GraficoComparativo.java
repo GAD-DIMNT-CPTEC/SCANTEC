@@ -57,9 +57,9 @@ public class GraficoComparativo {
                     break;
                 }
                 cont++;
-                System.out.println("\n----------------------------------\n");
-                //faz algo com a linha
-                System.out.println(linha);
+                
+                //System.out.println("\n----------------------------------\n");
+                //System.out.println(linha);
             }
             br.close();
             fr.close();
@@ -73,7 +73,7 @@ public class GraficoComparativo {
     
     public static double[][] lerResultadosDoScamtec(String documento) throws IOException {
         double[][] matriz = new double[10][21];
-        System.out.println("\n----------------Ler a Matriz");
+        //System.out.println("\n----------------Ler a Matriz");
         File arquivo = new File(documento);
         //faz a leitura do arquivo
         FileReader fr;
@@ -91,14 +91,13 @@ public class GraficoComparativo {
                     for (int i = 1; i < stringDividida.length - 2; i++) {
                         matriz[cont - 2][i - 1] = Double.valueOf(stringDividida[i]);
                         /*System.out.print(stringDividida[i] + ": "+ i +" ");*/
-                        System.out.print(matriz[cont - 2][i - 1] + " - ");
+                        //System.out.print(matriz[cont - 2][i - 1] + " - ");
                         /*System.out.print(i-1+" "+cont+ " "+(cont-2));*/
                     }
-                    System.out.println("");
+                       //System.out.println("");
                 }
                 cont++;
-                System.out.println("\n----------------------------------\n");
-                //faz algo com a linha
+                //System.out.println("\n----------------------------------\n");
                 //System.out.println(linha);
             }
             br.close();
@@ -112,7 +111,7 @@ public class GraficoComparativo {
     
     public static double[][] TirarDiferencaDaMatrizAeB(double matrizA[][], double matrizB[][]) {
         double[][] matriz = new double[10][21];
-        System.out.println("\n----------------Diferença das Matrizes");
+        //System.out.println("\n----------------Diferença das Matrizes");
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 21; j++) {
                 if (j > 0) {
@@ -121,16 +120,16 @@ public class GraficoComparativo {
                     matriz[i][j] = matrizA[i][j];
                 }
                 
-                System.out.print(matriz[i][j] + "    |    ");
+                //System.out.print(matriz[i][j] + "    |    ");
             }
-            System.out.println("");
+                //System.out.println("");
         }
         return matriz;
     }
     
     public static double[][] TirarDiferencaDaMatrizAeBVIES(double matrizA[][], double matrizB[][]) {
         double[][] matriz = new double[10][21];
-        System.out.println("\n----------------Diferença das Matrizes");
+        //System.out.println("\n----------------Diferença das Matrizes");
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 21; j++) {
                 if (j > 0) {
@@ -138,9 +137,9 @@ public class GraficoComparativo {
                 } else {
                     matriz[i][j] = Math.abs(matrizA[i][j]);
                 }
-                System.out.print(matriz[i][j] + "    |    ");
+                 //System.out.print(matriz[i][j] + "    |    ");
             }
-            System.out.println("");
+                 //System.out.println("");
         }
         return matriz;
     }
@@ -148,14 +147,14 @@ public class GraficoComparativo {
     public static double[][] dividirMatrizEmDois(double matrizAB[][]) {
         double[][] matriz = new double[5][21];
         int contador = 0;
-        System.out.println("\n-----------------Divisão das matrizes");
+        //System.out.println("\n-----------------Divisão das matrizes");
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 21; j++) {
                 matriz[contador][j] = (matrizAB[i][j] + matrizAB[i + 1][j]) / 2;//uma linha mais a próxima
                 //System.out.print(matriz[contador][j] + " = " + "("+matrizAB[i][j]+" + "+matrizAB[i+1][j]+") / 2) = ");
-                System.out.print(matriz[contador][j] + " |\n\n ");
+                //System.out.print(matriz[contador][j] + " |\n\n ");
             }
-            System.out.println("");
+                //System.out.println("");
             i++;
             contador++;
         }
@@ -177,9 +176,9 @@ public class GraficoComparativo {
                 } else if (matrizAB[i][j] <= -0.10) {
                     matriz[i][j - 1] = 1;
                 }
-                System.out.print(matriz[i][j - 1] + " | ");
+                //System.out.print(matriz[i][j - 1] + " | ");
             }
-            System.out.println("");
+                //System.out.println("");
         }
         return matriz;
     }
@@ -189,9 +188,9 @@ public class GraficoComparativo {
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 5; j++) {
                 matrizTransposta[i][j] = matriz[j][i];
-                System.out.print(matrizTransposta[i][j] + " | ");
+                //System.out.print(matrizTransposta[i][j] + " | ");
             }
-            System.out.println("");
+                //System.out.println("");
         }
         return matrizTransposta;
     }
@@ -205,9 +204,9 @@ public class GraficoComparativo {
                 } else {
                     matrizMultiplicada[i][j] = (matriz[i][j]);
                 }
-                System.out.print(matrizMultiplicada[i][j] + "  |  ");
+                 //System.out.print(matrizMultiplicada[i][j] + "  |  ");
             }
-            System.out.println("");
+                //System.out.println("");
             
         }
         return matrizMultiplicada;
@@ -215,7 +214,7 @@ public class GraficoComparativo {
     
     public static double[] CalcularDesvioPadrao(double[][] matriz) {
         double[] desvioPadrao = new double[20];
-        System.out.println("Desvio Padrão \n\n\n");
+        //System.out.println("Desvio Padrão \n\n\n");
         double media = 0;
         for (int i = 1; i < 21; i++) {
             for (int j = 0; j < 10; j++) {
@@ -228,7 +227,7 @@ public class GraficoComparativo {
                 
             }
             if (i > 0) {
-                System.out.print(desvioPadrao[i - 1] + " | ");
+               // System.out.print(desvioPadrao[i - 1] + " | ");
             }
             
             media = 0;
@@ -244,7 +243,7 @@ public class GraficoComparativo {
                     }
                 }
             }
-            System.out.print(desvioPadrao[i] + " | ");
+            //System.out.print(desvioPadrao[i] + " | ");
             media = 0;
         }
         
@@ -268,9 +267,9 @@ public class GraficoComparativo {
                 } else if (matrizAB[i][j] <= desvioPadrao[j - 1] * -1) {
                     matriz[i][j - 1] = 1;
                 }
-                System.out.print(matriz[i][j - 1] + " | ");
+                //System.out.print(matriz[i][j - 1] + " | ");
             }
-            System.out.println("");
+                //System.out.println("");
         }
         return matriz;
     }
@@ -291,9 +290,9 @@ public class GraficoComparativo {
                 } else if (matrizAB[i][j] <= desvioPadrao[j - 1] * -1) {
                     matriz[i][j - 1] = 1;
                 }
-                System.out.print(matriz[i][j - 1] + " | ");
+               //System.out.print(matriz[i][j - 1] + " | ");
             }
-            System.out.println("");
+               //System.out.println("");
         }
         return matriz;
     }
@@ -317,9 +316,9 @@ public class GraficoComparativo {
         matriz = GraficoComparativo.TirarDiferencaDaMatrizAeB(matrizA, matrizB);
         /*System.out.println("\n\n");*/
         matrizAB = GraficoComparativo.dividirMatrizEmDois(matriz);
-        System.out.println("\n");
+        //System.out.println("\n");
         matrizImpacto = GraficoComparativo.VerificarImpacto(matrizAB);
-        System.out.println("\n");
+        //System.out.println("\n");
         
         return GraficoComparativo.transporMatriz(matrizImpacto);
         
@@ -338,8 +337,7 @@ public class GraficoComparativo {
         matrizAB = GraficoComparativo.dividirMatrizEmDois(matriz);
         matrizImpacto = GraficoComparativo.VerificarImpactoRMS(matrizAB, desvioPadrao);
         
-        
-        
+                
         return GraficoComparativo.transporMatriz(matrizImpacto);
     }
     
@@ -384,14 +382,18 @@ public class GraficoComparativo {
     
     public void GerarHtmlComGraficoComparativo(String ACOR1, String ACOR2, String RMS1, String RMS2, String VIES1, String VIES2, String saida, String recorte) throws IOException {
         int[][] matrizTransposta = new int[20][5];
+        
+        String saidaFinal = saida + Recorte.ReplaceEspacoPorAnderline(recorte);
+        
         variaveis = GraficoComparativo.LerVariaveis(variaveis, ACOR1);
         matrizTransposta = GraficoComparativo.GerarMatrizParaContruirGrafico(ACOR1, ACOR2);
+        
         //GraficoComparativo.copiarPastaDeImagens(new File(""),new File(saida));
         for (int i = 19; i >= 0; i--) {
             for (int j = 4; j >= 0; j--) {
-                //       System.out.print(matrizTransposta[i][j] + " | ");
+                //System.out.print(matrizTransposta[i][j] + " | ");
             }
-            //   System.out.println();
+               //System.out.println();
         }
         String BarraDoSistema;
         if (System.getProperty("os.name").contains("Linux")) {
@@ -399,8 +401,10 @@ public class GraficoComparativo {
         } else {
             BarraDoSistema = "\\";
         }
-        copyDirectory(new File(".." + BarraDoSistema + "images" + BarraDoSistema), new File(saida + BarraDoSistema + "images" + BarraDoSistema));
-        File arquivo = new File(saida + "grafico.html");
+        
+                
+        copyDirectory(new File("images" + BarraDoSistema), new File(saidaFinal +  BarraDoSistema + "images" + BarraDoSistema));
+        File arquivo = new File(saidaFinal +  BarraDoSistema + "grafico_impacto.html");
         try {
             
             if (!arquivo.exists()) {
@@ -445,7 +449,7 @@ public class GraficoComparativo {
                     + "\n<legend id=\"PrimeiraFraseAcimaDoQuadrado\" >Anomaly Correlation</legend>"
                     + "\n<div id=\"PrimeiroQuadradoPai\" >";
             for (int i = 19; i >= 0; i--) {
-                html += "<a href=\"" + saida + "images" + BarraDoSistema + "ACOR_" + variaveis[i + 1] + "_" + Recorte.ReplaceEspacoPorAnderline(recorte) + ".png\">";
+                html += "<a href=\"" + saidaFinal + BarraDoSistema + "images" + BarraDoSistema + "ACOR_" + variaveis[i + 1] + "_" + Recorte.ReplaceEspacoPorAnderline(recorte) + ".png\">";
                 for (int j = 0; j < 5; j++) {
                     switch (matrizTransposta[i][j]) {
                         case 5:
@@ -476,7 +480,7 @@ public class GraficoComparativo {
                     
                 }
                 html += "</a>";
-                System.out.println("");
+                //System.out.println("");
             }
             html +=
                     "\n</div>"
@@ -484,7 +488,7 @@ public class GraficoComparativo {
                     + "\n<div class=\"QuadradoPai2e3\">";
             matrizTransposta = GraficoComparativo.GerarMatrizParaContruirGraficoRMS(RMS1, RMS2);
             for (int i = 19; i >= 0; i--) {
-                html += "<a href=\"" + saida + "images" + BarraDoSistema + "RMSE_" + variaveis[i + 1] + "_" + Recorte.ReplaceEspacoPorAnderline(recorte) + ".png\">";
+                html += "<a href=\"" + saidaFinal + BarraDoSistema + "images" + BarraDoSistema + "RMSE_" + variaveis[i + 1] + "_" + Recorte.ReplaceEspacoPorAnderline(recorte) + ".png\">";
                 for (int j = 0; j < 5; j++) {
                     switch (matrizTransposta[i][j]) {
                         case 5:
@@ -514,7 +518,7 @@ public class GraficoComparativo {
                     }
                 }
                 html += "</a>";
-                System.out.println("");
+                //System.out.println("");
             }
             
             html +=
@@ -523,7 +527,7 @@ public class GraficoComparativo {
                     + "\n<div class=\"QuadradoPai2e3\">";
             matrizTransposta = GraficoComparativo.GerarMatrizParaContruirGraficoVIES(VIES1, VIES2);
             for (int i = 19; i >= 0; i--) {
-                html += "<a href=\"" + saida + "images" + BarraDoSistema + "VIES_" + variaveis[i + 1] + "_" + Recorte.ReplaceEspacoPorAnderline(recorte) + ".png\">";
+                html += "<a href=\"" + saidaFinal + BarraDoSistema + "images" + BarraDoSistema + "VIES_" + variaveis[i + 1] + "_" + Recorte.ReplaceEspacoPorAnderline(recorte) + ".png\">";
                 for (int j = 0; j < 5; j++) {
                     switch (matrizTransposta[i][j]) {
                         case 5:
@@ -553,7 +557,7 @@ public class GraficoComparativo {
                     }
                 }
                 html += "</a>";
-                System.out.println("");
+                //System.out.println("");
             }
             html +=
                     "\n</div>"
@@ -570,7 +574,7 @@ public class GraficoComparativo {
             
             try {
                 //Process p = Runtime.getRuntime().exec("google-chrome /home/rafael/Documentos/interf_scamtec/Interface_Scamtec_v01/dist/results/grafico.html");
-                Process p = Runtime.getRuntime().exec("google-chrome " + saida + BarraDoSistema + "grafico.html");
+                Process p = Runtime.getRuntime().exec("firefox " + saidaFinal + BarraDoSistema + "grafico_impacto.html");
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Não foi possível abrir o navegador, clique com o botão direito no arquivo grafico.html que está na pasta de resultados e clique em abrir com qualquer navegador.");
                 System.err.println(e.toString());  

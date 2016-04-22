@@ -360,7 +360,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                         System.out.println("Erro ao criar diretório, o diretório ja existia, arquivos serão sobrescritos");
                     }
                     
-                    Main.endSaida = txtEndSaida.getText() + Recorte.ReplaceEspacoPorAnderline(listaRecorte.get(j).getRegiao()) + "/";
+                    Main.endSaida = txtEndSaida.getText();
                     fos.write(texto.getBytes());
 
                     fos.close();
@@ -401,7 +401,9 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
             }
 
         } else {
-            JOptionPane.showMessageDialog(rootPane, "Todos os processos foram finalizados");
+        	
+          JOptionPane.showMessageDialog(rootPane, "Processos finalizados!");
+        
         }
     }
 
@@ -476,8 +478,8 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     int cont = 0;
 
                     //setando o tamanho total da barra
-                    barraProcesso.setMaximum(difDatas());
-                    //barraProcesso.setIndeterminate(true);
+                    //barraProcesso.setMaximum(difDatas()); 
+                      //barraProcesso.setIndeterminate(true); //ja estava comentada
                     // variavel para verificar se é commentario
                     Character inicio = '!';
 
@@ -494,8 +496,8 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                             //nao faz nada   
                         } else {
                             cont = cont + 1;
-                            barraProcesso.setValue(cont);
-                            // barraProcesso.setIndeterminate(true);
+                            //barraProcesso.setValue(cont);
+                             // barraProcesso.setIndeterminate(true); //ja estava comentada
                         }
                         //escrevendo no jtextarea
                         txtResult.setText(line2);
@@ -508,6 +510,8 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                     indiceDaListaDeRecortes--;
                     ExecutarScamtec(indiceDaListaDeRecortes);
                     //barraProcesso.setIndeterminate(false);
+                           
+                    
                 }
 
             } catch (Exception err) {
@@ -1230,7 +1234,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
             } catch (Exception e) {
                 System.err.println("Erro na abertura do arquivo " + nomeArq + '\n');
-                e.printStackTrace();
+                //e.printStackTrace();
             }
             // System.out.println("parou aqui");
         }
@@ -1714,7 +1718,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         jPanel12 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtResult = new javax.swing.JTextArea();
-        barraProcesso = new javax.swing.JProgressBar();
+        //barraProcesso = new javax.swing.JProgressBar();
         btRun = new javax.swing.JButton();
         jPanelGrafico = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -1897,7 +1901,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         jLabel10.setText("LONGITUDE SUPERIOR:");
 
         jComboBoxRegiao.setEditable(true);
-        jComboBoxRegiao.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AMERICA DO SUL", "HEMISFERIO SUL", "BRASIL", "SÃO PAULO", "NOVO" }));
+        jComboBoxRegiao.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AMERICA DO SUL", "HEMISFERIO SUL", "HEMISFERIO NORTE", "EQUATORIAL", "GLOBAL", "BRASIL", "SÃO PAULO", "NOVO" }));
         jComboBoxRegiao.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxRegiaoActionPerformed(evt);
@@ -1920,7 +1924,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
 
             },
             new String [] {
-                "Nº", "Nome da Área", "Latitude Esquerda", "latitude Direita", "Logitude Inferior", "Longitude Superior", "Resolução DX", "Resolução DY"
+                "Nº", "Nome da Área", "Latitude Esquerda", "Latitude Direita", "Longitude Inferior", "Longitude Superior", "Resolução DX", "Resolução DY"
             }
         ));
         jScrollPane4.setViewportView(tabelaRecorte);
@@ -2528,7 +2532,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
-        barraProcesso.setStringPainted(true);
+        //barraProcesso.setStringPainted(true);
 
         btRun.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/imagens/gear.png"))); // NOI18N
         btRun.setText("RUN");
@@ -2547,7 +2551,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addGroup(jPanelRunLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel12, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelRunLayout.createSequentialGroup()
-                        .addComponent(barraProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        //.addComponent(barraProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 855, Short.MAX_VALUE)
                         .addComponent(btRun)))
                 .addContainerGap())
@@ -2560,8 +2564,9 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelRunLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btRun)
-                    .addComponent(barraProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    //.addComponent(barraProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                //.addContainerGap()
+                    ))
         );
 
         jTabbedPaneGrafico.addTab("RUN", jPanelRun);
@@ -2645,7 +2650,7 @@ public class ScamtecConfiguracao extends javax.swing.JInternalFrame {
         });
 
         jComboBoxRecorte.setEditable(true);
-        jComboBoxRecorte.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AMERICA DO SUL", "HEMISFERIO SUL", "BRASIL", "SÃO PAULO", "NOVO" }));
+        jComboBoxRecorte.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AMERICA DO SUL", "HEMISFERIO SUL", "HEMISFERIO NORTE", "EQUATORIAL", "GLOBAL", "BRASIL", "SÃO PAULO", "NOVO" }));
         jComboBoxRecorte.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxRecorteActionPerformed(evt);
@@ -2811,13 +2816,16 @@ private void btDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 }//GEN-LAST:event_btDeletarActionPerformed
 
 private void btAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAdicionarActionPerformed
-    DefaultTableModel modelo = ((DefaultTableModel) tabelaEXP.getModel());
+    
+        
+ try {
 
-    int contLinhaTabela = modelo.getRowCount() + 1;
-    //System.out.println("Contalinha "+contLinhaTabela+"id linha: "+id_linhaTabelaExp);
-    int quantEXP = Integer.parseInt((String) jComboBoxQuantExp.getSelectedItem());
-    
-    
+	 DefaultTableModel modelo = ((DefaultTableModel) tabelaEXP.getModel());
+	 
+	 int contLinhaTabela = modelo.getRowCount() + 1;
+	 //System.out.println("Contalinha "+contLinhaTabela+"id linha: "+id_linhaTabelaExp);
+	 int quantEXP = Integer.parseInt((String) jComboBoxQuantExp.getSelectedItem());	 
+	 
     
    if (txtEndExp.getText().equals("")) {
             JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DO EXPERIMENTO");
@@ -2890,22 +2898,23 @@ private void btAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
                   txtNomeEXP.setText("");
                                     
              }   
-	   
-       }
-	   
-  
-        	
+	      }
    }
    
+   vetNomeExp[contNE] = (String) modelo.getValueAt(contNE, 4);      
+   //System.out.println("Vendo nome do Experimento: "+vetNomeExp[contNE]);      
+   contNE = contNE+1;
+   
+   
+ }  catch (Exception ex) {
+	 System.out.println(ex.toString());
+	 //ex.printStackTrace();
+     
+     
+ }  
+   
  
-      vetNomeExp[contNE] = (String) modelo.getValueAt(contNE, 4);
-      
-      //System.out.println("Vendo nome do Experimento: "+vetNomeExp[contNE]);
-      
-      contNE = contNE+1;
-      
-           
-      //System.out.println("Funciona legal: "+modelo.getValueAt(0, 4));
+     
       
    
 }//GEN-LAST:event_btAdicionarActionPerformed
@@ -3011,9 +3020,10 @@ private void jComboBoxRegiaoActionPerformed(java.awt.event.ActionEvent evt) {//G
         txtLongInf.setText("-82.625");
         txtLatDireta.setText("11.375");
         txtLongSup.setText("-35.375");
-        txtResolucaoX.setText("0.25");
-        txtResolucaoY.setText("0.25");
+        txtResolucaoX.setText("0.4");
+        txtResolucaoY.setText("0.4");
         //jLabelMapa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/scamtec/frame/America do SUL.jpg")));
+        
     } else if (jComboBoxRegiao.getSelectedIndex() == 1) {//HEMISFERIO SUL
         txtLatEsq.setText("-80");
         txtLongInf.setText("0");
@@ -3021,14 +3031,39 @@ private void jComboBoxRegiaoActionPerformed(java.awt.event.ActionEvent evt) {//G
         txtLongSup.setText("360");
         txtResolucaoX.setText("0.4");
         txtResolucaoY.setText("0.4");
-    } else if (jComboBoxRegiao.getSelectedIndex() == 2) {//BRASIL
+        
+    } else if (jComboBoxRegiao.getSelectedIndex() == 2) {//HEMISFERIO NORTE
+        txtLatEsq.setText("20");
+        txtLongInf.setText("0");
+        txtLatDireta.setText("80");
+        txtLongSup.setText("360");
+        txtResolucaoX.setText("0.4");
+        txtResolucaoY.setText("0.4");
+        
+    } else if (jComboBoxRegiao.getSelectedIndex() == 3) {//EQUATORIAL
+        txtLatEsq.setText("-20");
+        txtLongInf.setText("0");
+        txtLatDireta.setText("20");
+        txtLongSup.setText("360");
+        txtResolucaoX.setText("0.4");
+        txtResolucaoY.setText("0.4");
+        
+    } else if (jComboBoxRegiao.getSelectedIndex() == 4) {//GLOBAL
+        txtLatEsq.setText("-80");
+        txtLongInf.setText("0");
+        txtLatDireta.setText("80");
+        txtLongSup.setText("360");
+        txtResolucaoX.setText("0.4");
+        txtResolucaoY.setText("0.4");    
+        
+    } else if (jComboBoxRegiao.getSelectedIndex() == 5) {//BRASIL
         txtLatEsq.setText("-35");
         txtLongInf.setText("-80");
         txtLatDireta.setText("10");
         txtLongSup.setText("-30");
         txtResolucaoX.setText("0.4");
         txtResolucaoY.setText("0.4");
-    } else if (jComboBoxRegiao.getSelectedIndex() == 3) {// SAO PAULO
+    } else if (jComboBoxRegiao.getSelectedIndex() == 6) {// SAO PAULO
         txtLatEsq.setText("-27");
         txtLongInf.setText("-55");
         txtLatDireta.setText("-20");
@@ -3079,49 +3114,45 @@ private void txtHistoriaTempoActionPerformed(java.awt.event.ActionEvent evt) {//
 
 private void geraGraficoGeralEmHtmlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_geraGraficoGeralEmHtmlActionPerformed
 // TODO add your handling code here:
-    GraficoComparativo grafico = new GraficoComparativo();
+	
+  try {
+	  
+	  
+		if(txtEndSaida.getText().equals("")) {
+            JOptionPane.showMessageDialog(rootPane, "INFORME O ENDEREÇO DOS RESULTADOS CORRETAMENTE");
+            txtEndSaida.requestFocus();
+        	    	
+        } else{
+        	
+            GraficoComparativo grafico = new GraficoComparativo();
     
-    String acor1,acor2,rms1,rms2,vies1,vies2,saidaArq,recExp;
+            String acor1,acor2,rms1,rms2,vies1,vies2,saidaArq,recExp;
         
-    String selCombExp1 = (String) jComboBoxExp1.getSelectedItem();
-    String selCombExp2 = (String) jComboBoxExp2.getSelectedItem();
+            String selCombExp1 = (String) jComboBoxExp1.getSelectedItem();
+            String selCombExp2 = (String) jComboBoxExp2.getSelectedItem();
     
-    String selMeioExp1[] = selCombExp1.split("-");
-    String selMeioExp2[] = selCombExp2.split("-");
+            String selMeioExp1[] = selCombExp1.split("-");
+            String selMeioExp2[] = selCombExp2.split("-");
     
-    String selFimExp1 = selMeioExp1[0];
-    String selFimExp2 = selMeioExp2[0];
+            String selFimExp1 = selMeioExp1[0];
+            String selFimExp2 = selMeioExp2[0];
     
-    saidaArq=txtEndSaida.getText();
-    recExp=Recorte.ReplaceEspacoPorAnderline(jComboBoxRecorte.getSelectedItem().toString());
+            saidaArq=txtEndSaida.getText();
+            recExp=Recorte.ReplaceEspacoPorAnderline(jComboBoxRecorte.getSelectedItem().toString());
     
-    System.out.println("Vamos ver qual experimento no compara: "+selFimExp1+" e "+selFimExp2);
+            //System.out.println("Vamos ver qual experimento no compara: "+selFimExp1+" e "+selFimExp2);
+        
+            acor1=saidaArq + recExp + "/" + "ACOR" + selFimExp1 + "_" + dataIni + dataFinal + "T.scam";
+            acor2=saidaArq + recExp + "/" + "ACOR" + selFimExp2 + "_" + dataIni + dataFinal + "T.scam";
     
+            rms1=saidaArq + recExp + "/" + "RMSE" + selFimExp1 + "_" + dataIni + dataFinal + "T.scam";
+            rms2=saidaArq + recExp + "/" + "RMSE" + selFimExp2 + "_" + dataIni + dataFinal + "T.scam";
     
-    acor1=saidaArq + recExp + "/" + "ACOR" + selFimExp1 + "_" + dataIni + dataFinal + "T.scam";
-    acor2=saidaArq + recExp + "/" + "ACOR" + selFimExp2 + "_" + dataIni + dataFinal + "T.scam";
-    
-    rms1=saidaArq + recExp + "/" + "RMSE" + selFimExp1 + "_" + dataIni + dataFinal + "T.scam";
-    rms2=saidaArq + recExp + "/" + "RMSE" + selFimExp2 + "_" + dataIni + dataFinal + "T.scam";
-    
-    vies1=saidaArq + recExp + "/" + "VIES" + selFimExp1 + "_" + dataIni + dataFinal + "T.scam";
-    vies2=saidaArq + recExp + "/" + "VIES" + selFimExp2 + "_" + dataIni + dataFinal + "T.scam";
-    
-    System.out.println("Vamos ver no compara: "+ acor1);
-    System.out.println("Vamos ver no compara: "+ acor2);
-    System.out.println("Vamos ver no compara: "+ rms1);
-    System.out.println("Vamos ver no compara: "+ rms2);
-    System.out.println("Vamos ver no compara: "+ vies1);
-    System.out.println("Vamos ver no compara: "+ vies2);
-    
-    
-
-//    try {
-        /*java.io.File dirOrigem = new java.io.File("/home/rafael/Público/a/");  
-        java.io.File dirDestino = new java.io.File("/home/rafael/Público/b/");
-        grafico.copiarPastaDeImagens(dirOrigem, dirDestino, true);*/
-        //grafico.copyDirectory(new File("./images/"),new File("/home/rafael/pastateste/"));
-/*        grafico.GerarHtmlComGraficoComparativo(
+            vies1=saidaArq + recExp + "/" + "VIES" + selFimExp1 + "_" + dataIni + dataFinal + "T.scam";
+            vies2=saidaArq + recExp + "/" + "VIES" + selFimExp2 + "_" + dataIni + dataFinal + "T.scam";
+       	
+        	        
+           grafico.GerarHtmlComGraficoComparativo(
                 acor1,
                 acor2,
                 rms1,
@@ -3129,16 +3160,15 @@ private void geraGraficoGeralEmHtmlActionPerformed(java.awt.event.ActionEvent ev
                 vies1,
                 vies2,
                 saidaArq,
-                jComboBoxRecorte.getSelectedItem().toString()); */
-    
-                
-  /*
+                jComboBoxRecorte.getSelectedItem().toString()); 
+          }            
+  
     } catch (Exception ex) {
         System.out.println(ex.toString());
         ex.printStackTrace();
     }
   
-    */
+  
     
     
 
@@ -3276,7 +3306,7 @@ private void jComboBoxRecorteActionPerformed(java.awt.event.ActionEvent evt) {//
      *                  para depois fazer vários testes automaticamente
      *///--------------------------------------------------------------
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JProgressBar barraProcesso;
+    //private javax.swing.JProgressBar barraProcesso;
     private javax.swing.JButton btAdicionar;
     private javax.swing.JButton btDeletar;
     private javax.swing.JButton btGrafico;
