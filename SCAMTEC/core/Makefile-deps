@@ -15,6 +15,8 @@ $(srcdir)/SCAM_ModelPlugin.o SCAM_ModelPlugin.o: \
 	$(srcdir)/m_Grb_ensemble_t126.o \
 	$(srcdir)/m_TQ062L028.o \
 	$(srcdir)/m_EraInterim.o \
+	$(srcdir)/m_brams5km.o \
+  $(srcdir)/m_brams20km.o \
 	$(srcdir)/obs_Precipitation.o
 
 $(srcdir)/SCAM_Plugin.o SCAM_Plugin.o: \
@@ -132,6 +134,25 @@ $(srcdir)/m_EraInterim.o m_EraInterim.o: \
 	$(srcdir)/SCAM_dataMOD.o \
 	$(srcdir)/SCAM_MetForm.o \
 	$(srcdir)/scamtec_module.o
+
+$(srcdir)/bramsIO.o bramsIO.o: \
+	$(srcdir)/bramsIO.f90
+
+$(srcdir)/m_brams5km.o m_brams5km.o: \
+	$(srcdir)/m_brams5km.f90 \
+	$(srcdir)/bilinear_interpolation.o \
+	$(srcdir)/SCAM_dataMOD.o \
+	$(srcdir)/SCAM_MetForm.o \
+	$(srcdir)/scamtec_module.o \
+	$(srcdir)/bramsIO.o
+
+$(srcdir)/m_brams20km.o m_brams20km.o: \
+	$(srcdir)/m_brams20km.f90 \
+	$(srcdir)/bilinear_interpolation.o \
+	$(srcdir)/SCAM_dataMOD.o \
+	$(srcdir)/SCAM_MetForm.o \
+	$(srcdir)/scamtec_module.o \
+	$(srcdir)/bramsIO.o
 
 $(srcdir)/m_ReadGrib.o m_ReadGrib.o: \
 	$(srcdir)/m_ReadGrib.f90 \

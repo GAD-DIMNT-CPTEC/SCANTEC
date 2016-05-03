@@ -83,7 +83,7 @@ ifeq ($(SCAM_ARCH),cray_pgi)
    FC  = ftn
    LD  = ftn
    AR  = ar
-   FFLAGS += -Mpreprocess -Mnorecursive -mp #-DDEBUG
+   FFLAGS += -Mpreprocess -Mnorecursive -mp -tp amd64 -mcmodel=medium -Mlarge_arrays#-DDEBUG
 
 # add flags for debugging if requested
    ifeq (dbg,$(findstring dbg,$(mode)))

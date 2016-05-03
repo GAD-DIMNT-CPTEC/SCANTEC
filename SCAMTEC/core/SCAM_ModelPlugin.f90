@@ -10,6 +10,8 @@ MODULE SCAM_Modelplugin
   USE m_EraInterim
 !  USE m_WRF9km
 !  USE m_WRF3km
+  Use m_brams5km
+  USE m_brams20km
   
   IMPLICIT NONE
   !BOP
@@ -53,6 +55,8 @@ MODULE SCAM_Modelplugin
   integer, public, parameter :: EraInterimId         = 10
 !  integer, public, parameter :: WRF9kmId             = 11 ! WRF9km
 !  integer, public, parameter :: WRF3kmId             = 12 ! WRF3km
+  integer, public, parameter :: brams5kmId           = 11 !BRAMS 5KM / CPTEC
+  integer, public, parameter :: brams20kmId          = 12 !BRAMS 20KM / CPTEC
 
   !-------------------------------------------------------------------
   ! !PUBLIC MEMBER FUNCTIONS:
@@ -148,7 +152,11 @@ Contains
      ! WRF3km gribs
 !    call registermodelinit(WRF3kmId,WRF3km_init) !
 !    call registermodelread(WRF3kmId,WRF3km_read) !
- 
+    call registermodelinit(brams5kmId,brams5km_init) !
+    call registermodelread(brams5kmId,brams5km_read) ! 
+    
+    call registermodelinit(brams20kmId,brams20km_init) !
+    call registermodelread(brams20kmId,brams20km_read) !
     
   END SUBROUTINE scam_models_plugin
   !EOC
