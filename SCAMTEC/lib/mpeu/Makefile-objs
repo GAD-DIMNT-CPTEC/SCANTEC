@@ -1,0 +1,15 @@
+# Automatically generated objects. Qui Nov  3 15:38:45 BRST 2011
+# fgen v0.3 (C) 1997,98 Beroud Jean-Marc
+
+OBJS = \
+	$(libdir)/m_StrTemplate.o \
+	$(libdir)/m_chars.o \
+	$(libdir)/m_die.o \
+	$(libdir)/m_dropdead.o \
+	$(libdir)/m_flow.o \
+	$(libdir)/m_inpak90.o \
+	$(libdir)/m_ioutil.o \
+	$(libdir)/m_mall.o \
+	$(libdir)/m_mpout.o \
+	$(libdir)/m_realkinds.o \
+	$(libdir)/m_stdio.o
