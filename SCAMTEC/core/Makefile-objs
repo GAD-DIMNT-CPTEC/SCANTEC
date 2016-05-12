@@ -31,4 +31,7 @@ OBJS = \
 	$(srcdir)/scamtec_module.o \
 	$(srcdir)/m_ReadGrib.o \
 	$(srcdir)/eof.o \
-	$(srcdir)/template_read.o
+	$(srcdir)/template_read.o \
+	$(srcdir)/bramsIO.o \
+	$(srcdir)/m_brams5km.o \
+	$(srcdir)/m_brams20km.o
