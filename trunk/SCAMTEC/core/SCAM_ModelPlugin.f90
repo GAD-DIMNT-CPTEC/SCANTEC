@@ -1,4 +1,5 @@
 MODULE SCAM_Modelplugin
+
   USE m_agcm
   USE m_clima50yr
   USE m_T126_Seq !paulo dias
@@ -10,6 +11,8 @@ MODULE SCAM_Modelplugin
   USE m_EraInterim
 !  USE m_WRF9km
 !  USE m_WRF3km
+  USE m_brams5km
+  USE m_brams20km 
   
   IMPLICIT NONE
   !BOP
@@ -45,14 +48,16 @@ MODULE SCAM_Modelplugin
   integer, public, parameter :: EtaId                = 2  ! Eta/CPTEC
   integer, public, parameter :: clima50yrId          = 3  ! 50yr Climatology / CPTEC
   integer, public, parameter :: T126_SeqId           = 4  ! IWV-PSAS T126 !Paulo Dias
-  integer, public, parameter :: PrecipitationId     = 5  ! Precipitation !Paulo Dias
+  integer, public, parameter :: PrecipitationId      = 5  ! Precipitation !Paulo Dias
   integer, public, parameter :: AGCM_T213Id          = 6  ! AGCM_T213/CPTEC !Paulo Dias
   integer, public, parameter :: Ensemble_T126Id      = 7  ! T126 Ensemble 
   integer, public, parameter :: Grb_ensemble_t126Id  = 8  ! Grb_ensemble_t126
   integer, public, parameter :: TQ062L028Id          = 9
   integer, public, parameter :: EraInterimId         = 10
-!  integer, public, parameter :: WRF9kmId             = 11 ! WRF9km
-!  integer, public, parameter :: WRF3kmId             = 12 ! WRF3km
+! integer, public, parameter :: WRF9kmId             = 11 ! WRF9km
+! integer, public, parameter :: WRF3kmId             = 12 ! WRF3km
+  integer, public, parameter :: brams5kmId           = 11 ! BRAMS 5KM / CPTEC
+  integer, public, parameter :: brams20kmId          = 12 ! BRAMS 20KM / CPTEC  
 
   !-------------------------------------------------------------------
   ! !PUBLIC MEMBER FUNCTIONS:
@@ -148,6 +153,13 @@ Contains
      ! WRF3km gribs
 !    call registermodelinit(WRF3kmId,WRF3km_init) !
 !    call registermodelread(WRF3kmId,WRF3km_read) !
+     ! BRAMS 5KM / CPTEC
+     call registermodelinit(brams5kmId,brams5km_init) !
+     call registermodelread(brams5kmId,brams5km_read) ! 
+     ! BRAMS 20KM / CPTEC
+     call registermodelinit(brams20kmId,brams20km_init) !
+     call registermodelread(brams20kmId,brams20km_read) !
+
  
     
   END SUBROUTINE scam_models_plugin
