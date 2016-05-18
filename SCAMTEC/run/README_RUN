@@ -1,0 +1,40 @@
+RUN THE SCAMTEC
+./run_scamtec
+
+it will run the scamtec.x and the graphic generator named plot.gpl
+
+DATA OUT
+the data will be in $WORK_HOME/saida_scamtec 
+to see the graphics tape there: evince plot_scamtec_results.eps 
+
+CHAMGIN DATA, ADD EXPERIMENTS OR MODELS
+You change in scamtec.conf and plot.gpl
+
+FUTURE IMPROVEMENTS
+enable the date change in scamtec.x and plot.gpl and number of experiments in plot.gpl caught by the command ./run_scamtec  
+
+
+Model list, get from SCAM_ModelPlugin.f90
+Available Models
+
+templateId           = 0  ! Template
+AGCMId               = 1  ! AGCM/CPTEC
+EtaId                = 2  ! Eta/CPTEC
+clima50yrId          = 3  ! 50yr Climatology / CPTEC
+T126_SeqId           = 4  ! IWV-PSAS T126 !Paulo Dias
+PrecipitationId      = 5  ! Precipitation !Paulo Dias
+AGCM_T213Id          = 6  ! AGCM_T213/CPTEC !Paulo Dias
+Ensemble_T126Id      = 7  ! T126 Ensemble 
+Grb_ensemble_t126Id  = 8  ! Grb_ensemble_t126
+TQ062L028Id          = 9
+EraInterimId         = 10
+!!! WRF9kmId             = 11 ! WRF9km (Unavailable)
+!!! WRF3kmId             = 12 ! WRF3km (Unavailable)
+brams5kmId           = 11 !BRAMS 5KM / CPTEC
+brams20kmId          = 12 !BRAMS 20KM / CPTEC
+
+
+
+
+
+
