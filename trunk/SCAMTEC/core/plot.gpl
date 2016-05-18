@@ -1,0 +1,169 @@
+#! /stornext/home/carlos.bastarz/bin/gnuplot 
+
+# Script simples para a visualização dos resultados do TestCase do SCAMTEC.
+#
+# Dependencias:
+# - Tabelas com as estatistica basicas (VIES, RMSE e ACOR) do TestCase do SCAMTEC.
+# - Gnuplot versão >= 5.0 (os usuários podem usar a versão que está indicada no #!)
+#
+# Uso:
+# ./plot_scamtec_results.gpl
+#
+# carlos.frederico@cptec.inpe.br (20/04/2016)
+
+reset
+
+# Salva em EPS colorido
+set terminal postscript eps enhanced color
+set output "plot_scamtec_results.eps"
+
+# Definições das linhas de grade 
+set style line 11 lc rgb '#808080' lt 1
+set border 3 back ls 11
+set tics nomirror
+
+set style line 12 lc rgb '#808080' lt 0 lw 1
+set grid back ls 12
+
+# Determina o layout da figura (6 linhas, 3 colunas)
+# Colunas: VIES, RMSE e ACOR
+# Linhas: VTMP, TEMP, UMES, ZGEO, UVEL e VVEL (não são mostrados PSNM, AGPL, PREC e PREV)
+# As figuras são plotadas começando pela primeira linha do layout
+set multiplot layout 6,3 rowsfirst title "SCAMTEC TestCase Display Output" font "Verdana,16" margins 0.03,0.99,0.05,0.92 spacing 0.05,0.025
+
+# Remove as marcações dos eixos
+set tics scale 0
+
+# Define o intervalo do eixo x e posição
+set xtics 24
+set xtics font "Verdana,6" offset -0.2, graph 0.15
+set ytics font "Verdana,6" offset 0.65, graph 0
+
+# Define a legenda
+set key on
+set key bottom left
+set key font "Verdana,6"
+
+# Define o formato dos valores no eixo y (float, 3 digitos com 2 casas decimais)
+set format y "%3.2f"
+
+# Define o eixo "0"
+set xzeroaxis linetype 0 linewidth 2.5
+
+# Nas linhas de 1 a 5, remove os valores do eixo x
+set format x ""
+
+# Figuras
+# Em todas as figuras, há 3 curvas, uma para cada nível avaliado (925, 850 e 500hPa)
+
+#VIES VTMP
+set title "VIES" offset 0,-0.5 font "Verdana,8" 
+set label 1 "VTMP" at graph 0.9,0.9 font "Verdana,6"
+plot "VIESEXP01_20160101002016010100T.scam" using ($1):2 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "925", \
+     "VIESEXP01_20160101002016010100T.scam" using ($1):3 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "850", \
+     "VIESEXP01_20160101002016010100T.scam" using ($1):4 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "500"
+
+# A legenda é mostrada apenas na primeira figura
+unset key
+
+#RMSE VTMP
+set title "RMSE" offset 0,-0.5 font "Verdana,8" 
+plot "RMSEEXP01_20160101002016010100T.scam" using ($1):2 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VTMP 925", \
+     "RMSEEXP01_20160101002016010100T.scam" using ($1):3 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VTMP 850", \
+     "RMSEEXP01_20160101002016010100T.scam" using ($1):4 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VTMP 500", \
+
+# ACOR VTMP
+set title "ACOR" offset 0,-0.5 font "Verdana,8" 
+plot "ACOREXP01_20160101002016010100T.scam" using ($1):2 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
+     "ACOREXP01_20160101002016010100T.scam" using ($1):3 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
+     "ACOREXP01_20160101002016010100T.scam" using ($1):4 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
+
+# O título das figuras é mostrado apenas nas figuras da primeira linha
+unset title
+
+#VIES TEMP
+set label 1 "TEMP" at graph 0.9,0.9 font "Verdana,6" 
+plot "VIESEXP01_20160101002016010100T.scam" using ($1):5 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
+     "VIESEXP01_20160101002016010100T.scam" using ($1):6 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
+     "VIESEXP01_20160101002016010100T.scam" using ($1):7 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
+
+#RMSE TEMP
+plot "RMSEEXP01_20160101002016010100T.scam" using ($1):5 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
+     "RMSEEXP01_20160101002016010100T.scam" using ($1):6 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
+     "RMSEEXP01_20160101002016010100T.scam" using ($1):7 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
+
+#ACOR TEMP
+plot "ACOREXP01_20160101002016010100T.scam" using ($1):5 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
+     "ACOREXP01_20160101002016010100T.scam" using ($1):6 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
+     "ACOREXP01_20160101002016010100T.scam" using ($1):7 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
+
+#VIES UMES
+set label 1 "UMES" at graph 0.9,0.9 font "Verdana,6" 
+plot "VIESEXP01_20160101002016010100T.scam" using ($1):9 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
+     "VIESEXP01_20160101002016010100T.scam" using ($1):10 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
+     "VIESEXP01_20160101002016010100T.scam" using ($1):11 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
+
+#RMSE UMES
+plot "RMSEEXP01_20160101002016010100T.scam" using ($1):9 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
+     "RMSEEXP01_20160101002016010100T.scam" using ($1):10 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
+     "RMSEEXP01_20160101002016010100T.scam" using ($1):11 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
+
+#ACOR UMES
+plot "ACOREXP01_20160101002016010100T.scam" using ($1):9 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
+     "ACOREXP01_20160101002016010100T.scam" using ($1):10 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
+     "ACOREXP01_20160101002016010100T.scam" using ($1):11 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
+
+#VIES ZGEO
+set label 1 "ZGEO" at graph 0.9,0.9 font "Verdana,6"
+plot "VIESEXP01_20160101002016010100T.scam" using ($1):13 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
+     "VIESEXP01_20160101002016010100T.scam" using ($1):14 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
+     "VIESEXP01_20160101002016010100T.scam" using ($1):15 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
+
+#RMSE ZGEO
+plot "RMSEEXP01_20160101002016010100T.scam" using ($1):13 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
+     "RMSEEXP01_20160101002016010100T.scam" using ($1):14 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
+     "RMSEEXP01_20160101002016010100T.scam" using ($1):15 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
+
+#ACOR ZGEO
+plot "ACOREXP01_20160101002016010100T.scam" using ($1):13 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
+     "ACOREXP01_20160101002016010100T.scam" using ($1):14 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
+     "ACOREXP01_20160101002016010100T.scam" using ($1):15 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
+
+#VIES UVEL 
+set label 1 "UVEL" at graph 0.9,0.9 font "Verdana,6" 
+plot "VIESEXP01_20160101002016010100T.scam" using ($1):16 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
+     "VIESEXP01_20160101002016010100T.scam" using ($1):17 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
+     "VIESEXP01_20160101002016010100T.scam" using ($1):18 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
+
+#RMSE UVEL
+plot "RMSEEXP01_20160101002016010100T.scam" using ($1):16 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
+     "RMSEEXP01_20160101002016010100T.scam" using ($1):17 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
+     "RMSEEXP01_20160101002016010100T.scam" using ($1):18 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
+
+#ACOR UVEL
+plot "ACOREXP01_20160101002016010100T.scam" using ($1):16 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
+     "ACOREXP01_20160101002016010100T.scam" using ($1):17 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
+     "ACOREXP01_20160101002016010100T.scam" using ($1):18 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
+
+# Para mostrar os valores do eixo x, define-se o formato (float, com 1 dígito com 0 casas decimais - neste caso
+# vai mostrar apenas a parte inteira dos valores
+set format x "%1.0f"
+
+#VIES VVEL
+set label 1 "VVEL" at graph 0.9,0.9 font "Verdana,6" 
+set xlabel "Forecast Lead Time" font "Verdana,6" offset 0,1.5
+plot "VIESEXP01_20160101002016010100T.scam" using ($1):19 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
+     "VIESEXP01_20160101002016010100T.scam" using ($1):20 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
+     "VIESEXP01_20160101002016010100T.scam" using ($1):21 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
+
+#RMSE VVEL
+plot "RMSEEXP01_20160101002016010100T.scam" using ($1):19 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
+     "RMSEEXP01_20160101002016010100T.scam" using ($1):20 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
+     "RMSEEXP01_20160101002016010100T.scam" using ($1):21 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
+
+#ACOR VVEL
+plot "ACOREXP01_20160101002016010100T.scam" using ($1):19 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
+     "ACOREXP01_20160101002016010100T.scam" using ($1):20 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
+     "ACOREXP01_20160101002016010100T.scam" using ($1):21 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
+
+unset multiplot

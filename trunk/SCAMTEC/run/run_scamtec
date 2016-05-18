@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#run scamtec
+cd ../core/
+./scamtec.x
+
+#run graphic generator
+cp plot.gpl $WORK_HOME/saida_scamtec/
+cd $WORK_HOME/saida_scamtec/
+./plot.gpl
+ 
+
+#end
