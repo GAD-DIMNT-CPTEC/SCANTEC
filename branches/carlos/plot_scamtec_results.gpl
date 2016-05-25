@@ -1,17 +1,32 @@
-#! /stornext/home/carlos.bastarz/bin/gnuplot 
+#! /stornext/home/carlos.bastarz/bin/gnuplot
 
 # Script simples para a visualização dos resultados do TestCase do SCAMTEC.
 #
 # Dependencias:
+# - Gnuplot v>=4.6.6
 # - Tabelas com as estatistica basicas (VIES, RMSE e ACOR) do TestCase do SCAMTEC.
 # - Gnuplot versão >= 5.0 (os usuários podem usar a versão que está indicada no #!)
 #
 # Uso:
-# ./plot_scamtec_results.gpl
+# gnuplot -c plot_scamtec_results.gpl datai dataf
+#
+# Exemplo:
+# gnuplot -c plot_scamtec_results.gpl 2014080100 2014080100
 #
 # carlos.frederico@cptec.inpe.br (20/04/2016)
 
-reset
+# Recebe datai e dataf da linha de comando
+datai = ARG1
+dataf = ARG2
+
+# Verifica se as datas de inicio e fim da avaliacao existem
+#if (exists("datai") && exists("dataf")) {
+#  print "Data Inicial: ", datai
+#  print "Data Final: ", dataf
+#} else {
+#  print "Uso: gnuplot -c plot_scamtec_results.gpl datai dataf"
+#  exit
+#}
 
 # Salva em EPS colorido
 set terminal postscript eps enhanced color
@@ -59,91 +74,91 @@ set format x ""
 #VIES VTMP
 set title "VIES" offset 0,-0.5 font "Verdana,8" 
 set label 1 "VTMP" at graph 0.9,0.9 font "Verdana,6"
-plot "VIESEXP01_20140801002014080100T.scam" using ($1):2 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "925", \
-     "VIESEXP01_20140801002014080100T.scam" using ($1):3 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "850", \
-     "VIESEXP01_20140801002014080100T.scam" using ($1):4 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "500"
+plot "VIESEXP01_".datai.dataf."T.scam" using ($1):2 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "925", \
+     "VIESEXP01_".datai.dataf."T.scam" using ($1):3 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "850", \
+     "VIESEXP01_".datai.dataf."T.scam" using ($1):4 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "500"
 
 # A legenda é mostrada apenas na primeira figura
 unset key
 
 #RMSE VTMP
 set title "RMSE" offset 0,-0.5 font "Verdana,8" 
-plot "RMSEEXP01_20140801002014080100T.scam" using ($1):2 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VTMP 925", \
-     "RMSEEXP01_20140801002014080100T.scam" using ($1):3 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VTMP 850", \
-     "RMSEEXP01_20140801002014080100T.scam" using ($1):4 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VTMP 500", \
+plot "RMSEEXP01_".datai.dataf."T.scam" using ($1):2 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VTMP 925", \
+     "RMSEEXP01_".datai.dataf."T.scam" using ($1):3 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VTMP 850", \
+     "RMSEEXP01_".datai.dataf."T.scam" using ($1):4 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VTMP 500", \
 
 # ACOR VTMP
 set title "ACOR" offset 0,-0.5 font "Verdana,8" 
-plot "ACOREXP01_20140801002014080100T.scam" using ($1):2 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
-     "ACOREXP01_20140801002014080100T.scam" using ($1):3 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
-     "ACOREXP01_20140801002014080100T.scam" using ($1):4 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
+plot "ACOREXP01_".datai.dataf."T.scam" using ($1):2 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
+     "ACOREXP01_".datai.dataf."T.scam" using ($1):3 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
+     "ACOREXP01_".datai.dataf."T.scam" using ($1):4 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
 
 # O título das figuras é mostrado apenas nas figuras da primeira linha
 unset title
 
 #VIES TEMP
 set label 1 "TEMP" at graph 0.9,0.9 font "Verdana,6" 
-plot "VIESEXP01_20140801002014080100T.scam" using ($1):5 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
-     "VIESEXP01_20140801002014080100T.scam" using ($1):6 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
-     "VIESEXP01_20140801002014080100T.scam" using ($1):7 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
+plot "VIESEXP01_".datai.dataf."T.scam" using ($1):5 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
+     "VIESEXP01_".datai.dataf."T.scam" using ($1):6 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
+     "VIESEXP01_".datai.dataf."T.scam" using ($1):7 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
 
 #RMSE TEMP
-plot "RMSEEXP01_20140801002014080100T.scam" using ($1):5 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
-     "RMSEEXP01_20140801002014080100T.scam" using ($1):6 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
-     "RMSEEXP01_20140801002014080100T.scam" using ($1):7 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
+plot "RMSEEXP01_".datai.dataf."T.scam" using ($1):5 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
+     "RMSEEXP01_".datai.dataf."T.scam" using ($1):6 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
+     "RMSEEXP01_".datai.dataf."T.scam" using ($1):7 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
 
 #ACOR TEMP
-plot "ACOREXP01_20140801002014080100T.scam" using ($1):5 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
-     "ACOREXP01_20140801002014080100T.scam" using ($1):6 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
-     "ACOREXP01_20140801002014080100T.scam" using ($1):7 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
+plot "ACOREXP01_".datai.dataf."T.scam" using ($1):5 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
+     "ACOREXP01_".datai.dataf."T.scam" using ($1):6 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
+     "ACOREXP01_".datai.dataf."T.scam" using ($1):7 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
 
 #VIES UMES
 set label 1 "UMES" at graph 0.9,0.9 font "Verdana,6" 
-plot "VIESEXP01_20140801002014080100T.scam" using ($1):9 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
-     "VIESEXP01_20140801002014080100T.scam" using ($1):10 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
-     "VIESEXP01_20140801002014080100T.scam" using ($1):11 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
+plot "VIESEXP01_".datai.dataf."T.scam" using ($1):9 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
+     "VIESEXP01_".datai.dataf."T.scam" using ($1):10 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
+     "VIESEXP01_".datai.dataf."T.scam" using ($1):11 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
 
 #RMSE UMES
-plot "RMSEEXP01_20140801002014080100T.scam" using ($1):9 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
-     "RMSEEXP01_20140801002014080100T.scam" using ($1):10 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
-     "RMSEEXP01_20140801002014080100T.scam" using ($1):11 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
+plot "RMSEEXP01_".datai.dataf."T.scam" using ($1):9 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
+     "RMSEEXP01_".datai.dataf."T.scam" using ($1):10 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
+     "RMSEEXP01_".datai.dataf."T.scam" using ($1):11 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
 
 #ACOR UMES
-plot "ACOREXP01_20140801002014080100T.scam" using ($1):9 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
-     "ACOREXP01_20140801002014080100T.scam" using ($1):10 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
-     "ACOREXP01_20140801002014080100T.scam" using ($1):11 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
+plot "ACOREXP01_".datai.dataf."T.scam" using ($1):9 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
+     "ACOREXP01_".datai.dataf."T.scam" using ($1):10 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
+     "ACOREXP01_".datai.dataf."T.scam" using ($1):11 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
 
 #VIES ZGEO
 set label 1 "ZGEO" at graph 0.9,0.9 font "Verdana,6"
-plot "VIESEXP01_20140801002014080100T.scam" using ($1):13 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
-     "VIESEXP01_20140801002014080100T.scam" using ($1):14 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
-     "VIESEXP01_20140801002014080100T.scam" using ($1):15 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
+plot "VIESEXP01_".datai.dataf."T.scam" using ($1):13 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
+     "VIESEXP01_".datai.dataf."T.scam" using ($1):14 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
+     "VIESEXP01_".datai.dataf."T.scam" using ($1):15 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
 
 #RMSE ZGEO
-plot "RMSEEXP01_20140801002014080100T.scam" using ($1):13 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
-     "RMSEEXP01_20140801002014080100T.scam" using ($1):14 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
-     "RMSEEXP01_20140801002014080100T.scam" using ($1):15 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
+plot "RMSEEXP01_".datai.dataf."T.scam" using ($1):13 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
+     "RMSEEXP01_".datai.dataf."T.scam" using ($1):14 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
+     "RMSEEXP01_".datai.dataf."T.scam" using ($1):15 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
 
 #ACOR ZGEO
-plot "ACOREXP01_20140801002014080100T.scam" using ($1):13 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
-     "ACOREXP01_20140801002014080100T.scam" using ($1):14 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
-     "ACOREXP01_20140801002014080100T.scam" using ($1):15 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
+plot "ACOREXP01_".datai.dataf."T.scam" using ($1):13 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
+     "ACOREXP01_".datai.dataf."T.scam" using ($1):14 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
+     "ACOREXP01_".datai.dataf."T.scam" using ($1):15 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
 
 #VIES UVEL 
 set label 1 "UVEL" at graph 0.9,0.9 font "Verdana,6" 
-plot "VIESEXP01_20140801002014080100T.scam" using ($1):16 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
-     "VIESEXP01_20140801002014080100T.scam" using ($1):17 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
-     "VIESEXP01_20140801002014080100T.scam" using ($1):18 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
+plot "VIESEXP01_".datai.dataf."T.scam" using ($1):16 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
+     "VIESEXP01_".datai.dataf."T.scam" using ($1):17 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
+     "VIESEXP01_".datai.dataf."T.scam" using ($1):18 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
 
 #RMSE UVEL
-plot "RMSEEXP01_20140801002014080100T.scam" using ($1):16 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
-     "RMSEEXP01_20140801002014080100T.scam" using ($1):17 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
-     "RMSEEXP01_20140801002014080100T.scam" using ($1):18 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
+plot "RMSEEXP01_".datai.dataf."T.scam" using ($1):16 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
+     "RMSEEXP01_".datai.dataf."T.scam" using ($1):17 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
+     "RMSEEXP01_".datai.dataf."T.scam" using ($1):18 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
 
 #ACOR UVEL
-plot "ACOREXP01_20140801002014080100T.scam" using ($1):16 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
-     "ACOREXP01_20140801002014080100T.scam" using ($1):17 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
-     "ACOREXP01_20140801002014080100T.scam" using ($1):18 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
+plot "ACOREXP01_".datai.dataf."T.scam" using ($1):16 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
+     "ACOREXP01_".datai.dataf."T.scam" using ($1):17 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
+     "ACOREXP01_".datai.dataf."T.scam" using ($1):18 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
 
 # Para mostrar os valores do eixo x, define-se o formato (float, com 1 dígito com 0 casas decimais - neste caso
 # vai mostrar apenas a parte inteira dos valores
@@ -152,18 +167,18 @@ set format x "%1.0f"
 #VIES VVEL
 set label 1 "VVEL" at graph 0.9,0.9 font "Verdana,6" 
 set xlabel "Forecast Lead Time" font "Verdana,6" offset 0,1.5
-plot "VIESEXP01_20140801002014080100T.scam" using ($1):19 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
-     "VIESEXP01_20140801002014080100T.scam" using ($1):20 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
-     "VIESEXP01_20140801002014080100T.scam" using ($1):21 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
+plot "VIESEXP01_".datai.dataf."T.scam" using ($1):19 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "VIES 925", \
+     "VIESEXP01_".datai.dataf."T.scam" using ($1):20 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "VIES 850", \
+     "VIESEXP01_".datai.dataf."T.scam" using ($1):21 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "VIES 500", \
 
 #RMSE VVEL
-plot "RMSEEXP01_20140801002014080100T.scam" using ($1):19 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
-     "RMSEEXP01_20140801002014080100T.scam" using ($1):20 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
-     "RMSEEXP01_20140801002014080100T.scam" using ($1):21 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
+plot "RMSEEXP01_".datai.dataf."T.scam" using ($1):19 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "RMSE 925", \
+     "RMSEEXP01_".datai.dataf."T.scam" using ($1):20 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "RMSE 850", \
+     "RMSEEXP01_".datai.dataf."T.scam" using ($1):21 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "RMSE 500", \
 
 #ACOR VVEL
-plot "ACOREXP01_20140801002014080100T.scam" using ($1):19 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
-     "ACOREXP01_20140801002014080100T.scam" using ($1):20 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
-     "ACOREXP01_20140801002014080100T.scam" using ($1):21 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
+plot "ACOREXP01_".datai.dataf."T.scam" using ($1):19 with linespoints ls 2 lw 1 pt 5 ps 0.5 title "ACOR 925", \
+     "ACOREXP01_".datai.dataf."T.scam" using ($1):20 with linespoints ls 4 lw 1 pt 5 ps 0.5 title "ACOR 850", \
+     "ACOREXP01_".datai.dataf."T.scam" using ($1):21 with linespoints ls 6 lw 1 pt 5 ps 0.5 title "ACOR 500", \
 
 unset multiplot
