@@ -77,9 +77,9 @@ case $TESTCASE in
 
 #Tempo
 datai=2016010100
-dataf=2016010100
+dataf=2016010300
 passo_analise=06
-passo_previsao=03
+passo_previsao=06
 total_previsao=36
 
 #Recorte
@@ -95,14 +95,18 @@ dy=0.25
 pl_model_refer=11
 
 #Arquivo (analise)
-arq_refer=/scratchin/grupos/assim_dados/home/gdad/DataFix/OBS/testcase/SCAMTEC/BRAMS/5km/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
+arq_refer=/scratchout/grupos/exp-dmd/home/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
+
+#/scratchin/grupos/assim_dados/home/gdad/DataFix/OBS/testcase/SCAMTEC/BRAMS/5km/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
 
 #Experimento
 #Plugin experimento
 pl_model_exper=11
 
 #Arquivo (previsao)
-arq_prev=/scratchin/grupos/assim_dados/home/gdad/DataFix/OBS/testcase/SCAMTEC/BRAMS/5km/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
+arq_prev=/scratchout/grupos/exp-dmd/home/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
+
+#/scratchin/grupos/assim_dados/home/gdad/DataFix/OBS/testcase/SCAMTEC/BRAMS/5km/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
 
 #climatologia
 use_climatologia=1
@@ -321,7 +325,7 @@ echo                                                                >> ${ARQlog}
 
 #Executando o SCAMTEC
 echo "Executando o scamtec.x"
-echo "        Aguarde "
+echo "        AGUARDE... "
 echo
 
 ./scamtec.x >> ${ARQlog}
@@ -350,24 +354,22 @@ echo                                                       >> ${ARQlog}
 
 #========================================================================================
 
-#Modificando o gerador de gráficos
-echo "Modificando o gerador de gráficos"
-echo 
-
-# Lucas, no script do Carlos muda apenas a datai e dataf no nome do arquivo
-
-echo "Fim da modificacao"
-
 #Executando o gerador de gráficos
 echo "Executando o gerador de gráficos"
 echo
 
 cd ${dir_act}/core
-cp plot.gpl ${saida_results}
+cp plot_scamtec_results.gpl ${saida_results}
 cd ${saida_results}
-./plot.gpl
+/scratchin/grupos/assim_dados/home/gdad/public/gnuplot5/bin/gnuplot -c ./plot_scamtec_results.gpl ${datai} ${dataf}
+
 
 echo "Fim da geração dos gráficos"
+echo
+
+echo "Dados se encontram em: ${saida_results}" 
+echo "Para vizualizar a figura digite evince plot_scamtec_results.eps "
+echo
 
 
 
