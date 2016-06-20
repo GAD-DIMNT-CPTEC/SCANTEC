@@ -111,7 +111,7 @@ Contains
     integer            :: i, npts,ier, tam_hist
     character(len=512) :: fname, fmt
     
-
+    if((scamtec%loop_count.eq.1) .and. (run .eq. 1))then
         
     !
     ! Identificando Indice dos pontos validos
@@ -136,7 +136,7 @@ Contains
     prefield => scamdata(1)%prefield
 
     
-    if((scamtec%loop_count.eq.1) .and. (run .eq. 1))then
+!    if((scamtec%loop_count.eq.1) .and. (run .eq. 1))then
      
        !
        ! Allocando Memoria para o calculo dos Indices
@@ -284,9 +284,10 @@ Contains
  
         print*,'Min/Max PREFIELD: ',minval(prefield(:,21)),maxval(prefield(:,21))
 
-        !Preenchendo dados de precipitacao OBS
-        dado(run)%prec(:,t,j)=prefield(Idx,21)       
-                        
+         print*,'passou do dado prec!!',t,j,run,minval(Idx),maxval(Idx)
+         !Preenchendo dados de precipitacao OBS
+         dado(run)%prec(:,t,j)=prefield(Idx,21)       
+                       
                         
         !gravar matriz observacao
         !OPEN(45,file=trim(scamtec%output_dir)//'/'//'soma_obs_precip1'//'.bin',form='unformatted',status='unknown',convert='big_endian')  
@@ -339,7 +340,7 @@ Contains
   if ( (scamtec%time_step.eq.scamtec%ntime_steps) .and. (scamtec%ftime_idx .eq.scamtec%ntime_forecast) .and. (run .eq. scamtec%nexp))then
          CALL FinalizeBStat( run )      
   endif  
-  
+ 
   DEALLOCATE (histo)
   DEALLOCATE (obs_histo)
   DEALLOCATE (obs_precip)
