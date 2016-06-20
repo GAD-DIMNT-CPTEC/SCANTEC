@@ -33,7 +33,7 @@ Implicit None
 ! Integer Variables
       Integer, Parameter    :: Mflds = 301
       Integer, Parameter    :: Mdim  = Mflds * ( Mflds + 1 ) / 2
-      Integer, Parameter    :: Meof  = 8
+      Integer, Parameter    :: Meof  = 4
       Integer               :: I, J, K, JJ, M
       Integer               :: K1, K2
       Integer               :: Iwork(5*Mflds),Ifail(Mflds)
