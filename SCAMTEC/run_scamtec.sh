@@ -13,14 +13,15 @@
 # ./run_scamtec.sh N
 #                  
 #  N=1 TestCase (análises e previsões do modelo BRAMS 05km para janeiro de 2016)
-#  N=2 Configuração do usuário (configurar manualmente o arquivo core/scamtec.conf) 
+#  N=2 TestCase utilizando dados do G3DVAR     para junho   de 2012
+#  N=3 Configuração do usuário (configurar manualmente o arquivo core/scamtec.conf) 
 #
 #
 # !Histórico de revisões: 
 #      20-05-2016 - Lucas Amarante     - Versão inicial
 #      24-05-2016 - Claudio Pavani     - TestCase BRAMS, execução do plot.gpl
 #      15-06-2016 - Carlos Bastarz     - Ajustes, padronização e generalizações
-#
+#      16-06-2016 - Claudio Pavani     - Acrescentando mais um testeCase
 #
 #help#
 #--------------------------------------------------------------------#
@@ -49,7 +50,8 @@ then
   echo " A opcao TestCase nao foi corretamente ajustada!"
   echo " Uso:"
   echo " ./run_scamtec.sh 1 - para fazer um TestCase do BRAMS"
-  echo " ./run_scamtec.sh 2 - para usar os dados definidos pelo usuario"
+  echo " ./run_scamtec.sh 2 - para fazer um TestCase do G3DVAR"
+  echo " ./run_scamtec.sh 3 - para usar os dados definidos pelo usuario"
   echo ""
   echo ""   
 else
@@ -59,8 +61,9 @@ else
     echo ""
     echo " A opcao TestCase nao foi corretamente ajusta!"
     echo " Uso:"
-    echo " ./run_scamtec.sh 1 - para fazer um TestCase do BRAMS 5km"
-    echo " ./run_scamtec.sh 2 - para usar os dados definidos pelo usuario"
+    echo " ./run_scamtec.sh 1 - para fazer um TestCase do BRAMS"
+    echo " ./run_scamtec.sh 2 - para fazer um TestCase do G3DVAR"
+    echo " ./run_scamtec.sh 3 - para usar os dados definidos pelo usuario"
     echo ""
     echo ""
     echo " Para mais informacoes digite:"
@@ -75,7 +78,7 @@ case $TESTCASE in
 [1]) 
 
 #--------------------------------------------------------------------#
-# Configuracoes do TestCase (NAO ALTERAR!)                           #
+# Configuracoes do TestCase BRAMS (NAO ALTERAR!)                     #
 #--------------------------------------------------------------------#
 
 # Datas
@@ -98,16 +101,16 @@ dy=0.25
 pl_model_refer=11
 
 # Arquivo (analise)
-arq_refer=/scratchout/grupos/exp-dmd/home/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
-
+arq_refer=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
+#/scratchout/grupos/exp-dmd/home/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
 #/scratchin/grupos/assim_dados/home/gdad/DataFix/OBS/testcase/SCAMTEC/BRAMS/5km/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
 
 # Experimento
-#Plugin experimento
+# Plugin experimento
 pl_model_exper=11
 
 # Arquivo (previsao)
-arq_prev=/scratchout/grupos/exp-dmd/home/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
+arq_prev=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
 
 #/scratchin/grupos/assim_dados/home/gdad/DataFix/OBS/testcase/SCAMTEC/BRAMS/5km/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
 
@@ -120,8 +123,58 @@ use_precipitacao=0
 # EOF
 use_eof=0
 ;;
- 
+
 [2])
+
+#--------------------------------------------------------------------#
+# Configuracoes do TestCase G3DVAR (NAO ALTERAR!)                    #
+#--------------------------------------------------------------------#
+
+# Datas
+datai=2012060600
+dataf=2012060618
+passo_analise=06
+passo_previsao=06
+total_previsao=72
+
+# Recortes
+lat_low=-49.875 
+lon_low=-82.625 
+lat_up=11.375 
+lon_up=-35.375 
+dx=0.25  
+dy=0.25 
+
+# Referencias 
+# Plugin modelo
+pl_model_refer=1
+
+# Arquivo (analise)
+arq_refer=/stornext/online6/assim_dados/luiz.sapucci/exps_iwv/Experimentos_no_G3DVAR/EXP7_Erro_Adaptativo_2/POS_Adaptativo2/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.grb
+
+
+
+# Experimento
+# Plugin experimento
+pl_model_exper=1
+
+# Arquivo (previsao)
+arq_prev=/stornext/online6/assim_dados/luiz.sapucci/exps_iwv/Experimentos_no_G3DVAR/EXP7_Erro_Adaptativo_2/POS_Adaptativo2/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb
+
+
+
+#climatologia
+use_climatologia=1
+
+#precipitacao
+use_precipitacao=0
+
+#calculo EOF
+use_eof=0
+;;
+
+ 
+[3])
 
 #--------------------------------------------------------------------#
 # Configuracoes do Usuario (ALTERAR O QUE FOR NECESSARIO)            #
@@ -293,7 +346,7 @@ Precipitation file: /stornext/online6/assim_dados/paulo.dias/Dados_SCAMTEC/preci
 Define o Range do Histograma: 2                                         # exemplo: 2
 Define valor do limite inferior da ultima classe do histograma: 70      # exemplo: 100
 Define valor do minimo inferior da primeira classe do histograma: 0     # exemplo: 0
-Define qual Precipitacao deseja avaliar: 16                             # exemplo: 16 para TOTAL ou 17 para CONVECTIVE
+Define qual Precipitacao deseja avaliar: 21                             # exemplo: 16 para TOTAL ou 17 para CONVECTIVE
 Define o periodo de acumulo de precpitacao da observacao: 3             # exemplo: 3 
 Define o periodo de acumulo de precpitacao do experimento: 24           # exemplo: 24
 
@@ -370,6 +423,7 @@ echo "Fim da geração dos gráficos!"
 echo ""
 
 echo "Resultados encontram-se em: ${saida_results}/plot_scamtec_results.eps" 
+echo "Para vizualizar a figura digite evince plot_scamtec_results.eps "
 echo ""
 
 exit 0
