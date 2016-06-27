@@ -56,7 +56,7 @@ then
   echo ""   
 else
   export TESTCASE=${1} 
-  if [ $TESTCASE -gt 2 ]
+  if [ $TESTCASE -gt 3 ]
   then
     echo ""
     echo " A opcao TestCase nao foi corretamente ajusta!"
