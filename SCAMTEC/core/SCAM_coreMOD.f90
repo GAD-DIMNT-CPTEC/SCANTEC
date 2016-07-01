@@ -150,6 +150,21 @@ CONTAINS
     Allocate(scamtec%ftime_count(scamtec%ntime_forecast))
     scamtec%ftime_count    = 0
     scamtec%ftime_count(1) = 1
+    
+
+    !controle de fluxo para eof  
+    if ((EOFs_Flag.eq.1) .and. (quant_EOFs.gt. 8 .or. scamtec%ntime_steps .gt. 301))then
+        write(*,*)
+        write(*,*)':: Parametros para calculo de EOF fora dos valores desejados :::'
+        
+        write(*,*)'Requer: '
+        write(*,*)'Quantidade de EOFS: < 8 '
+        write(*,*)'Passo de tempo:     < 301'
+        write(*,*)        
+        
+        EOFs_Flag = 0
+    endif
+    
 
 #ifdef DEBUG    
    write(6,'(A,F9.3)')'history increment    :',scamtec%hist_incr

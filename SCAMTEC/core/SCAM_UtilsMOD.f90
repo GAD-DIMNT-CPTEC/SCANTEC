@@ -291,13 +291,13 @@ MODULE SCAM_Utils
 
 #ifdef DEBUG
         write(*,'(   1A   )')'Running Specification:'
-        write(*,'(A,x,I10.10)')'Starting Time:',  scamtec%starting_time
-        write(*,'(A,x,I10.10)')'Ending Time:',    scamtec%ending_time
-        write(*,'(A,x,I3.2)')'Time Step:',      scamtec%time_step 
-        write(*,'(A,x,I3.2)')'Analisys Time Step:',  scamtec%forecast_time
-        write(*,'(A,x,I3.2)')'Forecast Time Step:',  scamtec%forecast_time
-        write(*,'(A,x,I3.2)')'Forecast Total Time:',  scamtec%forecast_time
-        write(*,'(A,x,I3.2)')'History Time:',   scamtec%hist_time
+        write(*,'(A,x,I10.10)')'Starting Time:',     scamtec%starting_time
+        write(*,'(A,x,I10.10)')'Ending Time:',       scamtec%ending_time
+        write(*,'(A,x,I3.2)')'Time Step:',           scamtec%time_step 
+        write(*,'(A,x,I3.2)')'Analisys Time Step:',  scamtec%atime_step
+        write(*,'(A,x,I3.2)')'Forecast Time Step:',  scamtec%ftime_step
+        write(*,'(A,x,I3.2)')'Forecast Total Time:', scamtec%forecast_time
+        write(*,'(A,x,I3.2)')'History Time:',        scamtec%hist_time
 #endif
 
 
