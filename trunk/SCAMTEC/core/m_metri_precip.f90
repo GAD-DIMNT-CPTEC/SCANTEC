@@ -111,20 +111,21 @@ Contains
     integer            :: i, npts,ier, tam_hist
     character(len=512) :: fname, fmt
     
-    if((scamtec%loop_count.eq.1) .and. (run .eq. 1))then
+    
+    
+    
         
     !
     ! Identificando Indice dos pontos validos
     !
   
-    nidx = count (scamdata(run)%UdfIdx)
+    !nidx = count (scamdata(run)%UdfIdx)
     npts = scamtec%nxpt*scamtec%nypt
 
-    Allocate(Idx(nidx))
+ 
+    !Allocate(Idx(nidx))
     
-    !Idx(1:nidx) = PACK ( (/(i,i=1,npts)/), mask = scamdata(run)%UdfIdx) !old
-
-    Idx(1:nidx) = PACK ( (/(i,i=1,npts)/), mask = scamdata(run)%UdfIdx(1:nidx,21))
+    !Idx(1:nidx) = PACK ( (/(i,i=1,npts)/), mask = scamdata(run)%UdfIdx(1:nidx,21))
         
     !
     ! transferindo dados para o calculo dos indices
@@ -135,8 +136,8 @@ Contains
     expfield => scamdata(run)%expfield
     prefield => scamdata(1)%prefield
 
-    
-!    if((scamtec%loop_count.eq.1) .and. (run .eq. 1))then
+
+    if((scamtec%loop_count.eq.1) .and. (run .eq. 1))then
      
        !
        ! Allocando Memoria para o calculo dos Indices
@@ -215,7 +216,7 @@ Contains
     ! Desalocando variaveis
     !
 
-    DeAllocate(Idx)
+    !DeAllocate(Idx)
     DeAllocate(dado)
     DeAllocate(histogram)
 
@@ -284,10 +285,10 @@ Contains
  
         print*,'Min/Max PREFIELD: ',minval(prefield(:,21)),maxval(prefield(:,21))
 
-         print*,'passou do dado prec!!',t,j,run,minval(Idx),maxval(Idx)
+
          !Preenchendo dados de precipitacao OBS
-         dado(run)%prec(:,t,j)=prefield(Idx,21)       
-                       
+         !dado(run)%prec(:,t,j)=prefield(Idx,21)       
+          dado(run)%prec(:,t,j)=scamtec%udef
                         
         !gravar matriz observacao
         !OPEN(45,file=trim(scamtec%output_dir)//'/'//'soma_obs_precip1'//'.bin',form='unformatted',status='unknown',convert='big_endian')  
@@ -310,6 +311,11 @@ Contains
         
         !Preenchendo dados de precipitacao EXP
         dado(run)%prec(:,t,j)=expfield(:,hist%tipo_precip)
+        
+        !if (maxval(dado(run)%prec(:,t,j)) .gt. 0) then  
+        ! write(19)expfield(:,hist%tipo_precip)
+        !stop
+        !end if
         
         !open(46,file=trim(scamtec%output_dir)//'/'//'EXP_precip'//'.bin',form='unformatted',status='unknown',access = 'sequential')         
         !write(46)expfield(:,hist%tipo_precip)  
@@ -535,10 +541,13 @@ Contains
   
   SUBROUTINE DadosEOFs(run)
   
+  
+    USE SCAM_Utils, only : quant_EOFs
+    
     !
     ! !INPUT PARAMETERS:
     !
-
+       
     integer, intent(in)  :: run ! experiment number
     
     
@@ -599,9 +608,9 @@ Contains
     Integer              :: cont
     !-----------
     
-    print*, ''
-    print*, 'teste', scamtec%gridDesc(2), scamtec%gridDesc(3), scamtec%npts
-    print*, ''
+    !print*, ''
+    !print*, 'teste', scamtec%gridDesc(2), scamtec%gridDesc(3), scamtec%npts
+    !print*, ''
     
    ! nx = int(scamtec%gridDesc(2))
    ! ny = int(scamtec%gridDesc(3))
@@ -614,7 +623,10 @@ Contains
     !Fanom=0
     Jeof=4
     Fvar=0.0
-    Cut=4.0
+    
+    !quantidade eof vindo do conf
+    Cut=quant_EOFs
+    
     Neof=0
     Trace=0.0
     Feof=0.0
@@ -624,7 +636,7 @@ Contains
     precip_obs_eof(:,:)=0
     precip_tempo(:,:,:)=0
     
-        !dado(run)%histo(t,f,i)
+    !dado(run)%histo(t,f,i)
     ! Total de preciptação do arquivo de Observação
     
     ALLOCATE(tempo(scamtec%ntime_forecast))
@@ -644,7 +656,6 @@ Contains
                 
     
   END SUBROUTINE DadosEOFs
-  
   
   
   

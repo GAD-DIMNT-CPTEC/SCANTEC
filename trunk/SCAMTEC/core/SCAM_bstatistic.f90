@@ -519,9 +519,7 @@ Contains
     dado(run)%rmse(:,j) = sqrt(dado(run)%rmse(:,j) / scamtec%ftime_count(j))
     dado(run)%vies(:,j) = dado(run)%vies(:,j) / scamtec%ftime_count(j)
     dado(run)%acor(:,j) = dado(run)%acor(:,j) / scamtec%ftime_count(j)
-    
-
-    
+        
     !dado(run)%desp(:,i) = sqrt(dado(run)%desp(:,i) / (scamtec%ftime_count(i)-1)) ! paulo dias
 
     write(FunitOut+0,fmt)(j-1)*scamtec%ftime_step,(dado(run)%rmse(i,j),i=1,scamtec%nvar)
@@ -540,7 +538,7 @@ Contains
         write(FunitOut+3)dado(run)%rmse_Field(:,i,j)
         write(FunitOut+4)dado(run)%vies_Field(:,i,j)
         write(FunitOut+5)dado(run)%exp_mean_Field(:,i,j)
-!print*,minval(dado(run)%rmse_Field(:,i,j)),maxval(dado(run)%rmse_Field(:,i,j))
+    !print*,minval(dado(run)%rmse_Field(:,i,j)),maxval(dado(run)%rmse_Field(:,i,j))
     ENDDO
 
 
@@ -551,6 +549,141 @@ Contains
     Close(FUnitOut+3)
     Close(FUnitOut+4)
     Close(FUnitOut+5)
+    
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !escrevento ctl para campos
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !RMS    
+      open(150, file=trim(scamtec%output_dir)//'/Campo_RMSE_'//trim(Fname)//'.ctl', status='unknown')
+      
+      write(150,'(A,A)')'dset ^','RMSE'//trim(Fname)//'F.scam'
+      write(150,'(A)')
+      write(150,'(A)')'options sequential'
+      write(150,'(A)')      
+      write(150,'(A)')'undef -999.9'      
+      write(150,'(A)')      
+      write(150,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'xdef',scamtec%nxpt,'linear', scamtec%gridDesc(5), scamtec%gridDesc(10)
+      write(150,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'ydef',scamtec%nypt,'linear', scamtec%gridDesc(4), scamtec%gridDesc(9)      
+      write(150,'(A)') 
+      write(150,'(A)')'zdef    1 linear 0 1'                  
+      write(150,'(A)') 
+      write(150,'(A,I3,A,I2,A)')'tdef  ',(scamtec%forecast_time/scamtec%atime_step)+1,' linear 00Z05AUG2014',scamtec%atime_step,'HR'
+      write(150,'(A)')
+      write(150,'(A)')'vars 22'
+      write(150,'(A)')'VT925 00 99 Virtual Temperature @ 925 hPa [K]'
+      write(150,'(A)')'VT850 00 99 Virtual Temperature @ 850 hPa [K]'
+      write(150,'(A)')'VT500 00 99 Virtual Temperature @ 500 hPa [K]'                                           
+      write(150,'(A)')'TM850 00 99 Absolute Temperature @ 850 hPa [K]'
+      write(150,'(A)')'TM500 00 99 Absolute Temperature @ 500 hPa [K]'
+      write(150,'(A)')'TM250 00 99 Absolute Temperature @ 250 hPa [K]'
+      write(150,'(A)')'PSNM0 00 99 Pressure reduced to snm [hPa]'                                           
+      write(150,'(A)')'SH925 00 99 Specific Humidity @ 925 hPa [g/Kg]'
+      write(150,'(A)')'SH850 00 99 Specific Humidity @ 850 hPa [g/Kg]'
+      write(150,'(A)')'SH500 00 99 Specific Humidity @ 500 hPa [g/Kg]'                                         
+      write(150,'(A)')'AG925 00 99 Inst. Precipitable Water @ 925 hPa [Kg/m2]'
+      write(150,'(A)')'ZG850 00 99 Geopotential height @ 850 hPa [gpm]'
+      write(150,'(A)')'ZG500 00 99 Geopotential height @ 500 hPa [gpm]'
+      write(150,'(A)')'ZG250 00 99 Geopotential height @ 250 hPa [gpm]'
+      write(150,'(A)')'UV850 00 99 Zonal Wind @ 850 hPa [m/s]'
+      write(150,'(A)')'UV500 00 99 Zonal Wind @ 500 hPa [m/s]'
+      write(150,'(A)')'UV250 00 99 Zonal Wind @ 250 hPa [m/s]'
+      write(150,'(A)')'VV850 00 99 Meridional Wind @ 850 hPa [m/s]'
+      write(150,'(A)')'VV500 00 99 Meridional Wind @ 500 hPa [m/s]'
+      write(150,'(A)')'VV250 00 99 Meridional Wind @  250 hPa [m/s]'
+      write(150,'(A)')'PC000 00 99 TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]'
+      write(150,'(A)')'PV001 00 99 CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]'
+      write(150,'(A)')'endvars'   
+      
+      close(150)
+    
+      !VIES   
+      open(151, file=trim(scamtec%output_dir)//'/Campo_VIES_'//trim(Fname)//'.ctl', status='unknown')
+      
+      write(151,'(A,A)')'dset ^','VIES'//trim(Fname)//'F.scam'
+      write(151,'(A)')
+      write(151,'(A)')'options sequential'
+      write(151,'(A)')      
+      write(151,'(A)')'undef -999.9'      
+      write(151,'(A)')      
+      write(151,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'xdef',scamtec%nxpt,'linear', scamtec%gridDesc(5), scamtec%gridDesc(10)
+      write(151,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'ydef',scamtec%nypt,'linear', scamtec%gridDesc(4), scamtec%gridDesc(9)      
+      write(151,'(A)') 
+      write(151,'(A)')'zdef    1 linear 0 1'                  
+      write(151,'(A)') 
+      write(151,'(A,I3,A,I2,A)')'tdef  ',(scamtec%forecast_time/scamtec%atime_step)+1,' linear 00Z05AUG2014',scamtec%atime_step,'HR'
+      write(151,'(A)')
+      write(151,'(A)')'vars 22'
+      write(151,'(A)')'VT925 00 99 Virtual Temperature @ 925 hPa [K]'
+      write(151,'(A)')'VT850 00 99 Virtual Temperature @ 850 hPa [K]'
+      write(151,'(A)')'VT500 00 99 Virtual Temperature @ 500 hPa [K]'                                           
+      write(151,'(A)')'TM850 00 99 Absolute Temperature @ 850 hPa [K]'
+      write(151,'(A)')'TM500 00 99 Absolute Temperature @ 500 hPa [K]'
+      write(151,'(A)')'TM250 00 99 Absolute Temperature @ 250 hPa [K]'
+      write(151,'(A)')'PSNM0 00 99 Pressure reduced to snm [hPa]'                                           
+      write(151,'(A)')'SH925 00 99 Specific Humidity @ 925 hPa [g/Kg]'
+      write(151,'(A)')'SH850 00 99 Specific Humidity @ 850 hPa [g/Kg]'
+      write(151,'(A)')'SH500 00 99 Specific Humidity @ 500 hPa [g/Kg]'                                         
+      write(151,'(A)')'AG925 00 99 Inst. Precipitable Water @ 925 hPa [Kg/m2]'
+      write(151,'(A)')'ZG850 00 99 Geopotential height @ 850 hPa [gpm]'
+      write(151,'(A)')'ZG500 00 99 Geopotential height @ 500 hPa [gpm]'
+      write(151,'(A)')'ZG250 00 99 Geopotential height @ 250 hPa [gpm]'
+      write(151,'(A)')'UV850 00 99 Zonal Wind @ 850 hPa [m/s]'
+      write(151,'(A)')'UV500 00 99 Zonal Wind @ 500 hPa [m/s]'
+      write(151,'(A)')'UV250 00 99 Zonal Wind @ 250 hPa [m/s]'
+      write(151,'(A)')'VV850 00 99 Meridional Wind @ 850 hPa [m/s]'
+      write(151,'(A)')'VV500 00 99 Meridional Wind @ 500 hPa [m/s]'
+      write(151,'(A)')'VV250 00 99 Meridional Wind @  250 hPa [m/s]'
+      write(151,'(A)')'PC000 00 99 TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]'
+      write(151,'(A)')'PV001 00 99 CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]'
+      write(151,'(A)')'endvars'   
+      
+      close(151)
+      
+      !MEAN   
+      open(152, file=trim(scamtec%output_dir)//'/Campo_MEAN_'//trim(Fname)//'.ctl', status='unknown')
+      
+      write(152,'(A,A)')'dset ^','MEAN'//trim(Fname)//'F.scam'
+      write(152,'(A)')
+      write(152,'(A)')'options sequential'
+      write(152,'(A)')      
+      write(152,'(A)')'undef -999.9'      
+      write(152,'(A)')      
+      write(152,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'xdef',scamtec%nxpt,'linear', scamtec%gridDesc(5), scamtec%gridDesc(10)
+      write(152,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'ydef',scamtec%nypt,'linear', scamtec%gridDesc(4), scamtec%gridDesc(9)      
+      write(152,'(A)') 
+      write(152,'(A)')'zdef    1 linear 0 1'                  
+      write(152,'(A)') 
+      write(152,'(A,I3,A,I2,A)')'tdef  ',(scamtec%forecast_time/scamtec%atime_step)+1,' linear 00Z05AUG2014',scamtec%atime_step,'HR'
+      write(152,'(A)')
+      write(152,'(A)')'vars 22'
+      write(152,'(A)')'VT925 00 99 Virtual Temperature @ 925 hPa [K]'
+      write(152,'(A)')'VT850 00 99 Virtual Temperature @ 850 hPa [K]'
+      write(152,'(A)')'VT500 00 99 Virtual Temperature @ 500 hPa [K]'                                           
+      write(152,'(A)')'TM850 00 99 Absolute Temperature @ 850 hPa [K]'
+      write(152,'(A)')'TM500 00 99 Absolute Temperature @ 500 hPa [K]'
+      write(152,'(A)')'TM250 00 99 Absolute Temperature @ 250 hPa [K]'
+      write(152,'(A)')'PSNM0 00 99 Pressure reduced to snm [hPa]'                                           
+      write(152,'(A)')'SH925 00 99 Specific Humidity @ 925 hPa [g/Kg]'
+      write(152,'(A)')'SH850 00 99 Specific Humidity @ 850 hPa [g/Kg]'
+      write(152,'(A)')'SH500 00 99 Specific Humidity @ 500 hPa [g/Kg]'                                         
+      write(152,'(A)')'AG925 00 99 Inst. Precipitable Water @ 925 hPa [Kg/m2]'
+      write(152,'(A)')'ZG850 00 99 Geopotential height @ 850 hPa [gpm]'
+      write(152,'(A)')'ZG500 00 99 Geopotential height @ 500 hPa [gpm]'
+      write(152,'(A)')'ZG250 00 99 Geopotential height @ 250 hPa [gpm]'
+      write(152,'(A)')'UV850 00 99 Zonal Wind @ 850 hPa [m/s]'
+      write(152,'(A)')'UV500 00 99 Zonal Wind @ 500 hPa [m/s]'
+      write(152,'(A)')'UV250 00 99 Zonal Wind @ 250 hPa [m/s]'
+      write(152,'(A)')'VV850 00 99 Meridional Wind @ 850 hPa [m/s]'
+      write(152,'(A)')'VV500 00 99 Meridional Wind @ 500 hPa [m/s]'
+      write(152,'(A)')'VV250 00 99 Meridional Wind @  250 hPa [m/s]'
+      write(152,'(A)')'PC000 00 99 TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]'
+      write(152,'(A)')'PV001 00 99 CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]'
+      write(152,'(A)')'endvars'   
+      
+      close(152)
+    
+    
+    
 
   End Subroutine WriteBstat
   !EOC

@@ -194,57 +194,93 @@ Implicit None
          End Do
          
       End Do
+      
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-!%  ARRUMAR %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ARRUMAR %%%%%%%%%%%%%%%%%%%%%%%%%
-!ARRUMAR
-!     WRITING OUT THE EOF EXPANSION COEFFICIENTS
-!
+!    WRITING OUT THE EOF EXPANSION COEFFICIENTS
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ !nome do arquivo de saida
+      if(e .eq. 0)then
+        nome_arq_saida=trim(scamtec%output_dir)//'/eofexpcoeffs'//'_'//tempo_char//'.txt'
+      else
+        nome_arq_saida=trim(scamtec%output_dir)//'/eofexpcoeffs'//Trim(Exper(e)%name)//'_'//tempo_char//'h'//'.txt'
+      endif
+      
+      nome_arq_saida=trim(scamtec%output_dir)//'/eofexpcoeffs'//Trim(Exper(e)%name)//'.txt'
+
+       !OPEN(120,FILE=nome_arq_saida,FORM='UNFORMATTED',ACCESS='DIRECT',RECL=NFLDS*NEOF*4)
+       OPEN(120,FILE=nome_arq_saida,FORM='FORMATTED',ACCESS='SEQUENTIAL',POSITION='APPEND')
+
+
       DO JJ=1,NFLDS
-!        Converting from REAL(KIND=8) to REAL(KIND=4)
+      !Converting from REAL(KIND=8) to REAL(KIND=4)
          DO I=1,NEOF
             ExpCff(I,JJ)=EIGVEC(JJ,I)
             WRITE(6,"(2I6,2F20.6)") I,JJ,ExpCff(I,JJ),EIGVEC(JJ,I)
+            WRITE(120,"(2I6,2F20.6)") I,JJ,ExpCff(I,JJ),EIGVEC(JJ,I)
          ENDDO
       ENDDO     
+         
+                  
+      print*, 'Neof, Nflds: ', NEOF, NFLDS
       
-      
-      
-      !nome do arquivo de saida
-      if(e .eq. 0)then
-        nome_arq_saida=trim(scamtec%output_dir)//'/'//'eofexpcoeffs'//'_'//tempo_char//'.bin'
-      else
-        nome_arq_saida=trim(scamtec%output_dir)//'/'//'eofexpcoeffs'//Trim(Exper(e)%name)//'_'//tempo_char//'h'//'.bin'
-      endif
-      
-      nome_arq_saida=trim(scamtec%output_dir)//'/'//'eofexpcoeffs'//Trim(Exper(e)%name)//'.bin'
-      
-      OPEN(120,FILE=nome_arq_saida,FORM='UNFORMATTED',ACCESS='DIRECT',RECL=NFLDS*NEOF*4)
-             
-      print*, 'teste', NEOF, NFLDS
-      
-      WRITE(120,REC=1) ((ExpCff(I,J),I=1,NEOF),J=1,NFLDS)
+      !WRITE(120,REC=1) ((ExpCff(I,J),I=1,NEOF),J=1,NFLDS)
+      !WRITE(120,*) ((ExpCff(I,J),I=1,NEOF),J=1,NFLDS)
       !CLOSE(120)
+      
 !
 !     WRITING OUT THE EOF PATTERNS
 !
      
       ! nome do arquivo de saida
       if(e .eq. 0)then
-        nome_arq_saida=trim(scamtec%output_dir)//'/'//'eofpatterns'//'_'//tempo_char//'.bin'
+        nome_arq_saida=trim(scamtec%output_dir)//'/eofpatterns'//'_'//tempo_char//'.bin'
       else
-        nome_arq_saida=trim(scamtec%output_dir)//'/'//'eofpatterns'//Trim(Exper(e)%name)//'_'//tempo_char//'h'//'.bin'
+        nome_arq_saida=trim(scamtec%output_dir)//'/eofpatterns'//Trim(Exper(e)%name)//'_'//tempo_char//'h'//'.bin'
       endif
       
-      nome_arq_saida=trim(scamtec%output_dir)//'/'//'eofpatterns'//Trim(Exper(e)%name)//'.bin'
+      nome_arq_saida=trim(scamtec%output_dir)//'/eofpatterns'//Trim(Exper(e)%name)//'.bin'
         
       OPEN(130,FILE=nome_arq_saida,FORM='UNFORMATTED',ACCESS='SEQUENTIAL')
                    
       DO M=1,NEOF
          PRINT*,'NEOF=',M,'NPTS=',NPTS
          
-         WRITE(130) (FEOF(K,M),K=1,NPTS)
+         WRITE(130) FEOF(:,M)
       ENDDO
+      
       !CLOSE(130)
+      
+!
+!     WRITING OUT THE EOF CTL
+!     
+!    Obs. sera criado o arquivo .ctl para os parametros que estao no scamtec.conf      
+!
+      open(140, file=trim(scamtec%output_dir)//'/eofpatterns.ctl', status='unknown')
+      
+      write(140,'(A6,A150)')'dset ^',nome_arq_saida
+      write(140,'(A)')
+      write(140,'(A)')'options sequential'
+      write(140,'(A)')      
+      write(140,'(A)')'undef -999.9000000'      
+      write(140,'(A)')      
+      write(140,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'xdef',scamtec%nxpt,'linear', scamtec%gridDesc(5), scamtec%gridDesc(10)
+      write(140,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'ydef',scamtec%nypt,'linear', scamtec%gridDesc(4), scamtec%gridDesc(9)      
+      write(140,'(A)') 
+      write(140,'(A)')'zdef  1 levels 1000'                  
+      write(140,'(A)') 
+      write(140,'(A,I3,A,I2,A)')'tdef  ',(scamtec%forecast_time/scamtec%atime_step)+1,' linear 00Z05AUG2014',scamtec%atime_step,'HR'
+      write(140,'(A)')
+      write(140,'(A)')'vars 4'
+      write(140,'(A)')'eof1   1 99  EOF'
+      write(140,'(A)')'eof2   1 99  EOF'
+      write(140,'(A)')'eof3   1 99  EOF'
+      write(140,'(A)')'eof4   1 99  EOF'
+      write(140,'(A)')'endvars'   
+      
+      close(140)
+      
+      
       
       
 RETURN	
