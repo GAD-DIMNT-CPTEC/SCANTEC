@@ -258,7 +258,7 @@ MODULE SCAM_Utils
          call get_value ( 'Forecast Time Step:', scamtec%ftime_step,    iret )
          call get_value ( 'Forecast Total Time:',scamtec%forecast_time, iret )
          call get_value ( 'History Time:',       scamtec%hist_time,     iret )
-         call get_value ( 'Undefined Value:',    scamtec%udef,          iret )
+         !call get_value ( 'Undefined Value:',    scamtec%udef,          iret )
 !
 ! Apply Sanity Checks on time specifications!
 !

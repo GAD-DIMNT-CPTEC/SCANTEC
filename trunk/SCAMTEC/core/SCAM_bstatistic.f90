@@ -553,8 +553,11 @@ Contains
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !escrevento ctl para campos
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !Obs* podera ser ajustado o nome usando Fname(ocorre erros quando as datas sao iguais)
+    !por isso o nome sem a variavel, com datas diferentes nao ocorre erros com o nome.
+    
     !RMS    
-      open(150, file=trim(scamtec%output_dir)//'/Campo_RMSE_'//trim(Fname)//'.ctl', status='unknown')
+      open(150, file=trim(scamtec%output_dir)//'/Campo_RMSE.ctl', status='unknown')
       
       write(150,'(A,A)')'dset ^','RMSE'//trim(Fname)//'F.scam'
       write(150,'(A)')
@@ -597,7 +600,7 @@ Contains
       close(150)
     
       !VIES   
-      open(151, file=trim(scamtec%output_dir)//'/Campo_VIES_'//trim(Fname)//'.ctl', status='unknown')
+      open(151, file=trim(scamtec%output_dir)//'/Campo_VIES.ctl', status='unknown')
       
       write(151,'(A,A)')'dset ^','VIES'//trim(Fname)//'F.scam'
       write(151,'(A)')
@@ -640,7 +643,7 @@ Contains
       close(151)
       
       !MEAN   
-      open(152, file=trim(scamtec%output_dir)//'/Campo_MEAN_'//trim(Fname)//'.ctl', status='unknown')
+      open(152, file=trim(scamtec%output_dir)//'/Campo_MEAN.ctl', status='unknown')
       
       write(152,'(A,A)')'dset ^','MEAN'//trim(Fname)//'F.scam'
       write(152,'(A)')

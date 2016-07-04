@@ -143,7 +143,7 @@ CONTAINS
     scamtec%nypt = dom(1)%ny
     scamtec%npts = dom(1)%nx*dom(1)%ny
 
-!    scamtec%udef = -999.9
+    scamtec%udef = -999.9
 
     scamtec%nvar = NumVarAval
     
