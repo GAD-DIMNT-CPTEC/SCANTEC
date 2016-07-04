@@ -24,6 +24,8 @@ INSTALL = install
 incdir = ./lib
 srcdir = ./core
 
+pathbin = ./bin
+
 PRJDIRS = $(incdir)/w3lib $(incdir)/mpeu $(srcdir) 
 
 # Not real file targets
@@ -31,6 +33,8 @@ PRJDIRS = $(incdir)/w3lib $(incdir)/mpeu $(srcdir)
 
 # targets
 all: libw3.a libmpeu.a scamtec.x 
+	mv $(srcdir)/scamtec.x $(pathbin)
+	rm $(srcdir)/*.mod $(srcdir)/*.o
 
 libw3.a:
 	@$(CD) $(incdir)/w3lib && \

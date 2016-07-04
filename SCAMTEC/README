@@ -1,7 +1,61 @@
 
 ** Instrucoes para compilacao e execucao do SCAMTEC **
 
-Para compilação siga os seguintes passos (ao final será gerado o arquivo scamtec.x)
+Para compilação e execução siga os seguintes passos:
+
+Ultima atualizacao do README: 04/07/2016
+
+*************************************************************************************************************************
+Para instalação no supercomputador TUPA:
+*************************************************************************************************************************
+
+1º Logar no TUPA 
+
+------
+2º Logar no eslogin01:
+ssh eslogin01 -XC
+
+------
+3º Escolher um diretorio para a instalação do SCAMTEC
+Obs. Pode ser nas areas $HOME/ ou $SUBMIT_HOME/ ou online6/ 
+
+------
+4º Baixar a versao do SCAMTEC do repositorio svn (projetos.cptec.inpe.br)
+svn co https://svn.cptec.inpe.br/scamtec/trunk/SCAMTEC
+
+------
+5º Entrar no diretorio do SCAMTEC
+cd SCAMTEC
+
+------
+6º Para compilar o SCAMTEC execute o script install com o comando:
+./install
+
+Escolha a opção 2 para o compilador pgi do TUPA
+
+------
+7º Executar o SCAMTEC (Rodadas TestCase):
+./run_scamtec.sh [parametro]
+
+Exemplos de utilização:
+./run_scamtec.sh 1 - para fazer um TestCase do BRAMS (Jan/2016)
+./run_scamtec.sh 2 - para fazer um TestCase do G3DVAR (Ago/2014)
+./run_scamtec.sh 3 - para usar os dados definidos pelo usuario
+
+* Cabe ressaltar que nessa versão está sendo gerado separado os resultados das métricas (arquivos *.scam) dos resultados de 
+precipitação. Para gerar os resultados das métricas deve-se deixar desligado as opções use precipitation e use eof, ou seja,
+os valores devem ser iguais a zero como no exemplo abaixo:
+
+Use Precipitation: 0
+Use EOFs: 0
+
+E para gerar somente os resultados de precipitação deve-se ligar essas mesmas opções citadas acima, conforme no exemplo:
+
+Use Precipitation: 1
+Use EOFs: 1
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Ultima atualizacao do README: 11/04/2016
 

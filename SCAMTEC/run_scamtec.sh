@@ -1,4 +1,4 @@
-#/bin/bash
+#/bin/sh
 
 #
 #BOP
@@ -12,9 +12,9 @@
 # !CALLING SEQUENCE:
 # ./run_scamtec.sh N
 #                  
-#  N=1 TestCase (análises e previsões do modelo BRAMS 05km para janeiro de 2016)
-#  N=2 TestCase utilizando dados do G3DVAR     para junho   de 2012
-#  N=3 Configuração do usuário (configurar manualmente o arquivo core/scamtec.conf) 
+#  N=1 TestCase utilizando dados do modelo BRAMS 05km para janeiro de 2016
+#  N=2 TestCase utilizando dados do G3DVAR para agosto 2014
+#  N=3 Configuração do usuário 
 #
 #
 # !Histórico de revisões: 
@@ -22,8 +22,17 @@
 #      24-05-2016 - Claudio Pavani     - TestCase BRAMS, execução do plot.gpl
 #      15-06-2016 - Carlos Bastarz     - Ajustes, padronização e generalizações
 #      16-06-2016 - Claudio Pavani     - Acrescentando mais um testeCase
+#      04-07-2016 - Lucas Amarante     - Atualizando testcase e outors parametros
 #
-#help#
+#
+#EOP  
+#--------------------------------------------------------------------#
+#BOC
+
+# Descomente a linha abaixo para debugar
+# set -o xtrace
+
+
 #--------------------------------------------------------------------#
 # Script para rodar os experimentos do SCAMTEC                       #
 #--------------------------------------------------------------------#
@@ -41,35 +50,32 @@ echo ""
 # Define o diretorio atual
 dir_act=`pwd`
 
-ARQlog=${dir_act}/exec_scamtec.log
+RUNTM=`date "+%Y%m%d.%H.%M"`
+ARQlog=${dir_act}/exec_scamtec_${RUNTM}.log
 
 # Verifica parametros de entrada
-if [ -z "${1}" ]
+if [ -z "${1}" ] 
 then
-  echo ""
-  echo " A opcao TestCase nao foi corretamente ajustada!"
+  echo 
+  echo " A opcao TestCase nao foi corretamente informada!"
   echo " Uso:"
-  echo " ./run_scamtec.sh 1 - para fazer um TestCase do BRAMS"
-  echo " ./run_scamtec.sh 2 - para fazer um TestCase do G3DVAR"
+  echo " ./run_scamtec.sh 1 - para fazer um TestCase do BRAMS (Jan/2016)"
+  echo " ./run_scamtec.sh 2 - para fazer um TestCase do G3DVAR (Ago/2014)"
   echo " ./run_scamtec.sh 3 - para usar os dados definidos pelo usuario"
-  echo ""
-  echo ""   
+  echo  
+  exit 1
 else
   export TESTCASE=${1} 
   if [ $TESTCASE -gt 3 ]
   then
-    echo ""
-    echo " A opcao TestCase nao foi corretamente ajusta!"
+    echo 
+    echo " A opcao TestCase nao foi corretamente informada!"
     echo " Uso:"
-    echo " ./run_scamtec.sh 1 - para fazer um TestCase do BRAMS"
-    echo " ./run_scamtec.sh 2 - para fazer um TestCase do G3DVAR"
+    echo " ./run_scamtec.sh 1 - para fazer um TestCase do BRAMS (Jan/2016)"
+    echo " ./run_scamtec.sh 2 - para fazer um TestCase do G3DVAR (Ago/2014)"
     echo " ./run_scamtec.sh 3 - para usar os dados definidos pelo usuario"
-    echo ""
-    echo ""
-    echo " Para mais informacoes digite:"
-    echo ""
-    echo " ./run_scamtec ajuda"
-    echo ""
+    echo 
+    echo 
     exit 1
   fi
 fi
@@ -96,14 +102,15 @@ lon_up=-35.375
 dx=0.25  
 dy=0.25 
 
+# Quantidade de experimentos
+quant_exp=1
+
 # Referencias
 # Plugin modelo
 pl_model_refer=11
 
 # Arquivo (analise)
 arq_refer=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
-#/scratchout/grupos/exp-dmd/home/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
-#/scratchin/grupos/assim_dados/home/gdad/DataFix/OBS/testcase/SCAMTEC/BRAMS/5km/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
 
 # Experimento
 # Plugin experimento
@@ -111,8 +118,6 @@ pl_model_exper=11
 
 # Arquivo (previsao)
 arq_prev=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
-
-#/scratchin/grupos/assim_dados/home/gdad/DataFix/OBS/testcase/SCAMTEC/BRAMS/5km/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
 
 # Climatologia
 use_climatologia=1
@@ -131,8 +136,8 @@ use_eof=0
 #--------------------------------------------------------------------#
 
 # Datas
-datai=2012060600
-dataf=2012060618
+datai=2014080500
+dataf=2014081500
 passo_analise=06
 passo_previsao=06
 total_previsao=72
@@ -142,25 +147,25 @@ lat_low=-49.875
 lon_low=-82.625 
 lat_up=11.375 
 lon_up=-35.375 
-dx=0.25  
-dy=0.25 
+dx=0.4  
+dy=0.4 
+
+# Quantidade de experimentos
+quant_exp=1
 
 # Referencias 
 # Plugin modelo
 pl_model_refer=1
 
 # Arquivo (analise)
-arq_refer=/stornext/online6/assim_dados/luiz.sapucci/exps_iwv/Experimentos_no_G3DVAR/EXP7_Erro_Adaptativo_2/POS_Adaptativo2/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.grb
-
-
+arq_refer=/stornext/online6/assim_dados/luiz.sapucci/testcase_scamtec/exp_global_cptec/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.grb
 
 # Experimento
 # Plugin experimento
 pl_model_exper=1
 
 # Arquivo (previsao)
-arq_prev=/stornext/online6/assim_dados/luiz.sapucci/exps_iwv/Experimentos_no_G3DVAR/EXP7_Erro_Adaptativo_2/POS_Adaptativo2/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb
-
+arq_prev=/stornext/online6/assim_dados/luiz.sapucci/testcase_scamtec/exp_global_cptec/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb
 
 
 #climatologia
@@ -200,14 +205,14 @@ dy=0.4
 pl_model_refer=1
 
 # Arquivo (analise)
-arq_refer=/stornext/online6/assim_dados/paulo.dias/Backup_g3dvar_comMetopB/pos_datainout/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ299L064.grb
+arq_refer=diretorio_dados
 
 # Experimento
 #Plugin experimento
 pl_model_exper=1
 
 # Arquivo (previsao)
-arq_prev=/stornext/online6/assim_dados/paulo.dias/Backup_g3dvar_comMetopB/pos_datainout/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ299L064.grb
+arq_prev=diretorio_dados
 
 # Climatologia
 use_climatologia=1
@@ -222,17 +227,48 @@ use_eof=0
 esac
 
 # Diretorio de saida do resultados
-#saida_results=/scratchout/grupos/assim_dados/home/claudio.pavani/saida_scamtec/
-saida_results=${dir_act}/saida_scamtec
+saida_results=${WORK_HOME}/saida_scamtec
 
 if [ ! -e ${saida_results} ]; then mkdir -p ${saida_results}; fi
 
-echo "======================================" 
-echo " Configuracoes iniciais:              " 
-echo " Data inicial: ${datai}               "
-echo " Data final:   ${dataf}               "
-echo "======================================" 
-echo ""                                     
+echo
+echo " =====================================     " 
+echo " Configuracoes iniciais do Testcase:       " 
+echo " =====================================     "  
+echo " Data inicial:   ${datai}                  "
+echo " Data final:     ${dataf}                  "
+echo " Passo analise:  ${passo_analise}          "
+echo " Passo previsao: ${passo_previsao}         "
+echo " Total previsao: ${total_previsao}         "
+echo
+echo
+echo " Recorte utilizado:                        "
+echo " Lat low: ${lat_low}                       "
+echo " Lon low: ${lon_low}                       "
+echo " Lat up:  ${lat_up}                        "
+echo " Lon up:  ${lon_up}                        "
+echo
+echo " Quantidade de experimentos: ${quant_exp}  "
+echo
+echo
+echo " Num. plugin referencia: ${pl_model_refer} "
+echo " Dados referencia (analise):               "
+echo " ${arq_refer}                              "
+echo
+echo " Num. plugin experimento: ${pl_model_exper}"
+echo " Dados experimento (previsao):             "
+echo " ${arq_prev}                               "
+echo
+echo "Uso climatologia: ${use_climatologia}      "
+echo "Uso precipitacao: ${use_precipitacao}      "
+echo "Uso eof:          ${use_eof}               "
+echo
+echo "Saida resultados:                          "
+echo "${saida_results}                           "
+echo
+echo
+echo "  ======================================   " 
+echo
 
 #--------------------------------------------------------------------#
 
@@ -318,12 +354,11 @@ Reference label: REFER
 # Experiment Files
 #
 
-Number of Experiments: 1
+Number of Experiments: ${quant_exp}
 
 Experiments:
 #ModelId Name Diretory File_Name_with_mask
 ${pl_model_exper} EXP01 ${arq_prev}
-
 ::
 
 #======================================
@@ -333,7 +368,7 @@ ${pl_model_exper} EXP01 ${arq_prev}
 Use Climatology: ${use_climatologia}	  # 0-do not use, 1-use
 # Diretory prefix mask sulfix
 Climatology Model Id: 3
-Climatology file: /stornext/online6/assim_dados/lucas.amarante/climatologiaJGM/climatologia50yr.%mc.bin
+Climatology file: /stornext/online6/assim_dados/luiz.sapucci/testcase_scamtec/climatologiaJGM/climatologia50yr.%mc.bin
 
 #======================================
 # Precipitation File
@@ -342,7 +377,7 @@ Climatology file: /stornext/online6/assim_dados/lucas.amarante/climatologiaJGM/c
 Use Precipitation: ${use_precipitacao}	# 0-do not use, 1-use
 # Diretory prefix mask sulfix
 Precipitation Model Id: 5
-Precipitation file: /stornext/online6/assim_dados/paulo.dias/Dados_SCAMTEC/preciptacao/%y4/3B42RT_SA.%y4%m2%d2%h200.bin
+Precipitation file: /stornext/online6/assim_dados/luiz.sapucci/testcase_scamtec/precipitacao/3B42RT/%y4/3B42RT.%y4.%m2.%d2.%h2z.bin
 Define o Range do Histograma: 2                                         # exemplo: 2
 Define valor do limite inferior da ultima classe do histograma: 70      # exemplo: 100
 Define valor do minimo inferior da primeira classe do histograma: 0     # exemplo: 0
@@ -353,8 +388,8 @@ Define o periodo de acumulo de precpitacao do experimento: 24           # exempl
 #======================================
 # Calculate EOFs
 #
-Use EOFs: ${use_eof}	# 0-do not use, 1-use
-Define a quantidade de EOFs: 4           # exemplo: 4
+Use EOFs: ${use_eof}	           # 0-do not use, 1-use
+Define a quantidade de EOFs: 4     # exemplo: 4
 
 #======================================================================
 # OUTPUT
@@ -364,28 +399,41 @@ Output directory: ${saida_results}
 EOT1
 
 echo "Arquivo de configuracao criado com sucesso."
-echo ""
+echo 
 
 echo "Copiando scamtec.conf final para a area selecionada e experimento..."  >> ${ARQlog}
-echo "" >> ${ARQlog}
+echo  >> ${ARQlog}
 cat scamtec.conf >> ${ARQlog}                           
-echo "" >> ${ARQlog}
-echo "" >> ${ARQlog}
+echo  >> ${ARQlog}
+echo  >> ${ARQlog}
 
 #--------------------------------------------------------------------#
 
 # Executando o SCAMTEC
-echo "Executando o scamtec.x"
-echo ""
-echo "AGUARDE... "
-echo ""
+cd ${dir_act}/bin 
 
-echo "Copiando executavel do programa principal para a pasta bin..."
-cp -v ${dir_act}/core/scamtec.x ${dir_act}/bin >> ${ARQlog}
-cd ${dir_act}/bin >> ${ARQlog}
-./scamtec.x >> ${ARQlog}
-if [ $(echo $?) -ne 0 ] # CFB: testar
-then
+if [ -e scamtec.x ]; then
+ echo
+ echo "Executando o scamtec.x"
+ echo 
+ echo "AGUARDE... "
+ echo 
+#  ./scamtec.x >> ${ARQlog}
+  
+else
+ echo
+ echo " ------ WARNING ------ "
+ echo
+ echo "Programa scamtec.x nao existe! Favor realizar a compilacao.."
+ echo
+ echo " ------ WARNING ------ "
+ echo
+ exit 1
+
+fi
+
+
+if [ $(echo $?) -ne 0 ]; then
   echo "Falha ao executar o SCAMTEC, abortando!"
   exit 2
 fi
@@ -394,36 +442,56 @@ data=`date`
 echo "Final do processo!! ${data}"
 
 echo "============================" >> ${ARQlog}
-echo "" >> ${ARQlog}
+echo  >> ${ARQlog}
 echo "Final do processo: ${data}" >> ${ARQlog}
 echo >> ${ARQlog} 
 
-echo ""
+echo 
 echo "Log da rodada se encontra no arquivo: ${ARQlog}"
 echo "===================================================================================="
-echo ""
+echo 
 echo "Fim do processo!" 
-echo ""
+echo 
 
 
-echo "Fim do processo para o recorte ${REC} conta ${USER}" >> ${ARQlog}
-echo "" >> ${ARQlog}
+echo "Fim do processo.. " >> ${ARQlog}
+echo >> ${ARQlog}
 
 #--------------------------------------------------------------------#
 
-# Executando script para plotar os resultados
-echo "Executando o script para plotar os gráficos"
-echo
+# Verificando saida para executar script gpl
+ver_scam=`\ls ${saida_results}/*.scam`
 
-cp ${dir_act}/core/plot_scamtec_results.gpl ${saida_results}
-cd ${saida_results}
-${gnuplot} -c ./plot_scamtec_results.gpl ${datai} ${dataf}
+div_scam=(${ver_scam// / }); #separa resultados pelo espaço
 
-echo "Fim da geração dos gráficos!"
-echo ""
+scam_fn=${div_scam[0]}
 
-echo "Resultados encontram-se em: ${saida_results}/plot_scamtec_results.eps" 
-echo "Para vizualizar a figura digite evince plot_scamtec_results.eps "
-echo ""
+if [ ! -z ${scam_fn} ]; then
+
+ # Executando script para plotar os resultados
+ echo "Executando o script para plotar os gráficos"
+ echo
+
+ cp ${dir_act}/core/plot_scamtec_results.gpl ${saida_results}
+ cd ${saida_results}
+ ${gnuplot} -c ./plot_scamtec_results.gpl ${datai} ${dataf}
+ 
+ echo "Fim da geração dos gráficos!"
+ echo 
+
+ echo "Resultados encontram-se em: ${saida_results}/plot_scamtec_results.eps" 
+ echo "Para vizualizar a figura digite evince plot_scamtec_results.eps "
+ echo 
+
+else
+ 
+ echo
+ echo "Resultados (.scam) nao foram gerados!!"
+ echo
+
+fi
+
+
+
 
 exit 0

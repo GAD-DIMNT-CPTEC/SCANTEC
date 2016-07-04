@@ -262,7 +262,7 @@ Implicit None
       write(140,'(A)')
       write(140,'(A)')'options sequential'
       write(140,'(A)')      
-      write(140,'(A)')'undef -999.9000000'      
+      write(140,'(A)')'undef -999.9'      
       write(140,'(A)')      
       write(140,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'xdef',scamtec%nxpt,'linear', scamtec%gridDesc(5), scamtec%gridDesc(10)
       write(140,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'ydef',scamtec%nypt,'linear', scamtec%gridDesc(4), scamtec%gridDesc(9)      

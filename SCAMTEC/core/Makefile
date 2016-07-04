@@ -108,6 +108,8 @@ include Makefile-objs
 LIBDIRS = -L$(MPEU_LIB) -L$(GRIB_LIB) 
 LIBS    = -lmpeu  -lw3 -llapack 
 
+PATH2=../bin
+
 # target names
 BIN = scamtec.x
 LIB = 
@@ -118,6 +120,8 @@ LIB =
 
 # targets
 all: $(LIB) $(BIN)
+	mv $(BIN) $(PATH2)
+	rm *.mod *.o
 
 $(LIB): $(OBJS)
 	@$(ECHO) ""
