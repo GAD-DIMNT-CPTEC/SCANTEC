@@ -33,17 +33,17 @@ incdir = ./
 srcdir = ./
 
 # default mode (max. optimization)
-mode =  dbg #pro
+mode = dbg #pro
 
 # header file directories
 CCFLAGS = -I$(incdir) -I$(MPEU_INC)
 FFLAGS  += -I$(incdir) -I$(MPEU_INC) 
 
 # default flags
-FPPFLAGS = -C -E 
-CCFLAGS += -DIFC
-LDFLAGS  = 
-ARFLAGS  = -r
+  FPPFLAGS = -C -E 
+  CCFLAGS += -DIFC
+  LDFLAGS  = 
+  ARFLAGS  = -r
 
 
 #
@@ -56,7 +56,7 @@ ifeq ($(SCAM_ARCH),Darwin_intel)
    FC  = ifort
    LD  = ifort
    AR  = ar
-   FFLAGS += -fpp -assume byterecl -heap-arrays
+   FFLAGS += -fpp -assume byterecl -heap-arrays 
 
 # add flags for debugging if requested
    ifeq (dbg,$(findstring dbg,$(mode)))
@@ -120,8 +120,8 @@ LIB =
 
 # targets
 all: $(LIB) $(BIN)
-	mv $(BIN) $(PATH2)
-	rm *.mod *.o
+#	mv $(BIN) $(PATH2)
+#	rm *.mod *.o
 
 $(LIB): $(OBJS)
 	@$(ECHO) ""

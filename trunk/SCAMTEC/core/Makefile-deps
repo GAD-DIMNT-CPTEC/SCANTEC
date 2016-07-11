@@ -41,7 +41,8 @@ $(srcdir)/SCAM_coreMOD.o SCAM_coreMOD.o: \
 	$(srcdir)/SCAM_UtilsMOD.o \
 	$(srcdir)/scamtec_module.o \
 	$(srcdir)/m_metri_precip.o \
-	$(srcdir)/m_time.o
+	$(srcdir)/m_time.o \
+	$(srcdir)/m_mode.o
 
 $(srcdir)/SCAM_dataMOD.o SCAM_dataMOD.o: \
 	$(srcdir)/SCAM_dataMOD.f90 \
@@ -57,7 +58,7 @@ $(srcdir)/SCAM_outputMOD.o SCAM_outputMOD.o: \
 	$(srcdir)/scamtec_module.o
 
 $(srcdir)/bilinear_interpolation.o bilinear_interpolation.o: \
-	$(srcdir)/bilinear_interpolation.f90\
+	$(srcdir)/bilinear_interpolation.f90 \
 	$(srcdir)/map_utils.o
 
 $(srcdir)/map_utils.o map_utils.o: \
@@ -70,6 +71,10 @@ $(srcdir)/m_metri_precip.o m_metri_precip.o: \
 	$(srcdir)/SCAM_UtilsMOD.o \
 	$(srcdir)/m_time.o
 
+$(srcdir)/m_mode.o m_mode.o: \
+	$(srcdir)/m_mode.f90 \
+	$(srcdir)/scamtec_module.o \
+	$(srcdir)/SCAM_dataMOD.o
 
 $(srcdir)/eta_read.o eta_read.o: \
 	$(srcdir)/eta_read.f90
@@ -145,7 +150,7 @@ $(srcdir)/m_brams5km.o m_brams5km.o: \
 	$(srcdir)/SCAM_MetForm.o \
 	$(srcdir)/scamtec_module.o \
 	$(srcdir)/bramsIO.o
-
+  
 $(srcdir)/m_brams20km.o m_brams20km.o: \
 	$(srcdir)/m_brams20km.f90 \
 	$(srcdir)/bilinear_interpolation.o \
