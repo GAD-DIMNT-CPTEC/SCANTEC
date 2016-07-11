@@ -68,14 +68,14 @@ Implicit None
 !=====================================================================!
 
 	
-!  Check value of  mflds :
+!  Check value of number of fields in data set (mflds):
 
       If ( mflds .lt. nflds ) Then
          write(*,*)'Oops, parameter  MFLDS  not big enough in  EOFT!'
          Stop
       EndIf
 !=====================================================================!
-!  Check value of  cut :
+!  Check value of  cut (number of EOFs to be computed):
 
       fmeof = meof + 0.01
       If ( cut .gt. fmeof ) Then

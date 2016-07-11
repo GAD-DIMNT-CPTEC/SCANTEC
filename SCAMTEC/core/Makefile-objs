@@ -34,4 +34,5 @@ OBJS = \
 	$(srcdir)/template_read.o \
 	$(srcdir)/bramsIO.o \
 	$(srcdir)/m_brams5km.o \
-	$(srcdir)/m_brams20km.o
+	$(srcdir)/m_brams20km.o \
+	$(srcdir)/m_mode.o

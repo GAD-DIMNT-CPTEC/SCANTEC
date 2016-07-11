@@ -53,6 +53,7 @@ MODULE SCAM_coreMOD
   USE m_ioutil
   use omp_lib
   USE m_metri_precip
+  USE mode
 
   IMPLICIT NONE
   PRIVATE
@@ -150,28 +151,13 @@ CONTAINS
     Allocate(scamtec%ftime_count(scamtec%ntime_forecast))
     scamtec%ftime_count    = 0
     scamtec%ftime_count(1) = 1
-    
-
-    !controle de fluxo para eof  
-    if ((EOFs_Flag.eq.1) .and. (quant_EOFs.gt. 8 .or. scamtec%ntime_steps .gt. 301))then
-        write(*,*)
-        write(*,*)':: Parametros para calculo de EOF fora dos valores desejados :::'
-        
-        write(*,*)'Requer: '
-        write(*,*)'Quantidade de EOFS: < 8 '
-        write(*,*)'Passo de tempo:     < 301'
-        write(*,*)        
-        
-        EOFs_Flag = 0
-    endif
-    
 
 #ifdef DEBUG    
    write(6,'(A,F9.3)')'history increment    :',scamtec%hist_incr
    write(6,'(A,F9.3)')'Analisys increment   :',scamtec%aincr
-   write(6,'(A,F9.3)')'Forecast increment   :',scamtec%aincr
+   write(6,'(A,F9.3)')'Forecast increment   :',scamtec%aincr           
    write(6,'(A,I9.3)')'N time steps         :',scamtec%ntime_steps
-   write(6,'(A,I9.3)')'N forecat time steps :',scamtec%ntime_forecast
+   write(6,'(A,I9.3)')'N forecast time steps :',scamtec%ntime_forecast
 #endif
 
   END SUBROUTINE SCAM_Config_init
@@ -317,6 +303,9 @@ CONTAINS
               write(*,*)'' 
               write(*,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
               CALL HistoStat ( NExp )  ! Calculate histogram  (descomentar esse para o teste)
+	      !CALL mode_init(NExp)
+	      !CALL mode_run(NExp)
+		!stop
            ENDIF
 
         ENDDO
@@ -406,6 +395,7 @@ CONTAINS
      REAL(DP) :: fincr
      integer :: I, Nx, Ny
      integer :: ii, jj
+
      INTEGER :: atimebufr
 
      scamtec%loop_count = scamtec%loop_count + 1
@@ -414,7 +404,7 @@ CONTAINS
      Nx = scamtec%ntime_steps
      Ny = scamtec%ntime_forecast
 
-     ii = ceiling((I)/float(Ny))
+     ii = ceiling((I)/float(Ny))  
      jj = ( I + Ny ) - Ny * ii
     
                

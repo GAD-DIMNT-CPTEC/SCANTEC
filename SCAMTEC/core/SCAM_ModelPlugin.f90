@@ -99,13 +99,13 @@ Contains
     !------------------------------------------------------------------
     ! Template
 !    external template_init
-    external template_read
+    external template_read     
     ! AGCM/CPTEC
 !    external agcm_init
 !    external agcm_read
     ! Eta/CPTEC
 !    external eta_init
-    external eta_read
+    external eta_read 
 
 #ifdef DEBUG
     WRITE(6,'(     2A)')'Hello from ', myname_

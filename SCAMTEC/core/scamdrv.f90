@@ -65,24 +65,24 @@ PROGRAM SCANTeC
 !  1. Configure SCAMTeC to RUN
 !
 
-   CALL SCAM_Config_init()
+   CALL SCAM_Config_init()                ! Subroutine defined in SCAM_coreMOD.f90
 
 !
 !  2. Initialize SCAMTeC main Variables and Plugins
 !
 
-   CALL SCAM_Init()
+   CALL SCAM_Init()                       ! Subroutine defined in SCAM_coreMOD.f90
 
 !
 !  3. RUN SCAMTeC
 !
 
-   CALL SCAM_RUN()
+   CALL SCAM_RUN()                        ! Subroutine defined in SCAM_coreMOD.f90
    
 !
 !  4. Finalize SCAMTeC, clean memory and etc ...
 !
 
-   CALL SCAM_FINALIZE()
+   CALL SCAM_FINALIZE()                   ! Subroutine defined in SCAM_coreMOD.f90
 
 END PROGRAM

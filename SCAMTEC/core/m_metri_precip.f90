@@ -66,9 +66,9 @@ MODULE m_metri_precip
   ! !PUBLIC DATA MEMBERS:
   !
   !real, pointer     :: reffield(:,:) ! (x*y,v)
-  real, pointer     :: expfield(:,:) ! (x*y,v)
+  real, pointer     :: expfield(:,:) ! (x*y,v)  
   !real, pointer     :: clmfield(:,:)
-  real, pointer     :: prefield(:,:) ! (x*y,v)
+  real, pointer     :: prefield(:,:) ! (x*y,v)  
   
   
   !
@@ -95,7 +95,7 @@ Contains
     ! !INPUT PARAMETERS:
     !
 
-    integer, intent(in) :: run ! experiment number
+    integer, intent(in) :: run      ! experiment number
 
     !
     !
@@ -108,24 +108,31 @@ Contains
     !BOC
     !
 
-    integer            :: i, npts,ier, tam_hist
-    character(len=512) :: fname, fmt
-    
-    
-    
-    
+    integer            :: i, npts,ier, tam_hist      
+    character(len=512) :: fname, fmt          
         
     !
     ! Identificando Indice dos pontos validos
     !
   
+!<<<<<<< .mine
+    nidx = count (scamdata(run)%UdfIdx)              ! scamdata -> variavel de tipo model_dec_type definida em SCAM_dataMOD.f90
+    npts = scamtec%nxpt*scamtec%nypt                 ! scamtec -> variable type definida em scamtec_module.f90
+!=======
     !nidx = count (scamdata(run)%UdfIdx)
-    npts = scamtec%nxpt*scamtec%nypt
+!    npts = scamtec%nxpt*scamtec%nypt
+!>>>>>>> .r183
 
  
     !Allocate(Idx(nidx))
     
+!<<<<<<< .mine
+    !Idx(1:nidx) = PACK ( (/(i,i=1,npts)/), mask = scamdata(run)%UdfIdx) !old              
+
+!    Idx(1:nidx) = PACK ( (/(i,i=1,npts)/), mask = scamdata(run)%UdfIdx(1:nidx,21))  
+!=======
     !Idx(1:nidx) = PACK ( (/(i,i=1,npts)/), mask = scamdata(run)%UdfIdx(1:nidx,21))
+!>>>>>>> .r183
         
     !
     ! transferindo dados para o calculo dos indices
@@ -133,9 +140,8 @@ Contains
 
     !reffield => scamdata(1)%reffield
     !clmfield => scamdata(1)%clmfield
-    expfield => scamdata(run)%expfield
-    prefield => scamdata(1)%prefield
-
+    expfield => scamdata(run)%expfield           ! expfield = experiment model field
+    prefield => scamdata(1)%prefield             ! prefield = precipitation field 
 
     if((scamtec%loop_count.eq.1) .and. (run .eq. 1))then
      
@@ -285,10 +291,16 @@ Contains
  
         print*,'Min/Max PREFIELD: ',minval(prefield(:,21)),maxval(prefield(:,21))
 
+!<<<<<<< .mine
+        !Preenchendo dados de precipitacao OBS
+!        dado(run)%prec(:,t,j)=prefield(Idx,21)       
+!=======
 
          !Preenchendo dados de precipitacao OBS
          !dado(run)%prec(:,t,j)=prefield(Idx,21)       
           dado(run)%prec(:,t,j)=scamtec%udef
+!>>>>>>> .r183
+                        
                         
         !gravar matriz observacao
         !OPEN(45,file=trim(scamtec%output_dir)//'/'//'soma_obs_precip1'//'.bin',form='unformatted',status='unknown',convert='big_endian')  
@@ -346,7 +358,7 @@ Contains
   if ( (scamtec%time_step.eq.scamtec%ntime_steps) .and. (scamtec%ftime_idx .eq.scamtec%ntime_forecast) .and. (run .eq. scamtec%nexp))then
          CALL FinalizeBStat( run )      
   endif  
- 
+  
   DEALLOCATE (histo)
   DEALLOCATE (obs_histo)
   DEALLOCATE (obs_precip)
@@ -530,7 +542,7 @@ Contains
             ! Escrevendo Histograma    
             write(FUnitOut)real(dado(run)%histo(t,:,:),4)
         endif        
-    enddo
+    enddo 
       
     !Fechando arquivo binario 
     Close(FUnitOut)

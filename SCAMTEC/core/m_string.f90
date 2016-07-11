@@ -20,7 +20,7 @@ MODULE m_string
   PUBLIC :: GetTokens    ! Get tokens by line
   PUBLIC :: find         ! find substring
 
-  interface Str_Template
+  interface Str_Template            
      module procedure str_Template_
   end interface
 
