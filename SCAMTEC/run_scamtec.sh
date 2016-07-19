@@ -418,7 +418,7 @@ if [ -e scamtec.x ]; then
  echo 
  echo "AGUARDE... "
  echo 
-#  ./scamtec.x >> ${ARQlog}
+  ./scamtec.x >> ${ARQlog}
   
 else
  echo
