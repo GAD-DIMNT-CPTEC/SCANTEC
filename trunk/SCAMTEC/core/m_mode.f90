@@ -7,6 +7,8 @@
 !										    !
 !       Adapted from the work of: Arletis Roque Carrasco                            !
 !				  Maibys Sierra Lorenzo                             !
+!				  Israel Borrajero Montejo                          !
+!				  Camilo Rodríguez Geno                             !
 !                               						    ! 
 !-----------------------------------------------------------------------------------!
 
@@ -29,6 +31,8 @@ MODULE mode
 
    USE scamtec_module                 ! module where the structure samtec is defined
    USE SCAM_dataMOD, only : scamdata  ! SCANTEC data matrix
+   USE m_mode_objects
+   USE m_mode_singleAttrib
 
    IMPLICIT NONE
    PRIVATE
@@ -42,8 +46,11 @@ MODULE mode
    real, allocatable :: precOriginalField(:,:)  ! Matrix to save precipitation observation data 
    real, allocatable :: expOriginalField(:,:)   ! Matrix to save precipitation experiment data 
 
+
    public :: mode_init
    public :: mode_run
+
+
 
    Contains
 
@@ -106,158 +113,160 @@ MODULE mode
          Implicit None
          integer, intent(in) :: nexp ! experiment number
 
-	 real, allocatable    :: cfilter(:,:)     ! Matrix to save circular filter's values
-	 real, allocatable    :: convField(:,:)   ! Field resulting of convolution process
-	 integer, allocatable :: maskField(:,:)
-	 real, allocatable    :: restoreField(:,:)
-         INTEGER :: I, J, rowSize, colSize, radio
-	 real    :: treshold
+	 real, allocatable    		:: cfilter(:,:)      ! Matrix to save circular filter's values
+	 real, allocatable    		:: convField(:,:)    ! Field resulting of convolution process
+	 integer, allocatable 		:: maskField(:,:)    ! Binary field -mask- resulting of tresholding process 
+	 real, allocatable    		:: restoreField(:,:) ! Matrix to save original field values where the mask is 1
+	 real    			:: treshold	     ! Precipitation threshold defined by the user
 
-	 ! exemplos para comprobar os algoritmos
-	 rowSize=3
-	 colSize=4
-	 ! os valores do radio e o limiar devem ser definidos no scamtec.conf
-	 radio=1
-         treshold=2.01
+         ! Radio and threshold values should be defined in scamtec.conf
+	 integer 			:: i, j, rowSize, colSize, radio, binary_treshold=1, is_valid, totalObj	 
 
+	 integer, allocatable   	:: mask(:,:), maskObj(:,:) ! Mask to count objects -> resulting of Object Identification Algorithm 	 
+	 ! objects attributes 
+	 integer			:: perimeter, area, xcent, ycent
+	 real				:: angle, aspect_ratio 
+
+	 
+         real, allocatable    		:: TESTE(:,:) ! EXEMPLOS PARA COMPROVAR OS ALGORITMOS
+	 
 	 call mode_init(nexp)
 
-	 allocate(cfilter(rowSize,colSize))
-	 allocate(convField(rowSize,colSize))
-	 allocate(maskField(rowSize,colSize))
-	 allocate(restoreField(rowSize,colSize))
+
+	 ! EXEMPLOS PARA COMPROVAR OS ALGORITMOS	 
+	 rowSize=15
+	 colSize=5
+	 ! os valores do radio e o limiar devem ser definidos no scamtec.conf
+	 radio=1
+         treshold=0.5
+
+	 allocate(TESTE(rowSize,colSize))
+	 
+	 allocate( convField(rowSize,colSize), maskField(rowSize,colSize), restoreField(rowSize,colSize) )	 	 
+	 allocate( mask(rowSize,colSize), maskObj(rowSize,colSize) )
+
+
+	 	 
+ 
+	 !**** TESTE  *************
+
+	 TESTE = 0
+	 mask = 0
+         maskObj = 0
+
+	 TESTE(1,1)=60.0
+	 TESTE(1,2)=60.0
+	 TESTE(2,1)=60.0
+	 TESTE(2,2)=59.9
+	 TESTE(2,3)=59
+	 TESTE(2,4)=60.0
+	 TESTE(3,2)=59.0
+	 TESTE(3,3)=50
+	 TESTE(5,1)=52
+	 TESTE(5,4)=52
+	 TESTE(5,5)=30
+	 TESTE(6,1)=30.01
+	 TESTE(6,5)=30.01
+	 TESTE(7,1)=32.1
+	 TESTE(7,2)=32.1
+	 TESTE(7,3)=30.01
+	 TESTE(7,4)=32.1
+	 TESTE(7,5)=32.2
+	 TESTE(8,2)=32.1
+	 TESTE(8,3)=32.1
+	 TESTE(8,5)=32.25 
+	 TESTE(9,1)=32.25 
+	 TESTE(9,2)=32.25
+         TESTE(9,5)=42
+	 TESTE(10,5)=32.25	
+	 TESTE(11,5)=42
+	 TESTE(12,4)=42
+	 TESTE(12,5)=32.25
+	 TESTE(13,4)=32.25
+	 TESTE(13,5)=32.251
+	 TESTE(14,3)=32.25
+	 TESTE(14,5)=32.25
+
+	 print*
+         print*, ' **** TESTE *****'
+	 Do i=1, rowSize
+	    write(*,*) (TESTE(i,j), j=1, colSize)
+         ENDDO
+ 	
+	 print*
+         print*,' **** CIRCULAR FILTER ***** '
+
+	 call circular_filter(cfilter, radio)
+	 
+            DO i=1, 3
+               write(*,*) (cfilter(i,j), j=1, 3)
+            ENDDO
+
+	 print*	 
+	 print*,' **** CONVOLUTION **** '
+
+         call convolution(convField, TESTE, cfilter, rowSize, colSize)
+         
+         DO i=1, rowSize            
+               write(*,*) (convField(i,j), j=1, colSize)            
+         ENDDO
+
+	 print*
+	 print*,' **** tresholding ****'
+
+         call tresholding(TESTE, convField, maskField, restoreField, rowSize, colSize, treshold)
+
+	 DO i=1, rowSize            
+               write(*,*) (maskField(i,j), j=1, colSize)             
+         ENDDO
+	 print*
+	 DO i=1, rowSize            
+               write(*,*) (restoreField(i,j), j=1, colSize)         
+         ENDDO
+
+         print*
+	 print*,' **** Object Identification ****'
+         totalObj=0
+	 DO j=1, colSize
+	    DO i=1, rowSize            
+               call valid(restoreField, rowSize, colSize, i, j, treshold, is_valid)		
+	       if (is_valid .and. (mask(i,j) .EQ. 0) ) then		  
+                  call singleObj_Ident_Attrib(i, j, restoreField, rowSize, colSize, treshold, mask, totalObj, maskObj, perimeter, area, xcent, ycent, angle, aspect_ratio)
+		  totalObj = totalObj + 1
+	          maskObj(i,j) = totalObj	       
+	       endif	       
+            ENDDO
+         ENDDO
+
+
+
+	 DO i=1, rowSize            
+               write(*,*) (mask(i,j), j=1, colSize)         
+         ENDDO
+
+	 print*
+	 DO i=1, rowSize            
+               write(*,*) (maskObj(i,j), j=1, colSize)         
+         ENDDO
 
          
 
          deallocate (cfilter)
 	 deallocate (convField)
 	 deallocate (maskField)
+	 deallocate (TESTE)
 
 
 
       END SUBROUTINE mode_run
-    !**************************************************************************************************************************************
+    !**************************************************************************************************************************************    
 
 
 
-
-    !**************************************************************************************************************************************
-      Subroutine circular_filter(filter, radio) 
-	 ! Subroutine where the circular filter used in the convolution process is calculated.
-         ! Circular filter has dimensions 3x3.
-	 ! Convolution radius is defined by the user
-
-         Implicit None
-	 ! INPUT PARAMETERS:
-	 integer, intent(in) :: radio    ! nrows= number of rows, ncols= number of columns, radio= radio used in the convolution process
-
-	 ! OUTPUT PARAMETER:
-	 real, allocatable, intent(out) :: filter(:,:)     ! Matrix to save circular filter's values
-
-         integer           :: i, j, x, y, filter_dimension=3
-	 real, parameter   :: pi=3.141592654
-
-         allocate(filter(filter_dimension,filter_dimension))
-
-	! Loop para calcular cada ponto (i,j) do filtro circular
-	 do i=1, filter_dimension
-	    x=i-filter_dimension/2
-	    do j=1, filter_dimension
-	       y=j-filter_dimension/2
-	       if (x*x+y*y .LE. radio*radio) then
-		  filter(i,j) = 1/(radio*radio*pi)
-	       else
-		  filter(i,j) = 0
-	       endif
-	    enddo	 
-	 enddo
-
-      End Subroutine
-    !**************************************************************************************************************************************
+    
 
 
-
-
-    !**************************************************************************************************************************************
-      Subroutine convolution(convField, originalField, filter, ysize, xsize)
-      !Subroutine where the convolution process is calculated        
-
-	 Implicit None
-	 ! INPUT PARAMETERS:
-	 real, allocatable, intent(in) :: originalField(:,:) , filter(:,:)
-	 integer, intent(in)           :: xsize, ysize    ! Convolution matrix dimensions
-
-	 ! OUTPUT PARAMETER:
-	 real, allocatable, intent(out) :: convField(:,:)  ! Field resulting of convolution process - Convolution matrix
-
-	 integer	:: nrow, ncol, frow, fcol, ccol, crow, filter_dimension=3
-
-	 allocate(convField(ysize, xsize))
-
-	! Loop para calcular cada ponto (i,j) do campo transformado pelo algoritmo de convolução: 
-	 do nrow=1, ysize            
-	    do ncol=1, xsize
-	       convField(nrow,ncol)=0
-	       do frow=1, filter_dimension		  
-		  do fcol=1, filter_dimension			
-		     crow=abs(nrow-frow)
-		     ccol=abs(ncol-fcol)
-		     if ( (nrow .EQ. 2) .and. (frow .EQ. 2) ) then 
-		        crow= frow
-		     endif
-		     if ( (ncol .EQ. 2) .and. (fcol .EQ. 2) ) then 
-			ccol= fcol
-		     endif
-		     if ( (ccol .GT. 0) .and. (ccol .LE. xsize) .and. (crow .GT. 0) .and. (crow .LE. ysize) ) then
-			convField(nrow,ncol)= convField(nrow,ncol) + filter(frow,fcol)*originalField(crow,ccol)
-		     endif
-		  enddo
-	       enddo		
-	    enddo
-	 enddo
-
-      End Subroutine
-    !**************************************************************************************************************************************
-
-
-
-
-    !**************************************************************************************************************************************
-      Subroutine tresholding(originalField, convField, mask, restoreField, ysize, xsize, treshold)
-       ! The subroutine creates a mask field based on a user-defined threshold,  and the raw data are restored to create the object field 
-
-	Implicit None
-	! INPUT PARAMETERS: 
-	real, allocatable, intent(in) :: originalField(:,:), convField(:,:) 
-	integer, intent(in)           :: xsize, ysize    ! Convolution matrix dimensions
-	real, intent(in)	      :: treshold
-
-	! OUTPUT PARAMETER:
-	integer, allocatable, intent(out) :: mask(:,:)         ! Binary field -mask- resulting of tresholding process 
-	real, allocatable, intent(out)    :: restoreField(:,:) ! Matrix to save original field values where the mask is 1 
-
-	integer    :: i,j 
-
-	allocate(mask(ysize,xsize))
-	allocate(restoreField(ysize,xsize))
-
-	do i=1, ysize
-	   do j=1, xsize
-	      if (convField(i,j) .GE. treshold) then
-		 mask(i,j)=1
-	      else
-	         mask(i,j)=0
-	      endif
-	      restoreField(i,j)= mask(i,j)*originalField(i,j)
-	   enddo
-	enddo
-
-      End Subroutine
-    !**************************************************************************************************************************************
-
-
-
-
+    
 
 
 

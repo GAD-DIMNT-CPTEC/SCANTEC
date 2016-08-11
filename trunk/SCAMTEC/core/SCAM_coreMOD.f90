@@ -303,9 +303,6 @@ CONTAINS
               write(*,*)'' 
               write(*,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
               CALL HistoStat ( NExp )  ! Calculate histogram  (descomentar esse para o teste)
-	      !CALL mode_init(NExp)
-	      !CALL mode_run(NExp)
-		!stop
            ENDIF
 
         ENDDO

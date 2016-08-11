@@ -35,4 +35,6 @@ OBJS = \
 	$(srcdir)/bramsIO.o \
 	$(srcdir)/m_brams5km.o \
 	$(srcdir)/m_brams20km.o \
-	$(srcdir)/m_mode.o
+	$(srcdir)/m_mode.o \
+	$(srcdir)/m_mode_objects.o \
+	$(srcdir)/m_mode_singleAttrib.o
