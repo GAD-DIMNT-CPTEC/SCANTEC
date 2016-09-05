@@ -20,7 +20,7 @@ MODULE SCAM_dataMOD
 
   USE scamtec_module    ! SCAMTEC types
   USE m_string          ! String Manipulation
-  USE SCAM_Utils, only: dom, nvmx, Refer, Clima, Exper
+  USE SCAM_Utils, only: dom, nvmx, Refer, Clima, Exper, Precip
   USE SCAM_Utils, only: Precipitation_Flag,hist,Precip !Paulo Dias
   
   IMPLICIT NONE
@@ -170,6 +170,7 @@ CONTAINS
     allocate(scamdata(1)%reffield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
     allocate(scamdata(1)%tmpfield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
     IF(scamtec%cflag.EQ.1)allocate(scamdata(1)%clmfield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))
+    
     IF(Precipitation_Flag.EQ.1)allocate(scamdata(1)%prefield(scamtec%nxpt*scamtec%nypt,scamtec%nvar))!paulo dias
     
     DO I=1,scamtec%nexp
@@ -215,7 +216,7 @@ CONTAINS
     IF (Allocated(scamdata(1)%reffield))DeAllocate(scamdata(1)%reffield)
     IF (Allocated(scamdata(1)%clmfield))DeAllocate(scamdata(1)%clmfield)
     IF (Allocated(scamdata(1)%tmpfield))DeAllocate(scamdata(1)%tmpfield)
-    IF (Allocated(scamdata(I)%prefield))DeAllocate(scamdata(1)%prefield)!paulo dias
+    IF (Allocated(scamdata(1)%prefield))DeAllocate(scamdata(1)%prefield)!paulo dias
      
     DO I=1,scamtec%nexp
        IF (Allocated(scamdata(I)%expfield))DeAllocate(scamdata(I)%expfield)

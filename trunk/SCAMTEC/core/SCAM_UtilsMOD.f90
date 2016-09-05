@@ -659,7 +659,7 @@ MODULE SCAM_Utils
             Case(1)
 
                Allocate(tmp(scamtec%nexp+2))
-               call unique((/Refer%id, Exper(:)%Id, Clima%Id/),tmp,I)
+               call unique((/Refer%id, Exper(:)%Id, Clima%Id, Precip%Id/),tmp,I)
 
                Allocate(scamtec%Init_ModelID(I))
                scamtec%Init_ModelID(1:I) = tmp(1:I)
