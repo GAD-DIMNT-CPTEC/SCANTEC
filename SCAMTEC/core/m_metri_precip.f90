@@ -284,11 +284,10 @@ Contains
   if(j .EQ. 1)then  
  
         print*,'Min/Max PREFIELD: ',minval(prefield(:,21)),maxval(prefield(:,21))
-
-
+         
          !Preenchendo dados de precipitacao OBS
-         !dado(run)%prec(:,t,j)=prefield(Idx,21)       
-          dado(run)%prec(:,t,j)=scamtec%udef
+         dado(run)%prec(:,t,j)=prefield(:,21)       
+          !dado(run)%prec(:,t,j)=scamtec%udef
                         
         !gravar matriz observacao
         !OPEN(45,file=trim(scamtec%output_dir)//'/'//'soma_obs_precip1'//'.bin',form='unformatted',status='unknown',convert='big_endian')  
@@ -310,7 +309,7 @@ Contains
         print*,'Min/Max EXPFIELD: ',minval(expfield(:,hist%tipo_precip)),maxval(expfield(:,hist%tipo_precip))
         
         !Preenchendo dados de precipitacao EXP
-        dado(run)%prec(:,t,j)=expfield(:,hist%tipo_precip)
+         !dado(run)%prec(:,t,j)=expfield(:,hist%tipo_precip)
         
         !if (maxval(dado(run)%prec(:,t,j)) .gt. 0) then  
         ! write(19)expfield(:,hist%tipo_precip)
