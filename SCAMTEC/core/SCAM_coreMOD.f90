@@ -304,7 +304,9 @@ CONTAINS
               write(*,*)'ATENCAO!!! Metrica precipitacao Ligada. Então Estatistica Basica Desligada!'
               write(*,*)'' 
               write(*,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-              CALL HistoStat ( NExp )  ! Calculate histogram  (descomentar esse para o teste)
+              CALL HistoStat ( NExp )  ! Calculate histogram  	      
+	      !Call mode_run(NExp) ! Applies the Method for Object-based Diagnostic Evaluation (MODE) (descomentar esse para o teste)  
+              !stop
            ENDIF
 
         ENDDO

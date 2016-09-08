@@ -76,14 +76,20 @@ $(srcdir)/m_mode.o m_mode.o: \
 	$(srcdir)/scamtec_module.o \
 	$(srcdir)/SCAM_dataMOD.o \
 	$(srcdir)/m_mode_objects.o \
-	$(srcdir)/m_mode_singleAttrib.o
+	$(srcdir)/m_mode_singleAttrib.o \
+	$(srcdir)/m_mode_pairAttrib.o
 
 $(srcdir)/m_mode_objects.o m_mode_objects.o: \
 	$(srcdir)/m_mode_objects.f90 \
-	$(srcdir)/m_mode_singleAttrib.o
+	$(srcdir)/m_mode_singleAttrib.o \
+	$(srcdir)/m_mode_pairAttrib.o
 
 $(srcdir)/m_mode_singleAttrib.o m_mode_singleAttrib.o: \
 	$(srcdir)/m_mode_singleAttrib.f90
+
+$(srcdir)/m_mode_pairAttrib.o m_mode_pairAttrib.o: \
+	$(srcdir)/m_mode_pairAttrib.f90 \
+	$(srcdir)/m_mode_singleAttrib.o
 
 $(srcdir)/eta_read.o eta_read.o: \
 	$(srcdir)/eta_read.f90
