@@ -37,4 +37,5 @@ OBJS = \
 	$(srcdir)/m_brams20km.o \
 	$(srcdir)/m_mode.o \
 	$(srcdir)/m_mode_objects.o \
-	$(srcdir)/m_mode_singleAttrib.o
+	$(srcdir)/m_mode_singleAttrib.o \
+	$(srcdir)/m_mode_pairAttrib.o

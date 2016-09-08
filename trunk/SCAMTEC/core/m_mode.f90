@@ -29,10 +29,12 @@
 
 MODULE mode
 
-   USE scamtec_module                 ! module where the structure samtec is defined
+   USE scamtec_module                 ! module where the structure scantec is defined
    USE SCAM_dataMOD, only : scamdata  ! SCANTEC data matrix
-   USE m_mode_objects
-   USE m_mode_singleAttrib
+   USE SCAM_Utils
+   USE m_mode_objects		      ! module where objects are identified
+   USE m_mode_singleAttrib	      ! module where single objects attributes are calculated
+   USE m_mode_pairAttrib	      ! module where pair objects attributes are calculated
 
    IMPLICIT NONE
    PRIVATE
@@ -46,8 +48,12 @@ MODULE mode
    real, allocatable :: precOriginalField(:,:)  ! Matrix to save precipitation observation data 
    real, allocatable :: expOriginalField(:,:)   ! Matrix to save precipitation experiment data 
 
+   ! Statistical indices
+   integer			:: hits, false_alarms, misses
+   real				:: CSI, POD, FAR, BIAS
 
    public :: mode_init
+   public :: mode_ObjectIdentf
    public :: mode_run
 
 
@@ -75,10 +81,20 @@ MODULE mode
          expfield => scamdata(nexp)%expfield           
 
 	 ! Convirtiendo el vector de los datos de precipitacion para una matriz 
-	 precOriginalField = RESHAPE(prefield, (/scamtec%nypt,scamtec%nxpt/))
-	 expOriginalField = RESHAPE(expfield, (/scamtec%nypt,scamtec%nxpt/))         
+	 precOriginalField = RESHAPE(prefield(:,21), (/scamtec%nypt,scamtec%nxpt/))
+	 expOriginalField = RESHAPE(expfield(:,hist%tipo_precip), (/scamtec%nypt,scamtec%nxpt/))      
 
-         print*,'mode_init'
+         !open(46,file=trim(scamtec%output_dir)//'/'//'EXP_precip'//'.bin',form='unformatted',status='unknown',access = 'sequential')         
+         !write(46)expOriginalField 
+
+         !print*,'mode_init' 
+
+	 !print*,'Min/Max PREFIELD_MODE: ',minval(precOriginalField(:,:)),maxval(precOriginalField(:,:))  
+
+         !print*,'Min/Max EXPFIELD_MODE: ',minval(expOriginalField(:,:)),maxval(expOriginalField(:,:))  
+         !stop  
+
+         
 
       End Subroutine mode_init
     !**************************************************************************************************************************************
@@ -109,164 +125,187 @@ MODULE mode
 
 
     !**************************************************************************************************************************************
-      SUBROUTINE mode_run(nexp)
+      Subroutine mode_run(nexp)
          Implicit None
          integer, intent(in) :: nexp ! experiment number
 
-	 real, allocatable    		:: cfilter(:,:)      ! Matrix to save circular filter's values
-	 real, allocatable    		:: convField(:,:)    ! Field resulting of convolution process
-	 integer, allocatable 		:: maskField(:,:)    ! Binary field -mask- resulting of tresholding process 
-	 real, allocatable    		:: restoreField(:,:) ! Matrix to save original field values where the mask is 1
-	 real    			:: treshold	     ! Precipitation threshold defined by the user
+			   ! dimensions of the fields to compare and loop variables
+         integer 	:: rowSize, colSize, i, j, t, f  
 
-         ! Radio and threshold values should be defined in scamtec.conf
-	 integer 			:: i, j, rowSize, colSize, radio, binary_treshold=1, is_valid, totalObj	 
+	 		   ! Weights of the attributes used in the fuzzy logic
+	 real		:: min_boundary_dist_weight, dif_centroid_weight, area_ratio_weight, perimeter_ratio_weight, dif_angle_weight, aspect_ratio_weight, complexity_ratio_weight, int_area_ratio_weight, weight(8), total_interest_tresh, grid_res         
 
-	 integer, allocatable   	:: mask(:,:), maskObj(:,:) ! Mask to count objects -> resulting of Object Identification Algorithm 	 
-	 ! objects attributes 
-	 integer			:: perimeter, area, xcent, ycent
-	 real				:: angle, aspect_ratio 
+					  ! Mask to count objects -> resulting of Object Identification Algorithm
+         integer, allocatable   	:: mask(:,:), obs_maskObj(:,:), exp_maskObj(:,:) 
 
+					  ! Identified objects total (Observation and Forecast)
+         integer 			:: prec_nobj, exp_nobj
+
+					  ! List to save objects and attributes (Observation and Forecast)
+         type(attrs), pointer		:: prec_objects(:), exp_objects(:)
+         type(atrib_pair), pointer	:: atrib_matched(:)
+
+					  ! Masks resulting of Matching Algorithm (Objects pairs have the same id in each field)
+	 integer, allocatable   	:: obsMatch_mask(:,:), expMatch_mask(:,:)
+					  ! Auxiliary variables used in the Matching Algorithm
+	 integer			:: fcst_id, obs_id, num, x, y, cont 
+         type(attrs)			:: objaux
+
+!					  ! Statistical indices
+!	 integer			:: hits, false_alarms, misses
+!	 real				:: CSI, POD, FAR, BIAS
+
+         call mode_init(nexp)
+
+         rowSize = scamtec%nypt
+         colSize = scamtec%nxpt          
+
+         grid_res = 0.400  ! Este valor creo q es dom(I)%x  
+
+         ! Attributes weight used in Merging and Matching process
+         min_boundary_dist_weight = 0.0
+	 dif_centroid_weight = 4.0
+	 area_ratio_weight = 2.0
+	 perimeter_ratio_weight = 0.0
+	 dif_angle_weight = 1.0
+	 aspect_ratio_weight = 0.0
+	 complexity_ratio_weight = 0.0
+	 int_area_ratio_weight = 2.0
+	 total_interest_tresh = 0.5
+
+         weight(1) = min_boundary_dist_weight
+	 weight(2) = dif_centroid_weight 
+	 weight(3) = area_ratio_weight
+	 weight(4) = perimeter_ratio_weight
+	 weight(5) = dif_angle_weight
+	 weight(6) = aspect_ratio_weight
+	 weight(7) = complexity_ratio_weight
+	 weight(8) = int_area_ratio_weight        
 	 
-         real, allocatable    		:: TESTE(:,:) ! EXEMPLOS PARA COMPROVAR OS ALGORITMOS
-	 
-	 call mode_init(nexp)
-
-
-	 ! EXEMPLOS PARA COMPROVAR OS ALGORITMOS	 
-	 rowSize=15
-	 colSize=5
-	 ! os valores do radio e o limiar devem ser definidos no scamtec.conf
-	 radio=1
-         treshold=0.5
-
-	 allocate(TESTE(rowSize,colSize))
-	 
-	 allocate( convField(rowSize,colSize), maskField(rowSize,colSize), restoreField(rowSize,colSize) )	 	 
-	 allocate( mask(rowSize,colSize), maskObj(rowSize,colSize) )
-
-
-	 	 
- 
-	 !**** TESTE  *************
-
-	 TESTE = 0
-	 mask = 0
-         maskObj = 0
-
-	 TESTE(1,1)=60.0
-	 TESTE(1,2)=60.0
-	 TESTE(2,1)=60.0
-	 TESTE(2,2)=59.9
-	 TESTE(2,3)=59
-	 TESTE(2,4)=60.0
-	 TESTE(3,2)=59.0
-	 TESTE(3,3)=50
-	 TESTE(5,1)=52
-	 TESTE(5,4)=52
-	 TESTE(5,5)=30
-	 TESTE(6,1)=30.01
-	 TESTE(6,5)=30.01
-	 TESTE(7,1)=32.1
-	 TESTE(7,2)=32.1
-	 TESTE(7,3)=30.01
-	 TESTE(7,4)=32.1
-	 TESTE(7,5)=32.2
-	 TESTE(8,2)=32.1
-	 TESTE(8,3)=32.1
-	 TESTE(8,5)=32.25 
-	 TESTE(9,1)=32.25 
-	 TESTE(9,2)=32.25
-         TESTE(9,5)=42
-	 TESTE(10,5)=32.25	
-	 TESTE(11,5)=42
-	 TESTE(12,4)=42
-	 TESTE(12,5)=32.25
-	 TESTE(13,4)=32.25
-	 TESTE(13,5)=32.251
-	 TESTE(14,3)=32.25
-	 TESTE(14,5)=32.25
-
-	 print*
-         print*, ' **** TESTE *****'
-	 Do i=1, rowSize
-	    write(*,*) (TESTE(i,j), j=1, colSize)
-         ENDDO
- 	
-	 print*
-         print*,' **** CIRCULAR FILTER ***** '
-
-	 call circular_filter(cfilter, radio)
-	 
-            DO i=1, 3
-               write(*,*) (cfilter(i,j), j=1, 3)
-            ENDDO
-
-	 print*	 
-	 print*,' **** CONVOLUTION **** '
-
-         call convolution(convField, TESTE, cfilter, rowSize, colSize)
+	 ! VER DESPUES SI ES PRECISO USAR ESTAS VARIABLES           
+         f = scamtec%ftime_idx 
          
-         DO i=1, rowSize            
-               write(*,*) (convField(i,j), j=1, colSize)            
-         ENDDO
+	      ! Subroutine defined in m_mode_objects where convolution, tresholding, identification of objects, attributes calculation and 
+	      ! merging algorithms are made
+	 ! Observation
+         call mode_ObjectIdentf(rowSize, colSize, precOriginalField, weight, total_interest_tresh, grid_res, mask, obs_maskObj, prec_nobj, prec_objects)
+            !print*
+	    !print*, 'prec_nobj', prec_nobj
+            ! imprimiendo campo objeto.
+	    !DO i=1, rowSize            
+               !write(*,*) (mask(i,j), j=1, colSize)         
+            !ENDDO
 
-	 print*
-	 print*,' **** tresholding ****'
-
-         call tresholding(TESTE, convField, maskField, restoreField, rowSize, colSize, treshold)
-
-	 DO i=1, rowSize            
-               write(*,*) (maskField(i,j), j=1, colSize)             
-         ENDDO
-	 print*
-	 DO i=1, rowSize            
-               write(*,*) (restoreField(i,j), j=1, colSize)         
-         ENDDO
-
-         print*
-	 print*,' **** Object Identification ****'
-         totalObj=0
-	 DO j=1, colSize
-	    DO i=1, rowSize            
-               call valid(restoreField, rowSize, colSize, i, j, treshold, is_valid)		
-	       if (is_valid .and. (mask(i,j) .EQ. 0) ) then		  
-                  call singleObj_Ident_Attrib(i, j, restoreField, rowSize, colSize, treshold, mask, totalObj, maskObj, perimeter, area, xcent, ycent, angle, aspect_ratio)
-		  totalObj = totalObj + 1
-	          maskObj(i,j) = totalObj	       
-	       endif	       
-            ENDDO
-         ENDDO
-
-
-
-	 DO i=1, rowSize            
-               write(*,*) (mask(i,j), j=1, colSize)         
-         ENDDO
-
-	 print*
-	 DO i=1, rowSize            
-               write(*,*) (maskObj(i,j), j=1, colSize)         
-         ENDDO
-
+	    !print*
+	    !DO i=1, rowSize            
+               !write(*,*) (obs_maskObj(i,j), j=1, colSize)         
+            !ENDDO                        
          
+	 ! Forecast
+         call mode_ObjectIdentf(rowSize, colSize, expOriginalField, weight, total_interest_tresh, grid_res, mask, exp_maskObj, exp_nobj, exp_objects)
+            !print*
+	    !print*, 'exp_nobj', exp_nobj
+	    !DO i=1, rowSize            
+               !write(*,*) (mask(i,j), j=1, colSize)         
+            !ENDDO
 
-         deallocate (cfilter)
-	 deallocate (convField)
-	 deallocate (maskField)
-	 deallocate (TESTE)
+	    !print*
+	    !DO i=1, rowSize            
+               !write(*,*) (exp_maskObj(i,j), j=1, colSize)         
+            !ENDDO	    
+         
+	 
+         If  (f .GT. 1) then
+	     ! Subroutine defined in m_mode_pairAttrib where observation objects attributes and forecast objects attributes are compared to select pair objects         
+           call object_matching(prec_nobj, prec_objects, exp_nobj, exp_objects, weight, grid_res, total_interest_tresh, atrib_matched, cont)
+         !stop
+           allocate(obsMatch_mask(rowSize,colSize))
+	   allocate(expMatch_mask(rowSize,colSize))
+	 
+!          obsMatch_mask = obs_maskObj
+!	   expMatch_mask = exp_maskObj
+
+           obsMatch_mask = 0
+	   expMatch_mask = 0	 
+         
+           num = 1
+	   do i=1, cont
+	     fcst_id = atrib_matched(i)%id1
+	     obs_id = atrib_matched(i)%id2           
+
+	     objaux = prec_objects(obs_id)
+	     !print*, 'prec_objects(obs_id)total_pts', prec_objects(obs_id)%total_pts
+             do j=1, objaux%area
+	       x = objaux%total_pts(j)%x
+	       y = objaux%total_pts(j)%y
+	     
+	       obsMatch_mask(y,x) = num
+	     enddo
+
+	     objaux = exp_objects(fcst_id)
+
+             do j=1, objaux%area
+	       x = objaux%total_pts(j)%x
+	       y = objaux%total_pts(j)%y
+	     
+	       expMatch_mask(y,x) = num
+	     enddo
+             num = num + 1	   
+           enddo
+	   !print*
+	   !print*, 'num', num
+
+	   !print*
+           !DO i=1, rowSize            
+             !write(*,*) (obsMatch_mask(i,j), j=1, colSize)         
+           !ENDDO
+
+	   !print*
+	   !DO i=1, rowSize            
+             !write(*,*) (expMatch_mask(i,j), j=1, colSize)         
+           !ENDDO	 
+
+	   call mode_finalize(nexp)         
+
+	 !*********** Object-based Statistical Índices *********************************
+
+	 misses = abs(prec_nobj - cont)
+	 false_alarms = abs(exp_nobj - cont)
+	 hits = cont
+
+	 print*
+	 print*, 'misses', misses, 'false_alarms', false_alarms, 'hits', hits
+
+	 CSI = REAL(hits) / (REAL(hits) + REAL(misses) + REAL(false_alarms))
+	 print*
+	 print*,  'CSI', CSI
+
+	 POD = REAL(hits) / (REAL(hits) + REAL(misses))
+	 print*
+	 print*,  'POD', POD
+
+	 FAR = REAL(false_alarms) / (REAL(hits) + REAL(false_alarms))
+	 print*
+	 print*,  'FAR', FAR
+
+	 BIAS = (REAL(hits) + REAL(false_alarms)) / (REAL(hits) + REAL(misses))
+	 print*
+	 print*, 'BIAS', BIAS
+        Endif
+
+      End Subroutine mode_run
+    !**************************************************************************************************************************************
+  
+
+    !**************************************************************************************************************************************
+      Subroutine mode_write(nexp)
+	Implicit None
+        integer, intent(in) :: nexp ! experiment number
 
 
-
-      END SUBROUTINE mode_run
-    !**************************************************************************************************************************************    
-
-
-
-    
-
-
-    
+      End Subroutine mode_write
+    !**************************************************************************************************************************************
+  
 
 
 
