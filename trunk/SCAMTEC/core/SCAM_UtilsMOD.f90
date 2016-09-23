@@ -552,10 +552,10 @@ MODULE SCAM_Utils
                return
             endif
             
-            call i90_label ( 'Define valor do limite inferior da ultima classe do histograma:', iret )
+            call i90_label ( 'Define valor do limite da ultima classe do histograma:', iret )
             hist%valor_limit = i90_gfloat(iret)
             if(iret /= 0) then
-               call perr(myname_,'i90_gint("Define valor do limite inferior da ultima classe do histograma:")',iret)
+               call perr(myname_,'i90_gint("Define valor do limite da ultima classe do histograma:")',iret)
                if(present(istat))istat=iret
                return
             endif            
