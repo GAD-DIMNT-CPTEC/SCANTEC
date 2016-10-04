@@ -256,7 +256,6 @@ Contains
   REAL,ALLOCATABLE     :: obs_precip(:), ant_obs_precip(:)    !Variavel de precipitation
   INTEGER :: tam_hist
   INTEGER, ALLOCATABLE :: tempo(:)                            !Intervalo de tempo ex(00,06,12...)
-  integer              :: v_tipo_prec
   
   character(len=*),parameter :: myname_=myname//'::HistoStat'
 
@@ -291,7 +290,7 @@ Contains
                 
          !Preenchendo dados de precipitacao OBS
          dado(run)%prec(:,t,j)=prefield(:,21)       
-          !dado(run)%prec(:,t,j)=scamtec%udef
+            !dado(run)%prec(:,t,j)=scamtec%udef !old
                         
         !gravar matriz observacao
         !OPEN(45,file=trim(scamtec%output_dir)//'/'//'soma_obs_precip1'//'.bin',form='unformatted',status='unknown',convert='big_endian')  
@@ -314,7 +313,7 @@ Contains
                
         
         !Preenchendo dados de precipitacao EXP
-         !dado(run)%prec(:,t,j)=expfield(:,hist%tipo_precip)
+         dado(run)%prec(:,t,j)=expfield(:,hist%tipo_precip)
         
         !if (maxval(dado(run)%prec(:,t,j)) .gt. 0) then  
         ! write(19)expfield(:,hist%tipo_precip)
@@ -342,17 +341,6 @@ Contains
                                
         ENDDO
         
-       ! stop
-          
-        
-        !if(tempo(j).eq.30) stop !then
-        !    write(75,*)expfield(:,hist%tipo_precip)
-        !    stop
-        !endif
-        
-        !print*,'Vendo expfield modelo',expfield(:,hist%tipo_precip)
-        
-        !stop
         
   endif
   

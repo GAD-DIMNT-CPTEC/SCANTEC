@@ -269,7 +269,7 @@ Implicit None
       write(140,'(A)') 
       write(140,'(A)')'zdef  1 levels 1000'                  
       write(140,'(A)') 
-      write(140,'(A,I3,A,I2,A)')'tdef  ',(scamtec%forecast_time/scamtec%atime_step)+1,' linear 00Z05AUG2014',scamtec%atime_step,'HR'
+      write(140,'(A,I3,A,I2,A)')'tdef  ',(scamtec%forecast_time/scamtec%atime_step)+1,' linear 00Z05AUG2014 ',scamtec%atime_step,'HR'
       write(140,'(A)')
       write(140,'(A)')'vars 4'
       write(140,'(A)')'eof1   1 99  EOF'
