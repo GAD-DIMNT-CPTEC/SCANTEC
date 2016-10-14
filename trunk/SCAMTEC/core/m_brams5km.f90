@@ -185,16 +185,16 @@ CONTAINS
     brams5km_struc%gridDesc     = 0 
 
     brams5km_struc%gridDesc( 1) = 0         !Input grid type (4=Gaussian)
-    brams5km_struc%gridDesc( 2) = 1159       !Number of points on a lat circle
-    brams5km_struc%gridDesc( 3) = 1367       !Number of points on a meridian
-    brams5km_struc%gridDesc( 4) = -47.  !Latitude of origin
-    brams5km_struc%gridDesc( 5) = -82.133       !Longitude of origin
+    brams5km_struc%gridDesc( 2) = 1159      !Number of points on a lat circle
+    brams5km_struc%gridDesc( 3) = 1367      !Number of points on a meridian
+    brams5km_struc%gridDesc( 4) = -47.      !Latitude of origin
+    brams5km_struc%gridDesc( 5) = -82.133   !Longitude of origin
     brams5km_struc%gridDesc( 6) = 128       !8 bits (1 byte) related to resolution
-                                        !(recall that 10000000 = 128), Table 7
-    brams5km_struc%gridDesc( 7) = 11.0196 !Latitude of extreme point
-    brams5km_struc%gridDesc( 8) = -26.9032    !Longitude of extreme point
-    brams5km_struc%gridDesc( 9) = 0.0424741    !N/S direction increment
-    brams5km_struc%gridDesc(10) = 0.0476941       !(Gaussian) # lat circles pole-equator
+                                            !(recall that 10000000 = 128), Table 7
+    brams5km_struc%gridDesc( 7) = 11.0196   !Latitude of extreme point
+    brams5km_struc%gridDesc( 8) = -26.9032  !Longitude of extreme point
+    brams5km_struc%gridDesc( 9) = 0.0424741 !N/S direction increment
+    brams5km_struc%gridDesc(10) = 0.0476941 !(Gaussian) # lat circles pole-equator
     brams5km_struc%gridDesc(20) = 0.0  
 
     brams5km_struc%npts = brams5km_struc%gridDesc(2)*brams5km_struc%gridDesc(3)

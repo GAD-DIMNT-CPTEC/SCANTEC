@@ -2,17 +2,18 @@ MODULE SCAM_Modelplugin
 
   USE m_agcm
   USE m_clima50yr
-  USE m_T126_Seq !paulo dias
-  USE obs_Precipitation !Paulo Dias
-  USE m_agcm_T213 !Paulo Dias
+  USE m_T126_Seq 
+  USE obs_Precipitation 
+  USE m_agcm_T213 
   USE m_Ensemble_T126
   USE m_grb_ensemble_t126
   USE m_TQ062L028
   USE m_EraInterim
-!  USE m_WRF9km
-!  USE m_WRF3km
+  USE m_WRF9km
+  USE m_WRF3km
   USE m_brams5km
   USE m_brams20km 
+  USE m_gfs
   
   IMPLICIT NONE
   !BOP
@@ -54,10 +55,11 @@ MODULE SCAM_Modelplugin
   integer, public, parameter :: Grb_ensemble_t126Id  = 8  ! Grb_ensemble_t126
   integer, public, parameter :: TQ062L028Id          = 9
   integer, public, parameter :: EraInterimId         = 10
-! integer, public, parameter :: WRF9kmId             = 11 ! WRF9km
-! integer, public, parameter :: WRF3kmId             = 12 ! WRF3km
   integer, public, parameter :: brams5kmId           = 11 ! BRAMS 5KM / CPTEC
   integer, public, parameter :: brams20kmId          = 12 ! BRAMS 20KM / CPTEC  
+  integer, public, parameter :: WRF9kmId             = 13 ! WRF9km
+  integer, public, parameter :: WRF3kmId             = 14 ! WRF3km
+  integer, public, parameter :: gfsId                = 15 ! gfs
 
   !-------------------------------------------------------------------
   ! !PUBLIC MEMBER FUNCTIONS:
@@ -148,17 +150,21 @@ Contains
     call registermodelinit(EraInterimId,EraInterim_init) !
     call registermodelread(EraInterimId,EraInterim_read) !
      ! WRF9km gribs
-!    call registermodelinit(WRF9kmId,WRF9km_init) !
-!    call registermodelread(WRF9kmId,WRF9km_read) !
+    call registermodelinit(WRF9kmId,WRF9km_init) !
+    call registermodelread(WRF9kmId,WRF9km_read) !
      ! WRF3km gribs
-!    call registermodelinit(WRF3kmId,WRF3km_init) !
-!    call registermodelread(WRF3kmId,WRF3km_read) !
+    call registermodelinit(WRF3kmId,WRF3km_init) !
+    call registermodelread(WRF3kmId,WRF3km_read) !
      ! BRAMS 5KM / CPTEC
      call registermodelinit(brams5kmId,brams5km_init) !
      call registermodelread(brams5kmId,brams5km_read) ! 
      ! BRAMS 20KM / CPTEC
      call registermodelinit(brams20kmId,brams20km_init) !
      call registermodelread(brams20kmId,brams20km_read) !
+     ! GFS 
+     call registermodelinit(gfsId,gfs_init) !
+     call registermodelread(gfsId,gfs_read) !
+     
 
  
     

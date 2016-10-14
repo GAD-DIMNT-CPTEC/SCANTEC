@@ -3,7 +3,7 @@
 !-----------------------------------------------------------------------------!
 !BOP
 !
-! !MODULE: m_WRF9km.f90
+! !MODULE: m_gfs.f90
 !
 ! !DESCRIPTON: This module contains routines and functions to configure,
 !              read and interpolate fields of the model to use in SCAMTEC.
@@ -13,7 +13,7 @@
 ! !INTERFACE:
 !
 
-MODULE m_WRF9km
+MODULE m_gfs
 
 !
 ! !USES:
@@ -31,7 +31,7 @@ MODULE m_WRF9km
 !
 ! !PUBLIC TYPES:  
 !
-  type WRF9km_type_dec 
+  type gfs_type_dec 
 
      integer                :: npts
      real, allocatable      :: gridDesc(:)
@@ -44,14 +44,14 @@ MODULE m_WRF9km
      real, allocatable      :: w111(:),w121(:)
      real, allocatable      :: w211(:),w221(:)
 
-  end type WRF9km_type_dec
+  end type gfs_type_dec
 
-  type(WRF9km_type_dec) :: WRF9km_struc
+  type(gfs_type_dec) :: gfs_struc
 !
 ! !PUBLIC MEMBER FUNCTIONS:
 !
-  public :: WRF9km_read ! Function to read files from WRF9km model
-  public :: WRF9km_init ! Function to initilize weights to interpolate fields
+  public :: gfs_read ! Function to read files from gfs model
+  public :: gfs_init ! Function to initilize weights to interpolate fields
 !
 !
 ! !REVISION HISTORY:
@@ -69,14 +69,14 @@ MODULE m_WRF9km
 !EOP
 !-----------------------------------------------------------------------------!
 !
-  character(len=*),parameter :: myname='m_WRF9km' 
+  character(len=*),parameter :: myname='m_gfs' 
 
 CONTAINS
 !
 !-----------------------------------------------------------------------------!
 !BOP
 !
-! !IROUTINE:  WRF9km_init
+! !IROUTINE:  gfs_init
 !
 ! !DESCRIPTION: This function initialize the matrices used to read 
 !               and export fields to SCAMTEC
@@ -85,7 +85,7 @@ CONTAINS
 ! !INTERFACE:
 !
 
-  SUBROUTINE WRF9km_init()
+  SUBROUTINE gfs_init()
 
 !
 !
@@ -100,7 +100,7 @@ CONTAINS
   
     IMPLICIT NONE
     integer :: nx, ny
-    character(len=*),parameter :: myname_=myname//'::WRF9km_init'
+    character(len=*),parameter :: myname_=myname//'::gfs_init'
 
     !
     ! DEBUG print
@@ -110,54 +110,54 @@ CONTAINS
     WRITE(stdout,'(     2A)')'Hello from ', myname_
 #endif
 
-    Allocate(WRF9km_struc%gridDesc(50))
+    Allocate(gfs_struc%gridDesc(50))
 
-    call WRF9km_domain()
+    call gfs_domain()
 
     nx = int(scamtec%gridDesc(2))
     ny = int(scamtec%gridDesc(3))
 
-    Allocate(WRF9km_struc%rlat1(nx*ny))
-    Allocate(WRF9km_struc%rlon1(nx*ny))              
-    Allocate(WRF9km_struc%n111(nx*ny))
-    Allocate(WRF9km_struc%n121(nx*ny))
-    Allocate(WRF9km_struc%n211(nx*ny))
-    Allocate(WRF9km_struc%n221(nx*ny))
-    Allocate(WRF9km_struc%w111(nx*ny))
-    Allocate(WRF9km_struc%w121(nx*ny))
-    Allocate(WRF9km_struc%w211(nx*ny))
-    Allocate(WRF9km_struc%w221(nx*ny))
+    Allocate(gfs_struc%rlat1(nx*ny))
+    Allocate(gfs_struc%rlon1(nx*ny))              
+    Allocate(gfs_struc%n111(nx*ny))
+    Allocate(gfs_struc%n121(nx*ny))
+    Allocate(gfs_struc%n211(nx*ny))
+    Allocate(gfs_struc%n221(nx*ny))
+    Allocate(gfs_struc%w111(nx*ny))
+    Allocate(gfs_struc%w121(nx*ny))
+    Allocate(gfs_struc%w211(nx*ny))
+    Allocate(gfs_struc%w221(nx*ny))
 
    !
    ! Initializing arrays of weights for interpolation in the field of SCAMTEC
    !
 
-    call bilinear_interp_input(WRF9km_struc%gridDesc, scamtec%gridDesc,        &
+    call bilinear_interp_input(gfs_struc%gridDesc, scamtec%gridDesc,        &
                                int(scamtec%gridDesc(2)*scamtec%gridDesc(3)), &
-                                     WRF9km_struc%rlat1,WRF9km_struc%rlon1,      &
-                                     WRF9km_struc%n111,WRF9km_struc%n121,        &
-                                     WRF9km_struc%n211,WRF9km_struc%n221,        &
-                                     WRF9km_struc%w111,WRF9km_struc%w121,        &
-                                     WRF9km_struc%w211,WRF9km_struc%w221)
+                                     gfs_struc%rlat1,gfs_struc%rlon1,      &
+                                     gfs_struc%n111,gfs_struc%n121,        &
+                                     gfs_struc%n211,gfs_struc%n221,        &
+                                     gfs_struc%w111,gfs_struc%w121,        &
+                                     gfs_struc%w211,gfs_struc%w221)
 
 
-  END SUBROUTINE WRF9km_init
+  END SUBROUTINE gfs_init
 !
 !EOC
 !
 !-----------------------------------------------------------------------------!
 !BOP
 !
-! !IROUTINE:  WRF9km_domain
+! !IROUTINE:  gfs_domain
 !
-! !DESCRIPTION: This routine initilize domain parameters of WRF9km model
+! !DESCRIPTION: This routine initilize domain parameters of gfs model
 !               
 !\\
 !\\
 ! !INTERFACE:
 !
 
-  SUBROUTINE WRF9km_domain()
+  SUBROUTINE gfs_domain()
 
 !
 !
@@ -171,7 +171,7 @@ CONTAINS
 !
   
     IMPLICIT NONE
-    character(len=*),parameter :: myname_=myname//'::WRF9km_domain'
+    character(len=*),parameter :: myname_=myname//'::gfs_domain'
 
     !
     ! DEBUG print
@@ -181,42 +181,36 @@ CONTAINS
     WRITE(stdout,'(     2A)')'Hello from ', myname_
 #endif
 
-    WRF9km_struc%gridDesc     = 0 
+    gfs_struc%gridDesc     = 0 
 
-    WRF9km_struc%gridDesc( 1) = 3         !Input grid type (3=Lambert)
-    WRF9km_struc%gridDesc( 2) = 829       !Number of points along X-axis
-    WRF9km_struc%gridDesc( 3) = 888       !Number of points along Y-axis
-    WRF9km_struc%gridDesc( 4) = -52.448   !Latitude of first grid point
-    WRF9km_struc%gridDesc( 5) = -105.029  !Longitude of first grid point
-    WRF9km_struc%gridDesc( 6) = 136       !8 bits (1 byte) related to resolution
-                                          !(recall that 10000000 = 128), Table 7
-    WRF9km_struc%gridDesc( 7) = -57.678   !Latitude of extreme point
-    WRF9km_struc%gridDesc( 8) = 9000      !X-direction grid lenght
-    WRF9km_struc%gridDesc( 9) = 9000      !Y-direction grid lenght
-    WRF9km_struc%gridDesc(10) = 128       !Projection center flag
-    WRF9km_struc%gridDesc(11) = 64        !Scaning mode (flags - see Code table 8)
-    WRF9km_struc%gridDesc(12) = -8.300    !first latitude from the pole at which the secant cone cuts the sphere
-    WRF9km_struc%gridDesc(13) = -31.700   !second latitude from the pole at which the secant cone cuts the sphere
-    WRF9km_struc%gridDesc(14) = -90.000   !Latitude of the southern pole in millidegrees (integer)
-    WRF9km_struc%gridDesc(15) = 0
-    WRF9km_struc%gridDesc(16) = 0
-    WRF9km_struc%gridDesc(17) = 0
-    WRF9km_struc%gridDesc(18) = 0 
-    WRF9km_struc%gridDesc(19) = 0
-    WRF9km_struc%gridDesc(20) = 0  
+    gfs_struc%gridDesc( 1) = 0        !Input grid type 
+    gfs_struc%gridDesc( 2) = 720      !Number of points on a lat circle
+    gfs_struc%gridDesc( 3) = 361      !Number of points on a meridian
+    gfs_struc%gridDesc( 4) = -90.000  !Latitude of origin
+    gfs_struc%gridDesc( 5) = 0.00     !Longitude of origin
+    gfs_struc%gridDesc( 6) = 128      !8 bits (1 byte) related to resolution
+                                      !(recall that 10000000 = 128), Table 7
+    gfs_struc%gridDesc( 7) = 90.000   !Latitude of extreme point (lat_orig+(resolucao-1)*num_pontos)
+    gfs_struc%gridDesc( 8) = 360.00     !Longitude of extreme point
+    gfs_struc%gridDesc( 9) = 0.5      !N/S direction increment
+    gfs_struc%gridDesc(10) = 0.5000   !(Gaussian) # lat circles pole-equator
+    gfs_struc%gridDesc(11) = 0        !SCANNING MODE FLAG 
+   
+    gfs_struc%gridDesc(20) = 0  
 
-    WRF9km_struc%npts = WRF9km_struc%gridDesc(2)*WRF9km_struc%gridDesc(3)
+    gfs_struc%npts = gfs_struc%gridDesc(2)*gfs_struc%gridDesc(3)
 
-  END SUBROUTINE WRF9km_domain
+
+  END SUBROUTINE gfs_domain
 !
 !EOC
 !
 !-----------------------------------------------------------------------------!
 !BOP
 !
-! !IROUTINE:  WRF9km_read
+! !IROUTINE:  gfs_read
 !
-! !DESCRIPTION: For a given file name, read fields from a WRF9km model,
+! !DESCRIPTION: For a given file name, read fields from a gfs model,
 !               interpolates to the SCAMTEC domain and export to SCAMTEC
 !               matrices.                
 !               
@@ -225,13 +219,13 @@ CONTAINS
 ! !INTERFACE:
 !
 
-  SUBROUTINE WRF9km_read(fname)
+  SUBROUTINE gfs_read(fname)
     IMPLICIT NONE
 !
 ! !INPUT PARAMETERS:
 !
   
-    character(len=*), intent(IN) :: fname ! File name of the WRF9km model
+    character(len=*), intent(IN) :: fname ! File name of the gfs model
 
 !
 !
@@ -243,7 +237,7 @@ CONTAINS
 !-----------------------------------------------------------------------------!
 !BOC
 !
-    character(len=*),parameter :: myname_=myname//'::WRF9km_read'
+    character(len=*),parameter :: myname_=myname//'::gfs_read'
 
     integer :: iret, jret, gbret, stat
     logical :: file_exists
@@ -263,6 +257,7 @@ CONTAINS
     real, dimension(:,:), allocatable :: f2
     real, dimension(:),   allocatable :: varfield
     character(10) :: dataini, datafinal 
+    real    :: undef  = 9.999E20
 
     integer , parameter :: maxsize = 1548800
     real data(maxsize)
@@ -297,7 +292,7 @@ CONTAINS
 !    pds7 = [  925 ,  850 ,  500 , 925 ,  850 ,  500 ,  250 ,  000  , 000  ,  850 ,  500 ,  250 ,  850  , &
 !              500 ,  250 ,  850 , 500 ,  250 ,  000 ,  000  ]
 
-        pds5 = [':SPFH:925 mb:           ', ':SPFH:850 mb:           ', ':SPFH:500 mb:           ', ':TMP:925 mb:            ', &
+        pds5 = [':SPFH:80 m above ground:925 mb:           ', ':SPFH:80 m above ground:850 mb:           ', ':SPFH:80 m above ground:500 mb:           ', ':TMP:925 mb:            ', &
      &          ':TMP:850 mb:            ', ':TMP:500 mb:            ', ':TMP:250 mb:            ', ':PRMSL:mean sea level:  ', &
      &          ':PWAT:entire atmosphere ', ':HGT:850 mb:            ', ':HGT:500 mb:            ', ':HGT:250 mb:            ', &
      &          ':UGRD:850 mb:           ', ':UGRD:500 mb:           ', ':UGRD:250 mb:           ', ':VGRD:850 mb:           ', &
@@ -305,9 +300,9 @@ CONTAINS
         pds7 = (/925,850,500,925,850,500,250,000,000,850,500,250,850,500,250,850,500,250,000,000/) !htlev2
 
 
-    allocate(lb2(WRF9km_struc%npts,scamtec%nvar))
-    allocate(lb(WRF9km_struc%npts,size(pds5)))
-    allocate(f(WRF9km_struc%npts,size(pds5)))
+    allocate(lb2(gfs_struc%npts,scamtec%nvar))
+    allocate(lb(gfs_struc%npts,size(pds5)))
+    allocate(f(gfs_struc%npts,size(pds5)))
 
   
     inquire (file=trim(fname), exist=file_exists)
@@ -318,15 +313,22 @@ CONTAINS
 
     call system('/opt/grads/2.0.a9/bin/wgrib2 '// trim(fname) //' > grib2tab.default.tab')
 
+!    write(*,*) 'undef=', undef
+
 !   read data sequentially
     do iv = 1, size(pds5)
 !       meta=pds5(iv)
 !       call grb_rd(fname,'grib2tab.default.tab', meta,'-E',data,maxsize,n,invout,ierr)
        call grb_rd(fname,'grib2tab.default.tab', pds5(iv),'-E',data,maxsize,n,invout,ierr)
+       
        if (ierr.eq.0) then
 !          write(*,*) maxsize, ierr, data(1),trim(invout)
           f(:,iv)  = data(:)
           lb(:,iv) = .true.
+          where(data.eq.undef) 
+            lb(:,iv) = .false.
+!             write(*,*) 'passou undef'
+          end where
 !          write(*,*) "f=", data
 !          write(*,*) "minval=", minval(data), "maxval=", maxval(data)
 !          stop
@@ -339,60 +341,7 @@ CONTAINS
 !       if (ierr.ne.0) write(*,*) "error meta=" , trim(meta)
     enddo
 
-!    DO iv=1,size(pds5)
-!       write(*,*) "minval(",iv,")=", minval(f(:,iv)), "maxval=", maxval(f(:,iv))
-!    enddo
-!    stop 
-    
-!    do iv = 1, size(pds5)
-!             
-!       if (file_exists) then 
-!
-!!          jpds(5) = pds5(iv)
-!          jpds(7) = pds7(iv)
-!
-!          lugb    = lugb + iv
-!
-!          call baopenr(lugb,fname,iret)
-!
-!          if(iret.eq.0) then
-!!             call getgb(lugb,lubi,WRF9km_struc%npts,j,jpds,jgds,kf,k,kpds, &
-!!                  gridDesc,lb(:,iv),f(:,iv),gbret)
-!
-!             if (gbret.ne.0)then
-!                stat = gbret
-!                call perr(myname_,'getgb("'//     &
-!                          trim(fname)//'")',gbret &
-!                         )
-!                return
-!             endif
-!
-!          else
-!             stat = iret
-!             call perr(myname_,'baopenr("'//     &
-!                       trim(fname)//'")',iret &
-!                      )
-!             return
-!          endif
-!
-!          call baclose(lugb,jret)
-!          if(jret.ne.0) then
-!            stat = jret
-!            call perr(myname_,'deallocate()',jret)
-!            return
-!          endif
-!       else
-!          stat = -1
-!
-!          deallocate(f)
-!          deallocate(lb)
-!          
-!          call perr(myname_,'File Not Found: '//trim(fname),stat)
-!          return
-!
-!       endif
-!
-!    enddo
+
 
     !
     ! Convertendo as Variaveis para as utilizadas no SCAMTEC
@@ -400,21 +349,21 @@ CONTAINS
     !   obtidas no modulo SCAM_dataMOD.f90
     !
 
-    allocate(f2(WRF9km_struc%npts,scamtec%nvar))
+    allocate(f2(gfs_struc%npts,scamtec%nvar))
 
 !   f2(:, 1) = f(:, 4)*(1 + 0.61*(f(:,1)/(1-f(:,1)))) ! Vtmp @ 925 hPa [K]
 !   f2(:, 2) = f(:, 5)*(1 + 0.61*(f(:,2)/(1-f(:,2)))) ! Vtmp @ 850 hPa [K]
 !   f2(:, 3) = f(:, 6)*(1 + 0.61*(f(:,3)/(1-f(:,3)))) ! Vtmp @ 500 hPa [K]
 
-    do i=1,WRF9km_struc%npts
+    do i=1,gfs_struc%npts
        f2(i, 1) = tv(f(i,4),f(i,1)); lb2(i,1) = lb(i,1) ! Vtmp @ 925 hPa [K]
        f2(i, 2) = tv(f(i,5),f(i,2)); lb2(i,2) = lb(i,2) ! Vtmp @ 850 hPa [K]
        f2(i, 3) = tv(f(i,6),f(i,3)); lb2(i,3) = lb(i,3) ! Vtmp @ 500 hPa [K]  
     enddo
     
-    f2(:, 4) = f(:, 5); lb2(:,4) = lb(:,5)              ! Absolute Temperature @ 850 hPa [K]             4 paulo dias
-    f2(:, 5) = f(:, 6); lb2(:,5) = lb(:,6)              ! Absolute Temperature @ 500 hPa [K]             5 paulo dias
-    f2(:, 6) = f(:, 7); lb2(:,6) = lb(:,7)              ! Absolute Temperature @ 250 hPa [K]             6 paulo dias
+    f2(:, 4) = f(:, 5); lb2(:,4) = lb(:,5)              ! Absolute Temperature @ 850 hPa [K]            
+    f2(:, 5) = f(:, 6); lb2(:,5) = lb(:,6)              ! Absolute Temperature @ 500 hPa [K]            
+    f2(:, 6) = f(:, 7); lb2(:,6) = lb(:,7)              ! Absolute Temperature @ 250 hPa [K]            
     
 
     f2(:, 7) = f(:, 8); lb2(:, 7) = lb(:,8)             ! PSNM [hPa]
@@ -464,9 +413,9 @@ CONTAINS
 
     DO iv=1,scamtec%nvar
 
-!       write(*,*) "minval(",iv,")=", minval(f2(:,iv)), "maxval=", maxval(f2(:,iv))
+       write(*,*) "minval(",iv,")=", minval(f2(:,iv)), "maxval=", maxval(f2(:,iv))
 
-       call interp_WRF9km( kpds, WRF9km_struc%npts,f2(:,iv),lb2(:,iv), scamtec%gridDesc,&
+       call interp_gfs( kpds, gfs_struc%npts,f2(:,iv),lb2(:,iv), scamtec%gridDesc,&
                          scamtec%nxpt,scamtec%nypt, varfield, iret)    
 
     !
@@ -474,25 +423,24 @@ CONTAINS
     !
 
        scamdata(1)%tmpfield(:,iv) = varfield(:)
-
+       
 
     Enddo
 
-!    do iv=1,size(pds5)+2
-!       write(99)scamdata(1)%tmpfield(:,iv)
-!    enddo
-!    stop
+  !write(99)scamdata(1)%tmpfield(:,5)
+
+  
 
     DeAllocate(varfield)
 
-  END SUBROUTINE WRF9km_read
+  END SUBROUTINE gfs_read
 !
 !EOC
 !
 !-----------------------------------------------------------------------------!
 !BOP
 !
-! !IROUTINE:  interp_WRF9km
+! !IROUTINE:  interp_gfs
 !
 ! !DESCRIPTION: this routine interpolates a givem field to the SCAMTEC domain 
 !
@@ -501,7 +449,7 @@ CONTAINS
 ! !INTERFACE:
 !
 
-  SUBROUTINE interp_WRF9km( kpds, npts,f,lb,gridDesc, nxpt, nypt, field1d, iret)
+  SUBROUTINE interp_gfs( kpds, npts,f,lb,gridDesc, nxpt, nypt, field1d, iret)
 
 !
 ! !INPUT PARAMETERS:
@@ -539,7 +487,7 @@ CONTAINS
     integer :: ip, ipopt(20),ibi,km
     integer :: ibo
     integer :: i,j,k
-    character(len=*),parameter :: myname_=myname//'::interp_WRF9km'
+    character(len=*),parameter :: myname_=myname//'::interp_gfs'
 
     !
     ! DEBUG print
@@ -556,17 +504,14 @@ CONTAINS
     lo    = .true.
 
     call bilinear_interp(gridDesc,ibi,lb,f,ibo,lo,field1d,   &
-                         WRF9km_struc%npts,nxpt*nypt,          &
-                         WRF9km_struc%rlat1, WRF9km_struc%rlon1, &
-                         WRF9km_struc%w111, WRF9km_struc%w121,   &
-                         WRF9km_struc%w211, WRF9km_struc%w221,   &
-                         WRF9km_struc%n111, WRF9km_struc%n121,   &
-                         WRF9km_struc%n211, WRF9km_struc%n221,scamtec%udef,iret)
+                         gfs_struc%npts,nxpt*nypt,          &
+                         gfs_struc%rlat1, gfs_struc%rlon1, &
+                         gfs_struc%w111, gfs_struc%w121,   &
+                         gfs_struc%w211, gfs_struc%w221,   &
+                         gfs_struc%n111, gfs_struc%n121,   &
+                         gfs_struc%n211, gfs_struc%n221,scamtec%udef,iret)
 
-    if (iret.ne.0)then
-       call perr(myname_,'bilinear_interp ( ... ) ',iret)
-       return
-    endif
+
 
 !    k = 0
 !    do j = 1, nypt
@@ -576,9 +521,9 @@ CONTAINS
 !       k = k + nxpt
 !    enddo
 
-  END SUBROUTINE interp_WRF9km
+  END SUBROUTINE interp_gfs
 !
 !EOC
 !-----------------------------------------------------------------------------!
 
-END MODULE m_WRF9km
+END MODULE m_gfs

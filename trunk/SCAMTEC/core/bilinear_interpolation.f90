@@ -293,7 +293,10 @@ subroutine bilinear_interp(gridDesco,ibi,li,gi,ibo,lo,go,mi,mo, &
   integer   :: s
   real wo(mo)
   real, parameter :: fill=-9999.
-
+  
+  
+  iret = 0
+  
   !
   ! Verify if input and output grid are in the same space. 
   !
@@ -343,7 +346,6 @@ subroutine bilinear_interp(gridDesco,ibi,li,gi,ibo,lo,go,mi,mo, &
      endif
   enddo
   if(gridDesco(1).eq.0) call polfixs(nn,mo,rlat,rlon,ibo,lo,go)
-  iret = 0 
 
 end subroutine bilinear_interp
 ! !ROUTINE: compute_earth_coord
