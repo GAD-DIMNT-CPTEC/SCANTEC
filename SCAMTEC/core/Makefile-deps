@@ -5,6 +5,9 @@
 $(srcdir)/Ftable.o Ftable.o: \
 	$(srcdir)/Ftable.c
 
+$(srcdir)/ftn_rd_grb2.o ftn_rd_grb2.o: \
+	$(srcdir)/ftn_rd_grb2.c
+
 $(srcdir)/SCAM_ModelPlugin.o SCAM_ModelPlugin.o: \
 	$(srcdir)/SCAM_ModelPlugin.f90 \
 	$(srcdir)/m_agcm.o \
@@ -17,6 +20,9 @@ $(srcdir)/SCAM_ModelPlugin.o SCAM_ModelPlugin.o: \
 	$(srcdir)/m_EraInterim.o \
 	$(srcdir)/m_brams5km.o \
 	$(srcdir)/m_brams20km.o \
+	$(srcdir)/m_WRF3km.o \
+	$(srcdir)/m_WRF9km.o \
+	$(srcdir)/m_gfs.o \
 	$(srcdir)/obs_Precipitation.o
 
 $(srcdir)/SCAM_Plugin.o SCAM_Plugin.o: \
@@ -173,6 +179,27 @@ $(srcdir)/m_brams20km.o m_brams20km.o: \
 	$(srcdir)/SCAM_MetForm.o \
 	$(srcdir)/scamtec_module.o \
 	$(srcdir)/bramsIO.o
+
+$(srcdir)/m_WRF3km.o m_WRF3km.o: \
+	$(srcdir)/m_WRF3km.f90 \
+	$(srcdir)/bilinear_interpolation.o \
+	$(srcdir)/SCAM_dataMOD.o \
+	$(srcdir)/SCAM_MetForm.o \
+	$(srcdir)/scamtec_module.o
+
+$(srcdir)/m_WRF9km.o m_WRF9km.o: \
+	$(srcdir)/m_WRF9km.f90 \
+	$(srcdir)/bilinear_interpolation.o \
+	$(srcdir)/SCAM_dataMOD.o \
+	$(srcdir)/SCAM_MetForm.o \
+	$(srcdir)/scamtec_module.o
+
+$(srcdir)/m_gfs.o m_gfs.o: \
+	$(srcdir)/m_gfs.f90 \
+	$(srcdir)/bilinear_interpolation.o \
+	$(srcdir)/SCAM_dataMOD.o \
+	$(srcdir)/SCAM_MetForm.o \
+	$(srcdir)/scamtec_module.o
 
 $(srcdir)/m_ReadGrib.o m_ReadGrib.o: \
 	$(srcdir)/m_ReadGrib.f90 \

@@ -3,6 +3,7 @@
 
 OBJS = \
 	$(srcdir)/Ftable.o \
+	$(srcdir)/ftn_rd_grb2.o \
 	$(srcdir)/SCAM_ModelPlugin.o \
 	$(srcdir)/SCAM_Plugin.o \
 	$(srcdir)/SCAM_UtilsMOD.o \
@@ -35,6 +36,9 @@ OBJS = \
 	$(srcdir)/bramsIO.o \
 	$(srcdir)/m_brams5km.o \
 	$(srcdir)/m_brams20km.o \
+	$(srcdir)/m_WRF3km.o \
+	$(srcdir)/m_WRF9km.o \
+	$(srcdir)/m_gfs.o \
 	$(srcdir)/m_mode.o \
 	$(srcdir)/m_mode_objects.o \
 	$(srcdir)/m_mode_singleAttrib.o \

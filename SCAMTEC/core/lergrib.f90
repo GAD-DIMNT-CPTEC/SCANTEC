@@ -24,8 +24,8 @@
 
 
        !grb%file='/scratchin/grupos/assim_dados/home/joao.gerd/NEW_MODELO_GLOBAL/pos/dataout/KUO/SSIB/21/LRun/2014/2014110200/GPOSERA20141102002014110200C.inz.TQ0062L028.grb'
-       grb%file='/stornext/online6/assim_dados/eduardo.khamis/SCAMTEC/core/WRF_ams_09KM_2015010100+2015010100.grb2'
-
+       !grb%file='/stornext/online6/assim_dados/eduardo.khamis/SCAMTEC/core/WRF_ams_09KM_2015010100+2015010100.grb2'
+       grb%file='/stornext/online9/DATAIN_DMD/previsao_gfs/0.25/201601/0100/gfs.t00z.pgrb2.0p25.f003.2016010100.grib2'
 
       call OpenGrib(grb)
       do i=1,20

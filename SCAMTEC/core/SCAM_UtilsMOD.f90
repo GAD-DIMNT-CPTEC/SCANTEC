@@ -609,7 +609,7 @@ MODULE SCAM_Utils
             WRITE(*,'(A,I2.2)')'  |---- Acumulo OBS        :',hist%acumulo_obs
             WRITE(*,'(A,I2.2)')'  |---- Acumulo EXP        :',hist%acumulo_exp
 #endif
-         ELSE
+          ELSE
 
 #ifdef DEBUG
             WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
