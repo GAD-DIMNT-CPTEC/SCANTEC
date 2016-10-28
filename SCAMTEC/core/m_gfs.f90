@@ -24,7 +24,10 @@ MODULE m_gfs
   USE m_die                         ! Error Messages
   USE m_stdio                       ! Module to defines std. I/O parameters
   USE SCAM_MetForm                  ! Module to conversion of meteorological variables
-
+  USE SCAM_Utils
+  USE time_module, only: jul2cal, cal2jul ! Time operations
+  USE m_ioutil
+  USE m_string
 
   IMPLICIT NONE
   PRIVATE
@@ -190,7 +193,7 @@ CONTAINS
     gfs_struc%gridDesc( 5) = 0.00     !Longitude of origin
     gfs_struc%gridDesc( 6) = 128      !8 bits (1 byte) related to resolution
                                       !(recall that 10000000 = 128), Table 7
-    gfs_struc%gridDesc( 7) = 90.000   !Latitude of extreme point (lat_orig+(resolucao-1)*num_pontos)
+    gfs_struc%gridDesc( 7) = 90.000   !Latitude of extreme point (lat_orig+(resolucao)*num_pontos)
     gfs_struc%gridDesc( 8) = 360.00     !Longitude of extreme point
     gfs_struc%gridDesc( 9) = 0.5      !N/S direction increment
     gfs_struc%gridDesc(10) = 0.5000   !(Gaussian) # lat circles pole-equator
@@ -226,7 +229,7 @@ CONTAINS
 !
   
     character(len=*), intent(IN) :: fname ! File name of the gfs model
-
+    integer :: ferror
 !
 !
 ! !REVISION HISTORY: 
@@ -264,6 +267,21 @@ CONTAINS
     character*200 invout, meta
     integer :: n, ierr
 
+
+    !variaveis para somatorio precipitacao
+    real, dimension(720*361) :: precgfs       !variavel de leitura  
+    real, dimension(720*361) :: precgfs_total !variavel de leitura  
+    
+    character(len=1024) :: gfsprecipitation  ! Precipitation File Name 
+   
+
+    character(len=512) :: gfname2, fmt
+    integer            :: gnymd, gnhms,gi
+    integer            :: gfymd, gfhms, gaymd, gahms
+    integer            :: gquant_arq_ant   !Quantidade de arquivos anterior  
+    integer(I4B)       :: gatime , gftime
+    real               :: gincr  
+
     !
     !  0. Hello
     !
@@ -273,7 +291,6 @@ CONTAINS
     WRITE(stdout,'( A,1X,A)')'Open File ::', trim(fname)
 #endif
 
-    !
     !
     !
 
@@ -286,12 +303,6 @@ CONTAINS
 !    pds7 = (/925,850,500,925,850,500,250,000,000,850,500,250,850,500,250,850,500,250,000,000/) !htlev2
 
 !obs.* deixar com espaco o valor do vetor
-!    pds5 = ['SPFH ', 'SPFH ', 'SPFH ', 'TMP  ', 'TMP  ', 'TMP  ', 'TMP  ', 'PRMSL' ,'PWAT', 'HGT', 'HGT', 'HGT', 'UGRD', &
-!            'UGRD', 'UGRD', 'VGRD', 'VGRD','VGRD', 'APCP', 'ACPCP' ]
-
-!    pds7 = [  925 ,  850 ,  500 , 925 ,  850 ,  500 ,  250 ,  000  , 000  ,  850 ,  500 ,  250 ,  850  , &
-!              500 ,  250 ,  850 , 500 ,  250 ,  000 ,  000  ]
-
         pds5 = [':SPFH:80 m above ground:925 mb:           ', ':SPFH:80 m above ground:850 mb:           ', ':SPFH:80 m above ground:500 mb:           ', ':TMP:925 mb:            ', &
      &          ':TMP:850 mb:            ', ':TMP:500 mb:            ', ':TMP:250 mb:            ', ':PRMSL:mean sea level:  ', &
      &          ':PWAT:entire atmosphere ', ':HGT:850 mb:            ', ':HGT:500 mb:            ', ':HGT:250 mb:            ', &
@@ -305,21 +316,63 @@ CONTAINS
     allocate(f(gfs_struc%npts,size(pds5)))
 
   
+    precgfs_total=0
+  
     inquire (file=trim(fname), exist=file_exists)
-
+    
+    !Calculo para o incremento do tempo
+    gincr=((100*hist%acumulo_obs)/24.0)/100.0   
+    
+    gatime=scamtec%atime    
+    gftime=scamtec%ftime
+    
+     !print*,'atime, ftime',gatime,gftime
+     print*,'PASSANDO POR AQUI QUANTAS '
+    
+    if (file_exists) then 
+    
+       gquant_arq_ant=hist%acumulo_exp/hist%acumulo_obs     !Calculando quantidade de arquivos anterior para abrir
+        
+        ! loop para somar o acumulo de precipitacao
+        do gi=1, gquant_arq_ant+1
+        
+                    
+            gaymd = gatime/100
+            gahms = MOD(gatime,100) * 10000
+        
+            !gftime  = gatime   
+            gfymd = gftime/100
+            gfhms = MOD(gftime,100) * 10000
+            
+            !print*,'arquivos: ',gquant_arq_ant
+            !print*,'atime, ftime',gatime,gftime
+             
+            !print*,'VENDO DATAS',gaymd, gahms, gfymd,gfhms
+             
+            
+            gfsprecipitation=TRIM(Exper(1)%file)  
+                          
+            CALL str_template(gfsprecipitation, gaymd, gahms,gfymd, gfhms)
+                       
+            
+#ifdef DEBUG
+   WRITE(6,'( A,1X,A)')'Open File ::', trim(gfsprecipitation)
+#endif             
+        
+       
+        
     do i=1, maxsize
        data(i) = 0.0
     enddo
 
-    call system('/opt/grads/2.0.a9/bin/wgrib2 '// trim(fname) //' > grib2tab.default.tab')
+    call system('/opt/grads/2.0.a9/bin/wgrib2 '// trim(gfsprecipitation) //' > grib2tab.default.tab')
 
-!    write(*,*) 'undef=', undef
 
 !   read data sequentially
     do iv = 1, size(pds5)
 !       meta=pds5(iv)
 !       call grb_rd(fname,'grib2tab.default.tab', meta,'-E',data,maxsize,n,invout,ierr)
-       call grb_rd(fname,'grib2tab.default.tab', pds5(iv),'-E',data,maxsize,n,invout,ierr)
+       call grb_rd(gfsprecipitation,'grib2tab.default.tab', pds5(iv),'-E',data,maxsize,n,invout,ierr)
        
        if (ierr.eq.0) then
 !          write(*,*) maxsize, ierr, data(1),trim(invout)
@@ -341,8 +394,32 @@ CONTAINS
 !       if (ierr.ne.0) write(*,*) "error meta=" , trim(meta)
     enddo
 
+    
+     print*,'Min/ Max PREC GFS: ',minval(f(:,19)),maxval(f(:,19))
+    
+     !somatorio precipitacao
+     precgfs(:)=f(:,19)
+     
+     precgfs_total(:)=precgfs_total(:)+precgfs(:)
+     
+
+      print*,'Min/ Max PREC GFS: ',minval(precgfs_total(:)),maxval(precgfs_total(:))
+                              
+      close(lugb)
+            
+      gftime=jul2cal(cal2jul(gftime)+gincr)
+            
+     enddo !fim loop precipitacao gfs 
+     
+   else
+
+       ferror = 0
 
 
+    endif       
+
+
+ 
     !
     ! Convertendo as Variaveis para as utilizadas no SCAMTEC
     ! * A lista de variaveis e as unidades utilizadas podem ser
@@ -383,12 +460,13 @@ CONTAINS
     f2(:,20) = f(:,18); lb2(:,20) = lb(:,18)             ! Vvel @ 250 hPa [m/s]
            
     if (y .eq. size(pds5)-2)then
-    f2(:,21) = 0.0; lb2(:,21) = .false.             ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]     
-    f2(:,22) = 0.0; lb2(:,22) = .false.             ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]   
+     f2(:,21) = 0.0; lb2(:,21) = .false.                  ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]     
+     f2(:,22) = 0.0; lb2(:,22) = .false.                  ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]   
     else
-    f2(:,21) = f(:,19); lb2(:,21) = lb(:,19)             ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]     
-    f2(:,22) = f(:,20); lb2(:,22) = lb(:,20)             ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]   
+     f2(:,21) = precgfs_total(:); lb2(:,21) = lb(:,19)    ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]     
+     f2(:,22) = f(:,20); lb2(:,22) = lb(:,20)             ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]   
     endif
+    
     DeAllocate(lb)
     DeAllocate(f)
 
@@ -413,7 +491,7 @@ CONTAINS
 
     DO iv=1,scamtec%nvar
 
-       write(*,*) "minval(",iv,")=", minval(f2(:,iv)), "maxval=", maxval(f2(:,iv))
+       !write(*,*) "minval(",iv,")=", minval(f2(:,iv)), "maxval=", maxval(f2(:,iv))
 
        call interp_gfs( kpds, gfs_struc%npts,f2(:,iv),lb2(:,iv), scamtec%gridDesc,&
                          scamtec%nxpt,scamtec%nypt, varfield, iret)    
@@ -427,9 +505,9 @@ CONTAINS
 
     Enddo
 
-  !write(99)scamdata(1)%tmpfield(:,5)
+!  write(99)scamdata(1)%tmpfield(:,13)
 
-  
+
 
     DeAllocate(varfield)
 

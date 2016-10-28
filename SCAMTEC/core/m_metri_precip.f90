@@ -55,6 +55,7 @@ MODULE m_metri_precip
   end type b_hist
   type(b_hist), allocatable :: histogram(:)
   
+  real, allocatable :: matsub(:,:),matentr(:,:) ! matriz subtracao
   
   integer, allocatable :: Idx(:)
   integer              :: nidx
@@ -159,6 +160,10 @@ Contains
               
           ALLOCATE(histogram(i)%media_histo(scamtec%ntime_forecast,tam_hist))
           
+          !matriz para subtrair previsao da outra no caso do brams
+          Allocate(matsub(scamtec%npts,scamtec%ntime_forecast))
+          Allocate(matentr(scamtec%npts,scamtec%ntime_forecast))
+          
           dado(i)%histo = 0.0   
           dado(i)%prec = 0.0   
           histogram(i)%soma_histo = 0
@@ -257,6 +262,8 @@ Contains
   INTEGER :: tam_hist
   INTEGER, ALLOCATABLE :: tempo(:)                            !Intervalo de tempo ex(00,06,12...)
   
+  character(len=5) :: tipo_modelo
+  
   character(len=*),parameter :: myname_=myname//'::HistoStat'
 
 #ifdef DEBUG
@@ -277,7 +284,14 @@ Contains
   !Zerando variaveis
   histo(:)=0
   obs_histo(:)=0
-   
+  matsub(:,1)=9999.9
+  matentr(:,1)=9999.9
+  
+  !***************************************************************************
+  !solucao paleativa para o brams
+  !
+  tipo_modelo='brams'
+     
   t=scamtec%time_step
   
   j = scamtec%ftime_idx 
@@ -286,7 +300,7 @@ Contains
       
   if(j .EQ. 1)then  
  
-        print*,'Min/Max PREFIELD: ',minval(prefield(:,21)),maxval(prefield(:,21))
+        print*,'Min/Max PREFIELD metri: ',minval(prefield(:,21)),maxval(prefield(:,21))
                 
          !Preenchendo dados de precipitacao OBS
          dado(run)%prec(:,t,j)=prefield(:,21)       
@@ -322,14 +336,41 @@ Contains
         
         !open(46,file=trim(scamtec%output_dir)//'/'//'EXP_precip'//'.bin',form='unformatted',status='unknown',access = 'sequential')         
         !write(46)expfield(:,hist%tipo_precip)  
-                    
-        
-                        
+                                  
         histo(:)=0
         
+        
+      if (tipo_modelo.eq.'brams') then
+        
+        print*,' '
+        print*,'Entrando no modelo: ',tipo_modelo
+        print*,' '
+        
+        matsub(:,j)=expfield(:,hist%tipo_precip)
+
+        write(*,*)        
+        print*,'vendo SUB > ',j,' ',minval(matsub(:,j)),maxval(matsub(:,j))
+        write(*,*)
+        
+        if(j.eq.2) matentr(:,j)=matsub(:,j)
+        if(j.eq.3) matentr(:,j)=matsub(:,3)-matsub(:,2)
+        if(j.eq.4) matentr(:,j)=matsub(:,4)-matsub(:,3)
+                      
+        write(*,*)
+        print*,'vendo nova matriz ENTR >:> ',j,minval(matentr(:,j)),maxval(matentr(:,j)) 
+        write(*,*)              
                       
         !Chamando rotina de Histograma        
+        !CALL histograma(expfield(:,hist%tipo_precip),hist%rang,hist%valor_min,hist%valor_limit,histo)
+        CALL histograma(matentr(:,j),hist%rang,hist%valor_min,hist%valor_limit,histo)
+        
+     else
+        
+        print*,'Entrando no modelo: ',tipo_modelo
         CALL histograma(expfield(:,hist%tipo_precip),hist%rang,hist%valor_min,hist%valor_limit,histo)
+        
+     endif
+        
         
         print *, '::: HISTOGRAMA EXP :::', run        
         tempo(j)=(j-1)*scamtec%ftime_step                
@@ -343,6 +384,8 @@ Contains
         
         
   endif
+  
+ 
   
 
   if ( (scamtec%time_step.eq.scamtec%ntime_steps) .and. (scamtec%ftime_idx .eq.scamtec%ntime_forecast)) then
