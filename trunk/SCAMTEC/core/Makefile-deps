@@ -195,10 +195,13 @@ $(srcdir)/m_WRF9km.o m_WRF9km.o: \
 	$(srcdir)/scamtec_module.o
 
 $(srcdir)/m_gfs.o m_gfs.o: \
+	$(srcdir)/m_string.o \
 	$(srcdir)/m_gfs.f90 \
 	$(srcdir)/bilinear_interpolation.o \
 	$(srcdir)/SCAM_dataMOD.o \
+	$(srcdir)/SCAM_UtilsMOD.o \
 	$(srcdir)/SCAM_MetForm.o \
+	$(srcdir)/m_time.o \
 	$(srcdir)/scamtec_module.o
 
 $(srcdir)/m_ReadGrib.o m_ReadGrib.o: \

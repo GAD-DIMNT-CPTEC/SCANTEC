@@ -152,18 +152,39 @@ CONTAINS
 
     Precipitation_struc%gridDesc     = 0 
 
+!    Precipitation_struc%gridDesc( 1) = 0         !Input grid type (4=Gaussian)
+!    Precipitation_struc%gridDesc( 2) = 1440      !Number of points on a lat circle
+!    Precipitation_struc%gridDesc( 3) = 480       !Number of points on a meridian
+!    Precipitation_struc%gridDesc( 4) = -59.87500 !Latitude of origin
+!    Precipitation_struc%gridDesc( 5) = 0.125000  !Longitude of origin
+!    Precipitation_struc%gridDesc( 6) = 128       !8 bits (1 byte) related to resolution
+!                                                 !(recall that 10000000 = 128), Table 7
+!    Precipitation_struc%gridDesc( 7) = 59.87500  !Latitude of extreme point (−59,87500+(0,250000)×480)
+!    Precipitation_struc%gridDesc( 8) = -0.12500  !Longitude of extreme point
+!    Precipitation_struc%gridDesc( 9) = 0.250     !N/S direction increment
+!    Precipitation_struc%gridDesc(10) = 0.250     !(Gaussian) # lat circles pole-equator
+!    Precipitation_struc%gridDesc(20) = 0.0  
+
+
+!dados escritos no grads somente AmericaSUL
     Precipitation_struc%gridDesc( 1) = 0         !Input grid type (4=Gaussian)
-    Precipitation_struc%gridDesc( 2) = 1440      !Number of points on a lat circle
-    Precipitation_struc%gridDesc( 3) = 480       !Number of points on a meridian
-    Precipitation_struc%gridDesc( 4) = -59.87500 !Latitude of origin
-    Precipitation_struc%gridDesc( 5) = 0.125000  !Longitude of origin
+    Precipitation_struc%gridDesc( 2) = 190       !Number of points on a lat circle
+    Precipitation_struc%gridDesc( 3) = 246       !Number of points on a meridian
+    Precipitation_struc%gridDesc( 4) = -49.875   !Latitude of origin
+    Precipitation_struc%gridDesc( 5) = -82.625   !Longitude of origin
     Precipitation_struc%gridDesc( 6) = 128       !8 bits (1 byte) related to resolution
                                                  !(recall that 10000000 = 128), Table 7
-    Precipitation_struc%gridDesc( 7) = 59.87500  !Latitude of extreme point
-    Precipitation_struc%gridDesc( 8) = -0.125000 !Longitude of extreme point
+    Precipitation_struc%gridDesc( 7) = 11.375    !Latitude of extreme point (−49,875+0,25×(246−1))
+    Precipitation_struc%gridDesc( 8) = -35.375   !Longitude of extreme point
     Precipitation_struc%gridDesc( 9) = 0.250     !N/S direction increment
     Precipitation_struc%gridDesc(10) = 0.250     !(Gaussian) # lat circles pole-equator
     Precipitation_struc%gridDesc(20) = 0.0  
+
+
+
+
+
+
 
     Precipitation_struc%npts = Precipitation_struc%gridDesc(2)*Precipitation_struc%gridDesc(3)
     
@@ -207,8 +228,11 @@ CONTAINS
     real, dimension(:,:), allocatable :: f2
     real, dimension(:), allocatable :: varfield
 
-    REAL,DIMENSION(1440*480) :: binario       !variavel de leitura  
-    REAL,DIMENSION(1440*480) :: binario_total !variavel de leitura  
+    !REAL,DIMENSION(1440*480) :: binario       !variavel de leitura  
+    !REAL,DIMENSION(1440*480) :: binario_total !variavel de leitura  
+    
+    REAL,DIMENSION(190*246) :: binario       !variavel de leitura  
+    REAL,DIMENSION(190*246) :: binario_total !variavel de leitura  
     
 
     character(len=*),parameter :: myname_=myname//'::Precipitation_read'
@@ -251,7 +275,8 @@ CONTAINS
     allocate(f(Precipitation_struc%npts,19))
     
     lugb = 1
-    binario_total=0
+    binario_total(:)=0
+    
     inquire (file=trim(fname), exist=file_exists)
     
     !Calculo para o incremento do tempo
@@ -264,8 +289,10 @@ CONTAINS
         quant_arq_ant=hist%acumulo_exp/hist%acumulo_obs     !Calculando quantidade de arquivos anterior para abrir
         
         ! loop para somar o acumulo de precipitacao
+        ftime = scamtec%ftime
+        
         do i=1, quant_arq_ant
-            ftime  = atime   
+          
             fymd = ftime/100
             fhms = MOD(ftime,100) * 10000
             Precipitation=TRIM(Precip%file)                
@@ -276,19 +303,25 @@ CONTAINS
 #endif         
             !dados de 2012
             !OPEN (UNIT=lugb,FILE=trim(Precipitation),FORM='unformatted',convert='big_endian',access='direct',recl=190*246*4,ACTION = 'read',STATUS ='Unknown',iostat=iret) 
-                
-            !dados de 2014
-            OPEN (UNIT=lugb,FILE=trim(Precipitation),FORM='unformatted',convert='big_endian',access='direct',recl=1440*480*4,ACTION = 'read',STATUS ='Unknown',iostat=iret)
+                                     
+            !dados de 2014 (dados reescritos para America do Sul)
+            OPEN (UNIT=lugb,FILE=trim(Precipitation),FORM='unformatted',access='direct',recl=190*246*4,ACTION = 'read',STATUS ='Unknown',iostat=iret)
                 
             read(lugb, rec=1)binario(:)
+
+             print*,'Min/ Max precipitation binario: ',minval(binario(:)),maxval(binario(:))   
                                    
-            binario_total(:)=binario_total(:)+binario(:)
+             binario_total(:)=binario_total(:)+binario(:)
             
-            print*,'Min/ Max precipitation: ',minval(binario_total(:)),maxval(binario_total(:))
+                        
+             !print*,'Min/ Max precipitation: ',minval(binario_total(:)),maxval(binario_total(:))
+                  
+            !write(54)binario(:)
+           
                               
             close(lugb)
             
-            atime=jul2cal(cal2jul(atime)-incr)
+            ftime=jul2cal(cal2jul(ftime)-incr)            
             
           enddo  
 
@@ -307,13 +340,14 @@ CONTAINS
     !
     allocate(f2(Precipitation_struc%npts,scamtec%nvar))
 
-
+     !write(76)binario_total(:)
+     !stop
 
 !----------------------------------------------------------------------------
 
    f(:,1) = 0 ;                 lb(:,1) = .true.   ! T 850 ABSOLUTE TEMPERATURE  
    f(:,2) = 0 ;                 lb(:,2) = .true.   ! T 500 ABSOLUTE TEMPERATURE  
-   f(:,3) = 0 ;                lb(:,3) = .true.    ! T 250 ABSOLUTE TEMPERATURE  
+   f(:,3) = 0 ;                 lb(:,3) = .true.    ! T 250 ABSOLUTE TEMPERATURE  
    f(:,4) = 0 ;                 lb(:,4) = .true.   ! PSNM [hPa]
         
    f(:,5) = 0 ;                 lb(:,5) = .true.   ! Q 925 SPECIFIC HUMIDITY
@@ -328,7 +362,7 @@ CONTAINS
    f(:,13) = 0 ;                lb(:,13) = .true.  ! Uvel @ 500 hPa [m/s]
    f(:,14) = 0 ;                lb(:,14) = .true.  ! Uvel @ 250 hPa [m/s]
    f(:,15) = 0 ;                lb(:,15) = .true.  ! Vvel @ 850 hPa [m/s]
-   f(:,16) = 0 ; 	       lb(:,16) = .true.   ! Vvel @ 500 hPa [m/s]
+   f(:,16) = 0 ; 	        lb(:,16) = .true.   ! Vvel @ 500 hPa [m/s]
    f(:,17) = 0 ;                lb(:,17) = .true.  ! Vvel @ 250 hPa [m/s]
    
    f(:,18) = binario_total(:) ; lb(:,18) = .true.  ! PREC @ 000 hPa [kg/m2/day]
@@ -364,8 +398,8 @@ CONTAINS
    f2(:,19) = f(:,16); lb2(:,19) = lb(:,19) ! Vvel @ 500 hPa [m/s]
    f2(:,20) = f(:,17); lb2(:,20) = lb(:,20) ! Vvel @ 250 hPa [m/s]
    
-   f2(:,21) = f(:,18); lb2(:,21) = lb(:,21) ! PREC @ 000 hPa [kg/m2/day]
-   f2(:,22) = f(:,19); lb2(:,22) = lb(:,22) ! PREV @ 000 hPa [kg/m2/day]
+   f2(:,21) = f(:,18); lb2(:,21) = lb(:,18) ! PREC @ 000 hPa [kg/m2/day]
+   f2(:,22) = f(:,19); lb2(:,22) = lb(:,19) ! PREV @ 000 hPa [kg/m2/day]
 
     do iv=1, scamtec%nvar
        where(f2(:,iv).eq.undef) lb(:,iv) = .false.
@@ -408,8 +442,13 @@ CONTAINS
 
     allocate(varfield(nx*ny))
 
+    print*,'Antes da interpolacao ',minval(f2(:,21)),maxval(f2(:,21)) 
+        
+    !write(65)f2(:,21)
+
     DO iv = 1, scamtec%nvar 
-      
+    
+          
       call interp_Precipitation( kpds, Precipitation_struc%npts, f2(:,iv), lb2(:,iv), scamtec%gridDesc, scamtec%nxpt, scamtec%nypt, varfield, iret)            
 
     !
@@ -417,12 +456,20 @@ CONTAINS
     !
     
        scamdata(1)%tmpfield(:,iv) = varfield(:)
-              
+        
+        !print*,'minval varfiel obs',minval(varfield),maxval(varfield)        
 
     enddo
     
-    !print*,minval(scamdata(1)%tmpfield(:,21)),maxval(scamdata(1)%tmpfield(:,21))
+    print*,' '
+    print*,'Depois de interpolado no obs > ',minval(scamdata(1)%tmpfield(:,21)),maxval(scamdata(1)%tmpfield(:,21))
+    print*,' '     
     
+    !write(66)scamdata(1)%tmpfield(:,21)
+    
+    
+
+
     
     DeAllocate(varfield)
 
