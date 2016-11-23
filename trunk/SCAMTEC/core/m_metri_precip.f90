@@ -287,10 +287,6 @@ Contains
   matsub(:,1)=9999.9
   matentr(:,1)=9999.9
   
-  !***************************************************************************
-  !solucao paleativa para o brams
-  !
-  tipo_modelo='brams'
      
   t=scamtec%time_step
   
@@ -323,29 +319,32 @@ Contains
         
   else  
         
-        print*,'Min/Max EXPFIELD: ',minval(expfield(:,hist%tipo_precip)),maxval(expfield(:,hist%tipo_precip))
+       print*,'Min/Max EXPFIELD: ',minval(expfield(:,hist%tipo_precip)),maxval(expfield(:,hist%tipo_precip))
                
         
-        !Preenchendo dados de precipitacao EXP
-         dado(run)%prec(:,t,j)=expfield(:,hist%tipo_precip)
+       !Preenchendo dados de precipitacao EXP
+        dado(run)%prec(:,t,j)=expfield(:,hist%tipo_precip)
         
-        !if (maxval(dado(run)%prec(:,t,j)) .gt. 0) then  
-        ! write(19)expfield(:,hist%tipo_precip)
-        !stop
-        !end if
+       !if (maxval(dado(run)%prec(:,t,j)) .gt. 0) then  
+       ! write(19)expfield(:,hist%tipo_precip)
+       !stop
+       !end if
         
-        !open(46,file=trim(scamtec%output_dir)//'/'//'EXP_precip'//'.bin',form='unformatted',status='unknown',access = 'sequential')         
-        !write(46)expfield(:,hist%tipo_precip)  
+       !open(46,file=trim(scamtec%output_dir)//'/'//'EXP_precip'//'.bin',form='unformatted',status='unknown',access = 'sequential')         
+       !write(46)expfield(:,hist%tipo_precip)  
                                   
-        histo(:)=0
+       histo(:)=0
         
-        
-      if (tipo_modelo.eq.'brams') then
+      !***************************************************************************
+      !solucao paleativa para o brams
+      !  
+      !modelo brams numero 11 
+      if (Exper(scamtec%nexp)%Id.eq.11) then
         
         print*,' '
-        print*,'Entrando no modelo: ',tipo_modelo
+        print*,'Entrando no modelo BRAMS: ',Exper%Id,scamtec%nexp
         print*,' '
-        
+
         matsub(:,j)=expfield(:,hist%tipo_precip)
 
         write(*,*)        

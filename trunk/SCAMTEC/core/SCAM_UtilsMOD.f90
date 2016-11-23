@@ -652,13 +652,22 @@ MODULE SCAM_Utils
     
          
 !
-! ïndices dos modelos
+! indices dos modelos
 !
 
-         select case (scamtec%cflag)
-            Case(1)
-
+         if(scamtec%cflag.eq.1 .and. Precipitation_Flag.eq.0) then
+         
                Allocate(tmp(scamtec%nexp+2))
+               call unique((/Refer%id, Exper(:)%Id, Clima%Id/),tmp,I)
+
+               Allocate(scamtec%Init_ModelID(I))
+               scamtec%Init_ModelID(1:I) = tmp(1:I)
+
+               DeAllocate(tmp)
+
+         else if (scamtec%cflag.eq.1 .and. Precipitation_Flag.eq.1) then
+              
+               Allocate(tmp(scamtec%nexp+3))
                call unique((/Refer%id, Exper(:)%Id, Clima%Id, Precip%Id/),tmp,I)
 
                Allocate(scamtec%Init_ModelID(I))
@@ -666,8 +675,10 @@ MODULE SCAM_Utils
 
                DeAllocate(tmp)
 
-            Case default
 
+         else
+
+            
                Allocate(tmp(scamtec%nexp+1))
                call unique((/Refer%id, Exper(:)%Id/),tmp,I)
 
@@ -675,7 +686,7 @@ MODULE SCAM_Utils
                scamtec%Init_ModelID(1:I) = tmp(1:I)
 
                DeAllocate(tmp)
-         end select
+         end if
 
 !
 !------------------------------------------------------------------------------- !Paulo Dias

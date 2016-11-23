@@ -324,20 +324,20 @@ CONTAINS
     gincr=((100*hist%acumulo_obs)/24.0)/100.0   
     
     gatime=scamtec%atime    
-    gftime=scamtec%ftime
     
-     !print*,'atime, ftime',gatime,gftime
-     print*,'PASSANDO POR AQUI QUANTAS '
+      
     
     if (file_exists) then 
     
        gquant_arq_ant=hist%acumulo_exp/hist%acumulo_obs     !Calculando quantidade de arquivos anterior para abrir
         
         ! loop para somar o acumulo de precipitacao
-        do gi=1, gquant_arq_ant+1
+        gftime=scamtec%ftime
+        
+        do gi=1, gquant_arq_ant
         
                     
-            gaymd = gatime/100
+            gaymd = gftime/100
             gahms = MOD(gatime,100) * 10000
         
             !gftime  = gatime   
@@ -348,7 +348,7 @@ CONTAINS
             !print*,'atime, ftime',gatime,gftime
              
             !print*,'VENDO DATAS',gaymd, gahms, gfymd,gfhms
-             
+            
             
             gfsprecipitation=TRIM(Exper(1)%file)  
                           
@@ -407,7 +407,7 @@ CONTAINS
                               
       close(lugb)
             
-      gftime=jul2cal(cal2jul(gftime)+gincr)
+      gftime=jul2cal(cal2jul(gftime)-gincr)
             
      enddo !fim loop precipitacao gfs 
      
@@ -489,6 +489,9 @@ CONTAINS
 !      write(98)f2(:,iv)
 !    enddo
 
+    print*,'antes de interpolar GFS: >',minval(f2(:,21)),maxval(f2(:,21)) 
+     write(45)f2(:,21)   
+
     DO iv=1,scamtec%nvar
 
        !write(*,*) "minval(",iv,")=", minval(f2(:,iv)), "maxval=", maxval(f2(:,iv))
@@ -505,9 +508,11 @@ CONTAINS
 
     Enddo
 
-!  write(99)scamdata(1)%tmpfield(:,13)
+  write(46)scamdata(1)%tmpfield(:,21)
+   print*,'depois de interpolar: ',minval(scamdata(1)%tmpfield(:,21)),maxval(scamdata(1)%tmpfield(:,21))
 
 
+  stop
 
     DeAllocate(varfield)
 

@@ -296,18 +296,14 @@ CONTAINS
         DO NExp=1,scamtec%nexp
            CALL SCAM_ModelData ( NExp )  ! Load Files: Analisys, Forecast and Climatology
            
-           IF(Precipitation_Flag .EQ. 0) CALL CalcBstat ( NExp ) ! Calculate Basic Statistics: Bias, RMSE, Anomaly Correlation
+           CALL CalcBstat ( NExp )       ! Calculate Basic Statistics: Bias, RMSE, Anomaly Correlation
               
-           IF(Precipitation_Flag .EQ. 1)then
-              write(*,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-              write(*,*)''
-              write(*,*)'ATENCAO!!! Metrica precipitacao Ligada. Então Estatistica Basica Desligada!'
-              write(*,*)'' 
-              write(*,*)'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+            IF(Precipitation_Flag .EQ. 1)then
+              
               CALL HistoStat ( NExp )  ! Calculate histogram  	      
-	      !Call mode_run(NExp) ! Applies the Method for Object-based Diagnostic Evaluation (MODE) (descomentar esse para o teste)  
-              !stop
-           ENDIF
+	      !Call mode_run(NExp)     ! Applies the Method for Object-based Diagnostic Evaluation (MODE) (descomentar esse para o teste)  
+              
+            ENDIF
 
         ENDDO
         call SCAM_NextStep( )
