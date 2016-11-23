@@ -269,10 +269,10 @@ CONTAINS
     allocate(lb(Precipitation_struc%npts,scamtec%nvar))
 
     allocate(lb2(Precipitation_struc%npts,scamtec%nvar))
-    
+
     !lb = .true.
     
-    allocate(f(Precipitation_struc%npts,19))
+    allocate(f(Precipitation_struc%npts,scamtec%nvar))
     
     lugb = 1
     binario_total(:)=0
@@ -345,29 +345,30 @@ CONTAINS
 
 !----------------------------------------------------------------------------
 
-   f(:,1) = 0 ;                 lb(:,1) = .true.   ! T 850 ABSOLUTE TEMPERATURE  
-   f(:,2) = 0 ;                 lb(:,2) = .true.   ! T 500 ABSOLUTE TEMPERATURE  
-   f(:,3) = 0 ;                 lb(:,3) = .true.    ! T 250 ABSOLUTE TEMPERATURE  
-   f(:,4) = 0 ;                 lb(:,4) = .true.   ! PSNM [hPa]
-        
-   f(:,5) = 0 ;                 lb(:,5) = .true.   ! Q 925 SPECIFIC HUMIDITY
-   f(:,6) = 0 ;                 lb(:,6) = .true.   ! Q 850 SPECIFIC HUMIDITY
-   f(:,7) = 0 ;                 lb(:,7) = .true.   ! Q 500 SPECIFIC HUMIDITY
+   f(:,1) = 0 ;                 lb(:,1) =  .true.    
+   f(:,2) = 0 ;                 lb(:,2) =  .true.    
+   f(:,3) = 0 ;                 lb(:,3) =  .true.    
+   f(:,4) = 0 ;                 lb(:,4) =  .true.           
+   f(:,5) = 0 ;                 lb(:,5) =  .true.   
+   f(:,6) = 0 ;                 lb(:,6) =  .true.   
+   f(:,7) = 0 ;                 lb(:,7) =  .true.   
 
-   f(:,8)  = 0 ;                lb(:,8) = .true.   ! Agpl @ 925 hPa [Kg/m2]
-   f(:,9)  = 0 ;                lb(:,9) = .true.   ! Zgeo @ 850 hPa [gpm]
-   f(:,10) = 0 ;                lb(:,10) = .true.  ! Zgeo @ 500 hPa [gpm]
-   f(:,11) = 0 ;                lb(:,11) = .true.  ! Zgeo @ 250 hPa [gpm]
-   f(:,12) = 0 ;                lb(:,12) = .true.  ! Uvel @ 850 hPa [m/s]
-   f(:,13) = 0 ;                lb(:,13) = .true.  ! Uvel @ 500 hPa [m/s]
-   f(:,14) = 0 ;                lb(:,14) = .true.  ! Uvel @ 250 hPa [m/s]
-   f(:,15) = 0 ;                lb(:,15) = .true.  ! Vvel @ 850 hPa [m/s]
-   f(:,16) = 0 ; 	        lb(:,16) = .true.   ! Vvel @ 500 hPa [m/s]
-   f(:,17) = 0 ;                lb(:,17) = .true.  ! Vvel @ 250 hPa [m/s]
+   f(:,8)  = 0 ;                lb(:,8) =  .true.   
+   f(:,9)  = 0 ;                lb(:,9) =  .true.   
+   f(:,10) = 0 ;                lb(:,10) = .true.  
+   f(:,11) = 0 ;                lb(:,11) = .true.  
+   f(:,12) = 0 ;                lb(:,12) = .true.  
+   f(:,13) = 0 ;                lb(:,13) = .true.  
+   f(:,14) = 0 ;                lb(:,14) = .true.  
+   f(:,15) = 0 ;                lb(:,15) = .true.  
+   f(:,16) = 0 ; 	        lb(:,16) = .true.  
+   f(:,17) = 0 ;                lb(:,17) = .true.  
    
-   f(:,18) = binario_total(:) ; lb(:,18) = .true.  ! PREC @ 000 hPa [kg/m2/day]
-   f(:,19) = 0  ;               lb(:,19) = .true.  ! PREV @ 000 hPa [kg/m2/day] 
-   
+   f(:,18) = 0  ;               lb(:,18) = .true.  
+   f(:,19) = 0  ;               lb(:,19) = .true.  
+   f(:,20) = 0  ;               lb(:,20) = .true.  
+   f(:,21) = binario_total(:);  lb(:,21) = .true.  ! PREC @ 000 hPa [kg/m2/day]    
+   f(:,22) = 0  ;               lb(:,22) = .true.  ! PREV @ 000 hPa [kg/m2/day]    
 
    !print*,'f1 >> ',minval(f(:,18)),maxval(f(:,18))
 
@@ -377,29 +378,30 @@ CONTAINS
    f2(:,2) = f(:,2);   lb2(:,2) = lb(:,2)   ! Vtmp @ 850 hPa [K]
    f2(:,3) = f(:,3);   lb2(:,3) = lb(:,3)   ! Vtmp @ 500 hPa [K]
    
-   f2(:,4) = f(:,1);  lb2(:,4) = lb(:,4)    ! Absolute Temperature @ 850 hPa [K]
-   f2(:,5) = f(:,2);  lb2(:,5) = lb(:,5)    ! Absolute Temperature @ 500 hPa [K]                               
-   f2(:,6) = f(:,3);  lb2(:,6) = lb(:,6)    ! Absolute Temperature @ 250 hPa [K]                               
+   f2(:,4) = f(:,4);  lb2(:,4) = lb(:,4)    ! Absolute Temperature @ 850 hPa [K]
+   f2(:,5) = f(:,5);  lb2(:,5) = lb(:,5)    ! Absolute Temperature @ 500 hPa [K]                               
+   f2(:,6) = f(:,6);  lb2(:,6) = lb(:,6)    ! Absolute Temperature @ 250 hPa [K]                               
 
       
-   f2(:,7) =  f(:,4); lb2(:,7) = lb(:,7)    ! PSNM [hPa]
-   f2(:,8) =  f(:,5); lb2(:,8) = lb(:,8)    ! Umes @ 925 hPa [Kg/Kg] (esta multiplicado para rmse ficar mais visivel)
-   f2(:,9) =  f(:,6); lb2(:,9) = lb(:,9)    ! Umes @ 850 hPa [Kg/Kg] (esta multiplicado para rmse ficar mais visivel)
-   f2(:,10) = f(:,7); lb2(:,10) = lb(:,10)  ! Umes @ 500 hPa [Kg/Kg] (esta multiplicado para rmse ficar mais visivel)
+   f2(:,7) =  f(:,7);  lb2(:,7) =  lb(:,7)  ! PSNM [hPa]
+   f2(:,8) =  f(:,8);  lb2(:,8) =  lb(:,8)  ! Umes @ 925 hPa [Kg/Kg] (esta multiplicado para rmse ficar mais visivel)
+   f2(:,9) =  f(:,9);  lb2(:,9) =  lb(:,9)  ! Umes @ 850 hPa [Kg/Kg] (esta multiplicado para rmse ficar mais visivel)
+   f2(:,10) = f(:,10); lb2(:,10) = lb(:,10) ! Umes @ 500 hPa [Kg/Kg] (esta multiplicado para rmse ficar mais visivel)
    
-   f2(:,11) = f(:,8);  lb2(:,11) = lb(:,11) ! Agpl @ 925 hPa [Kg/m2]
-   f2(:,12) = f(:,9);  lb2(:,12) = lb(:,12) ! Zgeo @ 850 hPa [gpm]
-   f2(:,13) = f(:,10); lb2(:,13) = lb(:,13) ! Zgeo @ 500 hPa [gpm]
-   f2(:,14) = f(:,11); lb2(:,14) = lb(:,14) ! Zgeo @ 250 hPa [gpm]
-   f2(:,15) = f(:,12); lb2(:,15) = lb(:,15) ! Uvel @ 850 hPa [m/s]
-   f2(:,16) = f(:,13); lb2(:,16) = lb(:,16) ! Uvel @ 500 hPa [m/s]
-   f2(:,17) = f(:,14); lb2(:,17) = lb(:,17) ! Uvel @ 250 hPa [m/s]
-   f2(:,18) = f(:,15); lb2(:,18) = lb(:,18) ! Vvel @ 850 hPa [m/s]
-   f2(:,19) = f(:,16); lb2(:,19) = lb(:,19) ! Vvel @ 500 hPa [m/s]
-   f2(:,20) = f(:,17); lb2(:,20) = lb(:,20) ! Vvel @ 250 hPa [m/s]
+   f2(:,11) = f(:,11); lb2(:,11) = lb(:,11) ! Agpl @ 925 hPa [Kg/m2]
+   f2(:,12) = f(:,12); lb2(:,12) = lb(:,12) ! Zgeo @ 850 hPa [gpm]
+   f2(:,13) = f(:,13); lb2(:,13) = lb(:,13) ! Zgeo @ 500 hPa [gpm]
+   f2(:,14) = f(:,14); lb2(:,14) = lb(:,14) ! Zgeo @ 250 hPa [gpm]
+   f2(:,15) = f(:,15); lb2(:,15) = lb(:,15) ! Uvel @ 850 hPa [m/s]
+   f2(:,16) = f(:,16); lb2(:,16) = lb(:,16) ! Uvel @ 500 hPa [m/s]
+   f2(:,17) = f(:,17); lb2(:,17) = lb(:,17) ! Uvel @ 250 hPa [m/s]
+   f2(:,18) = f(:,18); lb2(:,18) = lb(:,18) ! Vvel @ 850 hPa [m/s]
+   f2(:,19) = f(:,19); lb2(:,19) = lb(:,19) ! Vvel @ 500 hPa [m/s]
+   f2(:,20) = f(:,20); lb2(:,20) = lb(:,20) ! Vvel @ 250 hPa [m/s]
    
-   f2(:,21) = f(:,18); lb2(:,21) = lb(:,18) ! PREC @ 000 hPa [kg/m2/day]
-   f2(:,22) = f(:,19); lb2(:,22) = lb(:,19) ! PREV @ 000 hPa [kg/m2/day]
+   f2(:,21) = f(:,21); lb2(:,21) = lb(:,21) ! PREC @ 000 hPa [kg/m2/day]
+   f2(:,22) = f(:,22); lb2(:,22) = lb(:,22) ! PREV @ 000 hPa [kg/m2/day]
+
 
     do iv=1, scamtec%nvar
        where(f2(:,iv).eq.undef) lb(:,iv) = .false.

@@ -374,12 +374,12 @@ Climatology file: /stornext/online6/assim_dados/luiz.sapucci/testcase_scamtec/cl
 # Precipitation File
 #
 
-Use Precipitation: ${use_precipitacao}	# 0-do not use, 1-use
+Use Precipitation: ${use_precipitacao} # 0-do not use, 1-use
 # Diretory prefix mask sulfix
 Precipitation Model Id: 5
-Precipitation file: /stornext/online6/assim_dados/luiz.sapucci/testcase_scamtec/precipitacao/3B42RT/%y4/3B42RT.%y4.%m2.%d2.%h2z.bin
-Define o Range do Histograma: 2                                         # exemplo: 2
-Define valor do limite inferior da ultima classe do histograma: 70      # exemplo: 100
+Precipitation file: /stornext/online6/assim_dados/luiz.sapucci/testcase_scamtec/precipitacao/3B42RT/%y4/prec_AS/new_AS_3B42RT.%y4.%m2.%d2.%h2z.bin   
+Define o Range do Histograma: 5.0                                       # exemplo: 2
+Define valor do limite da ultima classe do histograma: 50               # exemplo: 100
 Define valor do minimo inferior da primeira classe do histograma: 0     # exemplo: 0
 Define qual Precipitacao deseja avaliar: 21                             # exemplo: 16 para TOTAL ou 17 para CONVECTIVE
 Define o periodo de acumulo de precpitacao da observacao: 3             # exemplo: 3 
