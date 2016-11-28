@@ -570,7 +570,7 @@ Contains
       write(150,'(A)') 
       write(150,'(A)')'zdef    1 linear 0 1'                  
       write(150,'(A)') 
-      write(150,'(A,I3,A,I2,A)')'tdef  ',(scamtec%forecast_time/scamtec%atime_step)+1,' linear 00Z05AUG2014',scamtec%atime_step,'HR'
+      write(150,'(A,I3,A,I2,A)')'tdef  ',(scamtec%forecast_time/scamtec%atime_step)+1,' linear 00Z05AUG2014 ',scamtec%atime_step,'HR'
       write(150,'(A)')
       write(150,'(A)')'vars 22'
       write(150,'(A)')'VT925 00 99 Virtual Temperature @ 925 hPa [K]'
@@ -613,7 +613,7 @@ Contains
       write(151,'(A)') 
       write(151,'(A)')'zdef    1 linear 0 1'                  
       write(151,'(A)') 
-      write(151,'(A,I3,A,I2,A)')'tdef  ',(scamtec%forecast_time/scamtec%atime_step)+1,' linear 00Z05AUG2014',scamtec%atime_step,'HR'
+      write(151,'(A,I3,A,I2,A)')'tdef  ',(scamtec%forecast_time/scamtec%atime_step)+1,' linear 00Z05AUG2014 ',scamtec%atime_step,'HR'
       write(151,'(A)')
       write(151,'(A)')'vars 22'
       write(151,'(A)')'VT925 00 99 Virtual Temperature @ 925 hPa [K]'
@@ -656,7 +656,7 @@ Contains
       write(152,'(A)') 
       write(152,'(A)')'zdef    1 linear 0 1'                  
       write(152,'(A)') 
-      write(152,'(A,I3,A,I2,A)')'tdef  ',(scamtec%forecast_time/scamtec%atime_step)+1,' linear 00Z05AUG2014',scamtec%atime_step,'HR'
+      write(152,'(A,I3,A,I2,A)')'tdef  ',(scamtec%forecast_time/scamtec%atime_step)+1,' linear 00Z05AUG2014 ',scamtec%atime_step,'HR'
       write(152,'(A)')
       write(152,'(A)')'vars 22'
       write(152,'(A)')'VT925 00 99 Virtual Temperature @ 925 hPa [K]'
