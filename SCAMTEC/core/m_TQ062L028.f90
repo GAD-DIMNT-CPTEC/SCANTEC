@@ -414,6 +414,8 @@ CONTAINS
     ny = int(scamtec%gridDesc(3))
     
     allocate(varfield(nx*ny))
+    
+    !write(115)f2(:,5)
 
     DO iv=1,scamtec%nvar
 
@@ -433,7 +435,8 @@ CONTAINS
 
     Enddo
 
-
+    !write(116)scamdata(1)%tmpfield(:,5)
+    
     DeAllocate(varfield)
 
   END SUBROUTINE TQ062L028_read

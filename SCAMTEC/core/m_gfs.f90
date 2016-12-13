@@ -190,12 +190,12 @@ CONTAINS
     gfs_struc%gridDesc( 2) = 720      !Number of points on a lat circle
     gfs_struc%gridDesc( 3) = 361      !Number of points on a meridian
     gfs_struc%gridDesc( 4) = -90.000  !Latitude of origin
-    gfs_struc%gridDesc( 5) = 0.00     !Longitude of origin
+    gfs_struc%gridDesc( 5) = 0.000    !Longitude of origin
     gfs_struc%gridDesc( 6) = 128      !8 bits (1 byte) related to resolution
                                       !(recall that 10000000 = 128), Table 7
     gfs_struc%gridDesc( 7) = 90.000   !Latitude of extreme point (lat_orig+(resolucao)*num_pontos)
-    gfs_struc%gridDesc( 8) = 360.00     !Longitude of extreme point
-    gfs_struc%gridDesc( 9) = 0.5      !N/S direction increment
+    gfs_struc%gridDesc( 8) = 359.500  !Longitude of extreme point
+    gfs_struc%gridDesc( 9) = 0.500    !N/S direction increment
     gfs_struc%gridDesc(10) = 0.5000   !(Gaussian) # lat circles pole-equator
     gfs_struc%gridDesc(11) = 0        !SCANNING MODE FLAG 
    
@@ -419,6 +419,7 @@ CONTAINS
     endif       
 
 
+
  
     !
     ! Convertendo as Variaveis para as utilizadas no SCAMTEC
@@ -464,7 +465,8 @@ CONTAINS
      f2(:,22) = 0.0; lb2(:,22) = .false.                  ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]   
     else
      f2(:,21) = precgfs_total(:); lb2(:,21) = lb(:,19)    ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]     
-     f2(:,22) = f(:,20); lb2(:,22) = lb(:,20)             ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]   
+     f2(:,22) = f(:,20); lb2(:,22) = lb(:,20)             ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]       
+
     endif
     
     DeAllocate(lb)
@@ -475,6 +477,8 @@ CONTAINS
     !
 
     where(.not.lb2) f2 = scamtec%udef
+
+
 
     !
     ! Interpolando para a grade do SCAMTEC
@@ -491,7 +495,7 @@ CONTAINS
 
     print*,'antes de interpolar GFS: >',minval(f2(:,21)),maxval(f2(:,21)) 
      write(45)f2(:,21)   
-
+     write(800)f2(:,5)
     DO iv=1,scamtec%nvar
 
        !write(*,*) "minval(",iv,")=", minval(f2(:,iv)), "maxval=", maxval(f2(:,iv))
@@ -505,6 +509,7 @@ CONTAINS
 
        scamdata(1)%tmpfield(:,iv) = varfield(:)
        
+        !print*,'depois de interpolar: ',minval(scamdata(1)%tmpfield(:,iv)),maxval(scamdata(1)%tmpfield(:,iv))
 
     Enddo
 
