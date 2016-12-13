@@ -261,9 +261,7 @@ Contains
   REAL,ALLOCATABLE     :: obs_precip(:), ant_obs_precip(:)    !Variavel de precipitation
   INTEGER :: tam_hist
   INTEGER, ALLOCATABLE :: tempo(:)                            !Intervalo de tempo ex(00,06,12...)
-  
-  character(len=5) :: tipo_modelo
-  
+    
   character(len=*),parameter :: myname_=myname//'::HistoStat'
 
 #ifdef DEBUG
@@ -365,7 +363,6 @@ Contains
         
      else
         
-        print*,'Entrando no modelo: ',tipo_modelo
         CALL histograma(expfield(:,hist%tipo_precip),hist%rang,hist%valor_min,hist%valor_limit,histo)
         
      endif
