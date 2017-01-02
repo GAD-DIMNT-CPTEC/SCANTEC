@@ -1,0 +1,12 @@
+
+ifndef SCAMDIR
+       SCAMDIR := $(PWD)/..
+endif
+
+
+CoreDir = $(SCAMDIR)/core
+ModDir  = $(SCAMDIR)/models
+PlugDir = $(SCAMDIR)/plugins
+StatDir = $(SCAMDIR)/stats
+UtilDir = $(SCAMDIR)/utils
+

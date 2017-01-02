@@ -1,0 +1,109 @@
+$(CoreDir)/SCAM_CoreMod.o SCAM_CoreMod.o: \
+	$(CoreDir)/SCAM_CoreMod.f90 \
+	$(CoreDir)/SCAM_GlobalTypes.o \
+	$(CoreDir)/SCAM_DataMod.o \
+	$(UtilDir)/SCAM_UtilsMod.o \
+	$(UtilDir)/SCAM_TimeMod.o \
+	$(UtilDir)/SCAM_StringMod.o \
+	$(PlugDir)/SCAM_ModelPlugin.o \
+	$(StatDir)/m_metri_precip.o \
+	$(StatDir)/SCAM_bstatistic.o 
+
+$(CoreDir)/SCAM_DataMod.o SCAM_DataMod.o: \
+	$(CoreDir)/SCAM_DataMod.f90 \
+	$(CoreDir)/SCAM_GlobalTypes.o\
+   $(UtilDir)/SCAM_UtilsMod.o \
+	$(UtilDir)/SCAM_StringMod.o 
+
+$(CoreDir)/SCAM_ModFuncTable.o SCAM_ModFuncTable.o: \
+	$(CoreDir)/SCAM_ModFuncTable.c \
+	$(CoreDir)/ftn_drv.h
+
+$(CoreDir)/SCAM_ObsFuncTable.o SCAM_ObsFuncTable.o: \
+	$(CoreDir)/SCAM_ObsFuncTable.c \
+	$(CoreDir)/ftn_drv.h
+
+$(CoreDir)/SCAM_StatFuncTable.o SCAM_StatFuncTable.o: \
+	$(CoreDir)/SCAM_StatFuncTable.c \
+	$(CoreDir)/ftn_drv.h
+
+$(CoreDir)/scamdrv.o scamdrv.o: \
+	$(CoreDir)/scamdrv.f90 \
+	$(CoreDir)/SCAM_CoreMod.o
+
+$(CoreDir)/SCAM_GlobalTypes.o SCAM_GlobalTypes.o: \
+	$(CoreDir)/SCAM_GlobalTypes.f90
+
+$(UtilDir)/SCAM_MetForm.o SCAM_MetForm.o: \
+	$(UtilDir)/SCAM_MetForm.f90
+
+$(UtilDir)/SCAM_TimeMod.o SCAM_TimeMod.o: \
+	$(UtilDir)/SCAM_TimeMod.f90
+
+$(UtilDir)/m_ReadGrib.o m_ReadGrib.o: \
+	$(UtilDir)/m_ReadGrib.f90 \
+	$(UtilDir)/SCAM_StringMod.o
+
+$(UtilDir)/SCAM_StringMod.o SCAM_StringMod.o: \
+	$(UtilDir)/SCAM_StringMod.f90
+
+$(UtilDir)/SCAM_UtilsMod.o SCAM_UtilsMod.o: \
+	$(CoreDir)/SCAM_GlobalTypes.o \
+	$(UtilDir)/SCAM_UtilsMod.f90
+
+$(InterpDir)/bilinear_interpolation.o bilinear_interpolation.o: \
+	$(InterpDir)/bilinear_interpolation.f90 \
+	$(InterpDir)/map_utils.o
+
+$(InterpDir)/map_utils.o map_utils.o: \
+   $(InterpDir)/map_utils.f90
+
+$(StatDir)/SCAM_bstatistic.o SCAM_bstatistic.o: \
+	$(StatDir)/SCAM_bstatistic.f90 \
+	$(CoreDir)/SCAM_GlobalTypes.o \
+	$(UtilDir)/SCAM_StringMod.o \
+	$(CoreDir)/SCAM_DataMod.o
+
+$(StatDir)/m_metri_precip.o m_metri_precip.o: \
+	$(StatDir)/m_metri_precip.f90 \
+   $(CoreDir)/SCAM_GlobalTypes.o \
+   $(CoreDir)/SCAM_DataMod.o \
+   $(UtilDir)/SCAM_StringMod.o \
+   $(StatDir)/SCAM_bstatistic.o \
+   $(UtilDir)/SCAM_UtilsMod.o \
+   $(UtilDir)/SCAM_TimeMod.o
+
+$(PlugDir)/SCAM_ModelPlugin.o SCAM_ModelPlugin.o: \
+	$(PlugDir)/SCAM_ModelPlugin.f90 \
+	$(ModDir)/SCAM_ModTemplate.o \
+	$(ModDir)/SCAM_TQ062L028.o \
+	$(ModDir)/SCAM_Clima50yr.o
+
+$(ModDir)/SCAM_ModTemplate.o SCAM_ModTemplate.o: \
+	$(ModDir)/SCAM_ModTemplate.f90
+
+
+$(ModDir)/SCAM_TQ062L028.o SCAM_TQ062L028.o: \
+	$(ModDir)/SCAM_TQ062L028.f90 \
+	$(InterpDir)/bilinear_interpolation.o \
+	$(UtilDir)/m_ReadGrib.o \
+	$(CoreDir)/SCAM_DataMod.o \
+	$(UtilDir)/SCAM_MetForm.o
+
+
+$(ModDir)/SCAM_clima50yr.o SCAM_clima50yr.o: \
+	$(ModDir)/SCAM_clima50yr.f90 \
+	$(InterpDir)/bilinear_interpolation.o \
+	$(CoreDir)/SCAM_DataMod.o \
+	$(UtilDir)/SCAM_MetForm.o
+
+
+$(PlugDir)/SCAM_ObsPlugin.o SCAM_ObsPlugin.o: \
+	$(PlugDir)/SCAM_ObsPlugin.f90
+
+$(PlugDir)/SCAM_StatPlugin.o SCAM_StatPlugin.o: \
+	$(PlugDir)/SCAM_StatPlugin.f90
+
+
+
+

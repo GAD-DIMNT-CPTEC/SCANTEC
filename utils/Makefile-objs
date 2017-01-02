@@ -1,0 +1,9 @@
+# Automatically generated objects. Sex Abr 15 16:46:46 BRT 2016
+# fgen v0.3 (C) 1997,98 Beroud Jean-Marc
+
+OBJS = \
+	$(srcdir)/SCAM_MetForm.o \
+	$(srcdir)/SCAM_StringMod.o \
+	$(srcdir)/SCAM_UtilsMod.o \
+	$(srcdir)/TimeMod.o \
+	$(srcdir)/m_ReadGrib.o
