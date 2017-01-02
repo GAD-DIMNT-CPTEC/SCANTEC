@@ -1,0 +1,20 @@
+# Automatically generated dependencies. Sex Abr 15 16:46:46 BRT 2016
+# fgen v0.3 (C) 1997,98 Beroud Jean-Marc
+
+
+$(srcdir)/SCAM_MetForm.o SCAM_MetForm.o: \
+	$(srcdir)/SCAM_MetForm.f90
+
+$(srcdir)/SCAM_StringMod.o SCAM_StringMod.o: \
+	$(srcdir)/SCAM_StringMod.f90
+
+$(srcdir)/SCAM_UtilsMod.o SCAM_UtilsMod.o: \
+	$(srcdir)/SCAM_UtilsMod.f90
+
+$(srcdir)/TimeMod.o TimeMod.o: \
+	$(srcdir)/TimeMod.f90
+
+$(srcdir)/m_ReadGrib.o m_ReadGrib.o: \
+	$(srcdir)/m_ReadGrib.f90 \
+	$(srcdir)/
+

@@ -1,0 +1,24 @@
+\chapter{Convenções para documentação e codificação}
+
+Esta seção descreve algumas convenções utilizadas para a codificação e documentação do SCAMTEC que serão úteis para os desenvolvedores deste sistema.
+
+\section{Conveções de Codificação}
+\label{sec:codificacao}
+
+O SCAMTEC é implementado utilizando as linguagens de programação Fortran 90 e C. Uma vez que diferentes compiladores Fortran 90 analisam de forma distinta arquivos fonte dependendo da extenção do arquivo (ou seja, .f, .f77, .F, .f90 e .F90) a tarefa de portar o código para diferentes plataformas é um processo difícil. Portanto, espera-se que as implementações e contribuições ao código do SCAMTEC sejam feitas utilizando-se o Fortran 90, e os arquivos fonte devem ser escritos utilizando-se a extenção f90. Algumas orientações de estilo são apresentadas a seguir, e devem ser utilizadas durante o desenvolvimento do código do SCAMTEC:
+
+\begin{itemize}
+   \item Preprocessador: O preprocessador C (cpp) é utilizado sempre que seja necessária a utilização de algum preprocessador de linguagem. Supõe-se que o compilador Fortran é capaz de executar o pré-processador como parte do processo de compilação. Os símbolos de pré-processamento são escritos em letras maiúsculas para diferenciá-los a partir do código Fortran;
+   \item Laços: Todos os laços em Fortran são estruturados utilizando-se as construções do--enddo, em oposição aos laços numerados;
+   \item Módulos: Os módulos devem ser nomeados com os mesmos nomes dos arquivos em que eles residem. Isso é reforçado devido ao fato de que os programas constrolem dependências com base nos nomes dos arquivos;
+   \item Implicit None: Todas as variáveis nos diferentes módulos devem apresentar explicitamente seu tipo, e isto deve ser reforçado pelo uso da declaração \textit{Implicit None} em todas as rotinas;
+   \item Padrões: Para consistência, legibilidade e para o uso em quaisqueis outras ferramentas. O código do SCAMTEC deve seguir estes padrões de codificação. Note que qualquer código integrado ao SCAMTEC, a partir de qualquer outra fonte, deve ser reescreto em conformidade com estes padrões:
+   \begin{itemize}
+      \item Tamanho da linha: As linhas não devem ser superiores a 80 caracteres de comprimento. Linhas maiores do que 80 caracteres devem ser quebradas com uma nova linha (isto é, com um Enter);
+      \item Indentação: Espera-se que os blocos de código (ou seja, subroutinas, blocos \textit{if}, laços \textit{do}) sejam indentados para a legibilidade. Uma indentação deve conter 3 espaços por nível -- Não deve ser utilizado caracteres Tab;
+      \item Documentação: Todas as subrotinas/funções devem ser documentadas no próprio código, referenciada como uma documentação \textit{in--line} (veja seção~\ref{sec:documentacao}).
+      \end{itemize}
+\end{itemize}
+
+\section{Conveções para da Documentação}
+\label{sec:documentacao}

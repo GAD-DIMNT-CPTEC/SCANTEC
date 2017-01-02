@@ -1,0 +1,27 @@
+# Automatically generated objects. Sex Abr 15 16:05:35 BRT 2016
+# fgen v0.3 (C) 1997,98 Beroud Jean-Marc
+
+OBJS = \
+	$(CoreDir)/SCAM_CoreMod.o \
+	$(CoreDir)/SCAM_DataMod.o \
+	$(CoreDir)/SCAM_ModFuncTable.o \
+	$(CoreDir)/SCAM_ObsFuncTable.o \
+	$(CoreDir)/SCAM_StatFuncTable.o \
+	$(CoreDir)/scamdrv.o \
+	$(CoreDir)/SCAM_GlobalTypes.o \
+	$(UtilDir)/SCAM_MetForm.o \
+	$(UtilDir)/SCAM_TimeMod.o \
+	$(UtilDir)/m_ReadGrib.o \
+	$(UtilDir)/SCAM_StringMod.o \
+	$(UtilDir)/SCAM_UtilsMod.o \
+	$(InterpDir)/bilinear_interpolation.o \
+	$(InterpDir)/map_utils.o \
+	$(StatDir)/SCAM_bstatistic.o \
+	$(StatDir)/m_metri_precip.o \
+	$(ModDir)/SCAM_ModTemplate.o \
+	$(ModDir)/SCAM_TQ062L028.o \
+	$(ModDir)/SCAM_clima50yr.o \
+	$(PlugDir)/SCAM_ModelPlugin.o \
+	$(PlugDir)/SCAM_ObsPlugin.o \
+	$(PlugDir)/SCAM_StatPlugin.o
+
