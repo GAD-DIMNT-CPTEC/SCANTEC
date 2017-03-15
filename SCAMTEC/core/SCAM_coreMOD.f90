@@ -300,9 +300,11 @@ CONTAINS
               
             IF(Precipitation_Flag .EQ. 1)then
               
-              CALL HistoStat ( NExp )  ! Calculate histogram  	      
-	      !Call mode_run(NExp)     ! Applies the Method for Object-based Diagnostic Evaluation (MODE) (descomentar esse para o teste)  
+              !CALL HistoStat ( NExp )  ! Calculate histogram  	      
+	      Call mode_run(NExp)     ! Applies the Method for Object-based Diagnostic Evaluation (MODE) (descomentar esse para o teste)  
               
+              
+
             ENDIF
 
         ENDDO
