@@ -1,0 +1,25 @@
+# Automatically generated objects. qui abr 13 12:28:32 BRT 2017
+# fgen v0.3 (C) 1997,98 Beroud Jean-Marc
+
+OBJS = \
+	$(srcdir)/Ftable.o \
+	$(srcdir)/scan_MetForm.o \
+	$(srcdir)/scan_ModelPlugin.o \
+	$(srcdir)/scan_Plugin.o \
+	$(srcdir)/scan_UtilsMOD.o \
+	$(srcdir)/scan_bstatistic.o \
+	$(srcdir)/scan_coreMOD.o \
+	$(srcdir)/scan_dataMOD.o \
+	$(srcdir)/scan_outputMOD.o \
+	$(srcdir)/bilinear_interpolation.o \
+	$(srcdir)/bramsIO.o \
+	$(srcdir)/ftn_rd_grb2.o \
+	$(srcdir)/m_agcm.o \
+	$(srcdir)/m_brams.o \
+	$(srcdir)/m_clima50yr.o \
+	$(srcdir)/m_string.o \
+	$(srcdir)/m_time.o \
+	$(srcdir)/map_utils.o \
+	$(srcdir)/scandrv.o \
+	$(srcdir)/scantec_module.o \
+	$(srcdir)/template_read.o
