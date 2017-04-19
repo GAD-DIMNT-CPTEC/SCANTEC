@@ -110,7 +110,7 @@ ifeq ($(SCAN_ARCH),GNU_Linux)
    FC  = gfortran
    LD  = gfortran
    AR  = ar
-   FFLAGS += -cpp -frecursive -ffree-line-length-none #-DDEBUG
+   FFLAGS += -cpp -frecursive -ffree-line-length-none -Dgfortran #-DDEBUG
 
 # add flags for debugging if requested
    ifeq (dbg,$(findstring dbg,$(mode)))

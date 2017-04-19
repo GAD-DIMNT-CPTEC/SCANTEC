@@ -68,6 +68,7 @@ clean:
 	@for dir in $(PRJDIRS); do \
 	    ($(CD) $$dir && $(MAKE) -f $(MAKEFILE) $@); \
 	 done
+	rm -f $(pathbin)/scantec.x
 
 # installation
 install:
