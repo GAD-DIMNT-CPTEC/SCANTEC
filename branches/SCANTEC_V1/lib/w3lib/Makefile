@@ -14,7 +14,7 @@ UMACHINE := $(shell uname -m)
 #CC	= cc
 # OPTIONS FOR IBM-SP 
 
-ifeq ($(SCAM_ARCH),AIX)
+ifeq ($(SCAN_ARCH),AIX)
 # Standard installation
 F77	= xlf
 FFLAGS	= -O -qstrict -qtune=auto -qarch=auto -qmaxmem=-1 -NS2000 -qsave -c -q64 -WF,-DAIX
@@ -30,7 +30,7 @@ ARFLAGS	= -X64 rv
 CC	= cc
 endif
 
-ifeq ($(SCAM_ARCH),OSF1)
+ifeq ($(SCAN_ARCH),OSF1)
 F77	= f90
 FFLAGS	= -c -cpp -automatic -convert big_endian -assume byterecl -arch ev6 -tune ev6 -fpe3
 CFLAGS	= -DOSF1
@@ -38,7 +38,7 @@ ARFLAGS = r
 CC	= gcc
 endif
 
-ifeq ($(SCAM_ARCH),linux_lf95)
+ifeq ($(SCAN_ARCH),linux_lf95)
 # OPTIONS FOR LINUX LAHEY
 F77	= lf95
 FFLAGS	= 
@@ -46,7 +46,7 @@ CFLAGS	= -O -DLINUX
 CC	= cc
 endif
 
-ifeq ($(SCAM_ARCH),linux_absoft)
+ifeq ($(SCAN_ARCH),linux_absoft)
 ifeq ($(UMACHINE), x86_64)
 BIT_FLAG = -DLINUX64
 else
@@ -59,7 +59,7 @@ CC	= gcc
 ARFLAGS	= r
 endif
 
-ifeq ($(SCAM_ARCH),Darwin_intel)
+ifeq ($(SCAN_ARCH),Darwin_intel)
 F77     = ifort
 FFLAGS  = $(BIT_FLAG)
 CFLAGS  = -O -DLINUX
@@ -67,7 +67,7 @@ CC      = gcc
 ARFLAGS = r
 endif
 
-ifeq ($(SCAM_ARCH),GNU_Linux)
+ifeq ($(SCAN_ARCH),GNU_Linux)
 F77     = gfortran
 FFLAGS  = $(BIT_FLAG)
 CFLAGS  = -O -DLINUX
@@ -75,7 +75,7 @@ CC      = gcc
 ARFLAGS = r
 endif
 
-ifeq ($(SCAM_ARCH),linux_ifc)
+ifeq ($(SCAN_ARCH),linux_ifc)
 ifeq ($(UMACHINE), ia64)
 BIT_FLAG = -DLINUX64
 else
@@ -88,7 +88,7 @@ CC      = icc
 ARFLAGS = r
 endif
 
-ifeq ($(SCAM_ARCH),linux_pgi)
+ifeq ($(SCAN_ARCH),linux_pgi)
 # OPTIONS FOR LINUX pgi
 ifeq ($(UMACHINE), x86_64)
 BIT_FLAG = -DLINUX64
@@ -102,7 +102,7 @@ CC    = gcc
 ARFLAGS    = r
 endif
 
-ifeq ($(SCAM_ARCH),cray_pgi)
+ifeq ($(SCAN_ARCH),cray_pgi)
 # OPTIONS FOR CRAY pgi
 ifeq ($(UMACHINE), x86_64)
 BIT_FLAG = -DLINUX64
