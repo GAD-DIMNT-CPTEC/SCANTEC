@@ -3,7 +3,7 @@
 
 Para compilação e execução siga os seguintes passos:
 
-Ultima atualizacao do README: 04/07/2016
+Ultima atualizacao do README: 26/04/2017
 
 *************************************************************************************************************************
 Para instalação no supercomputador TUPA:
@@ -13,165 +13,32 @@ Para instalação no supercomputador TUPA:
 
 ------
 2º Logar no eslogin01:
-ssh eslogin01 -XC
+> ssh eslogin01 -XC
 
 ------
 3º Escolher um diretorio para a instalação do scanTEC
 Obs. Pode ser nas areas $HOME/ ou $SUBMIT_HOME/ ou online6/ 
+> cd $HOME
 
 ------
-4º Baixar a versao do scanTEC do repositorio svn (projetos.cptec.inpe.br)
-svn co https://svn.cptec.inpe.br/scantec/trunk/scanTEC
+4º Obter o pacote do SCANTEC. Baixar a versao do repositorio svn (projetos.cptec.inpe.br)
+> svn export  https://svn.cptec.inpe.br/scantec/tags/SCANTEC_V1.0
+ou copiando do DVD
+> cp /DVD/SCANTEC_V1.0 $HOME/
 
 ------
-5º Entrar no diretorio do scanTEC
-cd scanTEC
+5º Entrar no diretorio do SCANTEC versao 1.0 
+> cd SCANTEC_V1.0
 
 ------
-6º Para compilar o scanTEC execute o script install com o comando:
-./install
+6º Para compilar o SCANTEC execute o script install com o comando:
+> ./install
 
-Escolha a opção 2 para o compilador pgi do TUPA
+Escolha a opção 3 para o compilador pgi do TUPA
+> 3
 
-------
-7º Executar o scanTEC (Rodadas TestCase):
-./run_scantec.sh [parametro]
-
-Exemplos de utilização:
-./run_scantec.sh 1 - para fazer um TestCase do BRAMS (Jan/2016)
-./run_scantec.sh 2 - para fazer um TestCase do G3DVAR (Ago/2014)
-./run_scantec.sh 3 - para usar os dados definidos pelo usuario
-
-* Cabe ressaltar que nessa versão está sendo gerado separado os resultados das métricas (arquivos *.scan) dos resultados de 
-precipitação. Para gerar os resultados das métricas deve-se deixar desligado as opções use precipitation e use eof, ou seja,
-os valores devem ser iguais a zero como no exemplo abaixo:
-
-Use Precipitation: 0
-Use EOFs: 0
-
-E para gerar somente os resultados de precipitação deve-se ligar essas mesmas opções citadas acima, conforme no exemplo:
-
-Use Precipitation: 1
-Use EOFs: 1
-
-
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Ultima atualizacao do README: 11/04/2016
-
-*************************************************************************************************************************
-Para instalação no supercomputador TUPA:
-*************************************************************************************************************************
-
-1º Logar no TUPA 
-
-------
-2º Logar no eslogin01:
-ssh eslogin01 -XC
-
-------
-3º Escolher um diretorio para a instalação do scanTEC
-Obs. Pode ser nas areas $HOME/ ou $SUBMIT_HOME/ ou online6/ 
-
-------
-4º Baixar a versao do scanTEC do repositorio svn (projetos.cptec.inpe.br)
-svn co https://svn.cptec.inpe.br/scantec/trunk/scanTEC
-
-------
-5º Entrar no diretorio do scanTEC
-cd scanTEC
-
-------
-6º Para compilar o scanTEC execute o script install com o comando:
-./install
-
-Escolha a opção 2 para o compilador pgi do TUPA
-
-------
-7º Entrar no diretorio core/ onde estão os códigos do scanTEC:
-cd core/
-
-------
-8º Editar o arquivo de configuração de acordo com os experimentos:
-gedit scantec.conf&
-
-É necessário:
--Configurar a data inicial e final, tempo de previsão e tempo de analise e total de previsao
--Configurar o recorte a ser escolhido (global, america sul ou brasil)
--Configurar o experimento referencia e experimentos. 
--Configurar uso de climatologia e precipitacao (normalmente deixar o padrao que ja esta)
--Configurar o diretorio da saida dos dados
-
-------
-9º Executar o scanTEC (scantec.conf já está pré-configurado para rodada TestCase)
-./scantec.x
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-2ª opção para executar o scanTEC:
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-Para executar o scanTEC em um nó auxiliar com qsub é necessário ajustar o script: 
-gedit submete_scantec.qsub&
-
-Ajustar:
--Tempo do walltime
--Diretorios dos logs e exec
-
-Para execução dar os comandos:
-module swap tupa2 aux
-qsub submete_scantec.qsub
-
-Para acompanhar o processo:
-qstat -u ${USER} @aux20-eth4
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Rodada TestCase
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Para realizar um TesteCase (de apenas 1 dia) com o scanTEC segue abaixo os parametros do arquivo scantec.conf:
-Obs.: **Apenas os parametros abaixo devem ser modificados no scantec.conf.
-
-Starting Time: 2014080100    
-Ending Time:   2014080100    
-Analisys Time Step:  12      
-Forecast Time Step:  12      
-Forecast Total Time: 120     
-History Time:   48           
-
-Reference model: 1
-Reference file: /stornext/online6/assim_dados/lucas.amarante/TesteCase_scanTEC/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.grb 
-
-Number of Experiments: 1
-
-Experiments:
-#ModelId Name Diretory File_Name_with_mask
-1 EXP01 /stornext/online6/assim_dados/lucas.amarante/TesteCase_scanTEC/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb
-
-Output directory: /scratchout/grupos/assim_dados/home/lucas.amarante/saida_scantec
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-*************************************************************************************************************************
-Versao desenvolvimento (para atualização, acréscimo ou deleção dos códigos fonte):
-*************************************************************************************************************************
-
-Para o desenvolvimento de novos códigos, implementações de novas métricas ou alterações nos programas fortran (.f90) deve ser feito:
-
--Logar no eslogin01:
-ssh eslogin01 -XC
-
--Exportar a variavel scan_ARCH (localizada no script install) com o comando:
-export scan_ARCH=cray_pgi
-
-Realizada as mudanças ou adições de programas é necessário dar o comando para compilação:
-make
-
-**Caso haja mudanças nos arquivos Makefile, Makefile-deps ou Makefile-objs dar os comandos:
-make clean
-make
-
+Para avaliar se o processo de compilacao foi bem sucedido verifique o executavel se criado no diretorio bin. Para isso faca:
+> ls bin/scantec.x
 
 *************************************************************************************************************************
 Para instalação em maquina local:
@@ -179,45 +46,141 @@ Para instalação em maquina local:
 
 É necessario ter instalado:
 -compilador ifort
--package SVN (subversion)
+-package SVN  (subversion) se tiver acesso ao repositório do CPTEC
 -biblioteca LAPACK
 
 ------
-1º Entrar em um diretorio de preferencia do usuario para realizar a instalação do scanTEC
-cd DIRETORIO
+1º Escolher um diretorio para a instalação do scanTEC
+Obs. Pode ser nas areas $HOME/ ou outra qualquer 
+> cd $HOME
 
 ------
-2º Baixar a versao do scanTEC do repositorio svn (projetos.cptec.inpe.br)
-svn co https://svn.cptec.inpe.br/scantec/trunk/scanTEC
+2º Obter o pacote do SCANTEC. Baixar a versao do repositorio svn (projetos.cptec.inpe.br) se tiver acesso
+> svn export https://svn.cptec.inpe.br/scantec/tags/SCANTEC_V1.0
+ou copiando do DVD
+> cp /DVD/SCANTEC_V1.0 $HOME/
 
 ------
-3º Entrar no diretorio do scanTEC
-cd scanTEC/
+3º Entrar no diretorio do SCANTEC versao 1.0 
+> cd SCANTEC_V1.0
 
 ------
-4º Para compilar o scanTEC execute o script install com o comando:
-./install
+6º Para compilar o SCANTEC execute o script install com o comando:
+> ./install
 
-Escolha a opção 3 para o compilador ifort
+Escolha a opção 4 para o compilador ifort instalado em seu linux
+> 4
+
+Para avaliar se o processo de compilacao foi bem sucedido verifique o executavel se criado no diretorio bin. Para isso faca:
+> ls bin/scantec.x
+
+*************************************************************************************************************************
+Para execucão do pacote usando um testeCase: usuarios iniciantes
+*************************************************************************************************************************
 
 ------
-5º Entrar no diretorio core/ onde estão os códigos do scanTEC:
-cd core/
+1º Executar o scanTEC (Rodadas TestCase):
+> ./run_scantec.sh [parametro]
+
+Exemplos de utilização:
+./run_scantec.sh 1 - para fazer um TestCase do G3DVAR (Ago/2014) 
+./run_scantec.sh 2 - para fazer um TestCase do BRAMS (Jan/2016)
+./run_scantec.sh 3 - para usar os dados definidos pelo usuario
+
+* Na versao de distribuicao e disponibilizada externa ao CPTEC/INPE apenas os dados do AGCM foram disponibilizados, por questao de espaco em disco. Caso esteja no CPTEC inpe a versao para o BRAMS devera funcionar pois os dados estao em um local de acesso publico.
+
+* Cabe ressaltar que nessa versão está sendo gerado apenas das métricas convencionais (RMS, VIES e CCA). Os resultados para as metricas de precipitacao nao esta disponivel nessa versao. Isso devera ser tratado e disponibilizado nas futuras versoes do sistema. 
+
+Use Precipitation: 0
+Use EOFs: 0
 
 ------
-6º Editar o arquivo de configuração de acordo com os experimentos:
-gedit scantec.conf&
+2º Executar o scanTEC usando os dados do AGCM (Rodadas TestCase):
+> ./run_scantec.sh 1
+
+------
+3º Observe o processo de execucao do SCANTEC no run_scantec.sh ira preparar automaticamente um arquivo de configuracao do sistema e executara em seguida calculando as estatisticas do periodo solicitado. Ele fara os seguintes passos
+
+(a) Criara o arquivo de configuracao é o core/scantec.conf com as seguintes configuracoes:
+
+ =====================================     
+ Configuracoes iniciais do Testcase:       
+ =====================================     
+ Data inicial:   2014080500                  
+ Data final:     2014080612                  
+ Passo analise:  12          
+ Passo previsao: 24         
+ Total previsao: 72 
+ 
+ (b) Executará o scantec.x com os parametros lidos no core/scantec.conf. 
+ Nesse processo sera informado a evolucao do processo dentro do periodo definido.
+ 
+ (c) criara um arquivo de log da rodada do tipo:
+ $HOME/SCANTEC_V1.0/exec_scantec_20170426.23.14.log
+ 
+ (d) Colocara os arquivos de saida com tabelas e arquivos binarios no diretorio (definido no core/scantec.conf ):
+ $HOME/SCANTEC_V1.0/saida_scantec_V1.0
+ 
+ (e) Executará o GNUplot para gerar algumas figuras de apresentacao dos resultados. O arquivo chamado plot_scantec_results.eps
+ criado no diretorio de saida sera criado. Ele pode ser acessado usando o comando evince. Faca
+ > cd $HOME/SCANTEC_V1.0/saida_scantec_V1.0
+ > evince plot_scantec_results.eps
+
+*************************************************************************************************************************
+Para execucão do pacote usando uma configuracao qualquer: usuarios avancados
+**************************************************************************************************************************
+
+------
+1º Entrar no diretorio core/ onde estão os códigos do SCANTEC:
+> cd $HOME/SCANTEC_V1.0/core/
+
+------
+2º Editar o arquivo de configuração de acordo com os experimentos:
+> gedit scantec.conf&
 
 É necessário:
 -Configurar a data inicial e final, tempo de previsão e tempo de analise e total de previsao
 -Configurar o recorte a ser escolhido (global, america sul ou brasil)
--Configurar o experimento referencia e experimentos. 
--Configurar uso de climatologia e precipitacao (normalmente deixar o padrao que ja esta)
--Configurar o diretorio da saida dos dados
+-Configurar o experimento referencia e numero de experimentos. 
+-Configurar uso de climatologia (normalmente deixar o padrao como está)
+-Define o diretorio da saida dos dados. Por exemplo: $HOME/SCANTEC_V1.0/saida_scantec_V1.0
+
+Salve as configuracoes escolhidas.
 
 ------
-7º Executar o scanTEC
-./scantec.x
+3º Executar o SCANTEC (scantec.conf será usado o que foi pré-configurado no passo anterior)
+> cd ../bin
+> ./scantec.x
+
+------
+4º Acompanhe o processo e avalie os resultados no diretorio de saida escolhido
+> cd $HOME/SCANTEC_V1.0/saida_scantec_V1.0
+> ls *
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ Opção para executar o scanTEC submetendo no tupa:
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+------
+1º Para executar o SCANTEC em um nó auxiliar com qsub é necessário ajustar o script: 
+> gedit core/submete_scantec.qsub&
+
+Ajustar:
+-Tempo do walltime
+-Diretorios dos logs e exec
+Salvar as modificacoes nesse arquivo.
+
+------
+2º Para execução dar os comandos:
+> module swap tupa2 aux
+> qsub submete_scantec.qsub
+
+------
+3º Para acompanhar o processo:
+> qstat -u ${USER} @aux20-eth4
+
+------
+4º Quando finalizado verificar os resultados no arquivo de saida configurado no arquivo core/scantec.conf 
 
 
 
