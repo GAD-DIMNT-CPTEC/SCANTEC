@@ -2,18 +2,19 @@
 
 #
 #BOP
-#--------------------------------------------------------------------#
-# Sistema de Avaliação de Modelos (SAM)                              #
-#--------------------------------------------------------------------#
+#---------------------------------------------------------------------------------#
+# SCANTEC: Sistema Comunitário de avaliação de modelos Numéricos de Tempo E Clima #
+# Projeto: Sistema de Avaliação de Modelos (SAM)                                  #
+#---------------------------------------------------------------------------------#
 #
 # !DESCRIPTION:
-# Script para executar o scanTEC
+# Script para executar o ScanTEC
 #
 # !CALLING SEQUENCE:
 # ./run_scantec.sh N
 #                  
-#  N=1 TestCase utilizando dados do modelo BRAMS 05km para janeiro de 2016
-#  N=2 TestCase utilizando dados do G3DVAR para agosto 2014
+#  N=1 TestCase utilizando dados do G3DVAR para agosto 2014 
+#  N=2 TestCase utilizando dados do modelo BRAMS 05km para janeiro de 2016
 #  N=3 Configuração do usuário 
 #
 #
@@ -22,7 +23,8 @@
 #      24-05-2016 - Claudio Pavani     - TestCase BRAMS, execução do plot.gpl
 #      15-06-2016 - Carlos Bastarz     - Ajustes, padronização e generalizações
 #      16-06-2016 - Claudio Pavani     - Acrescentando mais um testeCase
-#      04-07-2016 - Lucas Amarante     - Atualizando testcase e outors parametros
+#      04-07-2016 - Lucas Amarante     - Atualizando testcase e outros parametros
+#      26-04-2017 - Luiz Sapucci       - Adaptando a versao para a publicacao no INPI
 #
 #
 #EOP  
@@ -59,8 +61,8 @@ then
   echo 
   echo " A opcao TestCase nao foi corretamente informada!"
   echo " Uso:"
-  echo " ./run_scantec.sh 1 - para fazer um TestCase do BRAMS (Jan/2016)"
-  echo " ./run_scantec.sh 2 - para fazer um TestCase do G3DVAR (Ago/2014)"
+  echo " ./run_scantec.sh 1 - para fazer um TestCase do G3DVAR (Ago/2014)"
+  echo " ./run_scantec.sh 2 - para fazer um TestCase do BRAMS (Jan/2016) "
   echo " ./run_scantec.sh 3 - para usar os dados definidos pelo usuario"
   echo  
   exit 1
@@ -71,8 +73,8 @@ else
     echo 
     echo " A opcao TestCase nao foi corretamente informada!"
     echo " Uso:"
-    echo " ./run_scantec.sh 1 - para fazer um TestCase do BRAMS (Jan/2016)"
-    echo " ./run_scantec.sh 2 - para fazer um TestCase do G3DVAR (Ago/2014)"
+    echo " ./run_scantec.sh 1 - para fazer um TestCase do G3DVAR (Ago/2014)"
+    echo " ./run_scantec.sh 2 - para fazer um TestCase do BRAMS (Jan/2016)"
     echo " ./run_scantec.sh 3 - para usar os dados definidos pelo usuario"
     echo 
     echo 
@@ -84,62 +86,14 @@ case $TESTCASE in
 [1]) 
 
 #--------------------------------------------------------------------#
-# Configuracoes do TestCase BRAMS (NAO ALTERAR!)                     #
-#--------------------------------------------------------------------#
-
-# Datas
-datai=2016010100
-dataf=2016010300
-passo_analise=06
-passo_previsao=06
-total_previsao=36
-
-# Recortes
-lat_low=-49.875 
-lon_low=-82.625 
-lat_up=11.375 
-lon_up=-35.375 
-dx=0.25  
-dy=0.25 
-
-# Quantidade de experimentos
-quant_exp=1
-
-# Referencias
-# Plugin modelo
-pl_model_refer=11
-
-# Arquivo (analise)
-arq_refer=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
-
-# Experimento
-# Plugin experimento
-pl_model_exper=11
-
-# Arquivo (previsao)
-arq_prev=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
-
-# Climatologia
-use_climatologia=1
-
-# Precipitacao
-use_precipitacao=0
-
-# EOF
-use_eof=0
-;;
-
-[2])
-
-#--------------------------------------------------------------------#
 # Configuracoes do TestCase G3DVAR (NAO ALTERAR!)                    #
 #--------------------------------------------------------------------#
 
 # Datas
 datai=2014080500
-dataf=2014081500
-passo_analise=06
-passo_previsao=06
+dataf=2014080612
+passo_analise=12
+passo_previsao=24
 total_previsao=72
 
 # Recortes
@@ -158,14 +112,14 @@ quant_exp=1
 pl_model_refer=1
 
 # Arquivo (analise)
-arq_refer=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/exp_global_cptec/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.grb
+arq_refer=/scratchout/grupos/assim_dados/home/luiz.sapucci/SCANTEC_testecase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.grb
 
 # Experimento
 # Plugin experimento
 pl_model_exper=1
 
 # Arquivo (previsao)
-arq_prev=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/exp_global_cptec/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb
+arq_prev=//scratchout/grupos/assim_dados/home/luiz.sapucci/SCANTEC_testecase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb
 
 
 #climatologia
@@ -178,7 +132,54 @@ use_precipitacao=0
 use_eof=0
 ;;
 
- 
+[2])
+
+#--------------------------------------------------------------------#
+# Configuracoes do TestCase BRAMS (NAO ALTERAR!)                     #
+#--------------------------------------------------------------------#
+
+# Datas
+datai=2016010100
+dataf=2016010300
+passo_analise=12
+passo_previsao=12
+total_previsao=36
+
+# Recortes
+lat_low=-49.875 
+lon_low=-82.625 
+lat_up=11.375 
+lon_up=-35.375 
+dx=0.25  
+dy=0.25 
+
+# Quantidade de experimentos
+quant_exp=1
+
+# Referencias
+# Plugin modelo
+pl_model_refer=2
+
+# Arquivo (analise)
+arq_refer=/scratchout/grupos/assim_dados/home/luiz.sapucci/SCANTEC_testecase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
+
+# Experimento
+# Plugin experimento
+pl_model_exper=2
+
+# Arquivo (previsao)
+arq_prev=/scratchout/grupos/assim_dados/home/luiz.sapucci/SCANTEC_testecase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
+
+# Climatologia
+use_climatologia=1
+
+# Precipitacao
+use_precipitacao=0
+
+# EOF
+use_eof=0
+;;
+
 [3])
 
 #--------------------------------------------------------------------#
@@ -227,7 +228,7 @@ use_eof=0
 esac
 
 # Diretorio de saida do resultados
-saida_results=${WORK_HOME}/saida_scantec
+saida_results=${dir_act}/saida_scantec_V1.0
 
 if [ ! -e ${saida_results} ]; then mkdir -p ${saida_results}; fi
 
@@ -368,7 +369,7 @@ ${pl_model_exper} EXP01 ${arq_prev}
 Use Climatology: ${use_climatologia}	  # 0-do not use, 1-use
 # Diretory prefix mask sulfix
 Climatology Model Id: 3
-Climatology file: /stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/climatologiaJGM/climatologia50yr.%mc.bin
+Climatology file: /scratchout/grupos/assim_dados/home/luiz.sapucci/SCANTEC_testecase/climatology/climatologia50yr.%mc.bin
 
 #======================================
 # Precipitation File
@@ -418,8 +419,9 @@ if [ -e scantec.x ]; then
  echo 
  echo "AGUARDE... "
  echo 
-  ./scantec.x >> ${ARQlog}
-  
+  ./scantec.x   
+ 
+
 else
  echo
  echo " ------ WARNING ------ "
@@ -490,8 +492,5 @@ else
  echo
 
 fi
-
-
-
 
 exit 0
