@@ -1,33 +1,111 @@
+!-----------------------------------------------------------------------------------------------------------!
+!                           Modeling and Development Division - DMD/CPTEC/INPE                              !
+!-----------------------------------------------------------------------------------------------------------!
+!BOI
+! !TITLE:
+!      SCANTEC: Sistema Comunitário de avaliação de modelos Numéricos de Tempo E Clima
+!
+! !SVN PROJECT:
+!      Projeto: Sistema de Avaliação de Modelos (SAM)
+!
+! !DESCRIPTION:
+!      README: Arquivo com informações sobre a configuração/compilação/execução do sistema
+!
+! !REVISION HISTORY:
+!     04 de julho de 2016 - Lucas Avanço - Versão inicial com testcase e passo-a-passo na instalação.
+!     27 de abril de 2017 - L. F. Sapucci - Versão melhorada do README seguindo o padrão SVN/DMD/CPTEC/INPE.
 
-** Instrucoes para compilacao e execucao do scanTEC **
+!
+! !CONTENTE
+!
+
+O pacote do sistema SCANTEC e composto por um conjunto de rotinas Fortran e c nos diretórios core (onde 
+ficam todas as rotinas do sistema) e no diretório lib. (onde ficam as rotinas das bibliotecas utilizados pelo 
+sistema que são duas: mpeu e w3lib). O diretório bin [e um diretório vazio onde comporta o executável criado 
+no processo de compilação do sistema. Também compõe o pacote os seguintes arquivos e respectivas funções:
+- install: rotina de instalação do sistema com opções de diferentes ambientes computacionais;
+- Makefile: rotina de compilação usado pelo install;
+- README: arquivo com informações sobre a configuração/compilação/execução do sistema;
+- run_scantec.sh: arquivo de execução do sistema para facilitar o uso do mesmo para usuários iniciantes.
+
+!
+! !APPLICATION
+!
+
+O SCANTEC é uma ferramenta de avaliação de modelos de Previsão Numérica de tempo e Clima baseada em softwares 
+livres e desenvolvido com a filosofia de compartilhamento de esforços e benefícios potencializando sua 
+contribuição para a evolução dos modelos e mantendo continua sua evolução e aprimoramento com novas 
+funcionalidades sendo oferecidas para a comunidade usuária. Os dados de entrada são os arquivos pós processados
+dos modelos numéricos e as saídas são tabelas das métricas do RMS, VIES e CCA (coeficiente de correlação de 
+anomalia) em função do tempo de integração dos modelos, bem como arquivos binários dos campos espaciais dessas 
+métricas.
+
+!
+! !PROCESS DETAILS
+!
+
+Usando o script install ele prepara o ambiente para a compilação dando para o usuário optar pelo qual o 
+compilador que se tem à disposição na máquina que se quer instalar o sistema. Para o caso do super computador 
+do CPTEC usa-se o PGI e para o caso da maioria de outros sistemas usa-se o IFORT. Depois de escolhido o 
+compilador o script instala todos os programas e biblioteca e como processo final cria um executável chamado 
+scamtec.exe no diretório bin do sistema. Essa versão está preparada para avaliar apenas os modelos AGCM e o 
+BRAMS do CPTEC. Para uma utilização simples basta configurar o arquivo template core/scantec.conf e salvando 
+uma versão modificada no diretório bin onde o SCANTEC será executado. Nessa edição modifique todas as 
+informações dos modelos que se deseja avaliar, como o período, o local onde estão os dados disponíveis e o 
+diretório de saída dos dados gerados pelo sistema. Feito isso entre no diretório bin e executa-se o scantec.exe 
+e acompanhe o processamento dos dados e depois de finalizado analise os resultados obtidos. Como padrão o 
+diretório de saída chama-se saida_scantec. Para facilitar esse processo encontra-se disponível um script chamado 
+run_scantec.sh que realiza a execução do processo usando os dados de um testcase que acompanha o pacote. Esse 
+testcase contém um pequeno conjunto de dados dos modelos AGCM do CPTEC na resolução TQ0299L064. Para isso entre 
+com o argumento de entrada desse script a opção 1 para avaliar o modelo AGCM que o script configurara o arquivo 
+scantec.conf apropriadamente, executará o scantec gerando os arquivos de saída. Um processo final organiza 
+algumas figuras em um arquivo pdf usando o GNUplot que deve estar instalado e com o endereço correto no início 
+do script. Usando o evince para abrir o arquivo plot_scantec_results.eps pode-se avaliar os resultados do processo. 
+Usando a opção 2, pode-se avaliar o BRAMS, caso os dados estejam disponíveis, o que estão apenas dentro do Tupã, 
+pois esses dados não estão no pacote de distribuição externo do SCANTEC. Usando a opção 3 pode-se editar o script 
+com as informações dos dados disponíveis e executar o SCANTEC.
+
+!
+! !REMARKS
+!
+
+Esse sistema esta em contínuo desenvolvimento e novas versões estão sendo organizadas e devem ser publicadas 
+posteriormente. Novas funcionalidades serão adicionadas nessas versões. Uma frente importante de desenvolvimento 
+e na avaliação das previsões de precipitação atmosférica com o desenvolvimento de um módulo específico para essa 
+variável. Uma outra frente está envolvida na avaliação dos modelos usando dados observacionais.
+
+!
+! !STEP-BY-STEP
+!
+
+** Instruções para compilação e execução do SCANTEC **
 
 Para compilação e execução siga os seguintes passos:
 
-Ultima atualizacao do README: 26/04/2017
 
-*************************************************************************************************************************
+********************************************
 Para instalação no supercomputador TUPA:
-*************************************************************************************************************************
+********************************************
 
-1º Logar no TUPA 
+1º Logar no Tupã
 
 ------
 2º Logar no eslogin01:
 > ssh eslogin01 -XC
 
 ------
-3º Escolher um diretorio para a instalação do scanTEC
-Obs. Pode ser nas areas $HOME/ ou $SUBMIT_HOME/ ou online6/ 
+3º Escolher um diretório para a instalação do SCANTEC no Tupã
+Obs. Pode ser nas áreas $HOME/ ou $SUBMIT_HOME/ ou online6/
 > cd $HOME
 
 ------
-4º Obter o pacote do SCANTEC. Baixar a versao do repositorio svn (projetos.cptec.inpe.br)
-> svn export  https://svn.cptec.inpe.br/scantec/tags/SCANTEC_V1.0
+4º Obter o pacote do SCANTEC. Baixar a versão do repositório svn (projetos.cptec.inpe.br)
+> svn export https://svn.cptec.inpe.br/scantec/tags/SCANTEC_V1.0
 ou copiando do DVD
 > cp /DVD/SCANTEC_V1.0 $HOME/
 
 ------
-5º Entrar no diretorio do SCANTEC versao 1.0 
+5º Entrar no diretório do SCANTEC versão 1.0
 > cd SCANTEC_V1.0
 
 ------
@@ -37,31 +115,33 @@ ou copiando do DVD
 Escolha a opção 3 para o compilador pgi do TUPA
 > 3
 
-Para avaliar se o processo de compilacao foi bem sucedido verifique o executavel se criado no diretorio bin. Para isso faca:
+Para avaliar se o processo de compilação foi bem sucedido verifique o executável se criado no diretório bin. 
+Para isso faca:
 > ls bin/scantec.x
 
-*************************************************************************************************************************
-Para instalação em maquina local:
-*************************************************************************************************************************
+*******************************************
+Para instalação em maquinas locais linux:
+*******************************************
 
-É necessario ter instalado:
+É necessário ter instalado:
 -compilador ifort
 -package SVN  (subversion) se tiver acesso ao repositório do CPTEC
 -biblioteca LAPACK
 
 ------
-1º Escolher um diretorio para a instalação do scanTEC
-Obs. Pode ser nas areas $HOME/ ou outra qualquer 
+1º Escolher um diretório para a instalação do SCANTEC
+Pode ser em qualquer diretório que se deseje com as devidas permissões liberadas. Nesse passo-a-passo o diretório 
+considerado é o $HOME/
 > cd $HOME
 
 ------
-2º Obter o pacote do SCANTEC. Baixar a versao do repositorio svn (projetos.cptec.inpe.br) se tiver acesso
+2º Obter o pacote do SCANTEC. Baixar a versão do repositório svn (projetos.cptec.inpe.br) se tiver acesso
 > svn export https://svn.cptec.inpe.br/scantec/tags/SCANTEC_V1.0
 ou copiando do DVD
 > cp /DVD/SCANTEC_V1.0 $HOME/
 
 ------
-3º Entrar no diretorio do SCANTEC versao 1.0 
+3º Entrar no diretório do SCANTEC versão 1.0
 > cd SCANTEC_V1.0
 
 ------
@@ -71,67 +151,106 @@ ou copiando do DVD
 Escolha a opção 4 para o compilador ifort instalado em seu linux
 > 4
 
-Para avaliar se o processo de compilacao foi bem sucedido verifique o executavel se criado no diretorio bin. Para isso faca:
+Para avaliar se o processo de compilação foi bem sucedido verifique o executável se criado no diretório bin. 
+Para isso faca:
 > ls bin/scantec.x
 
-*************************************************************************************************************************
-Para execucão do pacote usando um testeCase: usuarios iniciantes
-*************************************************************************************************************************
+**************************************************************************
+Para execução do pacote usando um testcase: usuários iniciantes
+**************************************************************************
 
 ------
-1º Executar o scanTEC (Rodadas TestCase):
-> ./run_scantec.sh [parametro]
+1º Executar o SCANTEC (Rodadas Testcase):
+> ./run_scantec.sh [parâmetro]
 
 Exemplos de utilização:
-./run_scantec.sh 1 - para fazer um TestCase do G3DVAR (Ago/2014) 
-./run_scantec.sh 2 - para fazer um TestCase do BRAMS (Jan/2016)
-./run_scantec.sh 3 - para usar os dados definidos pelo usuario
+./run_scantec.sh 1 - para fazer um Testcase do G3DVAR (Ago./2014)
+./run_scantec.sh 2 - para fazer um Testcase do BRAMS (Jan/2016)
+./run_scantec.sh 3 - para usar os dados definidos pelo usuário
 
-* Na versao de distribuicao e disponibilizada externa ao CPTEC/INPE apenas os dados do AGCM foram disponibilizados, por questao de espaco em disco. Caso esteja no CPTEC inpe a versao para o BRAMS devera funcionar pois os dados estao em um local de acesso publico.
+* Na versão de distribuição e disponibilizada externa ao CPTEC/INPE apenas os dados do AGCM foram disponibilizados, 
+por questão de espaço em disco. Caso esteja no CPTEC INPE a versão para o BRAMS deverá funcionar, pois os dados 
+estão em um local de acesso publico.
 
-* Cabe ressaltar que nessa versão está sendo gerado apenas das métricas convencionais (RMS, VIES e CCA). Os resultados para as metricas de precipitacao nao esta disponivel nessa versao. Isso devera ser tratado e disponibilizado nas futuras versoes do sistema. 
+* Cabe ressaltar que nessa versão está sendo gerado apenas das métricas convencionais (RMS, VIES e CCA). Os resultados 
+para as métricas de precipitação não esta disponível nessa versão. Isso devera ser tratado e disponibilizado nas 
+futuras versões do sistema.
 
 Use Precipitation: 0
 Use EOFs: 0
 
 ------
-2º Executar o scanTEC usando os dados do AGCM (Rodadas TestCase):
+2º Executar o SCANTEC usando os dados do AGCM (Rodadas Testcase):
 > ./run_scantec.sh 1
 
 ------
-3º Observe o processo de execucao do SCANTEC no run_scantec.sh ira preparar automaticamente um arquivo de configuracao do sistema e executara em seguida calculando as estatisticas do periodo solicitado. Ele fara os seguintes passos
+3º Observe o processo de execução do SCANTEC no run_scantec.sh ira preparar automaticamente um arquivo de configuração 
+do sistema e executara em seguida calculando as estatísticas do período solicitado. Ele fara os seguintes passos
 
-(a) Criara o arquivo de configuracao é o core/scantec.conf com as seguintes configuracoes:
+(a) Criará o arquivo de configuração bin/scantec.conf com as seguintes configurações:
 
- =====================================     
- Configuracoes iniciais do Testcase:       
- =====================================     
- Data inicial:   2014080500                  
- Data final:     2014080612                  
- Passo analise:  12          
- Passo previsao: 24         
- Total previsao: 72 
- 
- (b) Executará o scantec.x com os parametros lidos no core/scantec.conf. 
- Nesse processo sera informado a evolucao do processo dentro do periodo definido.
- 
+ =====================================
+ Configurações iniciais do Testcase:
+ =====================================
+ Data inicial:   2014080500
+ Data final:     2014080612
+ Passo analise:  12
+ Passo previsão: 24
+ Total previsão: 72
+
+ (b) Executará o scantec.x com os parâmetros lidos no bin/scantec.conf.
+ Nesse processo será informado a evolução do processo dentro do período definido.
+
  (c) criara um arquivo de log da rodada do tipo:
  $HOME/SCANTEC_V1.0/exec_scantec_20170426.23.14.log
- 
- (d) Colocara os arquivos de saida com tabelas e arquivos binarios no diretorio (definido no core/scantec.conf ):
+
+ (d) Colocara os arquivos de saída com tabelas e arquivos binários no diretório (definido no core/scantec.conf ):
  $HOME/SCANTEC_V1.0/saida_scantec_V1.0
- 
- (e) Executará o GNUplot para gerar algumas figuras de apresentacao dos resultados. O arquivo chamado plot_scantec_results.eps
- criado no diretorio de saida sera criado. Ele pode ser acessado usando o comando evince. Faca
+
+ (e) Executará o GNUplot para gerar algumas figuras de apresentação dos resultados. O arquivo chamado 
+ plot_scantec_results.eps
+ criado no diretório de saída será criado. Ele pode ser acessado usando o comando evince. Faca
  > cd $HOME/SCANTEC_V1.0/saida_scantec_V1.0
  > evince plot_scantec_results.eps
 
+------
+4º Caso tenha acesso aos dados do BRAMS estando na máquina Tupã do CPTEC pode-se utilizar a opção 2 para utilizar 
+um testcase com esses dados para esse modelo.
+> ./run_scantec.sh 2
+
+------
+5º Observe o processo de execução do SCANTEC no run_scantec.sh ira preparar automaticamente um arquivo de configuração 
+do sistema e executara em seguida calculando as estatísticas do período solicitado. No caso do BRAMS a seguinte 
+configuração será usada:
+
+ =====================================
+ Configurações iniciais do Testcase:
+ =====================================
+ Data inicial:   2016010100
+ Data final:     2016010300
+ Passo analise:  12
+ Passo previsão: 12
+ Total previsão: 36
+
+Os mesmos passos listados ao usar o AGCM serão realizados e os resultados estarão disponíveis no diretório de saída.
+
+------
+6º Uma outra opção e usar a configuração fornecida pelo usuário a ser modificado no script run_scantec.sh. Nesse 
+caso a opção 3 deve ser utilizada depois de modificado os parâmetros determinados no script run_scantec.sh.
+> gedit run_scantec.sh
+Modifique os parâmetros entre as linhas 190 a 225 e salve o arquivo e depois execute o script com a opção 3:
+> ./run_scantec.sh 3
+
+------
+7º Observe que os mesmos passos listados ao usar o AGCM serão realizados e os resultados estarão disponíveis no 
+diretório de saída.
+
 *************************************************************************************************************************
-Para execucão do pacote usando uma configuracao qualquer: usuarios avancados
+Para execução do pacote usando uma configuração qualquer: usuários avançados
 **************************************************************************************************************************
 
 ------
-1º Entrar no diretorio core/ onde estão os códigos do SCANTEC:
+1º Entrar no diretório core/ onde estão os códigos do SCANTEC:
 > cd $HOME/SCANTEC_V1.0/core/
 
 ------
@@ -139,36 +258,37 @@ Para execucão do pacote usando uma configuracao qualquer: usuarios avancados
 > gedit scantec.conf&
 
 É necessário:
--Configurar a data inicial e final, tempo de previsão e tempo de analise e total de previsao
--Configurar o recorte a ser escolhido (global, america sul ou brasil)
--Configurar o experimento referencia e numero de experimentos. 
--Configurar uso de climatologia (normalmente deixar o padrao como está)
--Define o diretorio da saida dos dados. Por exemplo: $HOME/SCANTEC_V1.0/saida_scantec_V1.0
-
-Salve as configuracoes escolhidas.
+-Configurar a data inicial e final, tempo de previsão e tempo de analise e total de previsão;
+-Configurar o recorte a ser escolhido (global, américa sul ou brasil);
+-Configurar o experimento referencia e numero de experimentos.
+-Configurar uso de climatologia (normalmente deixar o padrão como está)
+-Define o diretório da saída dos dados. Por exemplo: $HOME/SCANTEC_V1.0/saida_scantec_V1.0
 
 ------
-3º Executar o SCANTEC (scantec.conf será usado o que foi pré-configurado no passo anterior)
+3º Salve esse arquivo editado no diretório bin com o mesmo nome scantec.conf.
+
+------
+4º Executar o SCANTEC (scantec.conf será usado o que foi pré-configurado no passo anterior)
 > cd ../bin
 > ./scantec.x
 
 ------
-4º Acompanhe o processo e avalie os resultados no diretorio de saida escolhido
+4º Acompanhe o processo e avalie os resultados no diretório de saída escolhido
 > cd $HOME/SCANTEC_V1.0/saida_scantec_V1.0
 > ls *
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- Opção para executar o scanTEC submetendo no tupa:
+ Opção para executar o scantec submetendo no Tupã:
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 ------
-1º Para executar o SCANTEC em um nó auxiliar com qsub é necessário ajustar o script: 
+1º Para executar o SCANTEC em um nó auxiliar com qsub é necessário ajustar o script:
 > gedit core/submete_scantec.qsub&
 
 Ajustar:
 -Tempo do walltime
--Diretorios dos logs e exec
-Salvar as modificacoes nesse arquivo.
+-Diretórios dos logs e exec
+Salvar as modificações nesse arquivo.
 
 ------
 2º Para execução dar os comandos:
@@ -180,7 +300,15 @@ Salvar as modificacoes nesse arquivo.
 > qstat -u ${USER} @aux20-eth4
 
 ------
-4º Quando finalizado verificar os resultados no arquivo de saida configurado no arquivo core/scantec.conf 
+4º Quando finalizado verificar os resultados no arquivo de saída configurado no arquivo core/scantec.conf
 
+!
+! !FUTURE IMPROVEMENTS
+!
 
+Diversas melhorias deverão ser implementadas nas próximas versões do sistema, algumas já estão implementadas e
+estão em fase de validação e testes e serão adicionadas nas próximas versões do sistema. Entre elas pode-se destacar:
+- Um módulo de avaliação de modelos utilizando como referência dados observacionais;
+- Um módulo de avaliação de previsões de precipitação usando campos espaciais de estimativas por satélites e dados de radar;
+- Novas métricas de avaliação espacial baseada em metodologias orientadas a objetos;
 
