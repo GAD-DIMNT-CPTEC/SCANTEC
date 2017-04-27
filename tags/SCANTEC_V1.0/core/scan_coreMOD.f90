@@ -291,7 +291,7 @@ CONTAINS
 
      DO WHILE (.NOT.is_last_step())
         passo=((scantec%time_step-1)*scantec%ntime_steps+scantec%ftime_idx)
-        total=((scantec%ntime_steps+1)*scantec%ntime_forecast)
+        total=((scantec%ntime_steps)*scantec%ntime_forecast)
         percent=passo/total*100
         write(*,'(2(1x,I10.10),1x,2I3.2,F7.0,A)')scantec%atime, scantec%ftime, int(abs(cal2jul(scantec%atime)-cal2jul(scantec%ftime))*24),scantec%ftime_idx,percent,"% concluido"
         DO NExp=1,scantec%nexp

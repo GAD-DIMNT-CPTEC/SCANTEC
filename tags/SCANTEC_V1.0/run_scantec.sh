@@ -112,14 +112,14 @@ quant_exp=1
 pl_model_refer=1
 
 # Arquivo (analise)
-arq_refer=/scratchout/grupos/assim_dados/home/luiz.sapucci/SCANTEC_testecase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.grb
+arq_refer=/scratchin/grupos/assim_dados/home/gdad/public/SCAMTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.grb
 
 # Experimento
 # Plugin experimento
 pl_model_exper=1
 
 # Arquivo (previsao)
-arq_prev=//scratchout/grupos/assim_dados/home/luiz.sapucci/SCANTEC_testecase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb
+arq_prev=/scratchin/grupos/assim_dados/home/gdad/public/SCAMTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb
 
 
 #climatologia
@@ -161,14 +161,14 @@ quant_exp=1
 pl_model_refer=2
 
 # Arquivo (analise)
-arq_refer=/scratchout/grupos/assim_dados/home/luiz.sapucci/SCANTEC_testecase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
+arq_refer=/scratchin/grupos/assim_dados/home/gdad/public/SCAMTEC/TestCase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
 
 # Experimento
 # Plugin experimento
 pl_model_exper=2
 
 # Arquivo (previsao)
-arq_prev=/scratchout/grupos/assim_dados/home/luiz.sapucci/SCANTEC_testecase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
+arq_prev=/scratchin/grupos/assim_dados/home/gdad/public/SCAMTEC/TestCase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
 
 # Climatologia
 use_climatologia=1
@@ -369,7 +369,7 @@ ${pl_model_exper} EXP01 ${arq_prev}
 Use Climatology: ${use_climatologia}	  # 0-do not use, 1-use
 # Diretory prefix mask sulfix
 Climatology Model Id: 3
-Climatology file: /scratchout/grupos/assim_dados/home/luiz.sapucci/SCANTEC_testecase/climatology/climatologia50yr.%mc.bin
+Climatology file: /scratchin/grupos/assim_dados/home/gdad/public/SCAMTEC/climatologia/climatologia50yr.%mc.bin
 
 #======================================
 # Precipitation File
@@ -378,7 +378,7 @@ Climatology file: /scratchout/grupos/assim_dados/home/luiz.sapucci/SCANTEC_teste
 Use Precipitation: ${use_precipitacao} # 0-do not use, 1-use
 # Diretory prefix mask sulfix
 Precipitation Model Id: 5
-Precipitation file: /stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/precipitacao/3B42RT/%y4/prec_AS/new_AS_3B42RT.%y4.%m2.%d2.%h2z.bin   
+Precipitation file: /scratchin/grupos/assim_dados/home/gdad/public/SCAMTEC/precipitacao/3B42RT/%y4/prec_AS/new_AS_3B42RT.%y4.%m2.%d2.%h2z.bin   
 Define o Range do Histograma: 5.0                                       # exemplo: 2
 Define valor do limite da ultima classe do histograma: 50               # exemplo: 100
 Define valor do minimo inferior da primeira classe do histograma: 0     # exemplo: 0
