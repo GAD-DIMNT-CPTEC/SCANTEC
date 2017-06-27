@@ -452,16 +452,17 @@ Contains
     !BOC
     !
 
-    integer            :: iret,i,j
+    integer            :: i,j
     character(len=512) :: fname, fmt
     integer            :: nymd, nhms
     integer            :: fymd, fhms
     integer            :: nidx
     integer            :: npts
     real               :: k
+    logical            :: Opened
 
-    inquire(unit=FUnitOut, opened=iret)
-    if(.not.iret) then
+    inquire(unit=FUnitOut, opened=Opened)
+    if(.not.Opened) then
 
        nymd = scamtec%starting_time/100
        nhms = MOD(scamtec%starting_time,100) * 10000

@@ -60,7 +60,8 @@ MODULE time_module
    END INTERFACE Cal2Jul
 
    INTERFACE Jul2Cal
-      MODULE PROCEDURE jul2cal_, jul2cal__
+!      MODULE PROCEDURE jul2cal_, jul2cal__
+      MODULE PROCEDURE  jul2cal__
    END INTERFACE Jul2Cal
 
 CONTAINS
@@ -418,7 +419,7 @@ CONTAINS
   INTEGER :: nymd
   INTEGER :: nhms
 
-  call jul2cal(jd,nymd,nhms)
+  call jul2cal_(jd,nymd,nhms)
 
   gregorian = (nymd*100)+INT(nhms/10000)
 

@@ -31,7 +31,7 @@ INSTALL = install
 libdir = ./
 
 # preprocessor, compilers, linker & archiver
-ifeq ($(SCAM_ARCH),Darwin_intel)
+ifeq ($(SCAN_ARCH),Darwin_intel)
    FPP = gcc
    CC  = gcc
    FC  = ifort
@@ -39,7 +39,7 @@ ifeq ($(SCAM_ARCH),Darwin_intel)
    AR  = ar
 endif
 
-ifeq ($(SCAM_ARCH),cray_pgi)
+ifeq ($(SCAN_ARCH),cray_pgi)
    FPP = cc
    CC  = cc
    FC  = ftn
@@ -47,6 +47,13 @@ ifeq ($(SCAM_ARCH),cray_pgi)
    AR  = ar
 endif
 
+ifeq ($(SCAN_ARCH),GNU_Linux)
+   FPP = cc
+   CC  = cc
+   FC  = gfortran
+   LD  = gfortran
+   AR  = ar
+endif
 # default mode (max. optimization)
 mode = opt
 

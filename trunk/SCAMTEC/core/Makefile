@@ -33,7 +33,7 @@ incdir = ./
 srcdir = ./
 
 # default mode (max. optimization)
-mode = dbg #pro
+mode = #dbg #pro
 
 # header file directories
 CCFLAGS = -I$(incdir) -I$(MPEU_INC)
@@ -50,7 +50,7 @@ FFLAGS  += -I$(incdir) -I$(MPEU_INC)
 # Flags to Intel fortran with gcc
 #
 
-ifeq ($(SCAM_ARCH),Darwin_intel)
+ifeq ($(SCAN_ARCH),Darwin_intel)
    FPP = gcc
    CC  = gcc
    FC  = ifort
@@ -77,7 +77,7 @@ endif
 # Flags to PGI on Cray
 #
 
-ifeq ($(SCAM_ARCH),cray_pgi)
+ifeq ($(SCAN_ARCH),cray_pgi)
    FPP = cc
    CC  = cc
    FC  = ftn
@@ -100,18 +100,45 @@ ifeq ($(SCAM_ARCH),cray_pgi)
    endif
 
 endif
+#
+# Flags to GNU
+#
 
+ifeq ($(SCAN_ARCH),GNU_Linux)
+   FPP = gcc
+   CC  = gcc
+   FC  = gfortran
+   LD  = gfortran
+   AR  = ar
+   FFLAGS += -cpp -frecursive -ffree-line-length-none -Dgfortran #-DDEBUG
+   LDFLAGS += -llapack -lblas
+
+# add flags for debugging if requested
+   ifeq (dbg,$(findstring dbg,$(mode)))
+      CCFLAGS += 
+      FFLAGS  += -g  -DDEBUG 
+      LDFLAGS += -g -pg
+   endif
+
+	# add flags for profiling if requested
+   ifeq (pro,$(findstring pro,$(mode)))
+      CCFLAGS += 
+      FFLAGS  += -O3
+      LDFLAGS += 
+   endif
+
+endif
 # objectlist file
 include Makefile-objs
 
 # additionnal libraries
 LIBDIRS = -L$(MPEU_LIB) -L$(GRIB_LIB) 
-LIBS    = -lmpeu  -lw3 -llapack 
+LIBS    = -lmpeu  -lw3  #-llapack 
 
 PATH2=../bin
 
 # target names
-BIN = scamtec.x
+BIN = scantec.x
 LIB = 
 
 # Not real file targets

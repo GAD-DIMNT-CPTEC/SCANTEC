@@ -182,7 +182,7 @@ MODULE SCAM_Utils
       CHARACTER(len=300)            :: config, formato
       LOGICAL                       :: exists
       INTEGER, ALLOCATABLE          :: tmp(:)
-      INTEGER, EXTERNAL             :: iargc
+!      INTEGER, EXTERNAL             :: iargc
 
       !
       ! Lista encadeada para leitura temporaria 

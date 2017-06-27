@@ -32,8 +32,8 @@ PRJDIRS = $(incdir)/w3lib $(incdir)/mpeu $(srcdir)
 .PHONY: $(MAKEFILE) all dep html clean install help
 
 # targets
-all: libw3.a libmpeu.a scamtec.x 
-	mv $(srcdir)/scamtec.x $(pathbin)
+all: libw3.a libmpeu.a scantec.x 
+	mv $(srcdir)/scantec.x $(pathbin)
 	rm $(srcdir)/*.mod $(srcdir)/*.o
 
 libw3.a:
@@ -44,7 +44,7 @@ libmpeu.a:
 	@$(CD) $(incdir)/mpeu && \
 	    $(MAKE) -f $(MAKEFILE) $@
 
-scamtec.x:
+scantec.x:
 	@$(CD) $(srcdir) && \
 	    $(MAKE) -f $(MAKEFILE) $@
 
@@ -68,6 +68,7 @@ clean:
 	@for dir in $(PRJDIRS); do \
 	    ($(CD) $$dir && $(MAKE) -f $(MAKEFILE) $@); \
 	 done
+	rm -f $(pathbin)/scantec.x
 
 # installation
 install:

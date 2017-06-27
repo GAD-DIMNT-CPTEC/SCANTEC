@@ -241,8 +241,8 @@ CONTAINS
     integer :: iret,lugb
     logical :: file_exists
     integer :: gbret,jret,jpds(200),jgds(200),gridDesc(200),kpds(200)
-    real :: lubi,kf,k
-    integer :: i,j
+    real :: lubi,kf
+    integer :: i,j, k
     integer :: iv, rc
     integer :: npts
     integer :: nx
