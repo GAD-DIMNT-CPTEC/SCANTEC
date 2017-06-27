@@ -116,13 +116,13 @@ MODULE m_mode_objects
 	 convField = originalField	 
 
 	 ! Loop para calcular cada ponto (i,j) do campo transformado pelo algoritmo de convolução: 	 
-	 do ccol=radio, xsize-radio1
-	   do crow=radio, ysize-radio1	 
+	 do ccol=int(radio), int(xsize-radio1)
+	   do crow=int(radio), int(ysize-radio1) 
 	       convField(crow,ccol) = 0      
 	       fcol = 1
-	       do ncol=ccol-radio1, ccol+radio1
+	       do ncol=int(ccol-radio1), int(ccol+radio1)
 	          frow = 1
-	          do nrow=crow-radio1, crow+radio1	 		
+	          do nrow=int(crow-radio1), int(crow+radio1)
 		     convField(crow,ccol)= convField(crow,ccol) + filter(frow,fcol)*originalField(nrow,ncol)		                
 	 	     frow = frow + 1
 		  enddo
@@ -184,12 +184,12 @@ MODULE m_mode_objects
 	real, intent(in)	     		:: treshold
 
         ! output parameters:
-	integer, intent(out)		:: is_valid
-        
-	is_valid=0
+	Logical, intent(out)		:: is_valid
+   
+	is_valid=.false.
 	if ( (i .GT. 0) .And. (i .LE. ysize) .And. (j .GT. 0) .And. (j .LE. xsize) ) then 
 	   if (restoreField(i,j) .NE. 0.0) then 
-	      is_valid = 1
+	      is_valid = .true.
 	   endif
 	endif
 
@@ -220,8 +220,9 @@ MODULE m_mode_objects
 	   type(point), pointer, intent(out)		:: pts_per(:) 
            character(len=*),parameter 			:: myname='::singleObj_Ident_Attrib'
 
-	   integer				    	:: is_valid, yini, xini, n, ys, yi, xi, xd
-	   integer				    	:: leftPoint, rightPoint, upperPoint, lowerPoint 
+	   integer				    	:: yini, xini, n, ys, yi, xi, xd
+      logical                 :: is_valid
+	   logical				    	:: leftPoint, rightPoint, upperPoint, lowerPoint
 	   integer				    	:: nsx, nsy  
 	   integer					:: i, nhull	   
 	   integer				    	:: xleft, xright, x, temp, hull_area, area_hull_int
@@ -387,7 +388,7 @@ MODULE m_mode_objects
 
                ! Checking if the point belongs to the border to calculate the perimeter of the object
 	       call valid(restoreField, ysize, xsize, yini, xi, treshold, is_valid)
-	       leftPoint=is_valid	       
+	       leftPoint=is_valid
 	       
 	       call valid(restoreField, ysize, xsize, ys, xini, treshold, is_valid)
 	       upperPoint=is_valid	       
@@ -398,7 +399,7 @@ MODULE m_mode_objects
 	       call valid(restoreField, ysize, xsize, yi, xini, treshold, is_valid)
 	       lowerPoint=is_valid
 		
-               if (.NOT. (leftPoint .and. upperPoint .and. rightPoint .and. lowerPoint) ) then        	
+          if (.NOT. (leftPoint .and. upperPoint .and. rightPoint .and. lowerPoint) ) then        	
 	         perimeter = perimeter + 1
 		 ! creating linked list to store the perimeter points	          
 		 if (.not. associated(points_aux)) then
@@ -531,7 +532,8 @@ MODULE m_mode_objects
 	 integer, allocatable 		:: mask(:,:)    ! Mask to count objects -> resulting of Object Identification Algorithm	 
 	 real    			:: treshold	     ! Precipitation threshold defined by the user
          ! Radio and threshold values should be defined in scamtec.conf
-	 integer 			:: i, j, radio, filter_dimension, is_valid, cont	  	 
+	 integer 			:: i, j, radio, filter_dimension, cont	  	 
+    logical         :: is_valid
 	 ! objects attributes 
 	 integer			:: perimeter, area, xcent, ycent
 	 real				:: angle, aspect_ratio, complexity, area_hull 
@@ -550,7 +552,7 @@ MODULE m_mode_objects
 	 real				:: min_distance ! Parametro de saida da subrotina min_set_distance
 	 real				:: dif_centroid_aux ! usado para calcular la diferencia de centroife entre dos objetos
 	 real				:: first_atrib, second_atrib, atrib_ratio ! usados para calcular area_ratio en ratio_function	
-         real				:: interest(8), conf(8), conf_i, conf_j 
+    real				:: interest(8), conf(8), conf_i, conf_j 
 	 real				::  total   ! Parametro de saida da subrotina total_interest 
 
 #ifdef DEBUG
@@ -798,10 +800,11 @@ MODULE m_mode_objects
         integer, intent(in) :: nexp, idField ! experiment number	        
 	integer, allocatable   	:: mask(:,:)
 
-	integer            :: iret, i,j, ier, f
+	integer            :: i,j, ier, f
 	character(len=512) :: filename, fname, fmt
 	integer            :: nymd, nhms
-    	integer            :: fymd, fhms	
+ 	integer            :: fymd, fhms	
+   logical            :: Opened
 
 	f = scamtec%ftime_idx 
         nymd = scamtec%atime/100
@@ -811,8 +814,8 @@ MODULE m_mode_objects
 
 	If (idField .EQ. 0) then
 	  fname = 'PrecipField'
-	  inquire(unit=119, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=119, opened=Opened)
+	  if(.not.Opened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut1)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 
@@ -844,8 +847,8 @@ MODULE m_mode_objects
 
 	elseif (idField .EQ. 1) then
 	  fname = 'ExpField'
-	  inquire(unit=122, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=122, opened=Opened)
+	  if(.not.Opened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut1)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 
@@ -885,10 +888,11 @@ MODULE m_mode_objects
         integer, intent(in) :: nexp, idField ! experiment number	        
 	integer, allocatable   	:: mask(:,:)
 
-	integer            :: iret, i,j, ier, f
+	integer            :: i,j, ier, f
 	character(len=512) :: filename, fname, fmt
 	integer            :: nymd, nhms
-    	integer            :: fymd, fhms	
+ 	integer            :: fymd, fhms	
+   logical            :: Opened
 
 	f = scamtec%ftime_idx 
         nymd = scamtec%atime/100
@@ -898,8 +902,8 @@ MODULE m_mode_objects
 
 	If (idField .EQ. 0) then
 	  fname = 'PrecipField'
-	  inquire(unit=119, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=119, opened=Opened)
+	  if(.not.Opened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut1)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 
@@ -931,8 +935,8 @@ MODULE m_mode_objects
 
 	elseif (idField .EQ. 1) then
 	  fname = 'ExpField'
-	  inquire(unit=122, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=122, opened=Opened)
+	  if(.not.Opened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut1)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 

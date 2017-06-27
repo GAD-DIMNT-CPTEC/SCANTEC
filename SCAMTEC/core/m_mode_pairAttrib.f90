@@ -750,10 +750,11 @@ MODULE m_mode_pairAttrib
 	Implicit None
         integer, intent(in) :: nexp,nobj ! experiment number
 	type(atrib_pair), pointer, intent(in)	:: atrib_matched(:)
-	integer            :: iret, i, j
+	integer            :: i, j
 	character(len=512) :: filename, fname, fmt
 	integer            :: nymd, nhms
-    	integer            :: fymd, fhms
+ 	integer            :: fymd, fhms
+   logical            :: Opened
 
 	!integer(I4B) 	:: a
      	integer	:: a,b 	
@@ -766,8 +767,8 @@ MODULE m_mode_pairAttrib
         
           fname = 'Attrib_functions'	  
 
-	  inquire(unit=71, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=71, opened=Opened)
+	  if(.not.Opened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut2)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 
@@ -809,10 +810,11 @@ MODULE m_mode_pairAttrib
 	Implicit None
         integer, intent(in) :: nexp,prec_nobj,exp_nobj ! experiment number
 	real, intent(in)    :: MMI,MMIF,MMIO
-	integer            :: iret, i, j
+	integer            :: i, j
 	character(len=512) :: filename, fname, fmt
 	integer            :: nymd, nhms
-    	integer            :: fymd, fhms
+ 	integer            :: fymd, fhms
+   logical            :: Opened
 
 	!integer(I4B) 	:: a
      	integer	:: a,b 	
@@ -825,8 +827,8 @@ MODULE m_mode_pairAttrib
         
           fname = 'MMI'	  
 
-	  inquire(unit=72, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=72, opened=Opened)
+	  if(.not.Opened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut2)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 

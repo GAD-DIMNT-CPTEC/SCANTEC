@@ -163,7 +163,7 @@ MODULE mode
      integer		:: i, j, a, b, c, d, n
      real		:: CSIc, PODc, FARc, BIASc, ETSc
 
-     integer            :: iret
+     logical            :: Opened
      character(len=512) :: filename, fname, fmt
      integer            :: nymd, nhms
      integer            :: fymd, fhms
@@ -260,8 +260,8 @@ MODULE mode
         
        
 	  fname = 'Restored_BasicStatistic'
-	  inquire(unit=67, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=67, opened=Opened)
+	  if(.not.Opened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 
@@ -575,7 +575,8 @@ MODULE mode
         integer, allocatable, intent(in)   	:: Mask(:,:), MaskObj(:,:) ! Mask to count objects -> resulting of Object Identification Algorithm
         real, allocatable :: tmp(:,:)
 	 
-	integer            :: iret, i,j, ier
+	integer            :: i,j, ier
+   logical            :: Opened
 	character(len=512) :: filename, fname, fmt
 	integer            :: nymd, nhms
     	integer            :: fymd, fhms
@@ -589,8 +590,8 @@ MODULE mode
 	If (id .EQ. 0) then  ! wrinting Reference Precipitation MODE Fields in .bin 
 
 	  fname = 'PrecipField'
-	  inquire(unit=FUnitOut, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=FUnitOut, opened=Opened)
+	  if(.not.Opened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 
@@ -721,8 +722,8 @@ MODULE mode
 	Elseif (id .EQ. 1) then  ! Wrinting Experiment Precipitation MODE Fields in .bin
 
 	  fname = 'ExpField'
-	  inquire(unit=FUnitOut, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=FUnitOut, opened=Opened)
+	  if(.not.Opened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 
@@ -861,7 +862,8 @@ MODULE mode
 	integer, allocatable   	:: obsMatch_mask(:,:), expMatch_mask(:,:)
 	!integer, allocatable :: mask(:,:)
 
-	integer            :: iret, i,j, ier
+	integer            :: i,j, ier
+   logical            :: Opened
 	character(len=512) :: filename, fname, fmt
 	integer            :: nymd, nhms
     	integer            :: fymd, fhms	
@@ -873,8 +875,8 @@ MODULE mode
 	
   	! Wrinting Objects Reference Merged Field in .bin
 	fname = 'PrecipField'
-	  inquire(unit=FUnitOut+10, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=FUnitOut+10, opened=Opened)
+	  if(.not.Opened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 
@@ -909,8 +911,8 @@ MODULE mode
 	  endif 
 		
 	fname = 'ExpField'
-	  inquire(unit=FUnitOut+11, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=FUnitOut+11, opened=Opened)
+	  if(.not.Opened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 
@@ -957,7 +959,8 @@ MODULE mode
 	type(attrs), pointer, intent(in)	:: attrib1(:), attrib2(:)
         type(atrib_pair), pointer, intent(in)	:: attrib3(:)
 
-	integer            :: iret, nparameters, i
+	integer            :: nparameters, i
+   logical            :: Opened
 	character(len=512) :: filename, fname, fmt
 	integer            :: nymd, nhms
     	integer            :: fymd, fhms
@@ -970,8 +973,8 @@ MODULE mode
         fhms = MOD(scamtec%ftime,100) * 10000		
 
 	  fname = 'PrecipField'
-	  inquire(unit=62, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=62, opened=Opened)
+	  if(.not.Opened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 	    open(unit   = 62,	&
@@ -989,8 +992,8 @@ MODULE mode
 	  endif
 
 	  fname = 'ExpField'
-	  inquire(unit=63, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=63, opened=Opened)
+	  if(.not.OPened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 	    open(unit   = 63,	&
@@ -1009,8 +1012,8 @@ MODULE mode
 
 	if (nobj3 .GT. 0) then
 	  fname = 'PairAttributes'
-	  inquire(unit=64, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=64, opened=Opened)
+	  if(.not.Opened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 	    open(unit   = 64,	&
@@ -1050,7 +1053,8 @@ MODULE mode
       Subroutine mode_write(nexp, aux)
 	Implicit None
         integer, intent(in) :: nexp, aux ! experiment number
-	integer            :: iret, i
+	integer            :: i
+   logical            :: Opened
 	character(len=512) :: filename, fname, fmt
 	integer            :: nymd, nhms
     	integer            :: fymd, fhms
@@ -1066,8 +1070,8 @@ MODULE mode
         
           fname = 'StatisticIndices'	  
 
-	  inquire(unit=65, opened=iret)
-	  if(.not.iret) then 
+	  inquire(unit=65, opened=Opened)
+	  if(.not.Opened) then 
 	    filename = trim(fname)//'_'//trim(FNameOut)
             call str_template(filename, nymd, nhms, fymd, fhms, label=num2str(nexp,'(I2.2)'))
 

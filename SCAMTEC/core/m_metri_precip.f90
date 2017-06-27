@@ -425,7 +425,7 @@ Contains
 
   character(len=*),parameter :: myname_=myname//'::histograma'
   
- #ifdef DEBUG
+#ifdef DEBUG
     WRITE(stdout,'(     2A)')'Hello from ', myname_
 #endif   
   
@@ -539,8 +539,9 @@ Contains
     !BOC
     !
 
-    integer              :: iret,i,j,ier, tam_hist
+    integer              :: i,j,ier, tam_hist
     integer              :: t,f, soma_pontos
+    logical              :: Opened
     
     
     !INTEGER, ALLOCATABLE :: media_histo(:,:)        !variavel do histograma
@@ -550,7 +551,7 @@ Contains
     
     
     ! Verificando se o arquivo esta aberto 
-    inquire(unit=FUnitOut, opened=iret)
+    inquire(unit=FUnitOut, opened=Opened)
    
        !
        ! Abrindo arquivo binario de saida

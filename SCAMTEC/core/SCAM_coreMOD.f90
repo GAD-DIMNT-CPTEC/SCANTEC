@@ -51,7 +51,7 @@ MODULE SCAM_coreMOD
   USE SCAM_OutputMOD , only: write_2d     !
   USE SCAM_bstatistic                     !
   USE m_ioutil
-  use omp_lib
+!  use omp_lib
   USE m_metri_precip
   USE mode
 
@@ -245,8 +245,8 @@ CONTAINS
     ! 8. Print informations
     !
 
-    write ( *, '(a,i8)' ) '  The number of processors available = ', omp_get_num_procs ( )
-    write ( *, '(a,i8)' ) '  The number of threads available    = ', omp_get_max_threads ( )
+!    write ( *, '(a,i8)' ) '  The number of processors available = ', omp_get_num_procs ( )
+!    write ( *, '(a,i8)' ) '  The number of threads available    = ', omp_get_max_threads ( )
 
   END SUBROUTINE SCAM_Init
   !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -26,9 +26,10 @@ C            OR     = Logical OR (add) on this machine.
 C            AND    = Logical AND (multiply) on this machine
 C          This is for Sun UNIX Fortran, DEC Alpha, and RS6000
 #if ( defined LINUX64 )
-      INTEGER*8 MASKS
+      INTEGER*16 MASKS
       PARAMETER (LMWD=64)
 #else
+      INTEGER*8 MASKS
       PARAMETER (LMWD=32)
 #endif
       DIMENSION MASKS(LMWD)

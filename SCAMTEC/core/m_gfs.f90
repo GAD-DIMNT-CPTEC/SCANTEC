@@ -254,7 +254,7 @@ CONTAINS
     integer :: ny
 !    integer, dimension(20) :: pds5, pds7
     integer, dimension(20) :: pds7
-    character(len=24), dimension(20) :: pds5
+    character(len=512), dimension(20) :: pds5
     logical*1, dimension(:,:), allocatable :: lb, lb2
     real, dimension(:,:), allocatable :: f
     real, dimension(:,:), allocatable :: f2
@@ -303,7 +303,10 @@ CONTAINS
 !    pds7 = (/925,850,500,925,850,500,250,000,000,850,500,250,850,500,250,850,500,250,000,000/) !htlev2
 
 !obs.* deixar com espaco o valor do vetor
-        pds5 = [':SPFH:80 m above ground:925 mb:           ', ':SPFH:80 m above ground:850 mb:           ', ':SPFH:80 m above ground:500 mb:           ', ':TMP:925 mb:            ', &
+       ! Different CHARACTER lengths are rejected with gfortran 4.4 or below:
+       !  - The proper solution is to use Fortran 2003's
+        pds5 = [ character(len=512) :: &
+        ':SPFH:80 m above ground:925 mb:           ', ':SPFH:80 m above ground:850 mb:           ', ':SPFH:80 m above ground:500 mb:           ', ':TMP:925 mb:            ', &
      &          ':TMP:850 mb:            ', ':TMP:500 mb:            ', ':TMP:250 mb:            ', ':PRMSL:mean sea level:  ', &
      &          ':PWAT:entire atmosphere ', ':HGT:850 mb:            ', ':HGT:500 mb:            ', ':HGT:250 mb:            ', &
      &          ':UGRD:850 mb:           ', ':UGRD:500 mb:           ', ':UGRD:250 mb:           ', ':VGRD:850 mb:           ', &
