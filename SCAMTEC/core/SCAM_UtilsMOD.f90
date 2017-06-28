@@ -182,7 +182,9 @@ MODULE SCAM_Utils
       CHARACTER(len=300)            :: config, formato
       LOGICAL                       :: exists
       INTEGER, ALLOCATABLE          :: tmp(:)
-!      INTEGER, EXTERNAL             :: iargc
+#ifndef gfortran      
+      INTEGER, EXTERNAL             :: iargc
+#endif
 
       !
       ! Lista encadeada para leitura temporaria 

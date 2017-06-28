@@ -120,6 +120,8 @@ ifeq ($(SCAN_ARCH),GNU_Linux)
       LDFLAGS += -g -pg
    endif
 
+
+
 	# add flags for profiling if requested
    ifeq (pro,$(findstring pro,$(mode)))
       CCFLAGS += 
@@ -128,6 +130,31 @@ ifeq ($(SCAN_ARCH),GNU_Linux)
    endif
 
 endif
+
+ifeq ($(SCAN_ARCH),cray_GNU)
+   FPP = gcc
+   CC  = gcc
+   FC  = ftn
+   LD  = ftn
+   AR  = ar
+   FFLAGS += -cpp -frecursive -ffree-line-length-none -Dgfortran #-DDEBUG
+
+# add flags for debugging if requested
+   ifeq (dbg,$(findstring dbg,$(mode)))
+      CCFLAGS += 
+      FFLAGS  += -g  -DDEBUG 
+      LDFLAGS += -g -pg
+   endif
+
+	# add flags for profiling if requested
+   ifeq (pro,$(findstring pro,$(mode)))
+      CCFLAGS += 
+      FFLAGS  += -O3
+      LDFLAGS += 
+   endif
+
+endif
+
 # objectlist file
 include Makefile-objs
 
