@@ -103,8 +103,8 @@ MODULE mode
     WRITE(6,'(     2A)')'Hello from ', myname
 #endif	      	 	    
 
-     Allocate(precOriginalField(scamtec%nxpt,scamtec%nypt))
-     Allocate(expOriginalField(scamtec%nxpt,scamtec%nypt))
+     if(.not.allocated(precOriginalField))Allocate(precOriginalField(scamtec%nxpt,scamtec%nypt))
+     if(.not.allocated(expOriginalField))Allocate(expOriginalField(scamtec%nxpt,scamtec%nypt))
 	
      if (f .EQ. 1) then
        Allocate(inputfield(scamtec%npts,scamtec%ntime_forecast))        
