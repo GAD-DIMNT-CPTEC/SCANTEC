@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # Copyright: This document has been placed in the public domain.
 
+###
+
 """
 Taylor diagram (Taylor, 2001) test implementation.
 
