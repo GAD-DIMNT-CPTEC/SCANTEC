@@ -1,4 +1,4 @@
-#/bin/sh
+#/bin/sh -x
 
 #
 #BOP
@@ -10,7 +10,7 @@
 # Script para executar o SCAMTEC
 #
 # !CALLING SEQUENCE:
-# ./run_scamtec.sh N
+# ./run_scantec.sh N
 #                  
 #  N=1 TestCase utilizando dados do modelo BRAMS 05km para janeiro de 2016
 #  N=2 TestCase utilizando dados do G3DVAR para agosto 2014
@@ -51,7 +51,7 @@ echo ""
 dir_act=`pwd`
 
 RUNTM=`date "+%Y%m%d.%H.%M"`
-ARQlog=${dir_act}/exec_scamtec_${RUNTM}.log
+ARQlog=${dir_act}/exec_scantec_${RUNTM}.log
 
 # Verifica parametros de entrada
 if [ -z "${1}" ] 
@@ -59,9 +59,9 @@ then
   echo 
   echo " A opcao TestCase nao foi corretamente informada!"
   echo " Uso:"
-  echo " ./run_scamtec.sh 1 - para fazer um TestCase do BRAMS (Jan/2016)"
-  echo " ./run_scamtec.sh 2 - para fazer um TestCase do G3DVAR (Ago/2014)"
-  echo " ./run_scamtec.sh 3 - para usar os dados definidos pelo usuario"
+  echo " ./run_scantec.sh 1 - para fazer um TestCase do BRAMS (Jan/2016)"
+  echo " ./run_scantec.sh 2 - para fazer um TestCase do G3DVAR (Ago/2014)"
+  echo " ./run_scantec.sh 3 - para usar os dados definidos pelo usuario"
   echo  
   exit 1
 else
@@ -71,9 +71,9 @@ else
     echo 
     echo " A opcao TestCase nao foi corretamente informada!"
     echo " Uso:"
-    echo " ./run_scamtec.sh 1 - para fazer um TestCase do BRAMS (Jan/2016)"
-    echo " ./run_scamtec.sh 2 - para fazer um TestCase do G3DVAR (Ago/2014)"
-    echo " ./run_scamtec.sh 3 - para usar os dados definidos pelo usuario"
+    echo " ./run_scantec.sh 1 - para fazer um TestCase do BRAMS (Jan/2016)"
+    echo " ./run_scantec.sh 2 - para fazer um TestCase do G3DVAR (Ago/2014)"
+    echo " ./run_scantec.sh 3 - para usar os dados definidos pelo usuario"
     echo 
     echo 
     exit 1
@@ -81,20 +81,22 @@ else
 fi
 
 case $TESTCASE in
+
+#--------------------------------------------------------------------#
+# Seção 1: Configuracoes do TestCase BRAMS (NAO ALTERAR!)                     #
+#--------------------------------------------------------------------#
+
 [1]) 
 
-#--------------------------------------------------------------------#
-# Configuracoes do TestCase BRAMS (NAO ALTERAR!)                     #
-#--------------------------------------------------------------------#
 
 # Datas
-datai=2016010100
+datai=2016010100 
 dataf=2016010300
 passo_analise=06
 passo_previsao=06
 total_previsao=36
 
-# Recortes
+# Recortes - DOMAIN SPECIFICATION
 lat_low=-49.875 
 lon_low=-82.625 
 lat_up=11.375 
@@ -102,38 +104,39 @@ lon_up=-35.375
 dx=0.25  
 dy=0.25 
 
-# Quantidade de experimentos
-quant_exp=1
+# Reference File
+pl_model_refer=11 # reference model
+arq_refer=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra # Reference file
 
-# Referencias
-# Plugin modelo
-pl_model_refer=11
-
-# Arquivo (analise)
-arq_refer=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra
-
-# Experimento
-# Plugin experimento
-pl_model_exper=11
-
-# Arquivo (previsao)
+#Experiment Files
+quant_exp=1 #Number of Experiments
+pl_model_exper=11 #pliging experimento
 arq_prev=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
+
 
 # Climatologia
 use_climatologia=1
+id_climatologia=3
+arq_climatologia=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/climatologiaJGM/climatologia50yr.%mc.bin # Climatology file
 
 # Precipitacao
-use_precipitacao=0
+use_precipitacao=1
+id_model_precipitacao=5 # Precipitation Model Id
+arq_precipitacao=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/precipitacao/3B42RT/%y4/prec_AS/new_AS_3B42RT.%y4.%m2.%d2.%h2z.bin # Precipitation file
+acum_periodo_obs=3 # Define o periodo de acumulo de precpitacao da observacao
+acum_periodo_exp=24 # Define o periodo de acumulo de precpitacao do experimento
+
 
 # EOF
-use_eof=0
+use_eof=1
+quant_eof=4
 ;;
 
-[2])
+#--------------------------------------------------------------------#
+# Seção 2: Configuracoes do TestCase G3DVAR (NAO ALTERAR!)                    #
+#--------------------------------------------------------------------#
 
-#--------------------------------------------------------------------#
-# Configuracoes do TestCase G3DVAR (NAO ALTERAR!)                    #
-#--------------------------------------------------------------------#
+[2])
 
 # Datas
 datai=2014080500
@@ -142,7 +145,7 @@ passo_analise=06
 passo_previsao=06
 total_previsao=72
 
-# Recortes
+# Recortes - DOMAIN SPECIFICATION
 lat_low=-49.875 
 lon_low=-82.625 
 lat_up=11.375 
@@ -150,84 +153,85 @@ lon_up=-35.375
 dx=0.4  
 dy=0.4 
 
-# Quantidade de experimentos
-quant_exp=1
+# Reference File
+pl_model_refer=1 # reference model
+arq_refer=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/exp_global_cptec/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.grb # Reference file
 
-# Referencias 
-# Plugin modelo
-pl_model_refer=1
-
-# Arquivo (analise)
-arq_refer=/stornext/online6/assim_dados/luiz.sapucci/testcase_scamtec/exp_global_cptec/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.grb
-
-# Experimento
-# Plugin experimento
+#Experiment Files
+quant_exp=1 #Number of Experiments
 pl_model_exper=1
-
-# Arquivo (previsao)
-arq_prev=/stornext/online6/assim_dados/luiz.sapucci/testcase_scamtec/exp_global_cptec/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb
-
+arq_prev=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/exp_global_cptec/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb
 
 #climatologia
 use_climatologia=1
+id_climatologia=3
+arq_climatologia=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/climatologiaJGM/climatologia50yr.%mc.bin # Climatology file
 
 #precipitacao
 use_precipitacao=0
+id_model_precipitacao=5 # Precipitation Model Id
+arq_precipitacao=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/precipitacao/3B42RT/%y4/prec_AS/new_AS_3B42RT.%y4.%m2.%d2.%h2z.bin # Precipitation file
+acum_periodo_obs=3 # Define o periodo de acumulo de precpitacao da observacao
+acum_periodo_exp=24 # Define o periodo de acumulo de precpitacao do experimento
 
 #calculo EOF
 use_eof=0
+quant_eof=4
 ;;
 
+
+#--------------------------------------------------------------------#
+# Seção 3: Configuracoes do Usuario (ALTERAR O QUE FOR NECESSARIO)   #
+#--------------------------------------------------------------------#
  
 [3])
 
-#--------------------------------------------------------------------#
-# Configuracoes do Usuario (ALTERAR O QUE FOR NECESSARIO)            #
-#--------------------------------------------------------------------#
 
-# Datas
-datai=2016010100
-dataf=2016010500
-passo_analise=12
-passo_previsao=12
-total_previsao=120
+# Datas - Runtime options
+datai=2016010300  # Starting Time
+dataf=2016011500  # Ending Time
+passo_analise=24  # Analisys Time Step
+passo_previsao=24 # Forecast Time Step
+total_previsao=72 # Forecast Total Time
 
-# Recortes
-lat_low=-49.875 
-lon_low=-82.625 
-lat_up=11.375 
-lon_up=-35.375 
-dx=0.4  
-dy=0.4 
+# Recortes - DOMAIN SPECIFICATION
+lat_low=-49.875 # run domain lower left lat
+lon_low=-82.625 # run domain lower left lon
+lat_up=11.375   # run domain upper right lat
+lon_up=-35.375  # run domain upper right lon
+dx=0.5          # run domain resolution dx
+dy=0.5          # run domain resolution dy
 
-# Referencias
-# Plugin modelo
-pl_model_refer=1
+# Reference File
+pl_model_refer=11 # reference model
+arq_refer=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra # Reference file
 
-# Arquivo (analise)
-arq_refer=diretorio_dados
-
-# Experimento
-#Plugin experimento
-pl_model_exper=1
-
-# Arquivo (previsao)
-arq_prev=diretorio_dados
+#Experiment Files
+quant_exp=1 #Number of Experiments
+pl_model_exper=11 
+arq_prev=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
 
 # Climatologia
 use_climatologia=1
+id_climatologia=3
+arq_climatologia=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/climatologiaJGM/climatologia50yr.%mc.bin # Climatology file
 
-# Precipitacao
-use_precipitacao=0
+# Precipitacao - Precipitation File
+use_precipitacao=1
+id_model_precipitacao=5 # Precipitation Model Id
+arq_precipitacao=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/precipitacao/3B42RT/%y4/prec_AS/new_AS_3B42RT.%y4.%m2.%d2.%h2z.bin # Precipitation file
+acum_periodo_obs=3 # Define o periodo de acumulo de precpitacao da observacao
+acum_periodo_exp=6 # Define o periodo de acumulo de precpitacao do experimento
 
-# EOF
-use_eof=0
+# EOF - Calculate EOFs
+use_eof=1
+quant_eof=4
 ;;
 
 esac
 
 # Diretorio de saida do resultados
-saida_results=${WORK_HOME}/saida_scamtec
+saida_results=${WORK_HOME}/saida_scantec
 
 if [ ! -e ${saida_results} ]; then mkdir -p ${saida_results}; fi
 
@@ -282,11 +286,11 @@ echo "Inicio do processamento: ${data}"
 cd ${dir_act}/bin
 
 echo ""
-echo "Criando o arquivo de configuracao (bin/scamtec.conf)"
+echo "Criando o arquivo de configuracao (bin/scantec.conf)"
 echo ""
 
 INPUTDATA='$INPUTDATA'
-cat <<EOT1 > scamtec.conf
+cat <<EOT1 > scantec.conf
 $INPUTDATA
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 #                  SCAMTeC - GDAD/CPTEC/INPE - 2010                   !
@@ -367,8 +371,8 @@ ${pl_model_exper} EXP01 ${arq_prev}
 
 Use Climatology: ${use_climatologia}	  # 0-do not use, 1-use
 # Diretory prefix mask sulfix
-Climatology Model Id: 3
-Climatology file: /stornext/online6/assim_dados/luiz.sapucci/testcase_scamtec/climatologiaJGM/climatologia50yr.%mc.bin
+Climatology Model Id: ${id_climatologia}
+Climatology file: ${arq_climatologia}
 
 #======================================
 # Precipitation File
@@ -376,20 +380,20 @@ Climatology file: /stornext/online6/assim_dados/luiz.sapucci/testcase_scamtec/cl
 
 Use Precipitation: ${use_precipitacao} # 0-do not use, 1-use
 # Diretory prefix mask sulfix
-Precipitation Model Id: 5
-Precipitation file: /stornext/online6/assim_dados/luiz.sapucci/testcase_scamtec/precipitacao/3B42RT/%y4/prec_AS/new_AS_3B42RT.%y4.%m2.%d2.%h2z.bin   
+Precipitation Model Id: ${id_model_precipitacao}
+Precipitation file: ${arq_precipitacao}
 Define o Range do Histograma: 5.0                                       # exemplo: 2
 Define valor do limite da ultima classe do histograma: 50               # exemplo: 100
 Define valor do minimo inferior da primeira classe do histograma: 0     # exemplo: 0
 Define qual Precipitacao deseja avaliar: 21                             # exemplo: 16 para TOTAL ou 17 para CONVECTIVE
-Define o periodo de acumulo de precpitacao da observacao: 3             # exemplo: 3 
-Define o periodo de acumulo de precpitacao do experimento: 24           # exemplo: 24
+Define o periodo de acumulo de precpitacao da observacao: ${acum_periodo_obs}             # exemplo: 3 
+Define o periodo de acumulo de precpitacao do experimento: ${acum_periodo_exp}           # exemplo: 24
 
 #======================================
 # Calculate EOFs
 #
 Use EOFs: ${use_eof}	           # 0-do not use, 1-use
-Define a quantidade de EOFs: 4     # exemplo: 4
+Define a quantidade de EOFs: ${quant_eof}     # exemplo: 4
 
 #======================================================================
 # OUTPUT
@@ -401,9 +405,9 @@ EOT1
 echo "Arquivo de configuracao criado com sucesso."
 echo 
 
-echo "Copiando scamtec.conf final para a area selecionada e experimento..."  >> ${ARQlog}
+echo "Copiando scantec.conf final para a area selecionada e experimento..."  >> ${ARQlog}
 echo  >> ${ARQlog}
-cat scamtec.conf >> ${ARQlog}                           
+cat scantec.conf >> ${ARQlog}                           
 echo  >> ${ARQlog}
 echo  >> ${ARQlog}
 
@@ -412,19 +416,19 @@ echo  >> ${ARQlog}
 # Executando o SCAMTEC
 cd ${dir_act}/bin 
 
-if [ -e scamtec.x ]; then
+if [ -e scantec.x ]; then
  echo
- echo "Executando o scamtec.x"
+ echo "Executando o scantec.x"
  echo 
  echo "AGUARDE... "
  echo 
-  ./scamtec.x >> ${ARQlog}
+  ./scantec.x >> ${ARQlog}
   
 else
  echo
  echo " ------ WARNING ------ "
  echo
- echo "Programa scamtec.x nao existe! Favor realizar a compilacao.."
+ echo "Programa scantec.x nao existe! Favor realizar a compilacao.."
  echo
  echo " ------ WARNING ------ "
  echo

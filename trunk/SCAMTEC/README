@@ -3,7 +3,7 @@
 
 Para compilação e execução siga os seguintes passos:
 
-Ultima atualizacao do README: 04/07/2016
+Ultima atualizacao do README: 29/07/2017
 
 *************************************************************************************************************************
 Para instalação no supercomputador TUPA:
@@ -13,7 +13,7 @@ Para instalação no supercomputador TUPA:
 
 ------
 2º Logar no eslogin01:
-ssh eslogin01 -XC
+ssh eslogin02 -XC
 
 ------
 3º Escolher um diretorio para a instalação do SCAMTEC
@@ -31,20 +31,18 @@ cd SCAMTEC
 6º Para compilar o SCAMTEC execute o script install com o comando:
 ./install
 
-Escolha a opção 2 para o compilador pgi do TUPA
+Escolha a opção 4 para o compilador pgi do TUPA
 
 ------
 7º Executar o SCAMTEC (Rodadas TestCase):
-./run_scamtec.sh [parametro]
+./run_scantec.sh [parametro]
 
 Exemplos de utilização:
-./run_scamtec.sh 1 - para fazer um TestCase do BRAMS (Jan/2016)
-./run_scamtec.sh 2 - para fazer um TestCase do G3DVAR (Ago/2014)
-./run_scamtec.sh 3 - para usar os dados definidos pelo usuario
+./run_scantec.sh 1 - para fazer um TestCase do BRAMS (Jan/2016) - Seção 1
+./run_scantec.sh 2 - para fazer um TestCase do G3DVAR (Ago/2014) - Seção 2
+./run_scantec.sh 3 - para usar os dados definidos pelo usuario (neste caso é necessário configurar o script para seu interesse na Seção 3)
 
-* Cabe ressaltar que nessa versão está sendo gerado separado os resultados das métricas (arquivos *.scam) dos resultados de 
-precipitação. Para gerar os resultados das métricas deve-se deixar desligado as opções use precipitation e use eof, ou seja,
-os valores devem ser iguais a zero como no exemplo abaixo:
+* Cabe ressaltar que nessa versão está sendo gerado separado os resultados das métricas (arquivos *.scam) dos resultados de precipitação. Para gerar os resultados das métricas deve-se deixar desligado as opções use precipitation e use eof, ou seja, os valores devem ser iguais a zero como no exemplo abaixo:
 
 Use Precipitation: 0
 Use EOFs: 0
