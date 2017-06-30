@@ -53,25 +53,6 @@ import matplotlib.pyplot as plt
 
 global datai, dataf, exps, ref_name, varname, nexps
 
-#print("\n")
-#exps = []
-#datai = input("Entre com a data Inicial 'Exemplo 2013010100': ") #sys.argv[1]
-#dataf = input("Entre com a data Final 'Exemplo 2013012118': ") #sys.argv[2]
-#varname = input("Entre com os nome da Variável Exemplo UMES-850: ") #sys.argv[3]
-#ref_name = input("Entre com o modelo de referência Exemplo NCEP: ")
-#exps = input("Entre com os Experimentos Exemplo CTRL EnKF EnSRF: ")
-
-#print("Data Inicial:", datai)
-#print("Data Final:", dataf)
-#print("Variável:", varname)
-#print("Experimento Referência:", ref_name)
-#print("Experimentos a ser Avaliados:", exps)
-
-#rmse_experimetos = {}
-#acor_experimentos = {}
-#rmse_referecia = {}
-#acor_refencia = {}
-
 rmse_experimetos = {}
 acor_experimentos = {}
 rmse_referecia = {}
@@ -81,18 +62,13 @@ exps = []
 ref_exps = []
 instrucaoviaprompt = sys.argv #recebe o argumento via linha de comando
 len_args = len(instrucaoviaprompt) #recebe o tamanho do argumento via parametro
-#print("Tamanho da função len_args: ", len_args)
-#print('Instrucaoviaprompt: ', instrucaoviaprompt)
+
 for i in range(len_args-1,3,-1): # os quatro primeiros args. (0,1,2,3) sao o nome do script, as duas datas e o nome da variavel
   exps.append(sys.argv[i])
 
 datai = sys.argv[1]
 dataf = sys.argv[2]
 varname = sys.argv[3]
-
-#for i in range(len(exps)):
-  #print("Valor do indice:",i,"\t\t Nome Do experimento:",exps[i])
-
 
 nexps = len(exps)
 
@@ -103,6 +79,7 @@ exps = [exps[i] for i in myorder] # reordena a lista para evitar que a legenda s
 # Verifica qual dos experimentos indicados é a referência:
 # - Se um experimento for indicado mais de uma vez, então 
 #   ele é a referência:
+
 testListExps = {}
 
 for exp in exps:  #Modificar esse codigo tornar mais prático
@@ -111,38 +88,13 @@ for exp in exps:  #Modificar esse codigo tornar mais prático
   except:
     testListExps[exp] = 1
 
-
 ref_name = list(testListExps.keys())[list(testListExps.values()).index(2)] # Está fixo com 2.
-
-
 ref_exps.append(ref_name)
 
-# Escreve uma lista apenas com os nomes dos experimentos, sem a referencia:
-exps_list = [x for x in exps if x not in ref_exps]
-
+exps_list = [x for x in exps if x not in ref_exps] # Escreve uma lista apenas com os nomes dos experimentos, sem a referencia:
 nexps_list = len(exps_list)
 
-'''
-print("Data Inicial:",datai)
-
-print("Data Final:",dataf)
-
-print("Valor do nexps:",nexps)
-
-print("Experimentos: ",exps)
-
-print("Variável:",varname)
-
-print("Experimento Referência:", ref_name)
-
-print("Experimentos Avaliados:",exps_list)
-''' 
-#print("\n")
-#print("Valores do exps",exps)
-
 def assembly_fnames(datai,dataf,exps):
-  #print("entra na função assembly_fnames")
-
   """
   Nesta função é montado o dicionário exps_fnames.
   Nele, as informações são armazenadas da seguinte forma:
@@ -177,22 +129,14 @@ def assembly_fnames(datai,dataf,exps):
     exp = exps[j]
 
     fname_vies = "./" + exp + "/VIESEXP01_" + datai + dataf + "T.scam"
-    #print("fname_vies",fname_vies)
-
-    fname_rmse = "./" + exp + "/RMSEEXP01_" + datai + dataf + "T.scam"
-    #print("fname_rmse: ",fname_rmse)
-  
+    fname_rmse = "./" + exp + "/RMSEEXP01_" + datai + dataf + "T.scam"  
     fname_acor = "./" + exp + "/ACOREXP01_" + datai + dataf + "T.scam"
-    #print("fname_acor: ",fname_acor)
-
     #fname_mean = "./" + exp + "/MEANEXP01_" + datai + dataf + "T.scam"
-    #print("fname_mean: ",fname_mean)
-  
+
     exps_fnames[exp] = fname_vies, fname_rmse, fname_acor#, fname_mean
-  #print("VAlor do exps_fnames: ",exps_fnames)
+
 
 def read_file(fname):
-  #print("Entra na função read_file")
   """
   Nesta função são lidos propriamente os arquivos de cada key do dicionário
   exps_fnames. Note que a primeira linha é ignorada e que apenas as colunas
@@ -202,61 +146,43 @@ def read_file(fname):
 
   Observação: não é feito nenhum tipo de verificação dos arquivos.
   """
-
   global data_table
 
-  #print(fname)
   data_table = np.loadtxt(fname,skiprows=1, unpack=True)
-  #print("data_table: ",data_table)
 
 def read_varc(data_table):
-  #print("Entra na função read_varc")
-
   global exp_data_table, vnames, vname
 
   vnames = {
-            '%Previsao': ['0',''],
-            'VTMP-925':  ['1','Temperatura Virtual em 925hPa'], 
-            'VTMP-850':  ['2','Temperatura Virtual em 850hPa'],
-            'VTMP-500':  ['3','Temperatura Virtual em 500hPa'],
-            'TEMP-850':  ['4','Temperatura do Ar em 925hPa'],
-            'TEMP-500':  ['5','Temperatura do Ar em 850hPa'],
-            'TEMP-250':  ['6','Temperatura do Ar em 500hPa'],
-            'PSNM-000':  ['7','Pressão em Superfície'],
-            'UMES-925':  ['8','Umidade Específica em 925hPa'],
-            'UMES-850':  ['9','Umidade Específica em 850hPa'],
-            'UMES-500': ['10','Umidade Específica em 500hPa'],
-            'AGPL-925': ['11','Água Precipitável em 925hPa'],
-            'ZGEO-850': ['12','Altura Geopotencial em 850hPa'],
-            'ZGEO-500': ['13','Altura Geopotencial em 500hPa'],
-            'ZGEO-250': ['14','Altura Geopotencial em 250hPa'],
-            'UVEL-850': ['15','Vento Zonal em 850hPa'],    
-            'UVEL-500': ['16','Vento Zonal em 500hPa'],    
-            'UVEL-250': ['17','Vento Zonal em 250hPa'],    
-            'VVEL-850': ['18','Vento Meridional em 850hPa'],
-            'VVEL-500': ['19','Vento Meridional em 500hPa'],
-            'VVEL-250': ['20','Vento Meridional em 250hPa'],
-            'PREC-000': ['21','Precipitação Convenctiva'],
-            'PREV-000': ['22' 'Precipitação Estratiforme'],
+            '%Previsao': [ 0 ,''],
+            'VTMP-925':  [ 1 ,'Temperatura Virtual em 925hPa'], 
+            'VTMP-850':  [ 2 ,'Temperatura Virtual em 850hPa'],
+            'VTMP-500':  [ 3 ,'Temperatura Virtual em 500hPa'],
+            'TEMP-850':  [ 4 ,'Temperatura do Ar em 925hPa'],
+            'TEMP-500':  [ 5 ,'Temperatura do Ar em 850hPa'],
+            'TEMP-250':  [ 6 ,'Temperatura do Ar em 500hPa'],
+            'PSNM-000':  [ 7 ,'Pressão em Superfície'],
+            'UMES-925':  [ 8 ,'Umidade Específica em 925hPa'],
+            'UMES-850':  [ 9 ,'Umidade Específica em 850hPa'],
+            'UMES-500': [ 10 ,'Umidade Específica em 500hPa'],
+            'AGPL-925': [ 11 ,'Água Precipitável em 925hPa'],
+            'ZGEO-850': [ 12 ,'Altura Geopotencial em 850hPa'],
+            'ZGEO-500': [ 13 ,'Altura Geopotencial em 500hPa'],
+            'ZGEO-250': [ 14 ,'Altura Geopotencial em 250hPa'],
+            'UVEL-850': [ 15 ,'Vento Zonal em 850hPa'],    
+            'UVEL-500': [ 16 ,'Vento Zonal em 500hPa'],    
+            'UVEL-250': [ 17 ,'Vento Zonal em 250hPa'],    
+            'VVEL-850': [ 18 ,'Vento Meridional em 850hPa'],
+            'VVEL-500': [ 19 ,'Vento Meridional em 500hPa'],
+            'VVEL-250': [ 20 ,'Vento Meridional em 250hPa'],
+            'PREC-000': [ 21 ,'Precipitação Convenctiva'],
+            'PREV-000': [ 22 ,'Precipitação Estratiforme'],
            }
 
-  vname = vnames[varname]
-
-  #print()
-  #print("vname[0] = ", vname[0])
-  #print()
-  
-  exp_data_table = data_table[int(vname[0])]
-
-  #print()
-  #print("TAbela da Referecnia: ", exp_data_table)
-  #print(varname,"(",vname,") =",data_table[int(vname[0])]) # imprime a coluna da variável da referência
-  #print()
+  vname = vnames[varname] # A Variavel vname recebe uma linha da variavel passada por parametro, assim essa variavel recebe um dicionario contento a chave e os seus valores
+  exp_data_table = data_table[(vname[0])] # Nessa linha a variavel exp_data_table recebbe a coluna da variavel analisada
 
 def samples(exps_fnames):#SAMPLES SÃO AS AMOSTRAS OU SEJA OS EXPERIMENTOS
-
-  #print("entra na função samples")
-
   """
   Nesta função são calculados os samples que serão utilizados no plot do
   diagrama de Taylor. O samples é também um dicionário e será organizado 
@@ -273,119 +199,42 @@ def samples(exps_fnames):#SAMPLES SÃO AS AMOSTRAS OU SEJA OS EXPERIMENTOS
   
   global refstd, refacor, model, samples_vars, samples, stdrefs, acorefs, name_exp
 
-
-
   samples = dict()
   stdrefs = dict()
   acorefs = dict()
 
   ref = exps_fnames[ref_name] #lista com os valores da referencia
-
-  #print("ref>>>>>>>>>>>>>>>>>>>>>>>>>>>>>: ",ref)
-  #print("referencia:  ",ref[0])
-
-  #A função np.mean Calcula a Média dos valor selecionados
-
-  ref_data_rmse = ref[1]           # arquivo rmse
-  #print("ref[1] = ",ref[1])
-
-  read_file(ref_data_rmse)
+ 
+  read_file(ref[1]) # arquivo rmse
   read_varc(data_table)
-
-  #print()
-  #print(data_table)
-  #print()
-  
-  refstd = np.mean(exp_data_table)
-  #rmse_referecia[ref_name] = exp_data_table #essa variavel recebe a coluna com os valores do RMSE da variavel de referencia pára fazer a comparação com os demais experimentos.
-  
-  rmse_referecia[0] = exp_data_table
-
-  #print(exp_data_table) 
-  #print("refstd =",refstd)
-
+  refstd = np.mean(exp_data_table) #A função np.mean Calcula a Média dos valor selecionados
   stdrefs[varname] = refstd
+  rmse_referecia[0] = exp_data_table  # Nessa linha e feito um dicionario com o valores da refencia sobre o RMSE
 
-  #print()
-
-  ref_data_acor = ref[2] # arquivo acor
-  #print("ref[2]: ", ref[2])
-
-  read_file(ref_data_acor)
+  read_file(ref[2])#  arquivo acor
   read_varc(data_table)
-
-  #print()
-  #print(data_table)
-  #print()
-
   refacor = np.mean(exp_data_table)
-  #acor_refencia[ref_name] = exp_data_table #essa variavel recebe a coluna com os valores da Correlação de Anomalias da variavel de referencia pára fazer a comparação com os demais experimentos.
- 
-  acor_refencia[0] = exp_data_table
- 
-  #print(exp_data_table)
-  #print("refacor =",refacor)
-
   acorefs[varname] = refacor
+  acor_refencia[0] = exp_data_table # Nessa linha e feito um dicionario com o valores da refencia sobre a Correlação de Anomalia
 
-  #print()
-  #print(len(exps_list))
-  for i in range(len(exps_list)):    #print("Valor do exps_list: ",exps_list[i])
-
-    #print("Valor de i = ",i)
+  for i in range(len(exps_list)):   
     name_exp = exps_list[i]
     m = exps_fnames[exps_list[i]] 
 
-    m_data_rmse = m[1]
-    read_file(m_data_rmse)
+    read_file(m[1]) # arquivo do rmse dos modelos
     read_varc(data_table)
-
     mstd = np.mean(exp_data_table)
-    #rmse_experimetos[name_exp] = exp_data_table
-    rmse_experimetos[i] = exp_data_table
+    rmse_experimetos[i] = exp_data_table # Nessa linha cria um dicionario com as tabela referente a variavel para cada modelo sobre o valor do RMSE
 
-    #print("Valores do RMSE experimento",exps_list[i],"= ", rmse_experimetos[name_exp])
-
-    #print("RMSE dos Experimentos = ",exp_data_table)
-    #print("mstd =",mstd)
-
-    #print()
-
-    m_data_acor = m[2]
-    read_file(m_data_acor)
+    
+    read_file(m[2]) # arquivo da correlaçao de anomalias dos modelos
     read_varc(data_table)
-
-    macor = np.mean(exp_data_table)
-    #acor_experimentos[name_exp] = exp_data_table
-    acor_experimentos[i] = exp_data_table
-    #print("Valores da Correlação de Anomalias do experimento", exps_list[i],"= ", acor_experimentos[name_exp])
-
-
-    #print("Correlação de anomalias dos experimentos = ",exp_data_table)
-    #print("macor =",macor)
-
-    #print()
-
+    macor = np.mean(exp_data_table)    
     samples_vars = np.array([mstd, macor, exps_list[i]])
-
-    #print("Valor do samples: ",samples_vars)
-
-    #print()
-
     samples.setdefault(varname,[]).append(samples_vars)
-
-    #print("Valor do samples: ",samples)
-
-    #print()
-
-    #print("Valor do stdrefs: ",stdrefs)
-
-    #print()
+    acor_experimentos[i] = exp_data_table  # Nessa linha cria um dicionario com as tabela referente a variavel para cada modelo sobre o valor da Correlação de Anomalia
 
 def plota_taylor(samples,stdrefs,acorefs):
-  #print("Entra na função plota_taylor")
-  
-
   """
   Nesta função é chamada a classe TaylorDiagram.
   """
@@ -409,8 +258,8 @@ def plota_taylor(samples,stdrefs,acorefs):
                          label=name)
       
       # Add RMS contours, and label them
-#      contours = dia.add_contours(levels=5, colors='0.5') # 5 levels
-#      dia.ax.clabel(contours, inline=1, fontsize=10, fmt='%.1f')
+      # contours = dia.add_contours(levels=5, colors='0.5') # 5 levels
+      # dia.ax.clabel(contours, inline=1, fontsize=10, fmt='%.1f')
 
       # Título
       if (datai == dataf):
@@ -427,17 +276,110 @@ def plota_taylor(samples,stdrefs,acorefs):
   else:
     plt.savefig(ref_name + '_' + varname + '_' + datai + '-' + dataf + '.png')
 
+def precisao_acuracia(): # Nesse método são calculados quais valores dos modelos são mais aproximado da referência assim podemos identificar qual modelo apresenta melhor precisão e acurácia
+
+  res_rmse = []
+  res_acor = []
+  lista_r = []
+  lista_a = []
+  x = rmse_referecia.get(0)
+  y = acor_refencia.get(0)
+
+  for i in range(len(exps_list)): 
+    """
+      Nesse Bloco são calculados a diferença entra os valores dos modelos em relação com a referência.
+      Sendo esses valores armazenados em uma lista contendo outras listas, ou seja lista dentro de lista.
+
+      Exemplo utilizando a seguinte instrução via prompt de comando: "./plota_taylor_diag.py 2013010100 2013013118 VTMP-500 CTRL CTRL EnKF EnSRF NCEP"
+
+      Diferença do RMSE em relação a referência:
+      [[0.122, 0.055000000000000049, 0.025999999999999912, 0.015000000000000124, 0.050000000000000044, 0.066999999999999948, 0.084999999999999964, 
+           0.10299999999999998, 0.12799999999999989, 0.14100000000000001, 0.15600000000000014, 0.16599999999999993, 0.17100000000000026, 0.17200000000000015, 
+           0.17300000000000004, 0.17300000000000004, 0.17500000000000027, 0.17700000000000005, 0.18400000000000016, 0.18699999999999983],
+      [0.11100000000000004, 0.11899999999999999, 0.1080000000000001, 0.097000000000000086, 0.085000000000000187, 0.075999999999999845, 0.066999999999999948,
+           0.05699999999999994, 0.050999999999999934, 0.042000000000000037, 0.036000000000000032, 0.030000000000000249, 0.024999999999999911, 0.020000000000000018,
+           0.016999999999999904, 0.017999999999999794, 0.021000000000000352, 0.027000000000000135, 0.036000000000000032, 0.044000000000000039],
+      [0.062, 0.05699999999999994, 0.050000000000000044, 0.045000000000000151, 0.042000000000000037, 0.042999999999999927, 0.040000000000000036, 0.038999999999999924,
+           0.038999999999999924, 0.038000000000000034, 0.037000000000000366, 0.034000000000000252, 0.032999999999999918, 0.032000000000000028, 0.032999999999999918,
+           0.036000000000000032, 0.037000000000000366, 0.039000000000000146, 0.044000000000000039, 0.046999999999999709]]
+
+      Diferença da Correlação de Anomalias em relação a referência:
+      [[0.0040000000000000036, 0.0020000000000000018, 0.0020000000000000018, 0.0010000000000000009, 0.0020000000000000018, 0.0020000000000000018, 0.0040000000000000036,
+           0.0050000000000000044, 0.0070000000000000062, 0.009000000000000008, 0.010000000000000009, 0.01100000000000001, 0.012000000000000011, 0.012000000000000011, 
+           0.013000000000000012, 0.013000000000000012, 0.014000000000000012, 0.015000000000000013, 0.016000000000000014, 0.017000000000000015], 
+      [0.0030000000000000027, 0.0060000000000000053, 0.0060000000000000053, 0.0070000000000000062, 0.0070000000000000062, 0.0070000000000000062, 0.0069999999999998952,
+           0.0070000000000000062, 0.0060000000000000053, 0.0060000000000000053, 0.0050000000000000044, 0.0050000000000000044, 0.0040000000000000036, 0.0030000000000000027, 
+           0.0030000000000000027, 0.0030000000000000027, 0.0030000000000000027, 0.0040000000000000036, 0.0050000000000000044, 0.0060000000000000053], 
+      [0.0020000000000000018, 0.0030000000000000027, 0.0020000000000000018, 0.0030000000000000027, 0.0030000000000000027, 0.0030000000000000027, 0.0030000000000000027,
+           0.0030000000000000027, 0.0030000000000000027, 0.0030000000000000027, 0.0030000000000000027, 0.0020000000000000018, 0.0020000000000000018, 0.0020000000000000018,
+           0.0010000000000000009, 0.0020000000000000018, 0.0020000000000000018, 0.0020000000000000018, 0.0030000000000000027, 0.0040000000000000036]]
+
+    """
+    tmp_r = []
+    tmp_a = []
+    xx = rmse_experimetos.get(i)
+    yy = acor_experimentos.get(i)
+
+    for j in range(1,len(x),1):
+      
+      if(xx[j]>x[j]):
+        r = xx[j]%x[j]
+        tmp_r.append(r)
+      else:
+        r = x[j]%xx[j]
+        tmp_r.append(r)
+      
+      if(yy[j]>y[j]):
+        a = yy[j]%y[j]
+        tmp_a.append(a)
+      else:
+        a = y[j]%yy[j]
+        tmp_a.append(a)
+
+    res_rmse.append(tmp_r[:])
+    res_acor.append(tmp_a[:])
+  
+  for k in range(0,len(x)-1,1):
+    lr = []
+    la = []
+
+    for l in range(0,len(res_rmse),1):
+      a = res_rmse[l][k]
+      b = res_acor[l][k]
+      lr.append(a)
+      la.append(b) 
+    lista_r.append(lr)
+    lista_a.append(la)
+
+  for m in range(0,len(lista_r),1):
+    valor_min = min(lista_r[m])
+    for n in range(0,len(exps_list),1):
+        if valor_min == lista_r[m][n]:
+          #print("Experimento de Referecnia: ",ref_name)
+          #print("Experimento Analisados: ", exps_list)
+          #print("Variável a ser Analisada: ", varname)
+          #print("Horário da Previsão:",(m+1)*6,"horas")
+          #print("Valor da variavel de Referecnia", x[m+1])
+          print("Modelo mais preciso as",(m+1)*6,"horas",exps_list[n])
+  print()
+
+  for m in range(0,len(lista_a),1):
+    valor_min = min(lista_a[m])
+    for n in range(0,len(exps_list),1):
+        if valor_min == lista_a[m][n]:
+          print("Modelo mais acurado as",(m+1)*6,"horas",exps_list[n])
+  print()
+
+  
 def main():
-  #print("Entra na função main")
 
   assembly_fnames(datai,dataf,exps)
-  #print('1')
-  samples(exps_fnames)
-  #print('2')
-  plota_taylor(samples,stdrefs,acorefs)
-  #print('3')
 
-   
+  samples(exps_fnames)
+
+  plota_taylor(samples,stdrefs,acorefs)
+
+
   print("\n\n\n\n\n\n")
   print("Nome do Modelo de referencia: ",ref_name)
   print()
@@ -452,68 +394,7 @@ def main():
   print("\n\n")
   print("dicionário da Correlação de Anomalias dos Experimentos: \n",acor_experimentos)
   print("\n\n")
-  #print(rmse_experimetos.keys())
-  #print(rmse_experimetos.values())
-  res_rmse = []
-  res_acor = []
-  lista_r = []
-  lista_a = []
 
-  x = rmse_referecia.get(0)
-  y = acor_refencia.get(0)
-
-  for i in range(len(exps_list)):
-  
-    xx = rmse_experimetos.get(i)
-    yy = acor_experimentos.get(i)
-
-    for j in range(1,len(x),1):
-      if(xx[j]>x[j]):
-        r = xx[j]%x[j]
-        #print("Valor de ",j,"= ",r)
-        res_rmse.append(r)
-      else:
-        r = x[j]%xx[j]
-        #print("Valor de ",j,"= ",r)
-        res_rmse.append(r)
-
-      
-      if(yy[j]>y[j]):
-        a = yy[j]%y[j]
-        #print("Valor de ",j,"= ",a)
-        res_acor.append(a)
-      else:
-        a = y[j]%yy[j]
-        #print("Valor de ",j,"= ",a)
-        res_acor.append(a)
-
-      
-  
-
-  for k in range(0,len(x)-1 ,1):
-    lr = [res_rmse[k],res_rmse[k+20],res_rmse[k+40]]
-    la = [res_acor[k],res_acor[k+20],res_acor[k+40]]
-
-    lista_r.append(lr)
-    #print(lista_r[k])
-    #print(min(lista_r[k]))
-
-    lista_a.append(la)
-    #print("res_rmse da",(k+1)*6,"horas: ",res_rmse[k],res_rmse[k+20],res_rmse[k+40])
-
-  
-  #print(valor_min)
-  for m in range(0,len(lista_r),1):
-    valor_min = min(lista_r[m])
-    for n in range(0,len(exps_list),1):
-        if valor_min == lista_r[m][n]:
-          print("Experimento com o menor valor do RMSE: ",exps_list[n])
-
-  #print(min(lista_r[0]))
-  #print("\n\n")
-  #print(lista_a)
-
-  
-  
+  precisao_acuracia()
 
 main()
