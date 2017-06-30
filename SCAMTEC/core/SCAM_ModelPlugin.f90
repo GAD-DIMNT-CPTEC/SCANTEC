@@ -25,14 +25,14 @@ MODULE SCAM_Modelplugin
   !   to register functions in the plugin modules
   !  
   !  The index definitions are simply a convention
-  !  The user may change these options, and the scamtec.conf 
+  !  The user may change these options, and the scantec.conf 
   !  should be changed appropriately to ensure that the correct function
   !  is called at run time
   !
   !  This module contains, also, the definition of the functions used 
   !  for open the numerical models states to use for evaluatin an other 
   !  relevant computations using the models, corresponding to each of 
-  !  the Model used in scamtec.
+  !  the Model used in scantec.
   !
   !  !REVISION HISTORY: 
   !  25 Oct 2011    J. G. de Mattos  Initial Specification

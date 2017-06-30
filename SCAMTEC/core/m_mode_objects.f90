@@ -531,7 +531,7 @@ MODULE m_mode_objects
 	 real, allocatable    		:: cfilter(:,:)      ! Matrix to save circular filter's values	 
 	 integer, allocatable 		:: mask(:,:)    ! Mask to count objects -> resulting of Object Identification Algorithm	 
 	 real    			:: treshold	     ! Precipitation threshold defined by the user
-         ! Radio and threshold values should be defined in scamtec.conf
+         ! Radio and threshold values should be defined in scantec.conf
 	 integer 			:: i, j, radio, filter_dimension, cont	  	 
     logical         :: is_valid
 	 ! objects attributes 
@@ -539,7 +539,7 @@ MODULE m_mode_objects
 	 real				:: angle, aspect_ratio, complexity, area_hull 
 	 type(mark), pointer		:: per_linked, total_linked 
 	 type(point), pointer		:: pts_per(:) 
-	 real				:: area_tresh  ! Area threshold defined according to the area of interest to the user (scamtec.conf)
+	 real				:: area_tresh  ! Area threshold defined according to the area of interest to the user (scantec.conf)
 	 integer			:: x, y, d, flag, id, points, ii, jj	 
 
 	 type(attrs), pointer		:: objects_temp(:)
@@ -559,7 +559,7 @@ MODULE m_mode_objects
     WRITE(6,'(     2A)')'Hello from ', myname    
 #endif
 	 	 
-	 ! os valores do radio e o limiar e os pesos devem ser definidos no scamtec.conf
+	 ! os valores do radio e o limiar e os pesos devem ser definidos no scantec.conf
 	 filter_dimension=3	 
          treshold=5.0
 	 area_tresh=2	 	 	 
