@@ -285,9 +285,8 @@ def precisao_acuracia(): # Nesse método são calculados quais valores dos model
   x = rmse_referecia.get(0)
   y = acor_refencia.get(0)
 
-  for i in range(len(exps_list)): 
-    """
-      Nesse Bloco são calculados a diferença entra os valores dos modelos em relação com a referência.
+  """
+      Nesse Bloco são calculados a diferença entra os valores dos modelos em relação a referência.
       Sendo esses valores armazenados em uma lista contendo outras listas, ou seja lista dentro de lista.
 
       Exemplo utilizando a seguinte instrução via prompt de comando: "./plota_taylor_diag.py 2013010100 2013013118 VTMP-500 CTRL CTRL EnKF EnSRF NCEP"
@@ -315,6 +314,9 @@ def precisao_acuracia(): # Nesse método são calculados quais valores dos model
            0.0010000000000000009, 0.0020000000000000018, 0.0020000000000000018, 0.0020000000000000018, 0.0030000000000000027, 0.0040000000000000036]]
 
     """
+
+  for i in range(len(exps_list)): 
+    
     tmp_r = []
     tmp_a = []
     xx = rmse_experimetos.get(i)
@@ -355,12 +357,14 @@ def precisao_acuracia(): # Nesse método são calculados quais valores dos model
     valor_min = min(lista_r[m])
     for n in range(0,len(exps_list),1):
         if valor_min == lista_r[m][n]:
-          #print("Experimento de Referecnia: ",ref_name)
-          #print("Experimento Analisados: ", exps_list)
-          #print("Variável a ser Analisada: ", varname)
-          #print("Horário da Previsão:",(m+1)*6,"horas")
-          #print("Valor da variavel de Referecnia", x[m+1])
           print("Modelo mais preciso as",(m+1)*6,"horas",exps_list[n])
+  print()
+
+  for m in range(0,len(lista_r),1):
+    valor_max = max(lista_r[m])
+    for n in range(0,len(exps_list),1):
+        if valor_max == lista_r[m][n]:
+          print("Modelo menos preciso as",(m+1)*6,"horas",exps_list[n])
   print()
 
   for m in range(0,len(lista_a),1):
@@ -368,6 +372,13 @@ def precisao_acuracia(): # Nesse método são calculados quais valores dos model
     for n in range(0,len(exps_list),1):
         if valor_min == lista_a[m][n]:
           print("Modelo mais acurado as",(m+1)*6,"horas",exps_list[n])
+  print()
+
+  for m in range(0,len(lista_a),1):
+    valor_max = max(lista_a[m])
+    for n in range(0,len(exps_list),1):
+        if valor_max == lista_a[m][n]:
+          print("Modelo menos acurado as",(m+1)*6,"horas",exps_list[n])
   print()
 
   
@@ -394,6 +405,12 @@ def main():
   print("\n\n")
   print("dicionário da Correlação de Anomalias dos Experimentos: \n",acor_experimentos)
   print("\n\n")
+
+          #print("Experimento de Referecnia: ",ref_name)
+          #print("Experimento Analisados: ", exps_list)
+          #print("Variável a ser Analisada: ", varname)
+          #print("Horário da Previsão:",(m+1)*6,"horas")
+          #print("Valor da variavel de Referecnia", x[m+1])
 
   precisao_acuracia()
 
