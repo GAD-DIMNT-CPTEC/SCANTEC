@@ -53,11 +53,6 @@ import matplotlib.pyplot as plt
 
 global datai, dataf, exps, ref_name, varname, nexps
 
-rmse_experimetos = {}
-acor_experimentos = {}
-rmse_referecia = {}
-acor_refencia = {}
-
 exps = []
 ref_exps = []
 instrucaoviaprompt = sys.argv #recebe o argumento via linha de comando
@@ -198,13 +193,19 @@ def samples(exps_fnames):#SAMPLES SÃO AS AMOSTRAS OU SEJA OS EXPERIMENTOS
   """
   
   global refstd, refacor, model, samples_vars, samples, stdrefs, acorefs, name_exp
+  global rmse_experimetos, acor_experimentos, rmse_referecia, acor_refencia
 
   samples = dict()
   stdrefs = dict()
   acorefs = dict()
+  rmse_referecia = dict()
+  acor_refencia = dict()
+  rmse_experimetos = dict()
+  acor_experimentos = dict()
 
-  ref = exps_fnames[ref_name] #lista com os valores da referencia
- 
+
+  ref = exps_fnames[ref_name] #lista com os nomes dos aruivos da referencia
+  
   read_file(ref[1]) # arquivo rmse
   read_varc(data_table)
   refstd = np.mean(exp_data_table) #A função np.mean Calcula a Média dos valor selecionados
@@ -229,52 +230,45 @@ def samples(exps_fnames):#SAMPLES SÃO AS AMOSTRAS OU SEJA OS EXPERIMENTOS
     
     read_file(m[2]) # arquivo da correlaçao de anomalias dos modelos
     read_varc(data_table)
-    macor = np.mean(exp_data_table)    
-    samples_vars = np.array([mstd, macor, exps_list[i]])
-    samples.setdefault(varname,[]).append(samples_vars)
+    macor = np.mean(exp_data_table)
     acor_experimentos[i] = exp_data_table  # Nessa linha cria um dicionario com as tabela referente a variavel para cada modelo sobre o valor da Correlação de Anomalia
 
-def plota_taylor(samples,stdrefs,acorefs):
+    samples_vars = np.array([mstd, macor, exps_list[i]])
+    samples.setdefault(varname,[]).append(samples_vars)
+    
+def plota_taylor(samples,stdrefs,acorefs, horas):
   """
   Nesta função é chamada a classe TaylorDiagram.
   """
-
+  HP = horas
   # Mais cores em: https://gist.github.com/endolith/2719900 
-
   colors = plt.matplotlib.cm.Set1(np.linspace(0,1,len(samples[varname])))
-
-  fig = plt.figure(figsize=(5,5))
+  fig = plt.figure(figsize=(5,5)) #Defini o tamanho da imagem
   
   for varlev in [varname]:
+    dia = TaylorDiagram(stdrefs[varlev], acorefs[varlev], colors, fig=fig, label=ref_name)
+    # Add samples to Taylor diagram
+    for i,(stddev,corrcoef,name) in enumerate(samples[varname]):      
+      dia.add_sample(stddev, corrcoef,colors[i],
+                     marker='$%d$' % (i+1), ms=7, ls='',
+                     mfc=colors[i], mec=colors[i], 
+                     label=name)
       
-      dia = TaylorDiagram(stdrefs[varlev], acorefs[varlev], colors, fig=fig, label=ref_name)
-  
-      # Add samples to Taylor diagram
-      for i,(stddev,corrcoef,name) in enumerate(samples[varname]):
-      
-          dia.add_sample(stddev, corrcoef,colors[i],
-                         marker='$%d$' % (i+1), ms=7, ls='',
-                         mfc=colors[i], mec=colors[i], 
-                         label=name)
-      
-      # Add RMS contours, and label them
-      # contours = dia.add_contours(levels=5, colors='0.5') # 5 levels
-      # dia.ax.clabel(contours, inline=1, fontsize=10, fmt='%.1f')
+  # Título
+  if (datai == dataf):
+    dia._ax.set_title(vnames[varlev][1] + ' ' + HP + ' HP\n(' + datai + ')', y=1.025)
+  else:
+    dia._ax.set_title(vnames[varlev][1] + ' ' + HP + ' HP\n(' + datai + ' - ' + dataf + ')', y=1.025)
 
-      # Título
-      if (datai == dataf):
-        dia._ax.set_title(vnames[varlev][1] + '\n(' + datai + ')', y=1.025)
-      else:
-        dia._ax.set_title(vnames[varlev][1] + '\n(' + datai + ' - ' + dataf + ')', y=1.025)
-  
+  # Legenda 
   fig.legend(dia.samplePoints,
              [ p.get_label() for p in dia.samplePoints ],
              numpoints=1, prop={'size':6}, bbox_to_anchor=(0.95,0.9))
-
+  #Salva diagrama em imagem
   if (datai == dataf):
-    plt.savefig(ref_name + '_' + varname + '_' + datai + '.png')
+    plt.savefig(ref_name + '_' + varname + ' HP: '+ HP +'_' + datai + '.png')
   else:
-    plt.savefig(ref_name + '_' + varname + '_' + datai + '-' + dataf + '.png')
+    plt.savefig(ref_name + '_' + varname + ' HP: '+ HP +'_' + datai + '-' + dataf + '.png')
 
 def precisao_acuracia(): # Nesse método são calculados quais valores dos modelos são mais aproximado da referência assim podemos identificar qual modelo apresenta melhor precisão e acurácia
 
@@ -292,28 +286,16 @@ def precisao_acuracia(): # Nesse método são calculados quais valores dos model
       Exemplo utilizando a seguinte instrução via prompt de comando: "./plota_taylor_diag.py 2013010100 2013013118 VTMP-500 CTRL CTRL EnKF EnSRF NCEP"
 
       Diferença do RMSE em relação a referência:
-      [[0.122, 0.055000000000000049, 0.025999999999999912, 0.015000000000000124, 0.050000000000000044, 0.066999999999999948, 0.084999999999999964, 
-           0.10299999999999998, 0.12799999999999989, 0.14100000000000001, 0.15600000000000014, 0.16599999999999993, 0.17100000000000026, 0.17200000000000015, 
-           0.17300000000000004, 0.17300000000000004, 0.17500000000000027, 0.17700000000000005, 0.18400000000000016, 0.18699999999999983],
-      [0.11100000000000004, 0.11899999999999999, 0.1080000000000001, 0.097000000000000086, 0.085000000000000187, 0.075999999999999845, 0.066999999999999948,
-           0.05699999999999994, 0.050999999999999934, 0.042000000000000037, 0.036000000000000032, 0.030000000000000249, 0.024999999999999911, 0.020000000000000018,
-           0.016999999999999904, 0.017999999999999794, 0.021000000000000352, 0.027000000000000135, 0.036000000000000032, 0.044000000000000039],
-      [0.062, 0.05699999999999994, 0.050000000000000044, 0.045000000000000151, 0.042000000000000037, 0.042999999999999927, 0.040000000000000036, 0.038999999999999924,
-           0.038999999999999924, 0.038000000000000034, 0.037000000000000366, 0.034000000000000252, 0.032999999999999918, 0.032000000000000028, 0.032999999999999918,
-           0.036000000000000032, 0.037000000000000366, 0.039000000000000146, 0.044000000000000039, 0.046999999999999709]]
+      [[0.122, 0.055, 0.026, 0.015, 0.050, 0.067, 0.085, 0.103, 0.128, 0.142, 0.157, 0.166, 0.171, 0.172, 0.173, 0.173, 0.175, 0.177, 0.184, 0.187],
+       [0.111, 0.119, 0.109, 0.098, 0.086, 0.076, 0.067, 0.057, 0.051, 0.042, 0.036, 0.030, 0.025, 0.020, 0.017, 0.018, 0.021, 0.027, 0.036, 0.044],
+       [0.062, 0.057, 0.050, 0.045, 0.042, 0.043, 0.040, 0.039, 0.039, 0.038, 0.037, 0.034, 0.033, 0.032, 0.033, 0.036, 0.037, 0.039, 0.044, 0.047]]
 
       Diferença da Correlação de Anomalias em relação a referência:
-      [[0.0040000000000000036, 0.0020000000000000018, 0.0020000000000000018, 0.0010000000000000009, 0.0020000000000000018, 0.0020000000000000018, 0.0040000000000000036,
-           0.0050000000000000044, 0.0070000000000000062, 0.009000000000000008, 0.010000000000000009, 0.01100000000000001, 0.012000000000000011, 0.012000000000000011, 
-           0.013000000000000012, 0.013000000000000012, 0.014000000000000012, 0.015000000000000013, 0.016000000000000014, 0.017000000000000015], 
-      [0.0030000000000000027, 0.0060000000000000053, 0.0060000000000000053, 0.0070000000000000062, 0.0070000000000000062, 0.0070000000000000062, 0.0069999999999998952,
-           0.0070000000000000062, 0.0060000000000000053, 0.0060000000000000053, 0.0050000000000000044, 0.0050000000000000044, 0.0040000000000000036, 0.0030000000000000027, 
-           0.0030000000000000027, 0.0030000000000000027, 0.0030000000000000027, 0.0040000000000000036, 0.0050000000000000044, 0.0060000000000000053], 
-      [0.0020000000000000018, 0.0030000000000000027, 0.0020000000000000018, 0.0030000000000000027, 0.0030000000000000027, 0.0030000000000000027, 0.0030000000000000027,
-           0.0030000000000000027, 0.0030000000000000027, 0.0030000000000000027, 0.0030000000000000027, 0.0020000000000000018, 0.0020000000000000018, 0.0020000000000000018,
-           0.0010000000000000009, 0.0020000000000000018, 0.0020000000000000018, 0.0020000000000000018, 0.0030000000000000027, 0.0040000000000000036]]
+      [[0.004, 0.002, 0.002, 0.001, 0.002, 0.002, 0.004, 0.005, 0.007, 0.009, 0.010, 0.011, 0.012, 0.012, 0.013, 0.013, 0.014, 0.015, 0.016, 0.017],
+       [0.003, 0.006, 0.006, 0.007, 0.007, 0.007, 0.007, 0.007, 0.006, 0.006, 0.005, 0.005, 0.004, 0.003, 0.003, 0.003, 0.003, 0.004, 0.005, 0.006], 
+       [0.002, 0.003, 0.002, 0.003, 0.003, 0.003, 0.003, 0.003, 0.003, 0.003, 0.003, 0.002, 0.002, 0.002, 0.001, 0.002, 0.002, 0.002, 0.003, 0.004]]
 
-    """
+  """
 
   for i in range(len(exps_list)): 
     
@@ -340,18 +322,17 @@ def precisao_acuracia(): # Nesse método são calculados quais valores dos model
 
     res_rmse.append(tmp_r[:])
     res_acor.append(tmp_a[:])
-  
+
   for k in range(0,len(x)-1,1):
     lr = []
     la = []
-
     for l in range(0,len(res_rmse),1):
       a = res_rmse[l][k]
       b = res_acor[l][k]
       lr.append(a)
       la.append(b) 
     lista_r.append(lr)
-    lista_a.append(la)
+    lista_a.append(la)  
 
   for m in range(0,len(lista_r),1):
     valor_min = min(lista_r[m])
@@ -381,6 +362,7 @@ def precisao_acuracia(): # Nesse método são calculados quais valores dos model
           print("Modelo menos acurado as",(m+1)*6,"horas",exps_list[n])
   print()
 
+
   
 def main():
 
@@ -388,30 +370,53 @@ def main():
 
   samples(exps_fnames)
 
-  plota_taylor(samples,stdrefs,acorefs)
+  #plota_taylor(samples,stdrefs,acorefs)
 
+  #precisao_acuracia()
 
-  print("\n\n\n\n\n\n")
+  global am_var, am_samples, dict_lista, w, z, hora
+
+  for p in range(1,len(rmse_referecia[0]),1):
+    w = dict()
+    z = dict()
+    am_samples = []
+    dict_lista = dict()
+    w[varname]= rmse_referecia[0][p]
+    z[varname] = acor_refencia[0][p]
+    hora = str(p*6)
+    for j in range(len(exps_list)):
+      am_var = np.array([rmse_experimetos[j][p],acor_experimentos[j][p],exps_list[j]])
+      #print("am_var: ",am_var)
+      am_samples.append(am_var) 
+    dict_lista[varname] = am_samples
+    plota_taylor(dict_lista,w,z,hora)
+    print("horas:", hora)
+    print("dict_lista: ", dict_lista)
+    print("rmse_referecia: ",w)
+    print("acor_refencia:",z)
+    print()
+
+  print()
   print("Nome do Modelo de referencia: ",ref_name)
   print()
   print("Valores da variavel de Referecnia sobre RMSE: \n", rmse_referecia)
-  print("\n\n")
-
+  print()
   print("Valores da variavel de referência sobre CORRELAÇÂO DE ANOMALIAS: \n",acor_refencia)
-  print("\n\n")
+  print()
   print("nomes das experimentos: ", exps_list)
   print()
   print("dicionário RMSE dos Experimentos: \n",rmse_experimetos)
-  print("\n\n")
+  print()
   print("dicionário da Correlação de Anomalias dos Experimentos: \n",acor_experimentos)
-  print("\n\n")
+  print()
 
-          #print("Experimento de Referecnia: ",ref_name)
-          #print("Experimento Analisados: ", exps_list)
-          #print("Variável a ser Analisada: ", varname)
-          #print("Horário da Previsão:",(m+1)*6,"horas")
-          #print("Valor da variavel de Referecnia", x[m+1])
 
-  precisao_acuracia()
+  #print("Experimento de Referecnia: ",ref_name)
+  #print("Experimento Analisados: ", exps_list)
+  #print("Variável a ser Analisada: ", varname)
+  #print("Horário da Previsão:",(m+1)*6,"horas")
+  #print("Valor da variavel de Referecnia", x[m+1])
+
+
 
 main()
