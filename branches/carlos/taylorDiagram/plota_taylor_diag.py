@@ -338,28 +338,32 @@ def precisao_acuracia(): # Nesse método são calculados quais valores dos model
     valor_min = min(lista_r[m])
     for n in range(0,len(exps_list),1):
         if valor_min == lista_r[m][n]:
-          print("Modelo mais preciso as",(m+1)*6,"horas",exps_list[n])
+          #print("Modelo mais preciso as",(m+1)*6,"horas",exps_list[n])
+          print((m+1)*6,"horas",exps_list[n])
   print()
 
   for m in range(0,len(lista_r),1):
     valor_max = max(lista_r[m])
     for n in range(0,len(exps_list),1):
         if valor_max == lista_r[m][n]:
-          print("Modelo menos preciso as",(m+1)*6,"horas",exps_list[n])
+          #print("Modelo menos preciso as",(m+1)*6,"horas",exps_list[n])
+          print((m+1)*6,"horas",exps_list[n])
   print()
 
   for m in range(0,len(lista_a),1):
     valor_min = min(lista_a[m])
     for n in range(0,len(exps_list),1):
         if valor_min == lista_a[m][n]:
-          print("Modelo mais acurado as",(m+1)*6,"horas",exps_list[n])
+          #print("Modelo mais acurado as",(m+1)*6,"horas",exps_list[n])
+          print((m+1)*6,"horas",exps_list[n])
   print()
 
   for m in range(0,len(lista_a),1):
     valor_max = max(lista_a[m])
     for n in range(0,len(exps_list),1):
         if valor_max == lista_a[m][n]:
-          print("Modelo menos acurado as",(m+1)*6,"horas",exps_list[n])
+          #print("Modelo menos acurado as",(m+1)*6,"horas",exps_list[n])
+          print((m+1)*6,"horas",exps_list[n])
   print()
 
 
@@ -372,7 +376,7 @@ def main():
 
   #plota_taylor(samples,stdrefs,acorefs)
 
-  #precisao_acuracia()
+  precisao_acuracia()
 
   global am_var, am_samples, dict_lista, w, z, hora
 
@@ -385,6 +389,7 @@ def main():
     z[varname] = acor_refencia[0][p]
     hora = str(p*6)
     for j in range(len(exps_list)):
+
       am_var = np.array([rmse_experimetos[j][p],acor_experimentos[j][p],exps_list[j]])
       #print("am_var: ",am_var)
       am_samples.append(am_var) 
