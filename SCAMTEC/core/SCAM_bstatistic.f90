@@ -48,9 +48,11 @@ Module SCAM_bstatistic
   type bstat
      real, allocatable :: rmse(:,:)
      real, allocatable :: vies(:,:)
+     real, allocatable ::  mae(:,:)
      real, allocatable :: acor(:,:)
      real, allocatable :: rmse_field(:,:,:)
      real, allocatable :: vies_field(:,:,:)
+     real, allocatable ::  mae_field(:,:,:)
      real, allocatable :: exp_mean_field(:,:,:)
   !   real, allocatable :: desp(:,:) ! desvio padrao paulo dias
   end type bstat
@@ -182,30 +184,45 @@ Contains
             Status = 'replace'      &
             )
        open(unit   = FUnitOut+3,      &
+            File   = trim(scamtec%output_dir)//'/MAE'//Trim(FName)//'T.scam',   &
+            access = 'sequential',  &
+            Form   = 'formatted', &
+            Status = 'replace'      &
+            )
+       open(unit   = FUnitOut+4,      &
             File   = trim(scamtec%output_dir)//'/RMSE'//Trim(FName)//'F.scam',   &
             access = 'sequential',  &
             Form   = 'unformatted', &
             Status = 'replace'      &
             )
             
-       open(unit   = FUnitOut+4,      &
+       open(unit   = FUnitOut+5,    &
             File   = trim(scamtec%output_dir)//'/VIES'//Trim(FName)//'F.scam',   &
             access = 'sequential',  &
             Form   = 'unformatted', &
             Status = 'replace'      &
             )
 
-       open(unit   = FUnitOut+5,      &
+       open(unit   = FUnitOut+6,      &
             File   = trim(scamtec%output_dir)//'/MEAN'//Trim(FName)//'F.scam',   &
             access = 'sequential',  &
             Form   = 'unformatted', &
             Status = 'replace'      &
             )
 
+       open(unit   = FUnitOut+7,      &
+            File   = trim(scamtec%output_dir)//'/MAE'//Trim(FName)//'F.scam',   &
+            access = 'sequential',  &
+            Form   = 'unformatted', &
+            Status = 'replace'      &
+            )
+
+
        write(fmt,'(A4,I3.3,A5)')'(A9,',scamtec%nvar,'A9)'
        write(FUnitOut+0,fmt)'%Previsao',(scamtec%VarName(i),i=1,scamtec%nvar)
        write(FUnitOut+1,fmt)'%Previsao',(scamtec%VarName(i),i=1,scamtec%nvar)
        write(FUnitOut+2,fmt)'%Previsao',(scamtec%VarName(i),i=1,scamtec%nvar)
+       write(FUnitOut+3,fmt)'%Previsao',(scamtec%VarName(i),i=1,scamtec%nvar)
      !  write(FUnitOut+3,fmt)'%Previsao',(scamtec%VarName(i),i=1,scamtec%nvar) ! paulo dias
 
        !
@@ -217,23 +234,28 @@ Contains
 
           Allocate(dado(run)%rmse(scamtec%nvar,scamtec%ntime_forecast))
           Allocate(dado(run)%vies(scamtec%nvar,scamtec%ntime_forecast))
+          Allocate(dado(run)%mae (scamtec%nvar,scamtec%ntime_forecast))
           Allocate(dado(run)%acor(scamtec%nvar,scamtec%ntime_forecast))
           Allocate(dado(run)%rmse_field(npts,scamtec%nvar,scamtec%ntime_forecast))
           Allocate(dado(run)%vies_field(npts,scamtec%nvar,scamtec%ntime_forecast))
+          Allocate(dado(run)%mae_field(npts,scamtec%nvar,scamtec%ntime_forecast))
           Allocate(dado(run)%exp_mean_field(npts,scamtec%nvar,scamtec%ntime_forecast))
 
           !Allocate(dado(i)%desp(scamtec%nvar,scamtec%ntime_forecast))! paulo dias
 
           dado(run)%rmse = 0.0
           dado(run)%vies = 0.0
+          dado(run)%mae  = 0.0
           dado(run)%acor = 0.0
 
           dado(run)%rmse_field = 0.0
           dado(run)%vies_field = 0.0
+          dado(run)%mae_field  = 0.0
           dado(run)%exp_mean_field = 0.0
           DO i = 1, scamtec%nvar
              dado(run)%rmse_field(Idx(1:nidx,i),i,:) = 0.0 !scamtec%udef
              dado(run)%vies_field(Idx(1:nidx,i),i,:) = 0.0 !scamtec%udef
+             dado(run)%mae_field (Idx(1:nidx,i),i,:) = 0.0 !scamtec%udef
              dado(run)%exp_mean_field(Idx(1:nidx,i),i,:) = 0.0 !scamtec%udef
           ENDDO
 
@@ -334,7 +356,7 @@ Contains
 
     integer             :: i, j, k, p, v
     integer             :: npts
-    real                :: tmp, TmpRMSE, TmpVIES, TmpDiff1, TmpDiff2
+    real                :: tmp, TmpRMSE, TmpMAE, TmpVIES, TmpDiff1, TmpDiff2, TmpDiff3
     real, allocatable   :: anomfield(:,:)
         
     integer :: ier
@@ -358,6 +380,7 @@ Contains
 
        TmpVIES = 0.0
        TmpRMSE = 0.0
+       TmpMAE  = 0.0
 
        DO k=1,nidx
 
@@ -365,18 +388,22 @@ Contains
           
           TmpDiff1 = expfield(p,i) - reffield(p,i)
           TmpDiff2 = TmpDiff1 * TmpDiff1
+          TmpDiff3 = ABS(TmpDiff1)
 
           TmpVIES  = TmpVIES + TmpDiff1
           TmpRMSE  = TmpRMSE + TmpDiff2
+          TmpMAE   = TmpMAE  + TmpDiff3
 !
           dado(run)%vies_field(p,i,j)     = dado(run)%vies_field(p,i,j) + TmpDiff1
           dado(run)%rmse_field(p,i,j)     = dado(run)%rmse_field(p,i,j) + TmpDiff2
+          dado(run)%mae_field(p,i,j)      = dado(run)%mae_field(p,i,j)  + TmpDiff3
           dado(run)%exp_mean_field(p,i,j) = dado(run)%exp_mean_field(p,i,j) + expfield(p,i)
 
        ENDDO
 
        dado(run)%vies(i,j) = dado(run)%vies(i,j) + TmpVIES / nidx
        dado(run)%rmse(i,j) = dado(run)%rmse(i,j) + TmpRMSE / nidx
+       dado(run)%mae(i,j)  = dado(run)%mae(i,j)  + TmpMAE  / nidx
 
        Allocate(anomfield(npts,2))
 
@@ -494,19 +521,31 @@ Contains
             position = 'append'   &
             )
        Open( unit   = FUnitOut+3,      &
+            file   = trim(scamtec%output_dir)//'/MAE'//trim(Fname)//'T.scam',   &
+            form   = 'formatted', &
+            access = 'sequential',  &
+            position = 'append'   &
+            )
+       Open( unit   = FUnitOut+4,      &
             file   = trim(scamtec%output_dir)//'/RMSE'//trim(Fname)//'F.scam',   &
             form   = 'unformatted', &
             access = 'sequential',  &
             position = 'append'   &
            )
-       Open( unit   = FUnitOut+4,      &
+       Open( unit   = FUnitOut+5,      &
             file   = trim(scamtec%output_dir)//'/VIES'//trim(Fname)//'F.scam',   &
             form   = 'unformatted', &
             access = 'sequential',  &
             position = 'append'   &
            )
-       Open( unit   = FUnitOut+5,      &
+       Open( unit   = FUnitOut+6,      &
             file   = trim(scamtec%output_dir)//'/MEAN'//trim(Fname)//'F.scam',   &
+            form   = 'unformatted', &
+            access = 'sequential',  &
+            position = 'append'   &
+           )           
+       Open( unit   = FUnitOut+7,      &
+            file   = trim(scamtec%output_dir)//'/MAE'//trim(Fname)//'F.scam',   &
             form   = 'unformatted', &
             access = 'sequential',  &
             position = 'append'   &
@@ -519,6 +558,7 @@ Contains
 
     dado(run)%rmse(:,j) = sqrt(dado(run)%rmse(:,j) / scamtec%ftime_count(j))
     dado(run)%vies(:,j) = dado(run)%vies(:,j) / scamtec%ftime_count(j)
+    dado(run)%mae (:,j) = dado(run)%mae (:,j) / scamtec%ftime_count(j)
     dado(run)%acor(:,j) = dado(run)%acor(:,j) / scamtec%ftime_count(j)
         
     !dado(run)%desp(:,i) = sqrt(dado(run)%desp(:,i) / (scamtec%ftime_count(i)-1)) ! paulo dias
@@ -526,6 +566,7 @@ Contains
     write(FunitOut+0,fmt)(j-1)*scamtec%ftime_step,(dado(run)%rmse(i,j),i=1,scamtec%nvar)
     write(FunitOut+1,fmt)(j-1)*scamtec%ftime_step,(dado(run)%vies(i,j),i=1,scamtec%nvar)
     write(FunitOut+2,fmt)(j-1)*scamtec%ftime_step,(dado(run)%acor(i,j),i=1,scamtec%nvar)
+    write(FunitOut+3,fmt)(j-1)*scamtec%ftime_step,(dado(run)%mae (i,j),i=1,scamtec%nvar)
 
     npts = scamtec%nxpt*scamtec%nypt
 
@@ -535,10 +576,12 @@ Contains
         dado(run)%rmse_Field(Idx(1:nidx,i),i,j) = sqrt(dado(run)%rmse_Field(Idx(1:nidx,i),i,j)/ scamtec%ftime_count(j))
         dado(run)%vies_Field(Idx(1:nidx,i),i,j) = dado(run)%vies_Field(Idx(1:nidx,i),i,j)/ scamtec%ftime_count(j)
         dado(run)%exp_mean_Field(Idx(1:nidx,i),i,j) = dado(run)%exp_mean_Field(Idx(1:nidx,i),i,j)/ scamtec%ftime_count(j)
+        dado(run)%mae_Field(Idx(1:nidx,i),i,j)  = dado(run)%mae_Field(Idx(1:nidx,i),i,j)/ scamtec%ftime_count(j)
        
-        write(FunitOut+3)dado(run)%rmse_Field(:,i,j)
-        write(FunitOut+4)dado(run)%vies_Field(:,i,j)
-        write(FunitOut+5)dado(run)%exp_mean_Field(:,i,j)
+        write(FunitOut+4)dado(run)%rmse_Field(:,i,j)
+        write(FunitOut+5)dado(run)%vies_Field(:,i,j)
+        write(FunitOut+6)dado(run)%exp_mean_Field(:,i,j)
+        write(FunitOut+7)dado(run)%mae_Field(:,i,j)
     !print*,minval(dado(run)%rmse_Field(:,i,j)),maxval(dado(run)%rmse_Field(:,i,j))
     ENDDO
 
@@ -550,6 +593,8 @@ Contains
     Close(FUnitOut+3)
     Close(FUnitOut+4)
     Close(FUnitOut+5)
+    Close(FUnitOut+6)
+    Close(FUnitOut+7)
     
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !escrevento ctl para campos
@@ -686,6 +731,48 @@ Contains
       
       close(152)
     
+      !MAE    
+      open(153,file=trim(scamtec%output_dir)//'/Campo_MAE.ctl', status='unknown')
+      
+      write(153,'(A,A)')'dset ^','MAE'//trim(Fname)//'F.scam'
+      write(153,'(A)')
+      write(153,'(A)')'options sequential'
+      write(153,'(A)')      
+      write(153,'(A)')'undef -999.9'      
+      write(153,'(A)')      
+      write(153,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'xdef',scamtec%nxpt,'linear', scamtec%gridDesc(5), scamtec%gridDesc(10)
+      write(153,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'ydef',scamtec%nypt,'linear', scamtec%gridDesc(4), scamtec%gridDesc(9)      
+      write(153,'(A)') 
+      write(153,'(A)')'zdef    1 linear 0 1'                  
+      write(153,'(A)') 
+      write(153,'(A,I3,A,I2,A)')'tdef  ',(scamtec%forecast_time/scamtec%atime_step)+1,' linear 00Z05AUG2014 ',scamtec%atime_step,'HR'
+      write(153,'(A)')
+      write(153,'(A)')'vars 22'
+      write(153,'(A)')'VT925 00 99 Virtual Temperature @ 925 hPa [K]'
+      write(153,'(A)')'VT850 00 99 Virtual Temperature @ 850 hPa [K]'
+      write(153,'(A)')'VT500 00 99 Virtual Temperature @ 500 hPa [K]'                                           
+      write(153,'(A)')'TM850 00 99 Absolute Temperature @ 850 hPa [K]'
+      write(153,'(A)')'TM500 00 99 Absolute Temperature @ 500 hPa [K]'
+      write(153,'(A)')'TM250 00 99 Absolute Temperature @ 250 hPa [K]'
+      write(153,'(A)')'PSNM0 00 99 Pressure reduced to snm [hPa]'                                           
+      write(153,'(A)')'SH925 00 99 Specific Humidity @ 925 hPa [g/Kg]'
+      write(153,'(A)')'SH850 00 99 Specific Humidity @ 850 hPa [g/Kg]'
+      write(153,'(A)')'SH500 00 99 Specific Humidity @ 500 hPa [g/Kg]'                                         
+      write(153,'(A)')'AG925 00 99 Inst. Precipitable Water @ 925 hPa [Kg/m2]'
+      write(153,'(A)')'ZG850 00 99 Geopotential height @ 850 hPa [gpm]'
+      write(153,'(A)')'ZG500 00 99 Geopotential height @ 500 hPa [gpm]'
+      write(153,'(A)')'ZG250 00 99 Geopotential height @ 250 hPa [gpm]'
+      write(153,'(A)')'UV850 00 99 Zonal Wind @ 850 hPa [m/s]'
+      write(153,'(A)')'UV500 00 99 Zonal Wind @ 500 hPa [m/s]'
+      write(153,'(A)')'UV250 00 99 Zonal Wind @ 250 hPa [m/s]'
+      write(153,'(A)')'VV850 00 99 Meridional Wind @ 850 hPa [m/s]'
+      write(153,'(A)')'VV500 00 99 Meridional Wind @ 500 hPa [m/s]'
+      write(153,'(A)')'VV250 00 99 Meridional Wind @  250 hPa [m/s]'
+      write(153,'(A)')'PC000 00 99 TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]'
+      write(153,'(A)')'PV001 00 99 CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]'
+      write(153,'(A)')'endvars'   
+      
+      close(153)
     
     
 
