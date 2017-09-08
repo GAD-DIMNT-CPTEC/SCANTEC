@@ -7,7 +7,7 @@
 #--------------------------------------------------------------------#
 #
 # !DESCRIPTION:
-# Script para executar o SCAMTEC
+# Script para executar o SCANTEC
 #
 # !CALLING SEQUENCE:
 # ./run_scantec.sh N
@@ -34,13 +34,13 @@
 
 
 #--------------------------------------------------------------------#
-# Script para rodar os experimentos do SCAMTEC                       #
+# Script para rodar os experimentos do SCANTEC                       #
 #--------------------------------------------------------------------#
 
 export gnuplot=/scratchin/grupos/assim_dados/home/gdad/public/gnuplot5/bin/gnuplot
 
 echo ""
-echo " <<< INICIANDO TESTCASE SCAMTEC >>> " 
+echo " <<< INICIANDO TESTCASE SCANTEC >>> " 
 echo ""
 
 #--------------------------------------------------------------------#
@@ -293,7 +293,7 @@ INPUTDATA='$INPUTDATA'
 cat <<EOT1 > scantec.conf
 $INPUTDATA
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
-#                  SCAMTeC - GDAD/CPTEC/INPE - 2010                   !
+#                  SCANTEC - GDAD/CPTEC/INPE - 2010                   !
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 
 #======================================================================
@@ -413,7 +413,7 @@ echo  >> ${ARQlog}
 
 #--------------------------------------------------------------------#
 
-# Executando o SCAMTEC
+# Executando o SCANTEC
 cd ${dir_act}/bin 
 
 if [ -e scantec.x ]; then
@@ -438,7 +438,7 @@ fi
 
 
 if [ $(echo $?) -ne 0 ]; then
-  echo "Falha ao executar o SCAMTEC, abortando!"
+  echo "Falha ao executar o SCANTEC, abortando!"
   exit 2
 fi
 
@@ -476,15 +476,15 @@ if [ ! -z ${scam_fn} ]; then
  echo "Executando o script para plotar os gráficos"
  echo
 
- cp ${dir_act}/core/plot_scamtec_results.gpl ${saida_results}
+ cp ${dir_act}/core/plot_SCANTEC_results.gpl ${saida_results}
  cd ${saida_results}
- ${gnuplot} -c ./plot_scamtec_results.gpl ${datai} ${dataf}
+ ${gnuplot} -c ./plot_SCANTEC_results.gpl ${datai} ${dataf}
  
  echo "Fim da geração dos gráficos!"
  echo 
 
- echo "Resultados encontram-se em: ${saida_results}/plot_scamtec_results.eps" 
- echo "Para vizualizar a figura digite evince plot_scamtec_results.eps "
+ echo "Resultados encontram-se em: ${saida_results}/plot_SCANTEC_results.eps" 
+ echo "Para vizualizar a figura digite evince plot_SCANTEC_results.eps "
  echo 
 
 else
