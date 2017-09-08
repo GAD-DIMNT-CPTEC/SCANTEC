@@ -422,8 +422,7 @@ if [ -e scantec.x ]; then
  echo 
  echo "AGUARDE... "
  echo 
-  ./scantec.x >> ${ARQlog}
-  
+  ./scantec.x scantec.conf >> ${ARQlog}
 else
  echo
  echo " ------ WARNING ------ "
@@ -433,7 +432,6 @@ else
  echo " ------ WARNING ------ "
  echo
  exit 1
-
 fi
 
 
