@@ -1,17 +1,17 @@
 #! /scratchin/grupos/assim_dados/home/gdad/public/gnuplot5/bin/gnuplot
 
-# Script simples para a visualização dos resultados do TestCase do SCAMTEC.
+# Script simples para a visualização dos resultados do TestCase do SCANTEC.
 #
 # Dependencias:
 # - Gnuplot v>=4.6.6
-# - Tabelas com as estatistica basicas (VIES, RMSE e ACOR) do TestCase do SCAMTEC.
+# - Tabelas com as estatistica basicas (VIES, RMSE e ACOR) do TestCase do SCANTEC.
 # - Gnuplot versão >= 5.0 (os usuários podem usar a versão que está indicada no #!)
 #
 # Uso:
-# gnuplot -c plot_scamtec_results.gpl datai dataf
+# gnuplot -c plot_SCANTEC_results.gpl datai dataf
 #
 # Exemplo:
-# gnuplot -c plot_scamtec_results.gpl 2014080100 2014080100
+# gnuplot -c plot_SCANTEC_results.gpl 2014080100 2014080100
 #
 # carlos.frederico@cptec.inpe.br (20/04/2016)
 
@@ -24,13 +24,13 @@ dataf = ARG2
 #  print "Data Inicial: ", datai
 #  print "Data Final: ", dataf
 #} else {
-#  print "Uso: gnuplot -c plot_scamtec_results.gpl datai dataf"
+#  print "Uso: gnuplot -c plot_SCANTEC_results.gpl datai dataf"
 #  exit
 #}
 
 # Salva em EPS colorido
 set terminal postscript eps enhanced color
-set output "plot_scamtec_results.eps"
+set output "plot_SCANTEC_results.eps"
 
 # Definições das linhas de grade 
 set style line 11 lc rgb '#808080' lt 1
@@ -44,7 +44,7 @@ set grid back ls 12
 # Colunas: VIES, RMSE e ACOR
 # Linhas: VTMP, TEMP, UMES, ZGEO, UVEL e VVEL (não são mostrados PSNM, AGPL, PREC e PREV)
 # As figuras são plotadas começando pela primeira linha do layout
-set multiplot layout 6,3 rowsfirst title "SCAMTEC TestCase Display Output" font "Verdana,16" margins 0.03,0.99,0.05,0.92 spacing 0.05,0.025
+set multiplot layout 6,3 rowsfirst title "SCANTEC TestCase Display Output" font "Verdana,16" margins 0.03,0.99,0.05,0.92 spacing 0.05,0.025
 
 # Remove as marcações dos eixos
 set tics scale 0
