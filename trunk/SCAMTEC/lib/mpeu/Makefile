@@ -54,6 +54,15 @@ ifeq ($(SCAN_ARCH),GNU_Linux)
    LD  = gfortran
    AR  = ar
 endif
+
+ifeq ($(SCAN_ARCH),cray_GNU)
+   FPP = cc
+   CC  = cc
+   FC  = ftn
+   LD  = ftn
+   AR  = ar
+endif
+
 # default mode (max. optimization)
 mode = opt
 

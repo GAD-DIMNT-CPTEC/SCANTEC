@@ -75,6 +75,14 @@ CC      = gcc
 ARFLAGS = r
 endif
 
+ifeq ($(SCAN_ARCH),cray_GNU)
+F77     = ftn
+FFLAGS  = $(BIT_FLAG) -DLINUX64
+CFLAGS  = -O -DLINUX
+CC      = gcc
+ARFLAGS = r
+endif
+
 ifeq ($(SCAN_ARCH),linux_ifc)
 ifeq ($(UMACHINE), ia64)
 BIT_FLAG = -DLINUX64
