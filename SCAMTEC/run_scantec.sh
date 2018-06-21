@@ -474,15 +474,15 @@ if [ ! -z ${scam_fn} ]; then
  echo "Executando o script para plotar os gráficos"
  echo
 
- cp ${dir_act}/core/plot_SCANTEC_results.gpl ${saida_results}
+ cp ${dir_act}/core/plot_scamtec_results.gpl ${saida_results}
  cd ${saida_results}
- ${gnuplot} -c ./plot_SCANTEC_results.gpl ${datai} ${dataf}
+ ${gnuplot} -c ./plot_scamtec_results.gpl ${datai} ${dataf}
  
  echo "Fim da geração dos gráficos!"
  echo 
 
  echo "Resultados encontram-se em: ${saida_results}/plot_SCANTEC_results.eps" 
- echo "Para vizualizar a figura digite evince plot_SCANTEC_results.eps "
+ echo "Para vizualizar a figura digite evince ${saida_results}/plot_SCANTEC_results.eps "
  echo 
 
 else
