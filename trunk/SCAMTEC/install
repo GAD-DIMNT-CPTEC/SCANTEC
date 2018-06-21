@@ -1,5 +1,6 @@
 #!/bin/sh
 ROOT_DIR=`pwd`
+
 while true
 do
 echo "------------------choose one of options-----------------"
@@ -45,6 +46,9 @@ echo
 echo "--------------------loading environment-----------------"
 echo
 export SCAN_ARCH=cray_GNU
+# Mudando ambiente de programacao para usar o GNU Fortran
+. /opt/modules/default/etc/modules.sh
+module swap PrgEnv-pgi PrgEnv-gnu
 echo SCAN_ARCH=$SCAN_ARCH
 echo
 echo "--------------------environment loaded------------------"
@@ -79,9 +83,30 @@ break
 ;;
 #
 *)
-echo "invalid option"
+echo
+echo "----- invalid option ---"
+echo
+continue
 ;;
 esac
 cd $ROOT_DIR; make
 break
 done
+
+\ls bin/scantec.x > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+  echo " "
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "!      Erro na Compilacao do SCANTEC       !"
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo " "
+  echo "Arquivo bin/scantec.x nao encontrado"
+  echo " "
+else
+  echo " "
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo "!    Compilacao do SCANTEC com sucesso     !"
+  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  echo " "
+fi
+

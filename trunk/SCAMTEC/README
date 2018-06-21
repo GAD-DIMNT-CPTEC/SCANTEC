@@ -29,7 +29,11 @@ $ cd SCANTEC/
 6. Para compilar o SCANTEC execute o script install com o comando:
 $ ./install
 
-Obs.: Escolha a opção 4 para o compilador pgi do TUPA;
+Obs1. Escolha a općao 1 para make clean caso tenha tipo uma tentativa de
+      instalacao sem sucesso já executada.
+
+Obs2. Escolha a opção 3 para usar o ifort no tupa ou a opcao 4 para 
+      usar o compilador pgi do TUPA;
 
 7. Executar o SCANTEC (Rodada TestCase):
 $ ./run_scantec.sh <opção>
