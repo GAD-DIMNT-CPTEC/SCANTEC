@@ -280,28 +280,26 @@ CONTAINS
     pds5 = (/ 51, 51, 51, 11, 11, 11, 11, 2, 54,  7,  7,  7, 33, 33, 33, 34, 34, 34, 61, 63/) !parameter
     pds7 = (/925,850,500,925,850,500,250,000,000,850,500,250,850,500,250,850,500,250,000,000/) !htlev2
 
-    allocate(lb2(TQ062L028_struc%npts,scamtec%nvar))
     allocate(lb(TQ062L028_struc%npts,size(pds5)))
     allocate(f(TQ062L028_struc%npts,size(pds5)))
 
   
     inquire (file=trim(fname), exist=file_exists)
     
-    do i=1, 300	
-		
-		    if(trim(fname(i:i+6)) .eq. 'GPOSNMC')then
-			    dataini=trim(fname(i+7:i+16))
-			    datafinal=trim(fname(i+17:i+26))
-		    endif			
-		
-	    enddo 
-	   	
-	    if(dataini .eq. datafinal)then
-		    y=size(pds5)-2
-	    else
-		    y=size(pds5)
-	    endif
-	    	    	    
+    do i=1, 300
+
+      if(trim(fname(i:i+6)) .eq. 'GPOSNMC' .or. trim(fname(i:i+6)) .eq. 'GPOSCPT')then
+        dataini=trim(fname(i+7:i+16))
+        datafinal=trim(fname(i+17:i+26))
+      endif
+
+    enddo 
+ 
+    if(dataini .eq. datafinal)then
+      y=size(pds5)-2
+    else
+      y=size(pds5)
+    endif
     
     do iv = 1, y!size(pds5)
              
@@ -345,7 +343,7 @@ CONTAINS
 
           deallocate(f)
           deallocate(lb)
-          
+     
           call perr(myname_,'File Not Found: '//trim(fname),stat)
           return
 
@@ -362,18 +360,16 @@ CONTAINS
     allocate(f2(TQ062L028_struc%npts,scamtec%nvar))
     allocate(lb2(TQ062L028_struc%npts,scamtec%nvar))
 
-
     do i=1,TQ062L028_struc%npts
-       f2(i, 1) = tv(f(i,4),f(i,1)); lb2(i,1) = lb(i,1) ! Vtmp @ 925 hPa [K]
-       f2(i, 2) = tv(f(i,5),f(i,2)); lb2(i,2) = lb(i,2) ! Vtmp @ 850 hPa [K]
-       f2(i, 3) = tv(f(i,6),f(i,3)); lb2(i,3) = lb(i,3) ! Vtmp @ 500 hPa [K]  
+      f2(i, 1) = tv(f(i,4),f(i,1)); lb2(i,1) = lb(i,1) ! Vtmp @ 925 hPa [K]
+      f2(i, 2) = tv(f(i,5),f(i,2)); lb2(i,2) = lb(i,2) ! Vtmp @ 850 hPa [K]
+      f2(i, 3) = tv(f(i,6),f(i,3)); lb2(i,3) = lb(i,3) ! Vtmp @ 500 hPa [K]  
     enddo
     
     f2(:, 4) = f(:, 5); lb2(:,4) = lb(:,5)              ! Absolute Temperature @ 850 hPa [K]
     f2(:, 5) = f(:, 6); lb2(:,5) = lb(:,6)              ! Absolute Temperature @ 500 hPa [K]
     f2(:, 6) = f(:, 7); lb2(:,6) = lb(:,7)              ! Absolute Temperature @ 250 hPa [K]
     
-
     f2(:, 7) = f(:, 8); lb2(:, 7) = lb(:,8)             ! PSNM [hPa]
     f2(:, 8) = f(:, 1)*1000.0 ; lb2(:, 8) = lb(:,1)     ! Umes @ 925 hPa [g/Kg]
     f2(:, 9) = f(:, 2)*1000.0 ; lb2(:, 9) = lb(:,2)     ! Umes @ 850 hPa [g/Kg]
@@ -391,14 +387,15 @@ CONTAINS
     f2(:,20) = f(:,18); lb2(:,20) = lb(:,18)             ! Vvel @ 250 hPa [m/s]
            
     if (y .eq. size(pds5)-2)then
-    f2(:,21) = 0.0; lb2(:,21) = .false.             ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]     
-    f2(:,22) = 0.0; lb2(:,22) = .false.             ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]   
+      f2(:,21) = 0.0; lb2(:,21) = .false.             ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]     
+      f2(:,22) = 0.0; lb2(:,22) = .false.             ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]   
     else
-    f2(:,21) = f(:,19); lb2(:,21) = lb(:,19)             ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]     
-    f2(:,22) = f(:,20); lb2(:,22) = lb(:,20)             ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]   
+      f2(:,21) = f(:,19); lb2(:,21) = lb(:,19)             ! TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]     
+      f2(:,22) = f(:,20); lb2(:,22) = lb(:,20)             ! CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]   
     endif
-    DeAllocate(lb)
-    DeAllocate(f)
+
+    deallocate(lb)
+    deallocate(f)
 
     !
     ! padronizando pontos com undef

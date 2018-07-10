@@ -283,7 +283,7 @@ CONTAINS
     
     do i=1, 300	
 		
-		    if(trim(fname(i:i+6)) .eq. 'GPOSNMC')then
+		    if(trim(fname(i:i+6)) .eq. 'GPOSNMC' .or. trim(fname(i:i+6)) .eq. 'GPOSCPT')then
 			    dataini=trim(fname(i+7:i+16))
 			    datafinal=trim(fname(i+17:i+26))
 		    endif			

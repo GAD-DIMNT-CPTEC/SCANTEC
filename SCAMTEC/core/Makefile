@@ -45,7 +45,6 @@ FFLAGS  += -I$(incdir) -I$(MPEU_INC)
   LDFLAGS  = 
   ARFLAGS  = -r
 
-
 #
 # Flags to Intel fortran with gcc
 #
@@ -57,6 +56,7 @@ ifeq ($(SCAN_ARCH),Darwin_intel)
    LD  = ifort
    AR  = ar
    FFLAGS += -fpp -assume byterecl -heap-arrays 
+   LDFLAGS += -L/opt/lapack/intel -llapack -lblas
 
 # add flags for debugging if requested
    ifeq (dbg,$(findstring dbg,$(mode)))
@@ -188,7 +188,7 @@ $(BIN): $(OBJS) $(MPEU_LIB)/libmpeu.a
 	@$(ECHO) ""
 	@$(ECHO) "Linking executable $(@F)"
 	@$(ECHO) ""
-	$(LD) $(LDFLAGS) $(notdir $(OBJS)) $(LIBDIRS) $(LIBS) -o $@
+	$(LD) $(notdir $(OBJS)) $(LIBDIRS) $(LIBS) $(LDFLAGS) -o $@
 
 # args for fgen & f2html
 FGENARGS   = -s $(srcdir) -l $(incdir) -i $(incdir) 
