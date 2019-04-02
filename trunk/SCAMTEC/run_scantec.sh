@@ -37,7 +37,7 @@
 # Script para rodar os experimentos do SCANTEC                       #
 #--------------------------------------------------------------------#
 
-export gnuplot=/scratchin/grupos/assim_dados/home/gdad/public/gnuplot5/bin/gnuplot
+export gnuplot=/scratchin/grupos/das/projetos/gdad/public/gnuplot5/bin/gnuplot
 
 echo ""
 echo " <<< INICIANDO TESTCASE SCANTEC >>> " 
@@ -106,23 +106,23 @@ dy=0.25
 
 # Reference File
 pl_model_refer=11 # reference model
-arq_refer=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra # Reference file
+arq_refer=/scratchin/grupos/das/projetos/gdad/DataFix/OBS/testcase/SCAMTEC/BRAMS/5km/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra # Reference file
 
 #Experiment Files
 quant_exp=1 #Number of Experiments
 pl_model_exper=11 #pliging experimento
-arq_prev=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
+arq_prev=/scratchin/grupos/das/projetos/gdad/DataFix/OBS/testcase/SCAMTEC/BRAMS/5km/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
 
 
 # Climatologia
 use_climatologia=1
 id_climatologia=3
-arq_climatologia=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/climatologiaJGM/climatologia50yr.%mc.bin # Climatology file
+arq_climatologia=/stornext/online6/das/luiz.sapucci/testcase_scantec/climatologiaJGM/climatologia50yr.%mc.bin # Climatology file
 
 # Precipitacao
 use_precipitacao=1
 id_model_precipitacao=5 # Precipitation Model Id
-arq_precipitacao=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/precipitacao/3B42RT/%y4/prec_AS/new_AS_3B42RT.%y4.%m2.%d2.%h2z.bin # Precipitation file
+arq_precipitacao=/stornext/online6/das/luiz.sapucci/testcase_scantec/precipitacao/3B42RT/%y4/prec_AS/new_AS_3B42RT.%y4.%m2.%d2.%h2z.bin # Precipitation file
 acum_periodo_obs=3 # Define o periodo de acumulo de precpitacao da observacao
 acum_periodo_exp=24 # Define o periodo de acumulo de precpitacao do experimento
 
@@ -155,22 +155,22 @@ dy=0.4
 
 # Reference File
 pl_model_refer=1 # reference model
-arq_refer=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/exp_global_cptec/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.grb # Reference file
+arq_refer=/stornext/online6/das/luiz.sapucci/testcase_scantec/exp_global_cptec/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.grb # Reference file
 
 #Experiment Files
 quant_exp=1 #Number of Experiments
 pl_model_exper=1
-arq_prev=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/exp_global_cptec/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb
+arq_prev=/stornext/online6/das/luiz.sapucci/testcase_scantec/exp_global_cptec/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.grb
 
 #climatologia
 use_climatologia=1
 id_climatologia=3
-arq_climatologia=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/climatologiaJGM/climatologia50yr.%mc.bin # Climatology file
+arq_climatologia=/stornext/online6/das/luiz.sapucci/testcase_scantec/climatologiaJGM/climatologia50yr.%mc.bin # Climatology file
 
 #precipitacao
 use_precipitacao=0
 id_model_precipitacao=5 # Precipitation Model Id
-arq_precipitacao=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/precipitacao/3B42RT/%y4/prec_AS/new_AS_3B42RT.%y4.%m2.%d2.%h2z.bin # Precipitation file
+arq_precipitacao=/stornext/online6/das/luiz.sapucci/testcase_scantec/precipitacao/3B42RT/%y4/prec_AS/new_AS_3B42RT.%y4.%m2.%d2.%h2z.bin # Precipitation file
 acum_periodo_obs=3 # Define o periodo de acumulo de precpitacao da observacao
 acum_periodo_exp=24 # Define o periodo de acumulo de precpitacao do experimento
 
@@ -204,22 +204,22 @@ dy=0.5          # run domain resolution dy
 
 # Reference File
 pl_model_refer=11 # reference model
-arq_refer=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra # Reference file
+arq_refer=/scratchin/grupos/das/projetos/gdad/DataFix/OBS/testcase/SCAMTEC/BRAMS/5km/%y4%m2%d200/grads/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.gra # Reference file
 
 #Experiment Files
 quant_exp=1 #Number of Experiments
 pl_model_exper=11 
-arq_prev=/stornext/online8/exp-dmd/OPER.2016/05km/exp5kmM/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
+arq_prev=/scratchin/grupos/das/projetos/gdad/DataFix/OBS/testcase/SCAMTEC/BRAMS/5km/%y4%m2%d200/grads/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.gra
 
 # Climatologia
 use_climatologia=1
 id_climatologia=3
-arq_climatologia=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/climatologiaJGM/climatologia50yr.%mc.bin # Climatology file
+arq_climatologia=/stornext/online6/das/luiz.sapucci/testcase_scantec/climatologiaJGM/climatologia50yr.%mc.bin # Climatology file
 
 # Precipitacao - Precipitation File
 use_precipitacao=1
 id_model_precipitacao=5 # Precipitation Model Id
-arq_precipitacao=/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/precipitacao/3B42RT/%y4/prec_AS/new_AS_3B42RT.%y4.%m2.%d2.%h2z.bin # Precipitation file
+arq_precipitacao=/stornext/online6/das/luiz.sapucci/testcase_scantec/precipitacao/3B42RT/%y4/prec_AS/new_AS_3B42RT.%y4.%m2.%d2.%h2z.bin # Precipitation file
 acum_periodo_obs=3 # Define o periodo de acumulo de precpitacao da observacao
 acum_periodo_exp=6 # Define o periodo de acumulo de precpitacao do experimento
 
