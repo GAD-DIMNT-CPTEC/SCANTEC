@@ -22,7 +22,7 @@
 #      24-05-2016 - Claudio Pavani     - TestCase BRAMS, execução do plot.gpl
 #      15-06-2016 - Carlos Bastarz     - Ajustes, padronização e generalizações
 #      16-06-2016 - Claudio Pavani     - Acrescentando mais um testeCase
-#      04-07-2016 - Lucas Amarante     - Atualizando testcase e outors parametros
+#      04-07-2016 - Lucas Amarante     - Atualizando testcase e outros parametros
 #
 #
 #EOP  
