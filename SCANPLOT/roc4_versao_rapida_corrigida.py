@@ -1,3 +1,4 @@
+import ntpath
 import glob
 import numpy as np
 import os
@@ -26,8 +27,8 @@ def plot_DIARIO_1_var(
 
     var_1 = str(title) +'-'+ str(level) #"title+level
 
-    path_1 ='dadosscantec/exp1/diario/'+str(regiao)
-    path_2 ='dadosscantec/exp2/diario/'+str(regiao)
+    path_1 ='dadosscantec/aval_SMG/diario/00Z/SMG_V2.0.0.'+str(regiao)
+    path_2 ='dadosscantec/aval_SMG/diario/00Z/SMG_V2.1.0.'+str(regiao)
     #
     print("inicio: "+ str(start_dt) +"  fim: "+ str(end_dt) )
     lista_1 = []
@@ -46,48 +47,48 @@ def plot_DIARIO_1_var(
         #
         anomesdia = dt.strftime("%Y%m%d")
 
-        allFiles_1 = glob.glob(path_1   + '/'+str(statistic)
-                                        +'EXP01_'
-                                        + str(ano)
-                                        + str(mes) 
-                                        + str(dia) 
-                                        + str(horario)
-                                        + str(ano)
-                                        + str(mes) 
-                                        + str(dia) 
-                                        + str(horario)
-                                        +'T.csv'
-                                        )
-        allFiles_2 = glob.glob(path_2   + '/'+str(statistic)
-                                        +'EXP01_'
-                                        + str(ano)
-                                        + str(mes) 
-                                        + str(dia) 
-                                        + str(horario)
-                                        + str(ano)
-                                        + str(mes) 
-                                        + str(dia) 
-                                        + str(horario)
-                                        +'T.csv'
-                                        )
+        allFiles_1 = glob.glob(path_1 + '/' + str(statistic)
+                                      + 'EXP01_'
+                                      + str(ano)
+                                      + str(mes) 
+                                      + str(dia) 
+                                      + str(horario)
+                                      + str(ano)
+                                      + str(mes) 
+                                      + str(dia) 
+                                      + str(horario)
+                                      +'T.csv'
+                                      )
+        allFiles_2 = glob.glob(path_2 + '/'+str(statistic)
+                                      +'EXP01_'
+                                      + str(ano)
+                                      + str(mes) 
+                                      + str(dia) 
+                                      + str(horario)
+                                      + str(ano)
+                                      + str(mes) 
+                                      + str(dia) 
+                                      + str(horario)
+                                      +'T.csv'
+                                      )
         #
         #
         allFiles_1.sort()
         allFiles_2.sort()
         #
         for file_ in allFiles_1:
-            name_file=os.path.splitext(file_)[0][54:56]
+            name_file=ntpath.basename(file_)
             #eixo x
-            datas_1.append(name_file)
+            datas_1.append(name_file[26:28])
             df = pd.read_csv(file_)                  
             #eixo y    
             td = df.loc[positionSCANTEC,var_1]
             lista_1.append(td)
         #
         for file_ in allFiles_2:
-            name_file=os.path.splitext(file_)[0][54:56]
+            name_file=ntpath.basename(file_)
             #eixo x
-            datas.append(name_file)
+            datas.append(name_file[26:28])
             print("exp2")
             print(name_file)
             df = pd.read_csv(file_)
@@ -100,7 +101,10 @@ def plot_DIARIO_1_var(
 
     lista_format = [round(elem, 3) for elem in lista]
     lista_1_format = [round(elem, 3) for elem in lista_1]
-   
+ 
+    print("datas:\n",datas)
+    print("datas_1:\n",datas_1)
+  
     sns.set()
     
     fig=plt.figure()
@@ -118,39 +122,37 @@ def plot_DIARIO_1_var(
     plt.title(str(statistic)
                 +' Diário '
                 +title+'-'
-                + str(level)
-                +' '+str(regiao)
+                + str(level) + 'hPa'
+                +' '+str(regiao.upper())
                 + ' FCT '
-                + str(previsao)
+                + str(previsao) + 'h'
                 + '\n'
                 + str(start_dt)
-                + str(horario)
+                + str(horario) 
                 +' - '
                 + str(end_dt) 
                 + str(horario)
                 +' '
                 )
     #
-    #plt.xticks(np.arange(1,32,1))
+#    plt.xticks(np.arange(1,32,1))
     plt.tick_params(labelsize=6)
     
     plt.xticks(rotation=45)#
     fig.align_labels()
 
+    print("lista_1_format:",lista_1_format)
+
     plt.ylim(ymin = (min(lista_1_format)) - 0.01) if min(lista_1_format) < min(lista_format) else plt.ylim(ymin = min(lista_format) - 0.01)
     plt.ylim(ymax = (max(lista_1_format)) + 0.01) if max(lista_1_format) > max(lista_format) else plt.ylim(ymax = max(lista_format) + 0.01)
    
-
     plt.legend()
     #plt.grid()
-    plt.savefig('tmp_exp0102/diario/'+str(regiao)+'/'+str(statistic)+'_DIARIO_'+ str(title) +'-'+ str(level) +'_'+
-                str(regiao)+'_'+str(previsao)+'h_12Z_indicefile'+ 
-                str(positionSCANTEC)+'_'+ str(start_dt)+ str(horario)+'_'+ str(end_dt)+ str(horario)+'.png')
+    plt.savefig('tmp_exp0102/diario/' + str(regiao.upper()) + '/' + str(statistic) + '_DIARIO_' + str(title) + '-' + str(level) + '_' + str(regiao.upper()) + '_' + str(previsao) + 'h_12Z_indicefile' + str(positionSCANTEC) + '_' + str(start_dt) + str(horario) + '_' + str(end_dt) + str(horario) + '.png', dpi=200)
     plt.close('all')
     return
 
-
-a =select(6,3,12,5,6,5,5,4,2)
+a =select(6,3,12,5,6,5,2,4,2)
 
 #Necessário para o relatório:
 
@@ -211,75 +213,76 @@ a =select(6,3,12,5,6,5,5,4,2)
 
 #***
 #Entre com a data
-start_dt = date(2015, 5, 3)
+start_dt = date(2015, 5, 4)
 end_dt = date(2015, 5, 31)
+#end_dt = date(2015, 5, 23)
 
-#plot_DIARIO_1_var(start_dt,end_dt,"ZGEO","VIES","24","500",4,"GL","00")
+plot_DIARIO_1_var(start_dt,end_dt,"ZGEO","ACOR","24","850",4,"hn","00")
 
-#***************
-#Para areas GL, TR e HS -> 3 a 28 for z in range(0,3):
-#Para areas AS -> 1 a 14 for z in range(4,5):
-#Para area HN -> 1 a 23  for z in range(3,4):
-
-print("250 - 850")
-print("start_dt | end_dt | title | statistic | previsao | level | positionSCANTEC | regiao | horario")
-for h in range(0,4):
-    #(0,4)
-    for z in range(3,4):
-        #(0,6)
-       for x in range (0,3):
-           #(0,4)
-           for  c in range(0,3):
-                    #(0,3)
-                   for e, g in zip(range(0,3),range(0,3)):
-                           plt.figure(figsize=(5,5))
-                           print("positionSCANTEC: "+ str(x))
-                           print("statistic:" +str(e))
-                           print("area:" + str(a[6][z]))
-                           print("horario:"+ a[8][h])
-                           print(e)
-                           print("Level:"+ str(g))
-
-                           plot_DIARIO_1_var(start_dt,end_dt,                                    
-                                    str(a[3][c]), a[2][e],a[1][x],
-                                    a[4][g],a[5][x], a[6][z], a[8][h]
-                                    )
-#print("500-925")
-#print("start_dt | end_dt | title | statistic | previsao | level | positionSCANTEC | regiao | horario")
-#for h in range(0,4):
-#    for z in range(0,3):
-#        for e in range(0,3):
-#            for x in range (0,3):
-#                for  c in range(4,6):
-#                        for g in range(1,4):
-#                                plt.figure(figsize=(5,5))
-#                                print("positionSCANTEC: "+ str(x))
-#                                print("statistic:" +str(e))
-#                                print("Level:"+ str(g))
-#                                plot_DIARIO_1_var(start_dt,end_dt,                                         
-#                                         str(a[3][c]), a[2][e],a[1][x],
-#                                         a[4][g],a[5][x], a[6][z], a[8][h]
-#                                         )
+####***************
+####Para areas GL, TR e HS -> 3 a 28 for z in range(0,3):
+####Para areas AS -> 1 a 14 for z in range(4,5):
+####Para area HN -> 1 a 23  for z in range(3,4):
 ###
-#print("000 - 925")
-#print("start_dt | end_dt | title | statistic | previsao | level | positionSCANTEC | regiao | horario")
-#for h in range(0,4):
-#    for z in range(0,3):
-#       for x in range (0,3):
-#           for  c, g in zip(range(6,8), range(3,5) ):
-#                for e in range(0,3):
-#                   # for g in range(3,4):
-#                    plt.figure(figsize=(5,5))
-#                    print("positionSCANTEC: "+ str(x))
-#                    print("area:" + str(a[6][z]))
-#                    print("horario:"+ a[8][h])
-#                    print("title:"+str(a[3][b]))
-#                    print(e)
-#                    print("Level:"+ str(g))
-#                    #
-#                    plot_DIARIO_1_var(start_dt,end_dt,                                
-#                                str(a[3][c]), a[2][e],a[1][x],
-#                                str(a[4][g]),a[5][x], a[6][z], a[8][h]
-#                                )
-#
-#
+###print("250 - 850")
+###print("start_dt | end_dt | title | statistic | previsao | level | positionSCANTEC | regiao | horario")
+###for h in range(0,4):
+###    #(0,4)
+###    for z in range(3,4):
+###        #(0,6)
+###       for x in range (0,3):
+###           #(0,4)
+###           for  c in range(0,3):
+###                    #(0,3)
+###                   for e, g in zip(range(0,3),range(0,3)):
+###                           plt.figure(figsize=(5,5))
+###                           print("positionSCANTEC: "+ str(x))
+###                           print("statistic:" +str(e))
+###                           print("area:" + str(a[6][z]))
+###                           print("horario:"+ a[8][h])
+###                           print(e)
+###                           print("Level:"+ str(g))
+###
+###                           plot_DIARIO_1_var(start_dt,end_dt,                                    
+###                                    str(a[3][c]), a[2][e],a[1][x],
+###                                    a[4][g],a[5][x], a[6][z], a[8][h]
+###                                    )
+####print("500-925")
+####print("start_dt | end_dt | title | statistic | previsao | level | positionSCANTEC | regiao | horario")
+####for h in range(0,4):
+####    for z in range(0,3):
+####        for e in range(0,3):
+####            for x in range (0,3):
+####                for  c in range(4,6):
+####                        for g in range(1,4):
+####                                plt.figure(figsize=(5,5))
+####                                print("positionSCANTEC: "+ str(x))
+####                                print("statistic:" +str(e))
+####                                print("Level:"+ str(g))
+####                                plot_DIARIO_1_var(start_dt,end_dt,                                         
+####                                         str(a[3][c]), a[2][e],a[1][x],
+####                                         a[4][g],a[5][x], a[6][z], a[8][h]
+####                                         )
+######
+####print("000 - 925")
+####print("start_dt | end_dt | title | statistic | previsao | level | positionSCANTEC | regiao | horario")
+####for h in range(0,4):
+####    for z in range(0,3):
+####       for x in range (0,3):
+####           for  c, g in zip(range(6,8), range(3,5) ):
+####                for e in range(0,3):
+####                   # for g in range(3,4):
+####                    plt.figure(figsize=(5,5))
+####                    print("positionSCANTEC: "+ str(x))
+####                    print("area:" + str(a[6][z]))
+####                    print("horario:"+ a[8][h])
+####                    print("title:"+str(a[3][b]))
+####                    print(e)
+####                    print("Level:"+ str(g))
+####                    #
+####                    plot_DIARIO_1_var(start_dt,end_dt,                                
+####                                str(a[3][c]), a[2][e],a[1][x],
+####                                str(a[4][g]),a[5][x], a[6][z], a[8][h]
+####                                )
+####
+####
