@@ -14,9 +14,9 @@
      
      {"positionSCANTEC": [4,8,12,16,20,24]},
 
-     {"regiao": ["GL","TR","HS","HN","AS"]},
+     {"regiao": ["gl","tr","hs","hn","as"]},
 
-     {"experimentos": ["exp1","exp2","exp3","exp4","exp5"]},
+     {"experimentos": ["SMG_V2.0.0","SMG_V2.1.0"]},
 
      {"horario": ["00","06","12","18"]}, 
 
