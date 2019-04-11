@@ -1,0 +1,21 @@
+{
+    "version": "0.1",
+    "language": "en",
+    "dictionaryDefinitions": [
+     { "name": "projectDictionary", "path": "./dictionary.txt"}
+    ],
+    "dictionaries": ["projectDictionary"],
+    "languageSettings": [
+     { "languageId": "*", "dictionaries": ["projectDictionary"] }
+    ],
+    "ignoreRegExpList": [
+    "\\\\cite{[A-Za-z0-9, -]+}",
+    "\\\\begin{\\w+}",
+    "\\\\end{\\w+}",
+    "\\\\usepackage{\\w+}",
+    "\\\\bibliographystyle{\\w+}",
+    "\\\\hyphenation{[A-Za-z0-9, -]+}",
+    "\\w+{?"]
+   }
+   
+   

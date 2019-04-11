@@ -1,0 +1,56 @@
+{
+  "var_scantec": [
+
+     {"position": [4 ,8, 12, 17, 21, 25]},
+
+     {"previsao": [24,48,72,96,120,144]},
+
+     {"estatistica": ["ACOR", "RMSE", "VIES"]},
+     
+     {"title": ["TEMP","UVEL","VVEL","ZGEO","VTMP","UMES","AGPL","PSNM","PREC-000","PREC","PREV-000","PREV"]},
+
+     
+     {"level": [250,500,850,925,"000"]},
+     
+     {"positionSCANTEC": [4,8,12,16,20,24]},
+
+     {"regiao": ["GL","TR","HS","HN","AS"]},
+
+     {"experimentos": ["exp1","exp2","exp3","exp4","exp5"]},
+
+     {"horario": ["00","06","12","18"]}, 
+
+     {"frequencia": ["diario","mensal"]},     
+      
+     {"var_VTMP":
+            {"title":"VTMP",
+            "level":[500,850,925]}
+            },
+     
+     {"var_TEMP":
+            {"title":"TEMP",
+            "level":[250,500,850]}
+            },
+     
+     {"var_UMES":
+            { "title":"UMES",
+              "level": [500, 850,925]}       
+            },
+     
+      {"var_ZGEO":
+            { "title":"ZGEO",
+              "level": [250, 500,850]}       
+            },
+      
+      {"var_UVEL":
+            { "title":"UVEL",
+              "level": [250,500,850]}       
+            },
+      
+      {"var_VVEL":
+            { "title":"VVEL",
+              "level": [250,500,850]}       
+            }      
+      
+     ]  
+}    
