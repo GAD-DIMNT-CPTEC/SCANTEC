@@ -23,7 +23,7 @@ from datetime import timedelta, date
 
 start_dt = date(2015, 5, 4)
 end_dt = date(2015, 5, 31)
-
+#
 def plot_DIARIO_1_var(
                     start_dt,
                     end_dt,                    
@@ -37,7 +37,7 @@ def plot_DIARIO_1_var(
                     ):
 
     var_1 = str(title) +'-'+ str(level) #"title+level
-
+    #
     path_1 ='dadosscantec/aval_SMG/diario/00Z/SMG_V2.0.0.'+str(regiao)
     path_2 ='dadosscantec/aval_SMG/diario/00Z/SMG_V2.1.0.'+str(regiao)
     #
@@ -57,7 +57,7 @@ def plot_DIARIO_1_var(
         ano = dt.strftime("%Y")
         #
         anomesdia = dt.strftime("%Y%m%d")
-
+        #
         allFiles_1 = glob.glob(path_1 + '/' + str(statistic)
                                       + 'EXP01_'
                                       + str(ano)
@@ -108,27 +108,27 @@ def plot_DIARIO_1_var(
             ts = df.loc[positionSCANTEC,var_1]
             #
             lista.append(ts)
- 
-
+    #
+    #
     lista_format = [round(elem, 3) for elem in lista]
     lista_1_format = [round(elem, 3) for elem in lista_1]
- 
+    #
     print("datas:\n",datas)
     print("datas_1:\n",datas_1)
-  
+    #
     sns.set()
-    
+    #
     fig=plt.figure()
-
+    #
     plt.plot(datas,lista_format, marker='s', label='v2.1.0')
     plt.plot(datas_1,lista_1_format, marker='8', label='v2.0.0')
-
+    #
     plt.ylabel(str(statistic))
     plt.xlabel("Dia")
-
+    #
     plt.axhline(y=0 , color='black') if str(statistic) == "VIES" else print("sem axhline")
-
-
+    #
+    #
     #    
     plt.title(str(statistic)
                 +' Diário '
@@ -146,20 +146,41 @@ def plot_DIARIO_1_var(
                 +' '
                 )
     #
-#    plt.xticks(np.arange(1,32,1))
+    #
     plt.tick_params(labelsize=6)
-    
+    #
     plt.xticks(rotation=45)#
     fig.align_labels()
-
+    #
     print("lista_1_format:",lista_1_format)
-
+    #
     plt.ylim(ymin = (min(lista_1_format)) - 0.01) if min(lista_1_format) < min(lista_format) else plt.ylim(ymin = min(lista_format) - 0.01)
     plt.ylim(ymax = (max(lista_1_format)) + 0.01) if max(lista_1_format) > max(lista_format) else plt.ylim(ymax = max(lista_format) + 0.01)
-   
+    #
     plt.legend()
-    #plt.grid()
-    plt.savefig('output/diario/' + str(regiao.upper()) + '/' + str(statistic) + '_DIARIO_' + str(title) + '-' + str(level) + '_' + str(regiao.upper()) + '_' + str(previsao) + 'h_12Z_indicefile' + str(positionSCANTEC) + '_' + str(start_dt) + str(horario) + '_' + str(end_dt) + str(horario) + '.png', dpi=200)
+    #
+    plt.savefig('output/diario/' 
+                + str(regiao.upper()) 
+                + '/' 
+                + str(statistic) 
+                + '_DIARIO_' 
+                + str(title) 
+                + '-' 
+                + str(level) 
+                + '_' 
+                + str(regiao.upper()) 
+                + '_' 
+                + str(previsao) 
+                + 'h_12Z_indicefile' 
+                + str(positionSCANTEC) 
+                + '_' 
+                + str(start_dt) 
+                + str(horario) 
+                + '_' 
+                + str(end_dt) 
+                + str(horario) 
+                + '.png', 
+                dpi=200)
     plt.close('all')
     return
 
