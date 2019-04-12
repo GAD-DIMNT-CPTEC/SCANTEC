@@ -1,3 +1,12 @@
+"""
+Objetivo: Este script realiza a plotagem das tabelas do SCANTEC (ACOR, RMSE e VIES)
+          para o período indicado, em função dos dias da avaliação.
+
+Uso: python3 scanplot_diario.py
+
+Observações: Alterar o valor das variáveis "start_dt" e "end_dt"
+"""
+
 import ntpath
 import glob
 import numpy as np
@@ -6,12 +15,14 @@ import csv
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+
 from matplotlib.ticker import FormatStrFormatter
-
 from fjso import select
-
 from time_date import daterange
 from datetime import timedelta, date
+
+start_dt = date(2015, 5, 4)
+end_dt = date(2015, 5, 31)
 
 def plot_DIARIO_1_var(
                     start_dt,
@@ -213,8 +224,8 @@ a = select(6,3,12,5,6,5,2,4,2)
 
 #***
 #Entre com a data
-start_dt = date(2015, 5, 4)
-end_dt = date(2015, 5, 31)
+#start_dt = date(2015, 5, 4)
+#end_dt = date(2015, 5, 31)
 #end_dt = date(2015, 5, 23)
 
 plot_DIARIO_1_var(start_dt,end_dt,"ZGEO","ACOR","24","850",4,"hn","00")
