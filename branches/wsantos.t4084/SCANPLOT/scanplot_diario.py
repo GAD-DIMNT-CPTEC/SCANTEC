@@ -148,11 +148,11 @@ def plot_DIARIO_1_var(
    
     plt.legend()
     #plt.grid()
-    plt.savefig('tmp_exp0102/diario/' + str(regiao.upper()) + '/' + str(statistic) + '_DIARIO_' + str(title) + '-' + str(level) + '_' + str(regiao.upper()) + '_' + str(previsao) + 'h_12Z_indicefile' + str(positionSCANTEC) + '_' + str(start_dt) + str(horario) + '_' + str(end_dt) + str(horario) + '.png', dpi=200)
+    plt.savefig('output/diario/' + str(regiao.upper()) + '/' + str(statistic) + '_DIARIO_' + str(title) + '-' + str(level) + '_' + str(regiao.upper()) + '_' + str(previsao) + 'h_12Z_indicefile' + str(positionSCANTEC) + '_' + str(start_dt) + str(horario) + '_' + str(end_dt) + str(horario) + '.png', dpi=200)
     plt.close('all')
     return
 
-a =select(6,3,12,5,6,5,2,4,2)
+a = select(6,3,12,5,6,5,2,4,2)
 
 #Necessário para o relatório:
 

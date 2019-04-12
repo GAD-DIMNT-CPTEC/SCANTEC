@@ -3,7 +3,7 @@ from pprint import pprint
 import itertools
 
 
-with open('json/teste.json', encoding='utf-8') as f:
+with open('json/scanplot.json', encoding='utf-8') as f:
     data = json.load(f)
 
 def select(teste1,teste3,teste4,teste5,teste6,teste7,teste8,teste9,teste10):
