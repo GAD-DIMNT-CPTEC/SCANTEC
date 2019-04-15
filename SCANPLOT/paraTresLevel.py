@@ -81,7 +81,7 @@ def plot_DIARIO_1_var_3_level(start_dt,end_dt,var_1,var_2,var_3,title,statistic,
             name_file_1 = ntpath.basename(file_1)
             datas_1.append(name_file_1[26:28])
             df_1 = pd.read_csv(file_1, sep="\s+")                  
-            td_1 = df_1.loc[positionSCANTEC,var_1]
+            td_1 = df_1.loc[positionSCANTEC,[var_1,var_2,var_3]]
             lista_1.append(td_1)
         else:
             datas_1.append(np.nan)
@@ -92,7 +92,7 @@ def plot_DIARIO_1_var_3_level(start_dt,end_dt,var_1,var_2,var_3,title,statistic,
             name_file_2 = ntpath.basename(file_2)
             datas_2.append(name_file_2[26:28])
             df_2 = pd.read_csv(file_2, sep="\s+")
-            ts_2 = df_2.loc[positionSCANTEC,var_1]
+            ts_2 = df_2.loc[positionSCANTEC,[var_1,var_2,var_3]]
             lista_2.append(ts_2)
         else:
             datas_2.append(np.nan)
