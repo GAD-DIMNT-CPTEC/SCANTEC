@@ -212,6 +212,7 @@ diaFinal   = "31"
 mes = "05"
 ano = "2015"
 
+#Exps=["SMG_V2.0.0.","SMG_V2.1.0."]
 Hsins=["00"]
 Vars=["VVEL-850"]
 Regs=["as"]

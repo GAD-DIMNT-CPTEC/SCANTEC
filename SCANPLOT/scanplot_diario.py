@@ -300,7 +300,7 @@ def plot_diario(
 # Main
 a = select(6,3,12,5,6,5,2,4,2)
 
-#Exps=["",""]
+#Exps=["SMG_V2.0.0.","SMG_V2.1.0."]
 #Vars=["TEMP-850", "PSNM-000", "UMES-925", "ZGEO-500", "UVEL-250", "VVEL-850"]
 #Regs=["hn", "tr", "hs", "as"]
 #Stats=["VIES","RMSE","ACOR"]
