@@ -90,14 +90,31 @@ def plot_mensal(
     else:
         print("O que colocar? Vai Existir?")
 
+    print("td_1_fmt:\n",td_1)
+    print("ts_2_fmt:\n",ts_2)
+    print("name_file_1",name_file_1[26:28])
+
+
+    td_1_min = np.nanmin(td_1)
+    td_1_max = np.nanmax(td_1)
+    ts_2_min = np.nanmin(ts_2)
+    ts_2_max = np.nanmax(ts_2)
+
+    if ts_2_min <= td_1_min:
+        lista_min = ts_2_min
+    else:
+        lista_min = td_1_min
+
+    if ts_2_max >= td_1_max:
+        lista_max = ts_2_max
+    else:
+        lista_max = td_1_max
+
+    
 
     #
-
-        #
-
-   
     sns.set()
-    
+    #
     fig=plt.figure()
     #
     plt.plot(td_1, marker='8', label='v2.0.0')
@@ -106,7 +123,7 @@ def plot_mensal(
     plt.ylabel(str(statistic))
     plt.xlabel("mensal")
     #
-    plt.axhline(y=0 , color='black') if str(statistic) == "VIES" else print("sem axhline")
+    #
     #
     #
     #    
@@ -129,11 +146,20 @@ def plot_mensal(
                 + str(diaFinal) 
                 + str(horario)+' ')
     #
-    plt.tick_params(labelsize=6)
+    plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}')) # Sem casas decimais
+    plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.3f}')) # Com 3 casas decimais
+    
+    plt.tick_params(labelsize=7, pad=-1.5)
     #
     plt.xticks(rotation=45)
     fig.align_labels()
     #
+    print("lista_min",lista_min,"lista_max",lista_max)
+    #
+    if statistic == "ACOR":
+        plt.ylim((lista_min - 0.1),1.0)
+    elif statistic == "VIES":
+        plt.axhline(y=0, color='black')
     #
     plt.legend()
     #
@@ -148,7 +174,6 @@ def plot_mensal(
                         + '_' 
                         + str(regiao.upper()) 
                         + '_' 
-                        + 'h_' 
                         + str(start_dt) 
                         + str(horario) 
                         + '_' 
@@ -166,8 +191,7 @@ def plot_mensal(
                         + str(level) 
                         + '_' 
                         + str(regiao.upper()) 
-                        + '_' 
-                        + 'h_' 
+                        + '_'
                         + str(start_dt) 
                         + str(horario) 
                         + '_' 
@@ -188,5 +212,25 @@ diaFinal   = "31"
 mes = "05"
 ano = "2015"
 
-plot_mensal(diaInicial,diaFinal,mes,ano,"TEMP","VIES","500","hn","00")
+Hsins=["00"]
+Vars=["VVEL-850"]
+Regs=["as"]
+Stats=["ACOR"]
+Hsins=["00"]
+
+for var_name in Vars:
+
+    var=var_name.split("-",1)[0]
+    lev=var_name.split("-",1)[1]
+    
+    for reg in Regs:
+        #
+        for stat in Stats:
+        #    
+            for hsin in Hsins:
+            #
+                print(start_dt,end_dt,stat,var,lev,reg,hsin)
+                plot_mensal(diaInicial,diaFinal,mes,ano,var,stat,lev,reg,hsin)
+
+
 
