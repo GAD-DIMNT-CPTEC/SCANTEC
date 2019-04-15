@@ -1,19 +1,23 @@
 import glob
+import ntpath
 import numpy as np
-import os
-import csv
-import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from matplotlib.ticker import FormatStrFormatter
-
-from fjso import select
+import matplotlib.pyplot as plt
 
 from time_date import daterange
 from datetime import timedelta, date
+from matplotlib.ticker import StrMethodFormatter
 
- 
-def plot_mensal_1_var(
+# Alterar os valores das dates de início e fim da avaliação diária:
+start_dt = date(2015,5,1)
+end_dt = date(2015,5,31)
+
+# Alterar os caminhos para as tabelas do SCANTEC:
+base_path_1 = 'dadosscantec/aval_SMG/mensal/00Z/SMG_V2.0.0.'
+base_path_2 = 'dadosscantec/aval_SMG/mensal/00Z/SMG_V2.1.0.'
+
+def plot_mensal(
                     diaInicial,
                     diaFinal,
                     mes,
@@ -29,9 +33,11 @@ def plot_mensal_1_var(
     print("OK: "+str(var_1))
     
 
-    path_1 ='dadosscantec/exp1/mensal/'+str(regiao)
-    path_2 ='dadosscantec/exp2/mensal/'+str(regiao)
+    path_1 = base_path_1 + str(regiao)
+    print("path_1",path_1)
+    path_2 = base_path_2 + str(regiao)
     #
+    print("\n>> Inicio: " + str(start_dt) + "  Fim: " + str(end_dt))
     lista_1 = []
     datas_1 = []
     #
@@ -47,7 +53,7 @@ def plot_mensal_1_var(
                                     + str(ano)+ str(mes) 
                                     + str(diaFinal) 
                                     + str(horario)
-                                    +'T.csv')
+                                    +'T.scam')
 
     allFiles_2 = glob.glob(path_2   + '/'+str(statistic)
                                     +'EXP01_'
@@ -59,37 +65,50 @@ def plot_mensal_1_var(
                                     + str(mes) 
                                     + str(diaFinal) 
                                     + str(horario)
-                                    +'T.csv')
+                                    +'T.scam')
     allFiles_1.sort()
     allFiles_2.sort()
     #
-    for file_ in allFiles_1:
-        name_file=os.path.splitext(file_)[0][54:56]
-        df = pd.read_csv(file_)
-        td = df.loc[0:12,var_1]
+    print("allFiles_1:",allFiles_1)
+    print("allFiles_2:",allFiles_2)
+    
+    if len(allFiles_1) != 0:
+        file_1 = allFiles_1[0]
+        name_file_1 = ntpath.basename(file_1)
+        df_1 = pd.read_csv(file_1, sep="\s+")                  
+        td_1 = df_1.loc[0:,var_1]
+    else:
+        print("O que colocar? Vai Existir?")
+
+
+    if len(allFiles_2) != 0:
+        file_2 = allFiles_2[0]
+        name_file_2 = ntpath.basename(file_2)
+        df_2 = pd.read_csv(file_2, sep="\s+")
+        ts_2 = df_2.loc[0:,var_1]
+        print(ts_2)
+    else:
+        print("O que colocar? Vai Existir?")
+
 
     #
-    for file_ in allFiles_2:
-        name_file=os.path.splitext(file_)[0][54:56]
-        datas.append(name_file)    
-        df = pd.read_csv(file_)
-        ts = df.loc[0:12,var_1]
+
         #
 
    
     sns.set()
     
     fig=plt.figure()
-
-    plt.plot(td, marker='s', label='v2.1.0')
-    plt.plot(ts, marker='8', label='v2.0.0')
-    
+    #
+    plt.plot(td_1, marker='8', label='v2.0.0')
+    plt.plot(ts_2, marker='s', label='v2.1.0')
+    #
     plt.ylabel(str(statistic))
     plt.xlabel("mensal")
-
+    #
     plt.axhline(y=0 , color='black') if str(statistic) == "VIES" else print("sem axhline")
-
-
+    #
+    #
     #    
     plt.title(str(statistic)
                 +' Mensal '
@@ -114,78 +133,60 @@ def plot_mensal_1_var(
     #
     plt.xticks(rotation=45)
     fig.align_labels()
-
-
+    #
+    #
     plt.legend()
+    #
+    print("figura:",'output/mensal/' 
+                        + str(regiao.upper()) 
+                        + '/' 
+                        + str(statistic) 
+                        + '_DIARIO_' 
+                        + str(title) 
+                        + '-' 
+                        + str(level) 
+                        + '_' 
+                        + str(regiao.upper()) 
+                        + '_' 
+                        + 'h_' 
+                        + str(start_dt) 
+                        + str(horario) 
+                        + '_' 
+                        + str(end_dt) 
+                        + str(horario) 
+                        + '.png'
+                        )
+    plt.savefig('output/mensal/' 
+                        + str(regiao.upper()) 
+                        + '/' 
+                        + str(statistic) 
+                        + '_DIARIO_' 
+                        + str(title) 
+                        + '-' 
+                        + str(level) 
+                        + '_' 
+                        + str(regiao.upper()) 
+                        + '_' 
+                        + 'h_' 
+                        + str(start_dt) 
+                        + str(horario) 
+                        + '_' 
+                        + str(end_dt) 
+                        + str(horario) 
+                        + '.png', dpi=200)
+    
   
-    plt.savefig('tmp_exp0102/mensal/'
-                +str(regiao)+'/'
-                +str(statistic)
-                +'_MENSAL_'
-                + str(title) 
-                +'-'
-                + str(level) 
-                +'_'
-                + str(ano)
-                + str(mes) 
-                + str(diaInicial) 
-                + str(horario)
-                +'_'
-                + str(ano)
-                + str(mes) 
-                + str(diaFinal) 
-                + str(horario)+'.png')
+    
     plt.close('all')
     return
 
 #########################################################################################################
 #EXECUÇÃO E PASSAGEM DE PARAMÊTROS
 
-a =select(6,3,12,5,6,5,5,4,2)
-
 diaInicial = "02"
 diaFinal   = "31"
 mes = "05"
 ano = "2015"
 
-#print("TEMP-500")
-plot_mensal_1_var(diaInicial,diaFinal,mes,ano,"TEMP","VIES","500","HN","00")
+plot_mensal(diaInicial,diaFinal,mes,ano,"TEMP","VIES","500","hn","00")
 
-
-#print("250 - 850")
-#print("title+level<var_1> | title | statistic | previsao | level | positionSCANTEC | regiao | horario ")
-#for h in range(0,1):
-#    #(0,4)
-#    for z in range(0,5):
-#        #(0,6)
-#       for x in range (0,3):
-#           #(0,4)
-#           for b, c in zip(range(0,4), range(0,4)):
-#                    #(0,3)
-#                   for e, g in zip(range(0,3),range(0,3)):
-#                           plt.figure(figsize=(5,5))
-#                           print("positionSCANTEC: "+ str(x))
-#                           print("area:" + str(a[6][z]))
-#                           print("horario:"+ a[8][h])
-#                           print(b)
-#                           print(e)
-#                           print("Level:"+ str(g))
-#                           print(str(a[3][b]) +'-'+ str(a[4][g]))
-#
-#                           plot_mensal_1_var(
-#                                diaInicial,
-#                                diaFinal,
-#                                mes,
-#                                ano,
-#                                str(a[3][c]), 
-#                                a[2][e],
-#                                a[4][g], 
-#                                a[6][z], 
-#                                a[8][h]
-#                                    )
-#
-#
-#
-#
-#
-#
