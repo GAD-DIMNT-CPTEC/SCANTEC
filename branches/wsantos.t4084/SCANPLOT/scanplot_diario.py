@@ -10,6 +10,29 @@ Uso: python3 scanplot_diario.py
 Observações: Alterar o valor das variáveis "start_dt", "end_dt", "base_path_1" e "base_path_2".
 
 Versões dos pacotes:
+
+Python 3.6.5.final.0
+conda version : 4.5.11
+numpy==1.14.3
+pandas==0.23.0
+seaborn==0.8.1
+
+obs.:Os outros pacotes são nativos do python, logo suas releases acompanham
+a versão do python
+
+############################################################################
+
+O pacote : from fjso import select
+Foi criado uma função para manipular os dados dentro do scanplot.json
+SCANPLOT
+    |__fjso.py
+    json
+        |__ scanplot.json
+
+O pacote: from time_date import daterange
+Foi criado uma função para variação de Ano, Mês e Dia.                        
+SCANPLOT
+    |__time_date.py
 """
 
 import glob
@@ -33,7 +56,7 @@ base_path_1 = 'dadosscantec/aval_SMG/diario/00Z/SMG_V2.0.0.'
 base_path_2 = 'dadosscantec/aval_SMG/diario/00Z/SMG_V2.1.0.'
 
 # Função "plot_diario":
-# Receve as informações abaixo para ler as tabelas do SCANTEC e plotar os
+# Recebe as informações abaixo para ler as tabelas do SCANTEC e plotar os
 # gŕficos de linha correspondentes aos parâmetros de entrada.
 # Parâmetros de entrada:
 # start_dt.:
@@ -230,8 +253,45 @@ def plot_diario(
     
         plt.legend()
     
-        print("figura:",'output/diario/' + str(regiao.upper()) + '/' + str(statistic) + '_DIARIO_' + str(title) + '-' + str(level) + '_' + str(regiao.upper()) + '_' + str(previsao) + 'h_' + str(start_dt) + str(horario) + '_' + str(end_dt) + str(horario) + '.png')
-        plt.savefig('output/diario/' + str(regiao.upper()) + '/' + str(statistic) + '_DIARIO_' + str(title) + '-' + str(level) + '_' + str(regiao.upper()) + '_' + str(previsao) + 'h_' + str(start_dt) + str(horario) + '_' + str(end_dt) + str(horario) + '.png', dpi=200)
+        print("figura:",'output/diario/' 
+                        + str(regiao.upper()) 
+                        + '/' 
+                        + str(statistic) 
+                        + '_DIARIO_' 
+                        + str(title) 
+                        + '-' 
+                        + str(level) 
+                        + '_' 
+                        + str(regiao.upper()) 
+                        + '_' 
+                        + str(previsao) 
+                        + 'h_' 
+                        + str(start_dt) 
+                        + str(horario) 
+                        + '_' 
+                        + str(end_dt) 
+                        + str(horario) 
+                        + '.png'
+                        )
+        plt.savefig('output/diario/' 
+                        + str(regiao.upper()) 
+                        + '/' 
+                        + str(statistic) 
+                        + '_DIARIO_' 
+                        + str(title) 
+                        + '-' 
+                        + str(level) 
+                        + '_' 
+                        + str(regiao.upper()) 
+                        + '_' 
+                        + str(previsao) 
+                        + 'h_' 
+                        + str(start_dt) 
+                        + str(horario) 
+                        + '_' 
+                        + str(end_dt) 
+                        + str(horario) 
+                        + '.png', dpi=200)
     
         plt.close('all')
 
@@ -240,15 +300,15 @@ def plot_diario(
 # Main
 a = select(6,3,12,5,6,5,2,4,2)
 
-Exps=["",""]
-Vars=["TEMP-850", "PSNM-000", "UMES-925", "ZGEO-500", "UVEL-250", "VVEL-850"]
-Regs=["hn", "tr", "hs", "as"]
-Stats=["VIES","RMSE","ACOR"]
+#Exps=["",""]
+#Vars=["TEMP-850", "PSNM-000", "UMES-925", "ZGEO-500", "UVEL-250", "VVEL-850"]
+#Regs=["hn", "tr", "hs", "as"]
+#Stats=["VIES","RMSE","ACOR"]
 Hsins=["00"]
-#Vars=["VVEL-850"]
-#Regs=["as"]
-#Stats=["ACOR"]
-#Hsins=["00"]
+Vars=["VVEL-850"]
+Regs=["as"]
+Stats=["ACOR"]
+Hsins=["00"]
 
 for var_name in Vars:
 
