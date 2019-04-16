@@ -72,16 +72,25 @@ base_path_2 = 'dadosscantec/aval_SMG/diario/00Z/SMG_V2.1.0.'
 def plot_diario(
                     start_dt,
                     end_dt,                    
-                    title,
+                    var,
                     statistic,
                     previsao,
                     level,
-                    positionSCANTEC,
                     regiao,
                     horario
                     ):
 
-    var_1 = str(title) + '-' + str(level) 
+
+    var_1 = str(var) + '-' + str(level) 
+
+    if previsao==24:
+        linha=4
+    elif previsao==48:
+        linha=8
+    elif previsao==72:
+        linha=12
+
+    
 
     path_1 = base_path_1 + str(regiao)
     path_2 = base_path_2 + str(regiao)
@@ -100,7 +109,7 @@ def plot_diario(
         mes = dt.strftime("%m")
         ano = dt.strftime("%Y")
 
-        print("\n >",title,level,previsao,regiao,horario)
+        print("\n >",var,level,previsao,regiao,horario)
 
         allFiles_1 = glob.glob(path_1 + '/' + str(statistic)
                                       + 'EXP01_'
@@ -139,7 +148,7 @@ def plot_diario(
             name_file_1 = ntpath.basename(file_1)
             datas_1.append(name_file_1[26:28])
             df_1 = pd.read_csv(file_1, sep="\s+")                  
-            td_1 = df_1.loc[positionSCANTEC,var_1]
+            td_1 = df_1.loc[linha,var_1]
             lista_1.append(td_1)
         else:
             datas_1.append(np.nan)
@@ -150,7 +159,7 @@ def plot_diario(
             name_file_2 = ntpath.basename(file_2)
             datas_2.append(name_file_2[26:28])
             df_2 = pd.read_csv(file_2, sep="\s+")
-            ts_2 = df_2.loc[positionSCANTEC,var_1]
+            ts_2 = df_2.loc[linha,var_1]
             lista_2.append(ts_2)
         else:
             datas_2.append(np.nan)
@@ -208,7 +217,7 @@ def plot_diario(
     
         plt.title(str(statistic)
                     +' Diário '
-                    + title + '-'
+                    + var + '-'
                     + str(level) + 'hPa'
                     + ' ' + str(regiao.upper())
                     + ' FCT '
@@ -258,7 +267,7 @@ def plot_diario(
                         + '/' 
                         + str(statistic) 
                         + '_DIARIO_' 
-                        + str(title) 
+                        + str(var) 
                         + '-' 
                         + str(level) 
                         + '_' 
@@ -278,7 +287,7 @@ def plot_diario(
                         + '/' 
                         + str(statistic) 
                         + '_DIARIO_' 
-                        + str(title) 
+                        + str(var) 
                         + '-' 
                         + str(level) 
                         + '_' 
@@ -316,19 +325,11 @@ for var_name in Vars:
     lev=var_name.split("-",1)[1]
 
     for fct in np.arange(24,96,24):
-
-        if fct==24:
-            l_fct=4
-        elif fct==48:
-            l_fct=8
-        elif fct==72:
-            l_fct=12
-        
         for reg in Regs:
 
             for stat in Stats:
  
                 for hsin in Hsins:
                 
-                    print(start_dt,end_dt,stat,var,lev,fct,l_fct,reg,hsin)
-                    plot_diario(start_dt,end_dt,var,stat,fct,lev,l_fct,reg,hsin)
+                    print(start_dt,end_dt,stat,var,lev,fct,reg,hsin)
+                    plot_diario(start_dt,end_dt,var,stat,fct,lev,reg,hsin)
