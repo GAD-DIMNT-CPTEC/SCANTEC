@@ -69,6 +69,23 @@ base_path_2 = 'dadosscantec/aval_SMG/diario/00Z/SMG_V2.1.0.'
 # regiao...:
 # horario..:
 
+# Função criada exclusivamente para fazer o looping e escolha da previsão e linha.
+# Ela retornará o valor da linha de acordo com o valor da previsão que passar por ela;
+# no 'return' ele retornará exclusivamente o valor da linha selecionada.
+# Na função plot_diario, chamaremos a função 'previsao_linha' atrelando ela a uma variável chamada 'linha'.
+# Ficando assim visualmente:                         linha =  previsao_linha(previsao) 
+# Que na verdade ele estará passando assim:          linha =  4 
+def previsao_linha(previsao):
+    if previsao==24:
+        linha=4
+    elif previsao==48:
+        linha=8
+    elif previsao==72:
+        linha=12
+    return (linha)
+
+
+
 def plot_diario(
                     start_dt,
                     end_dt,                    
@@ -83,13 +100,8 @@ def plot_diario(
 
     var_1 = str(var) + '-' + str(level) 
 
-    if previsao==24:
-        linha=4
-    elif previsao==48:
-        linha=8
-    elif previsao==72:
-        linha=12
-
+    #função que entra a 'previsao' passada pela função 'plot_diario' e saio o valor da linha na tabela do Scantec
+    linha = previsao_linha(previsao)
     
 
     path_1 = base_path_1 + str(regiao)
