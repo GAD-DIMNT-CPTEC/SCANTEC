@@ -75,6 +75,7 @@ base_path_2 = 'dadosscantec/aval_SMG/diario/00Z/SMG_V2.1.0.'
 # Na função plot_diario, chamaremos a função 'previsao_linha' atrelando ela a uma variável chamada 'linha'.
 # Ficando assim visualmente:                         linha =  previsao_linha(previsao) 
 # Que na verdade ele estará passando assim:          linha =  4 
+
 def previsao_linha(previsao):
     if previsao==24:
         linha=4
