@@ -7,7 +7,7 @@ Objetivo: Este script realiza a plotagem das tabelas do SCANTEC (ACOR, RMSE e VI
 
 Uso: python3 scanplot_diario.py
 
-Observações: Alterar o valor das variáveis "start_dt", "end_dt", "base_path_1" e "base_path_2".
+Observações: Alterar o valor das variáveis "start_dt", "end_dt", "base_path" e "files".
 
 Versões dos pacotes:
 
@@ -35,6 +35,8 @@ SCANPLOT
     |__time_date.py
 """
 
+# NEW: Importa a biblioteca de regex
+import re
 import glob
 import ntpath
 import numpy as np
@@ -51,9 +53,14 @@ from matplotlib.ticker import StrMethodFormatter
 start_dt = date(2015,5,1)
 end_dt = date(2015,5,31)
 
-# Alterar os caminhos para as tabelas do SCANTEC:
-base_path_1 = 'dadosscantec/aval_SMG/diario/00Z/SMG_V2.0.0.'
-base_path_2 = 'dadosscantec/aval_SMG/diario/00Z/SMG_V2.1.0.'
+# NEW: Alterar o caminho para as tabelas do SCANTEC: (atentar para a barra [/] ao final do nome)
+base_path = 'dadosscantec/aval_SMG/diario/00Z/'
+
+# NEW: Adicionar os experimentos a serem processados: (atentar para o ponto [.] ao final do nome)
+files = ['SMG_V2.0.0.',
+         'SMG_V2.1.0.',
+         'SMG_V2.1.2.',
+         'SMG_V2.1.3.']
 
 # Função "plot_diario":
 # Recebe as informações abaixo para ler as tabelas do SCANTEC e plotar os
@@ -87,34 +94,27 @@ def previsao_linha(previsao):
 
 
 
-def plot_diario(
-                    start_dt,
-                    end_dt,                    
-                    var,
-                    statistic,
-                    previsao,
-                    level,
-                    regiao,
-                    horario
-                    ):
+def plot_diario( start_dt,
+                 end_dt,
+                 var,
+                 statistic,
+                 previsao,
+                 level,
+                 regiao,
+                 horario
+                ):
 
 
     var_1 = str(var) + '-' + str(level) 
 
     #função que entra a 'previsao' passada pela função 'plot_diario' e saio o valor da linha na tabela do Scantec
     linha = previsao_linha(previsao)
-    
 
-    path_1 = base_path_1 + str(regiao)
-    path_2 = base_path_2 + str(regiao)
-    
     print("\n>> Inicio: " + str(start_dt) + "  Fim: " + str(end_dt))
 
-    lista_1 = []
-    datas_1 = []
-    
-    lista_2 = []
-    datas_2 = []
+    # NEW: armazena as listas e datas de cada experimento especificado na variável 'base_path'
+    dic_listas = {}
+    dic_datas = {}
     
     for dt in daterange(start_dt, end_dt):
 
@@ -124,91 +124,65 @@ def plot_diario(
 
         print("\n >",var,level,previsao,regiao,horario)
 
-        allFiles_1 = glob.glob(path_1 + '/' + str(statistic)
-                                      + 'EXP01_'
-                                      + str(ano)
-                                      + str(mes) 
-                                      + str(dia) 
-                                      + str(horario)
-                                      + str(ano)
-                                      + str(mes) 
-                                      + str(dia) 
-                                      + str(horario)
-                                      +'T.scam'
-                                      )
+        # NEW: processa os experimentos especificados na variável 'base_path'
+        for index, file in enumerate(files):
 
-        allFiles_2 = glob.glob(path_2 + '/'+str(statistic)
-                                      +'EXP01_'
-                                      + str(ano)
-                                      + str(mes) 
-                                      + str(dia) 
-                                      + str(horario)
-                                      + str(ano)
-                                      + str(mes) 
-                                      + str(dia) 
-                                      + str(horario)
-                                      +'T.scam'
-                                      )
+            allFiles = glob.glob(base_path + file + str(regiao) + '/'
+                                                  + str(statistic)
+                                                  + 'EXP01_'
+                                                  + str(ano)
+                                                  + str(mes)
+                                                  + str(dia)
+                                                  + str(horario)
+                                                  + str(ano)
+                                                  + str(mes)
+                                                  + str(dia)
+                                                  + str(horario)
+                                                  + 'T.scam')
+            allFiles.sort()
 
-        allFiles_1.sort()
-        allFiles_2.sort()
+            print("allFiles_{}: {}\n".format(index, allFiles))
 
-        print("allFiles_1:",allFiles_1)
-        print("allFiles_2:",allFiles_2)
+            lista_n = dic_listas.setdefault(index, list())
+            datas_n = dic_datas.setdefault(index, list())
 
-        if len(allFiles_1) != 0:
-            file_1 = allFiles_1[0]
-            name_file_1 = ntpath.basename(file_1)
-            datas_1.append(name_file_1[26:28])
-            df_1 = pd.read_csv(file_1, sep="\s+")                  
-            td_1 = df_1.loc[linha,var_1]
-            lista_1.append(td_1)
-        else:
-            datas_1.append(np.nan)
-            lista_1.append(np.nan)
-        
-        if len(allFiles_2) != 0:
-            file_2 = allFiles_2[0]
-            name_file_2 = ntpath.basename(file_2)
-            datas_2.append(name_file_2[26:28])
-            df_2 = pd.read_csv(file_2, sep="\s+")
-            ts_2 = df_2.loc[linha,var_1]
-            lista_2.append(ts_2)
-        else:
-            datas_2.append(np.nan)
-            lista_2.append(np.nan)
+            if len(allFiles) != 0:
+                file_n = allFiles[0]
+                name_file_n = ntpath.basename(file_n)
+                datas_n.append(name_file_n[26:28])
+                df_n = pd.read_csv(file_n, sep="\s+")
+                td_n = df_n.loc[linha, var_1]
+                lista_n.append(td_n)
+            else:
+                datas_n.append(np.nan)
+                lista_n.append(np.nan)
 
-    lista_1_fmt = [round(elem,3) for elem in lista_1]
-    lista_2_fmt = [round(elem,3) for elem in lista_2]
+    # NEW: obtem os valores minimos e maximos das listas
+    lista_min = np.nan
+    lista_max = np.nan
 
-    print("lista_1_fmt:\n",lista_1_fmt)
-    print("lista_2_fmt:\n",lista_2_fmt)
+    for index, lista_n in dic_listas.items():
+        lista_n_fmt = [round(elem, 3) for elem in lista_n]
+        dic_listas[index] = lista_n_fmt
 
-    print("len(lista_1_fmt):",len(lista_1_fmt))
-    print("len(lista_2_fmt):",len(lista_2_fmt))
- 
-    print("datas_1:\n",datas_1)
-    print("datas_2:\n",datas_2)
+        print("lista_{}_fmt: {}\n".format(index, lista_n_fmt))
 
-    if len(datas_2) >= len(datas_1):
-        datas = datas_2
-    else:
-        datas = datas_1
- 
-    lista_1_min = np.nanmin(lista_1_fmt)
-    lista_1_max = np.nanmax(lista_1_fmt)
-    lista_2_min = np.nanmin(lista_2_fmt)
-    lista_2_max = np.nanmax(lista_2_fmt)
+        lista_n_min = np.nanmin(lista_n_fmt)
+        lista_n_max = np.nanmax(lista_n_fmt)
 
-    if lista_2_min <= lista_1_min:
-        lista_min = lista_2_min
-    else:
-        lista_min = lista_1_min
+        if np.isnan(lista_min) or lista_n_min < lista_min:
+            lista_min = lista_n_min
 
-    if lista_2_max >= lista_1_max:
-        lista_max = lista_2_max
-    else:
-        lista_max = lista_1_max
+        if np.isnan(lista_max) or lista_n_max > lista_max:
+            lista_max = lista_n_max
+
+    # NEW: obtem a lista com o maior numero de datas
+    datas = ()
+    for index, datas_n in dic_datas.items():
+        print("datas_{}: {}\n".format(index, datas_n))
+
+        if len(datas_n) > len(datas):
+            datas = datas_n
 
     if np.isnan(lista_max) and np.isnan(lista_min):
         print("All NaNs")
@@ -222,9 +196,12 @@ def plot_diario(
 
         plt.tight_layout()
 
-        plt.plot(x_tick_labels,lista_1_fmt, marker='8', label='v2.0.0')
-        plt.plot(x_tick_labels,lista_2_fmt, marker='s', label='v2.1.0')
-        
+        # NEW: plota a informacao de cada lista formatada
+        for index, lista_n_fmt in dic_listas.items():
+            marker = '${}$'.format(index)
+            label = re.findall('SMG_(.+).', files[index])[0]
+            plt.plot(x_tick_labels, lista_n_fmt, marker=marker, label=label)
+
         plt.ylabel(str(statistic))
         plt.xlabel('Dia')
     
