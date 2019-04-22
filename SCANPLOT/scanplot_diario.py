@@ -37,17 +37,28 @@ SCANPLOT
 
 # NEW: Importa a biblioteca de regex
 import re
+import sys
 import glob
 import ntpath
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import matplotlib
 import matplotlib.pyplot as plt
 
 from fjso import select
 from time_date import daterange
 from datetime import date
 from matplotlib.ticker import StrMethodFormatter
+
+print("##versões utilizadas##")
+print("Python version: {}". format(sys.version))
+print("NumPy version: {}". format(np.__version__))
+print("pandas version: {}". format(pd.__version__))
+print("matplotlib version: {}". format(matplotlib.__version__))
+print("seaborn version: {}". format(sns.__version__))
+print("    ")
+
 
 # Alterar os valores das dates de início e fim da avaliação diária:
 start_dt = date(2015,5,1)
@@ -297,29 +308,30 @@ def plot_diario( start_dt,
     return
 
 # Main
-a = select(6,3,12,5,6,5,2,4,2)
-
-#Exps=["SMG_V2.0.0.","SMG_V2.1.0."]
-#Vars=["TEMP-850", "PSNM-000", "UMES-925", "ZGEO-500", "UVEL-250", "VVEL-850"]
-#Regs=["hn", "tr", "hs", "as"]
-#Stats=["VIES","RMSE","ACOR"]
-Hsins=["00"]
-Vars=["VVEL-850"]
-Regs=["as"]
-Stats=["ACOR"]
-Hsins=["00"]
-
-for var_name in Vars:
-
-    var=var_name.split("-",1)[0]
-    lev=var_name.split("-",1)[1]
-
-    for fct in np.arange(24,96,24):
-        for reg in Regs:
-
-            for stat in Stats:
- 
-                for hsin in Hsins:
-                
-                    print(start_dt,end_dt,stat,var,lev,fct,reg,hsin)
-                    plot_diario(start_dt,end_dt,var,stat,fct,lev,reg,hsin)
+#a = select(6,3,12,5,6,5,2,4,2)
+#
+##Exps=["SMG_V2.0.0.","SMG_V2.1.0."]
+##Vars=["TEMP-850", "PSNM-000", "UMES-925", "ZGEO-500", "UVEL-250", "VVEL-850"]
+##Regs=["hn", "tr", "hs", "as"]
+##Stats=["VIES","RMSE","ACOR"]
+#Hsins=["00"]
+#Vars=["VVEL-850"]
+#Regs=["as"]
+#Stats=["ACOR"]
+#Hsins=["00"]
+#
+#for var_name in Vars:
+#
+#    var=var_name.split("-",1)[0]
+#    lev=var_name.split("-",1)[1]
+#
+#    for fct in np.arange(24,96,24):
+#        for reg in Regs:
+#
+#            for stat in Stats:
+# 
+#                for hsin in Hsins:
+#                
+#                    print(start_dt,end_dt,stat,var,lev,fct,reg,hsin)
+#                    plot_diario(start_dt,end_dt,var,stat,fct,lev,reg,hsin)
+#
