@@ -60,7 +60,8 @@ print("seaborn version: {}". format(sns.__version__))
 print("    ")
 
 # NEW: Alterar o caminho para as tabelas do SCANTEC: (atentar para a barra [/] ao final do nome)
-base_path = 'dadosscantec/aval_SMG/diario/00Z/'
+#base_path = 'aval_SMG/diario/00Z/'
+#base_path = "/home/carlos/Documents/INPE2019/GDAD/SMG/teste_scamtec_v100/repo_carlos/wsantos.t4084/tmp/SCANPLOT/aval_SMG/diario/00Z/"
 
 # NEW: Adicionar os experimentos a serem processados: (atentar para o ponto [.] ao final do nome)
 files = ['SMG_V2.0.0.',
@@ -107,6 +108,7 @@ def plot_diario( start_dt,
                  Fcts,
                  Regs,
                  horario,
+                 base_path
                 ):
 
     for var_name in Vars:
@@ -127,7 +129,7 @@ def plot_diario( start_dt,
                         #função que entra a 'fct' passada pela função 'plot_diario' e saio o valor da linha na tabela do Scantec
                         linha = previsao_linha(fct)
 
-                        print("\n>> Inicio: " + str(start_dt) + "  Fim: " + str(end_dt))
+#                        print("\n>> Inicio: " + str(start_dt) + "  Fim: " + str(end_dt))
                         
                         # NEW: armazena as listas e datas de cada experimento especificado na variável 'base_path'
                         dic_listas = {}
@@ -139,7 +141,7 @@ def plot_diario( start_dt,
                             mes = dt.strftime("%m")
                             ano = dt.strftime("%Y")
 
-                            print("\n >",var,lev,fct,reg,hsin)
+#                            print("\n >",var,lev,fct,reg,hsin)
                             
                             # NEW: processa os experimentos especificados na variável 'base_path'
                             for index, file in enumerate(files):
@@ -158,7 +160,7 @@ def plot_diario( start_dt,
                                                                       + 'T.scam')
                                 allFiles.sort()
 
-                                print("allFiles_{}: {}\n".format(index, allFiles))
+#                                print("allFiles_{}: {}\n".format(index, allFiles))
                                 
                                 lista_n = dic_listas.setdefault(index, list())
                                 datas_n = dic_datas.setdefault(index, list())
@@ -182,7 +184,7 @@ def plot_diario( start_dt,
                             lista_n_fmt = [round(elem, 3) for elem in lista_n]
                             dic_listas[index] = lista_n_fmt
 
-                            print("lista_{}_fmt: {}\n".format(index, lista_n_fmt))
+#                            print("lista_{}_fmt: {}\n".format(index, lista_n_fmt))
                             
                             lista_n_min = np.nanmin(lista_n_fmt)
                             lista_n_max = np.nanmax(lista_n_fmt)
@@ -196,7 +198,7 @@ def plot_diario( start_dt,
                         # NEW: obtem a lista com o maior numero de datas
                         datas = ()
                         for index, datas_n in dic_datas.items():
-                            print("datas_{}: {}\n".format(index, datas_n))
+#                            print("datas_{}: {}\n".format(index, datas_n))
                             
                             if len(datas_n) > len(datas):
                                 datas = datas_n
@@ -246,7 +248,7 @@ def plot_diario( start_dt,
 
                             fig.align_labels()
 
-                            print("lista_min:",lista_min,"lista_max:",lista_max)
+#                            print("lista_min:",lista_min,"lista_max:",lista_max)
 
                             # Não vai servir para todas as variáveis...
                             if stat == "ACOR":
@@ -312,18 +314,4 @@ def plot_diario( start_dt,
                             #plt.close('all')
                             plt.show()
 
-    return
-
-
-#start_dt = date(2015,5,1)
-#end_dt = date(2015,5,31)
-#
-## As variáveis a seguir devem ser listas
-#Vars = ["VVEL-850"]
-#Regs = ["hs"]
-#Stats = ["ACOR"]
-#horario = ["00"]
-#Fcts = np.arange(24,96,24)
-#
-#
-#plot_diario(start_dt,end_dt,Vars,Stats,Fcts,Regs,horario)
+    return 
