@@ -47,7 +47,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 from fjso import select
-from time_date import daterange
+from time_date import *
 from datetime import date
 from matplotlib.ticker import StrMethodFormatter
 
@@ -101,15 +101,27 @@ def previsao_linha(fct):
 
 
 
-def plot_diario( start_dt,
-                 end_dt,
-                 Vars,
-                 Stats,
-                 Fcts,
-                 Regs,
-                 horario,
-                 base_path
+def plot_diario(    diaInicial,
+                    diaFinal,
+                    mes,
+                    ano,
+                    Vars,
+                    Stats,
+                    Fcts,
+                    Regs,
+                    Hsins,
+                    base_path
                 ):
+
+    # Classe criada para padronizar o jeito que é inserido os dias, mes e ano
+    #de todos os scripts
+    #call class
+    cclass = definirData(diaInicial,diaFinal,mes,ano)
+    a = cclass.getStart()
+    print("a",a)
+    start_dt = cclass.getStart()
+    end_dt = cclass.getEnd()
+
 
     for var_name in Vars:
         
@@ -122,7 +134,7 @@ def plot_diario( start_dt,
 
                 for stat in Stats:
                
-                    for hsin in horario:
+                    for hsin in Hsins:
 
                         var_1 = str(var) + '-' + str(lev) 
 
@@ -311,7 +323,29 @@ def plot_diario( start_dt,
                                             + str(hsin) 
                                             + '.png', dpi=200)
 
-                            #plt.close('all')
+                            plt.close('all')
                             plt.show()
 
     return 
+
+# Datas de início e fim
+#start_dt = date(2015,5,1)
+#end_dt = date(2015,5,31)
+
+diaInicial = 2
+diaFinal   = 31
+mes = 5
+ano = 2015
+
+
+# Escolha das variáveis (em listas)
+Vars = ["VVEL-850"]
+Regs = ["gl"]
+Stats = ["ACOR"]
+Hsins = ["00"]
+Fcts = np.arange(24,96,24)
+
+# Caminho para absoluto para as tabelas
+base_path = "./aval_SMG/diario/00Z/"
+
+plot_diario(diaInicial,diaFinal,mes,ano,Vars,Stats,Fcts,Regs,Hsins,base_path)
