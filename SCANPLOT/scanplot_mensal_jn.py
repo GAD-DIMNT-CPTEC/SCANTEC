@@ -56,12 +56,13 @@ def plot_mensal(
                     base_path
                     ):
 
-        #cclass = definirData(diaInicial,diaFinal,mes,ano)
-        #a = cclass.getStart()
-        #print ("a",a)
-        ##
-        #b = cclass.getDiaInicial()
-        #print(b)
+        cclass = definirData(diaInicial,diaFinal,mes,ano)
+        
+        # Convertendo para o formato desejado
+        diaInicial = cclass.getStart().strftime("%d")
+        diaFinal = cclass.getEnd().strftime("%d")
+        mes = cclass.getStart().strftime("%m")
+     
 
         for var_name in Vars:
             #    
@@ -94,7 +95,8 @@ def plot_mensal(
                                                                     + str(mes) 
                                                                     + str(diaInicial) 
                                                                     + str(hsin)
-                                                                    + str(ano)+ str(mes) 
+                                                                    + str(ano)
+                                                                    + str(mes) 
                                                                     + str(diaFinal) 
                                                                     + str(hsin)
                                                                     +'T.scam')
@@ -225,20 +227,20 @@ def plot_mensal(
 #########################################################################################################
 #EXECUÇÃO E PASSAGEM DE PARAMÊTROS
 
-diaInicial = "02"
+diaInicial = 2
 diaFinal   = 31
-mes = "05"
+mes = 5
 ano = 2015
-
+#
 # Escolha das variáveis (em listas)
 Vars = ["VVEL-850"]
 Regs = ["hn"]
 Stats = ["ACOR"]
 Hsins = ["00"]
-
+#
 # Caminho para absoluto para as tabelas
 base_path = "./aval_SMG/mensal/00Z/"
-
+#
 #print(start_dt,end_dt,stat,var,lev,reg,hsin)
 plot_mensal(diaInicial,diaFinal,mes,ano,Vars,Stats,Regs,Hsins,base_path)
 
