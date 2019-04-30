@@ -1,3 +1,6 @@
+#! /usr/bin/env python3
+#-*- coding: utf-8 -*-
+
 from datetime import timedelta, date
 
 # Ideia da função retirada desse site
