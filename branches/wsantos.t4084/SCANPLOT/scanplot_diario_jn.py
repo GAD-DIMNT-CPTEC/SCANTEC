@@ -46,10 +46,14 @@ import seaborn as sns
 import matplotlib
 import matplotlib.pyplot as plt
 
-from fjso import select
 from time_date import *
 from datetime import date
 from matplotlib.ticker import StrMethodFormatter
+
+plt.switch_backend('agg')
+# Foi acrescentado a linha acima pra retirar um erro que estava ocorrendo quando executava esse script
+#na maquina virtual itapemirim. Erro:
+# RuntimeError: Invalid DISPLAY variable
 
 print("##versões utilizadas##")
 print("Python version: {}". format(sys.version))
@@ -117,8 +121,6 @@ def plot_diario(    diaInicial,
     #de todos os scripts
     #call class
     cclass = definirData(diaInicial,diaFinal,mes,ano)
-    a = cclass.getStart()
-    print("a",a)
     start_dt = cclass.getStart()
     end_dt = cclass.getEnd()
 
