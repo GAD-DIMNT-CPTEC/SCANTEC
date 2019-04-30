@@ -11,6 +11,12 @@ import matplotlib.pyplot as plt
 from time_date import *
 from matplotlib.ticker import StrMethodFormatter
 
+plt.switch_backend('agg')
+# Foi acrescentado a linha acima pra retirar um erro que estava ocorrendo quando executava esse script
+#na maquina virtual itapemirim. Erro:
+# RuntimeError: Invalid DISPLAY variable
+
+
 print("##versões utilizadas##")
 print("Python version: {}". format(sys.version))
 print("NumPy version: {}". format(np.__version__))
