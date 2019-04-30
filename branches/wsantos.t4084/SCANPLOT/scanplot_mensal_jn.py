@@ -59,7 +59,7 @@ def plot_mensal(
                     Stats,
                     Regs,
                     Hsins,
-                    base_path
+                    base_path_mensal
                     ):
 
         cclass = definirData(diaInicial,diaFinal,mes,ano)
@@ -93,8 +93,8 @@ def plot_mensal(
                         # NEW: processa os experimentos especificados na variável 'base_path'
                         for index, file in enumerate(files):
                         #
-                            print("base path",base_path)
-                            allFiles = glob.glob(base_path  + file  + str(reg) + '/'
+                            print("base path",base_path_mensal)
+                            allFiles = glob.glob(base_path_mensal  + file  + str(reg) + '/'
                                                                     +str(stat)
                                                                     +'EXP01_'
                                                                     + str(ano)
@@ -233,20 +233,20 @@ def plot_mensal(
 #########################################################################################################
 #EXECUÇÃO E PASSAGEM DE PARAMÊTROS
 
-diaInicial = 2
-diaFinal   = 31
-mes = 5
-ano = 2015
-#
-# Escolha das variáveis (em listas)
-Vars = ["VVEL-850"]
-Regs = ["hn"]
-Stats = ["ACOR"]
-Hsins = ["00"]
-#
-# Caminho para absoluto para as tabelas
-base_path = "./aval_SMG/mensal/00Z/"
-#
-#print(start_dt,end_dt,stat,var,lev,reg,hsin)
-plot_mensal(diaInicial,diaFinal,mes,ano,Vars,Stats,Regs,Hsins,base_path)
+#diaInicial = 2
+#diaFinal   = 31
+#mes = 5
+#ano = 2015
+##
+## Escolha das variáveis (em listas)
+#Vars = ["VVEL-850"]
+#Regs = ["hn"]
+#Stats = ["ACOR"]
+#Hsins = ["00"]
+##
+## Caminho para absoluto para as tabelas
+#base_path = "./aval_SMG/mensal/00Z/"
+##
+##print(start_dt,end_dt,stat,var,lev,reg,hsin)
+#plot_mensal(diaInicial,diaFinal,mes,ano,Vars,Stats,Regs,Hsins,base_path)
 

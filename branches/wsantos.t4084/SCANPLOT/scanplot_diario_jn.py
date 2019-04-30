@@ -94,6 +94,9 @@ files = ['SMG_V2.0.0.',
 # Ficando assim visualmente:                         linha =  fct_linha(fct) 
 # Que na verdade ele estará passando assim:          linha =  4 
 
+
+
+
 def previsao_linha(fct):
     if fct==24:
         linha=4
@@ -114,7 +117,7 @@ def plot_diario(    diaInicial,
                     Fcts,
                     Regs,
                     Hsins,
-                    base_path
+                    base_path_diario
                 ):
 
     # Classe criada para padronizar o jeito que é inserido os dias, mes e ano
@@ -160,7 +163,7 @@ def plot_diario(    diaInicial,
                             # NEW: processa os experimentos especificados na variável 'base_path'
                             for index, file in enumerate(files):
                             
-                                allFiles = glob.glob(base_path + file + str(reg) + '/'
+                                allFiles = glob.glob(base_path_diario + file + str(reg) + '/'
                                                                       + str(stat)
                                                                       + 'EXP01_'
                                                                       + str(ano)
@@ -330,24 +333,20 @@ def plot_diario(    diaInicial,
 
     return 
 
-# Datas de início e fim
-#start_dt = date(2015,5,1)
-#end_dt = date(2015,5,31)
-
-diaInicial = 2
-diaFinal   = 31
-mes = 5
-ano = 2015
-
-
-# Escolha das variáveis (em listas)
-Vars = ["VVEL-850"]
-Regs = ["gl"]
-Stats = ["ACOR"]
-Hsins = ["00"]
-Fcts = np.arange(24,96,24)
-
-# Caminho para absoluto para as tabelas
-base_path = "./aval_SMG/diario/00Z/"
-
-plot_diario(diaInicial,diaFinal,mes,ano,Vars,Stats,Fcts,Regs,Hsins,base_path)
+#diaInicial = 2
+#diaFinal   = 31
+#mes = 5
+#ano = 2015
+##
+##
+## Escolha das variáveis (em listas)
+#Vars = ["VVEL-850"]
+#Regs = ["gl"]
+#Stats = ["ACOR"]
+#Hsins = ["00"]
+#Fcts = np.arange(24,96,24)
+##
+## Caminho para absoluto para as tabelas
+#base_path = "./aval_SMG/diario/00Z/"
+##
+#plot_diario(diaInicial,diaFinal,mes,ano,Vars,Stats,Fcts,Regs,Hsins,base_path)
