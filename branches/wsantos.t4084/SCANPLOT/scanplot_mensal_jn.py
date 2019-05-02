@@ -31,10 +31,13 @@ print("    ")
 
 
 # NEW: Adicionar os experimentos a serem processados: (atentar para o ponto [.] ao final do nome)
+#files = ['SMG_V2.0.0.',
+#         'SMG_V2.1.0.',
+#         'SMG_V2.1.2.',
+#         'SMG_V2.1.3.']
+
 files = ['SMG_V2.0.0.',
-         'SMG_V2.1.0.',
-         'SMG_V2.1.2.',
-         'SMG_V2.1.3.']
+         'SMG_V2.1.0.']
 
  # Função "plot_mensal":
 # Recebe as informações abaixo para ler as tabelas do SCANTEC e plotar os

@@ -68,10 +68,13 @@ print("    ")
 #base_path = "/home/carlos/Documents/INPE2019/GDAD/SMG/teste_scamtec_v100/repo_carlos/wsantos.t4084/tmp/SCANPLOT/aval_SMG/diario/00Z/"
 
 # NEW: Adicionar os experimentos a serem processados: (atentar para o ponto [.] ao final do nome)
+#files = ['SMG_V2.0.0.',
+#         'SMG_V2.1.0.',
+#         'SMG_V2.1.2.',
+#         'SMG_V2.1.3.']
+
 files = ['SMG_V2.0.0.',
-         'SMG_V2.1.0.',
-         'SMG_V2.1.2.',
-         'SMG_V2.1.3.']
+         'SMG_V2.1.0.']
 
 # Função "plot_diario":
 # Recebe as informações abaixo para ler as tabelas do SCANTEC e plotar os
