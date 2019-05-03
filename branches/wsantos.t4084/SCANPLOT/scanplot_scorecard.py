@@ -38,8 +38,9 @@ dataf = "2015053100"
 tipo = "mensal"
 hsin = "00Z"
 
-base_path = "/home/carlos/Documents/INPE2019/GDAD/SMG/teste_scamtec_v100/repo_carlos/wsantos.t4084/SCANPLOT/dadosscantec/aval_SMG/"
-
+#base_path = "/home/carlos/Documents/INPE2019/GDAD/SMG/teste_scamtec_v100/repo_carlos/wsantos.t4084/SCANPLOT/dadosscantec/aval_SMG/"
+#base_path = "/SCANPLOT/aval_SMG/"
+base_path = "/home/wanderson/Documentos/teste_scamtec_v101/wsantos.t4084/SCANPLOT/aval_SMG/"
 sns.set(style="whitegrid", font_scale=0.45)
 sns.set_context(rc={"xtick.major.size": 1.5,  "ytick.major.size": 1.5,
                     "xtick.major.pad": 0.05,  "ytick.major.pad": 0.05,
