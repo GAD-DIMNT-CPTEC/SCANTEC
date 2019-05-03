@@ -110,6 +110,92 @@ def plot_DIARIO_1_var_3_level(start_dt,end_dt,var_1,var_2,var_3,title,statistic,
  
     print("datas_1:\n",datas_1)
     print("datas_2:\n",datas_2)
+    
+    sns.set()
+        
+    fig=plt.figure()
+    #
+    plt.tight_layout()
+    #
+    plt.plot(lista_1_fmt, marker='8', label='v2.0.0')
+    plt.plot(lista_2_fmt, marker='s', label='v2.1.0')
+    #
+    plt.ylabel(str(statistic))
+    plt.xlabel('Dia')
+    #
+    plt.title(str(statistic)
+                +' Diário '
+                + title + '-'
+                + str(level) + 'hPa'
+                + ' ' + str(regiao.upper())
+                + ' FCT '
+                + str(previsao) + 'h'
+                + '\n'
+                + str(start_dt)
+                + str(horario) 
+                + ' - '
+                + str(end_dt) 
+                + str(horario)
+                + ' '
+                )
+    #
+    plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}')) # Sem casas decimais
+    plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.3f}')) # Com 3 casas decimais
+    #
+    plt.tick_params(labelsize=7, pad=-1.5)
+    plt.xticks(x_tick_labels,rotation=45)
+    #
+    fig.align_labels()
+    
+    if statistic == "ACOR":
+        plt.ylim((lista_min - 0.1),1.0)
+    elif statistic == "VIES":
+        plt.axhline(y=0, color='black')
+    
+    plt.legend()
+    plt.show()
+    
+    #print("figura:",'output/diario/' 
+    #                    + str(regiao.upper()) 
+    #                    + '/' 
+    #                    + str(statistic) 
+    #                    + '_DIARIO_' 
+    #                    + str(title) 
+    #                    + '-' 
+    #                    + str(level) 
+    #                    + '_' 
+    #                    + str(regiao.upper()) 
+    #                    + '_' 
+    #                    + str(previsao) 
+    #                    + 'h_' 
+    #                    + str(start_dt) 
+    #                    + str(horario) 
+    #                    + '_' 
+    #                    + str(end_dt) 
+    #                    + str(horario) 
+    #                    + '.png'
+    #                    )
+    #plt.savefig('output/diario/' 
+    #                    + str(regiao.upper()) 
+    #                    + '/' 
+    #                    + str(statistic) 
+    #                    + '_DIARIO_' 
+    #                    + str(title) 
+    #                    + '-' 
+    #                    + str(level) 
+    #                    + '_' 
+    #                    + str(regiao.upper()) 
+    #                    + '_' 
+    #                    + str(previsao) 
+    #                    + 'h_' 
+    #                    + str(start_dt) 
+    #                    + str(horario) 
+    #                    + '_' 
+    #                    + str(end_dt) 
+    #                    + str(horario) 
+    #                    + '.png', dpi=200)
+    plt.savefig("teste.png")
+    plt.close('all')
     return
 
 plot_DIARIO_1_var_3_level(start_dt,end_dt,"TEMP-250","TEMP-500","TEMP-850","TEMP","VIES","24",4,"hn","00")
