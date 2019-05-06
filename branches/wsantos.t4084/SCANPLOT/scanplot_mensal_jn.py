@@ -96,7 +96,7 @@ def plot_mensal(
                         # NEW: processa os experimentos especificados na variável 'base_path'
                         for index, file in enumerate(files):
                         #
-                            print("base path",base_path_mensal)
+                            print("")
                             allFiles = glob.glob(base_path_mensal  + file  + str(reg) + '/'
                                                                     +str(stat)
                                                                     +'EXP01_'
@@ -127,7 +127,7 @@ def plot_mensal(
                         
                         for index, lista_n in dic_listas.items():
                             lista_n_fmt = [round(elem, 3) for elem in lista_n]
-                            print("lista_n_fmt",lista_n_fmt)
+                            print("")
                             dic_listas[index] = lista_n_fmt
 
                        
@@ -177,7 +177,7 @@ def plot_mensal(
                         #print("lista_min",lista_min,"lista_max",lista_max)
                         #
                         if stat == "ACOR":
-                            print("a definir")
+                            print("")
                             #plt.ylim((lista_min - 0.1),1.0)
                         elif stat == "VIES":
                             plt.axhline(y=0, color='black')
