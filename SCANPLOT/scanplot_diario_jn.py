@@ -46,6 +46,10 @@ import seaborn as sns
 import matplotlib
 import matplotlib.pyplot as plt
 
+from matplotlib import pylab
+
+pylab.rcParams['figure.figsize'] = (10,10)
+
 from time_date import *
 from datetime import date
 from matplotlib.ticker import StrMethodFormatter
@@ -331,7 +335,7 @@ def plot_diario(    diaInicial,
                                             + str(hsin) 
                                             + '.png', dpi=200)
 
-                            plt.close('all')
+                            #plt.close('all')
                             plt.show()
 
     return 
