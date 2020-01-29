@@ -1,0 +1,45 @@
+# Automatically generated objects. Sex Out 19 11:52:19 BRT 2012
+# fgen v0.3 (C) 1997,98 Beroud Jean-Marc
+
+OBJS = \
+	$(srcdir)/Ftable.o \
+	$(srcdir)/ftn_rd_grb2.o \
+	$(srcdir)/SCAM_ModelPlugin.o \
+	$(srcdir)/SCAM_Plugin.o \
+	$(srcdir)/SCAM_UtilsMOD.o \
+	$(srcdir)/SCAM_bstatistic.o \
+	$(srcdir)/SCAM_coreMOD.o \
+	$(srcdir)/SCAM_dataMOD.o \
+	$(srcdir)/SCAM_gridMOD.o \
+	$(srcdir)/SCAM_outputMOD.o \
+	$(srcdir)/SCAM_MetForm.o \
+	$(srcdir)/bilinear_interpolation.o \
+	$(srcdir)/map_utils.o \
+	$(srcdir)/eta_read.o \
+	$(srcdir)/m_agcm.o \
+	$(srcdir)/m_agcm_T213.o \
+	$(srcdir)/m_clima50yr.o \
+	$(srcdir)/m_T126_Seq.o \
+	$(srcdir)/m_Ensemble_T126.o \
+	$(srcdir)/m_Grb_ensemble_t126.o \
+	$(srcdir)/m_TQ062L028.o \
+	$(srcdir)/m_EraInterim.o \
+	$(srcdir)/m_string.o \
+	$(srcdir)/m_time.o \
+	$(srcdir)/m_metri_precip.o \
+	$(srcdir)/obs_Precipitation.o \
+	$(srcdir)/scamdrv.o \
+	$(srcdir)/scamtec_module.o \
+	$(srcdir)/m_ReadGrib.o \
+	$(srcdir)/eof.o \
+	$(srcdir)/template_read.o \
+	$(srcdir)/bramsIO.o \
+	$(srcdir)/m_brams5km.o \
+	$(srcdir)/m_brams20km.o \
+	$(srcdir)/m_WRF3km.o \
+	$(srcdir)/m_WRF9km.o \
+	$(srcdir)/m_gfs.o \
+	$(srcdir)/m_mode.o \
+	$(srcdir)/m_mode_objects.o \
+	$(srcdir)/m_mode_singleAttrib.o \
+	$(srcdir)/m_mode_pairAttrib.o
