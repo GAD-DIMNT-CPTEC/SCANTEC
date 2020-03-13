@@ -185,16 +185,16 @@ CONTAINS
     brams20km_struc%gridDesc     = 0 
 
     brams20km_struc%gridDesc( 1) = 0         !Input grid type (4=Gaussian)
-    brams20km_struc%gridDesc( 2) = 365       !Number of points on a lat circle
-    brams20km_struc%gridDesc( 3) = 337       !Number of points on a meridian
-    brams20km_struc%gridDesc( 4) = -47.  !Latitude of origin
-    brams20km_struc%gridDesc( 5) = -88.0911       !Longitude of origin
+    brams20km_struc%gridDesc( 2) = 354       !nx: Number of points on a lat circle
+    brams20km_struc%gridDesc( 3) = 412       !ny: Number of points on a meridian
+    brams20km_struc%gridDesc( 4) = -52.6879  !Latitude of origin
+    brams20km_struc%gridDesc( 5) = -88.0431  !Longitude of origin
     brams20km_struc%gridDesc( 6) = 128       !8 bits (1 byte) related to resolution
-                                        !(recall that 10000000 = 128), Table 7
-    brams20km_struc%gridDesc( 7) = 14.1482 !Latitude of extreme point
-    brams20km_struc%gridDesc( 8) = -23.9512    !Longitude of extreme point
-    brams20km_struc%gridDesc( 9) = 0.16799    !N/S direction increment
-    brams20km_struc%gridDesc(10) = 0.190892       !(Gaussian) # lat circles pole-equator
+                                             !(recall that 10000000 = 128), Table 7
+    brams20km_struc%gridDesc( 7) = 16.3558    !Latitude of extreme point
+    brams20km_struc%gridDesc( 8) = -20.658    !Longitude of extreme point
+    brams20km_struc%gridDesc( 9) = 0.16799    !dy: N/S direction increment
+    brams20km_struc%gridDesc(10) = 0.190892   !dx: (Gaussian) # lat circles pole-equator
     brams20km_struc%gridDesc(20) = 0.0  
 
     brams20km_struc%npts = brams20km_struc%gridDesc(2)*brams20km_struc%gridDesc(3)
@@ -304,7 +304,7 @@ CONTAINS
           call ler_arq2(unidade,pds5(1:3),f(:,1:3))
           where(f(:,1:3).eq.undef)lb(:,1:3) = .false.
 
-          !Temperatuar Absoluta
+          !Temperatura Absoluta
           call ler_arq2(unidade,pds5(4:6),f(:,4:6))
           where(f(:,4:6).eq.undef)lb(:,4:6) = .false.
 				  
@@ -336,7 +336,7 @@ CONTAINS
           call ler_arq2(unidade,pds5(21:21),f(:,21:21))
           where(f(:,21:21).eq.undef)lb(:,21:21) = .false.
           
-          !Preciṕitação convectiva
+          !Precipitação convectiva
           call ler_arq2(unidade,pds5(22:22),f(:,22:22))
           where(f(:,22:22).eq.undef)lb(:,22:22) = .false.
 
