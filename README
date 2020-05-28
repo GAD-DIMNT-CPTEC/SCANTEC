@@ -1,2 +1,46 @@
 Este repositório contém um conjunto de scripts em linguagem Python para a plotagem das tabelas do SCANTEC. 
 
+- Instruções para configuração de um ambiente para uso do SCANPLOT
+
+$ conda create -n SCANPLOT python=3.8.2
+
+-- Instalação dos pacotes necessários
+
+$ conda install -c conda-forge ipywidgets
+$ conda install -c anaconda numpy 
+$ conda install -c anaconda seaborn 
+$ conda install -c conda-forge matplotlib 
+
+-- Carregamento dos notebooks do Jupyter
+
+$ conda activate SCANPLOT
+$ jupyter-notebook
+
+Caso algum problema ocorra, as informações a seguir podem ser utilizadas como referência:
+
+carlos@itatiaia 17:32 $ conda info
+
+     active environment : SCANPLOT
+    active env location : /opt/anaconda3/envs/SCANPLOT
+            shell level : 2
+       user config file : /Volumes/RAID0/carlos/.condarc
+ populated config files : /Volumes/RAID0/carlos/.condarc
+          conda version : 4.8.3
+    conda-build version : 3.18.11
+         python version : 3.7.6.final.0
+       virtual packages : __osx=10.14.6
+       base environment : /opt/anaconda3  (writable)
+           channel URLs : https://repo.anaconda.com/pkgs/main/osx-64
+                          https://repo.anaconda.com/pkgs/main/noarch
+                          https://repo.anaconda.com/pkgs/r/osx-64
+                          https://repo.anaconda.com/pkgs/r/noarch
+          package cache : /opt/anaconda3/pkgs
+                          /Volumes/RAID0/carlos/.conda/pkgs
+       envs directories : /opt/anaconda3/envs
+                          /Volumes/RAID0/carlos/.conda/envs
+               platform : osx-64
+             user-agent : conda/4.8.3 requests/2.22.0 CPython/3.7.6 Darwin/18.7.0 OSX/10.14.6
+                UID:GID : 503:20
+             netrc file : None
+           offline mode : False
+
