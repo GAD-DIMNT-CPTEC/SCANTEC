@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import re
+import json
 
 # Lê o arquivo scantec.vars e transforma a lista de variáveis e níveis e um dicionário
 filename = 'scantec.vars'
@@ -15,7 +16,14 @@ with open(filename,'r') as scantec_vars:
       varlevdesc = rline.strip().split(' ', 1)
       VarsLevs[varlevdesc[0]] = varlevdesc[1].strip('\"')
 
-print('VarsLevs = ',VarsLevs)    
+print('VarsLevs = ',VarsLevs)  
+
+#gera a estrutura json
+json_object_scantec_vars = json.dumps(VarsLevs, indent = 4) 
+#escreve o arquivo scantec.vars.json com base no que foi
+#setado no json_object_scantec_vars
+with open('scantec.vars.json','w') as json_file_scantec_vars:   
+  json_file_scantec_vars.write(json_object_scantec_vars)
 
 # Lê do arquivo scantec.conf e transforma as informações principais em um dicionário
 filename = 'scantec.conf'
@@ -87,3 +95,11 @@ with open(filename,'r') as scantec_conf:
       key_value(line)
 
 print('Confs = ',Confs)
+
+#gera a estrutura json
+json_object_scantec_conf = json.dumps(Confs, indent = 4) 
+
+#escreve o arquivo scantec.conf.json com base no que foi
+#setado no json_object_scantec_conf
+with open('scantec.conf.json','w') as json_file_scantec_conf:   
+  json_file_scantec_conf.write(json_object_scantec_conf)
