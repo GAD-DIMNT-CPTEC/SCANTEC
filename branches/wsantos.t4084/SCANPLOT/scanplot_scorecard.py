@@ -23,8 +23,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from matplotlib import pylab
-pylab.rcParams['figure.figsize'] = (10,10)
-plt.switch_backend('agg')
 
 def plot_scorecard( datai,
                     dataf,
@@ -72,9 +70,7 @@ def plot_scorecard( datai,
                     score_table = (1.0 - (p_table2[1:].T / p_table1[1:].T))
 
                 # Figura
-                
-                fig = plt.subplots(figsize=(5,4))
-
+            
                 sns.set(style="whitegrid", font_scale=0.45)
                 sns.set_context(rc={"xtick.major.size": 1.5,  "ytick.major.size": 1.5,
                                     "xtick.major.pad": 0.05,  "ytick.major.pad": 0.05,
@@ -112,8 +108,8 @@ def plot_scorecard( datai,
                 plt.xlabel("Previsões")
                 plt.figure()
                 plt.tight_layout()
-                plt.savefig("scorecard_" + str(tstat) + "_exps" + "_" + str(stat.lower()) + "_" + str(reg) + "_" + str(datai) + "-" + str(dataf) + "_" + str(hsin) + ".png", bbox_inches="tight", dpi=200)
-                #plt.close()
+                plt.savefig("output/scorecard/"+ str(tstat) +"/"+ str(stat.lower()) +"/"+ str(reg) +"/scorecard_" + str(tstat) + "_exps" + "_" + str(stat.lower()) + "_" + str(reg) + "_" + str(datai) + "-" + str(dataf) + "_" + str(hsin) + ".png", bbox_inches="tight", dpi=200)
+                plt.close()
                 plt.show()
     return
 
@@ -143,3 +139,4 @@ def plot_scorecard( datai,
 #"PREC-000","PREV-000"]
 #
 #plot_scorecard(datai,dataf,list_var,Stats,Tstats,tipo,Regs,hsin,bexp1,bexp2,base_path)
+#
