@@ -4,19 +4,29 @@ import re
 import json
 
 # Lê o arquivo scantec.vars e transforma a lista de variáveis e níveis e um dicionário
+
 filename = 'scantec.vars'
  
 VarsLevs = {}
 
 # Com o método "with open", o arquivo é fechado automaticamente ao final
-with open(filename,'r') as scantec_vars:
-  for line in scantec_vars.readlines():
-    rline = line.lstrip()
-    if not (rline.startswith('#') or rline.startswith('::') or rline.startswith('variables:')):
-      varlevdesc = rline.strip().split(' ', 1)
-      VarsLevs[varlevdesc[0]] = varlevdesc[1].strip('\"')
+with open(filename,"rt") as scantec_vars:
 
-print('VarsLevs = ',VarsLevs)  
+  for line in scantec_vars.readlines():
+
+    rline = line.lstrip()
+    
+    if not (rline.startswith('#') or rline.startswith('::') or rline.startswith('variables:')):
+
+      varsCut = rline.strip()[:4]
+      LevelCut = rline.strip()[5:8]
+      varlevdesc = rline.strip().split(' ', 1)
+      nameVars = varlevdesc[1].strip('\"')
+
+      VarsLevs[varlevdesc[0]] = {'variable':varsCut, 'level':LevelCut , 'name':nameVars}     
+
+'VarsLevs = ',VarsLevs   
+#print(json.dumps(VarsLevs, indent=2, sort_keys=True))
 
 #gera a estrutura json
 json_object_scantec_vars = json.dumps(VarsLevs, indent = 4) 
@@ -24,6 +34,7 @@ json_object_scantec_vars = json.dumps(VarsLevs, indent = 4)
 #setado no json_object_scantec_vars
 with open('scantec.vars.json','w') as json_file_scantec_vars:   
   json_file_scantec_vars.write(json_object_scantec_vars)
+
 
 # Lê do arquivo scantec.conf e transforma as informações principais em um dicionário
 filename = 'scantec.conf'
@@ -94,7 +105,7 @@ with open(filename,'r') as scantec_conf:
     elif line.startswith('Output directory'):
       key_value(line)
 
-print('Confs = ',Confs)
+'Confs = ',Confs
 
 #gera a estrutura json
 json_object_scantec_conf = json.dumps(Confs, indent = 4) 
