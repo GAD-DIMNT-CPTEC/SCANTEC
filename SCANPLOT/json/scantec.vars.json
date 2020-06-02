@@ -1,0 +1,102 @@
+{
+    "VTMP:925": {
+        "variable": "VTMP",
+        "level": "925",
+        "name": "Virtual Temperature @ 925 hPa [K]"
+    },
+    "VTMP:850": {
+        "variable": "VTMP",
+        "level": "850",
+        "name": "Virtual Temperature @ 850 hPa [K]"
+    },
+    "VTMP:500": {
+        "variable": "VTMP",
+        "level": "500",
+        "name": "Virtual Temperature @ 500 hPa [K]"
+    },
+    "TEMP:850": {
+        "variable": "TEMP",
+        "level": "850",
+        "name": "Absolute Temperature @ 850 hPa [K]"
+    },
+    "TEMP:500": {
+        "variable": "TEMP",
+        "level": "500",
+        "name": "Absolute Temperature @ 500 hPa [K]"
+    },
+    "TEMP:250": {
+        "variable": "TEMP",
+        "level": "250",
+        "name": "Absolute Temperature @ 250 hPa [K]"
+    },
+    "PSNM:000": {
+        "variable": "PSNM",
+        "level": "000",
+        "name": "Pressure reduced to MSL [hPa]"
+    },
+    "UMES:925": {
+        "variable": "UMES",
+        "level": "925",
+        "name": "Specific Humidity @ 925 hPa [g/Kg]"
+    },
+    "UMES:850": {
+        "variable": "UMES",
+        "level": "850",
+        "name": "Specific Humidity @ 850 hPa [g/Kg]"
+    },
+    "UMES:500": {
+        "variable": "UMES",
+        "level": "500",
+        "name": "Specific Humidity @ 500 hPa [g/Kg]"
+    },
+    "AGPL:925": {
+        "variable": "AGPL",
+        "level": "925",
+        "name": "Inst. Precipitable Water @ 925 hPa [Kg/m2]"
+    },
+    "ZGEO:850": {
+        "variable": "ZGEO",
+        "level": "850",
+        "name": "Geopotential height @ 850 hPa [gpm]"
+    },
+    "ZGEO:500": {
+        "variable": "ZGEO",
+        "level": "500",
+        "name": "Geopotential height @ 500 hPa [gpm]"
+    },
+    "ZGEO:250": {
+        "variable": "ZGEO",
+        "level": "250",
+        "name": "Geopotential height @ 250 hPa [gpm]"
+    },
+    "UVEL:850": {
+        "variable": "UVEL",
+        "level": "850",
+        "name": "Zonal Wind @ 850 hPa [m/s]"
+    },
+    "UVEL:500": {
+        "variable": "UVEL",
+        "level": "500",
+        "name": "Zonal Wind @ 500 hPa [m/s]"
+    },
+    "UVEL:250": {
+        "variable": "UVEL",
+        "level": "250",
+        "name": "Zonal Wind @ 250 hPa [m/s]"
+    },
+    "VVEL:850": {
+        "variable": "VVEL",
+        "level": "850",
+        "name": "Meridional Wind @ 850 hPa [m/s]"
+    },
+    "VVEL:500": {
+        "variable": "VVEL",
+        "level": "500",
+        "name": "Meridional Wind @ 500 hPa [m/s]"
+    },
+    "VVEL:250": {
+        "variable": "VVEL",
+        "level": "250",
+        "name": "Meridional Wind @  250 hPa [m/s]"
+    }
+}
