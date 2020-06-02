@@ -1,0 +1,26 @@
+{
+    "Starting Time": "2016071500",
+    "Ending Time": "2016071500",
+    "Analisys Time Step": "06",
+    "Forecast Time Step": "06",
+    "History Time": "48",
+    "scantec tables": "/media/extra/wrk/scantec/SCANTEC_V1/tables",
+    "run domain number": "1",
+    "run domain lower left lat": "-49.875",
+    "run domain lower left lon": "-82.625",
+    "run domain upper right lat": "11.375",
+    "run domain upper right lon": "-35.375",
+    "run domain resolution dx": "0.5",
+    "run domain resolution dy": "0.5",
+    "Reference Model Name": "brams",
+    "Reference file": "../datain/BRAMS_%y4%m2%d200G-A-%y4-%m2-%d2-000000-g1.ctl",
+    "Experiments": {
+        "EXP01": [
+            "brams",
+            "../datain/BRAMS_%iy4%im2%id200G-A-%fy4-%fm2-%fd2-%fh20000-g1.ctl"
+        ]
+    },
+    "Climatology Model Name": "3",
+    "Climatology file": "/stornext/online6/assim_dados/luiz.sapucci/testcase_scantec/climatologiaJGM/climatologia50yr.%mc.bin",
+    "Output directory": "../dataout"
+}
