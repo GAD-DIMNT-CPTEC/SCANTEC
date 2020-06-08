@@ -22,29 +22,33 @@ Module scan_MetForm
   ! Funções para obter variaveis meteorologicas 
   !
 
-  public :: es ! Pressão de Vapor Saturado
-  public :: ee ! Pressão de Vapor
-  public :: w  ! Razão de Mistura
-  public :: q  ! Umidade Especifica
-  public :: rh ! Umidade Relativa
-  public :: td ! Temperatura do Ponto de Orvalho
-  public :: tv ! Temperatura Virtual
+  public :: svap  ! Pressão de Vapor Saturado
+  public :: vapp  ! Pressão de Vapor
+  public :: hmxr1 ! utiliza umidade especifica: w(q)
+  public :: hmxr2 ! utiliza pressão de vapor e pressao atm: w(p,e)
+  public :: umes1 ! utiliza somente razao de mistura: q(w)
+  public :: umes2 ! utiliza td e pressao atm: q(p,td)
+  public :: umes3 ! utiliza pressao atm, temperatura do ar e umidade relativa: q(p,t,rh)
+  public :: umrl  ! Umidade Relativa
+  public :: tpor  ! Temperatura do Ponto de Orvalho
+  public :: vtmp1 ! utiliza temperatura do ar e Umidade Especifica: tv(t,q)
+  public :: vtmp2 ! utiliza temperatura do ar, umidade relativa e pressao atm: tv(t,rh,p)
 
-  interface q
-     module procedure q1,& ! utiliza somente razao de mistura: q(w)
-                      q2,& ! utiliza td e pressao atm: q(p,td)
-                      q3   ! utiliza pressao atm, temperatura do ar e umidade relativa: q(p,t,rh)
-  end interface q
+  interface umes
+     module procedure umes1,& ! utiliza somente razao de mistura: q(w)
+                      umes2,& ! utiliza td e pressao atm: q(p,td)
+                      umes3   ! utiliza pressao atm, temperatura do ar e umidade relativa: q(p,t,rh)
+  end interface umes
 
-  interface w
-     module procedure w1,& ! utiliza pressão de vapor e pressao atm: w(p,e)
-                      w2   ! utiliza umidade especifica: w(q)
-  end interface w
+  interface hmxr
+     module procedure hmxr1,& ! utiliza umidade especifica: w(q)
+                      hmxr2   ! utiliza pressão de vapor e pressao atm: w(p,e)
+  end interface hmxr
 
-  interface tv
-     module procedure tv1,& ! utiliza temperatura do ar e Umidade Especifica: tv(t,q)
-                      tv2   ! utiliza temperatura do ar, umidade relativa e pressao atm: tv(t,rh,p)
-  end interface tv
+  interface vtmp
+     module procedure vtmp1,& ! utiliza temperatura do ar e Umidade Especifica: tv(t,q)
+                      vtmp2   ! utiliza temperatura do ar, umidade relativa e pressao atm: tv(t,rh,p)
+  end interface vtmp
 
 
   !
@@ -58,7 +62,6 @@ Module scan_MetForm
   real, parameter  :: L  = 2257e03 ! Calor latente de vaporização [Joules/kg]
 
   character(len=1024),parameter :: myname='scan_MetForm'
-
 
 
   !
@@ -75,12 +78,12 @@ Module scan_MetForm
   !-----------------------------------------------------------------------------!
 
 Contains
-
   !
+  !EOC
   !-----------------------------------------------------------------------------!
   !BOP
   !
-  ! !IROUTINE:  es
+  ! !IROUTINE:  svap
   !
   ! !DESCRIPTION: Esta funcao calcula a pressão de vapor de saturacao [Pa]
   !
@@ -88,7 +91,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  function es(temp)
+  subroutine svap(temp, es)
     implicit none
     !
     ! !INPUT PARAMETERS:
@@ -116,24 +119,24 @@ Contains
     !BOC
     !
 
-    character(len=1024),parameter :: myname_=trim(myname)//'::es'
+    character(len=1024),parameter :: myname_=trim(myname)//'::svap'
 
     es = 611.2*exp((17.67 * temp)/(temp+243.5))
 
-  end function es
+    end subroutine svap
   !EOC
   !
   !-----------------------------------------------------------------------------!
   !BOP
   !
-  ! !IROUTINE:  ee
+  ! !IROUTINE:  vapp
   !
   ! !DESCRIPTION: Esta função calcula a pressão de vapor [Pa]
   !
   !\\
   !\\
   ! !INTERFACE:
-  function ee(es, rh)
+  subroutine vapp (es, rh, ee)
     implicit none
 
     !
@@ -147,7 +150,7 @@ Contains
     ! !OUTPUT PARAMETERS:
     !
 
-    real :: ee ! pressao de vapor [Pa]
+    real, intent(out) :: ee ! pressao de vapor [Pa]
 
     !
     !
@@ -163,16 +166,16 @@ Contains
     !-----------------------------------------------------------------------------!
     !BOC
     !
-    character(len=1024),parameter :: myname_=trim(myname)//'::ee'
+    character(len=1024),parameter :: myname_=trim(myname)//'::vapp'
 
     ee = ( rh / 100.0 ) * es
 
-  end function ee
+  end subroutine vapp
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
   !
-  ! !IROUTINE:  w
+  ! !IROUTINE:  hmxr2
   !
   ! !DESCRIPTION: Esta funcao calcula a razao de mistura [-]
   !               
@@ -181,7 +184,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  function w1(pres, ee)
+  subroutine hmxr2 (pres, ee, w)
     implicit none
 
     !
@@ -195,7 +198,7 @@ Contains
     ! !OUTPUT PARAMETERS:
     !
 
-    real :: w1 ! razão de mistura [-]
+    real :: w  ! razão de mistura [-]
 
     !
     !
@@ -214,18 +217,18 @@ Contains
 
     real :: eps
 
-    character(len=1024),parameter :: myname_=trim(myname)//'::w1'
+    character(len=1024),parameter :: myname_=trim(myname)//'::hmxr2'
 
     eps = Rd / Rv
 
-    w1 = eps * ( ee / (pres - ee) ) 
+    w  = eps * ( ee / (pres - ee) ) 
 
-  end function w1
+  end subroutine hmxr2
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
   !
-  ! !IROUTINE:  w2
+  ! !IROUTINE:  hmxr1
   !
   ! !DESCRIPTION: Esta rotina calcula a razao de mistura [-] a partir da umidade
   !               especifica [kg/kg].
@@ -234,7 +237,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  function w2(q)
+  subroutine hmxr1(q, w)
 
     Implicit None
     !
@@ -245,7 +248,7 @@ Contains
     ! !OUTPUT PARAMETERS:
     !
 
-    real :: w2 ! Razão de Mistura [-]
+    real :: w  ! Razão de Mistura [-]
 
     !
     !
@@ -258,16 +261,16 @@ Contains
     !BOC
     !
 
-    character(len=1024),parameter :: myname_=trim(myname)//'::w2'
+    character(len=1024),parameter :: myname_=trim(myname)//'::hmxr1'
 
-    w2 = (q / ( 1 - q ) )
+    w  = (q / ( 1 - q ) )
 
-  end function w2
+  end subroutine hmxr1
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
   !
-  ! !IROUTINE:  q1
+  ! !IROUTINE:  umes1
   !
   ! !DESCRIPTION: Esta funcao calcula a umidade especifica [kg/kg]
   !               
@@ -276,7 +279,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  function q1(w)
+  subroutine umes1(w, q)
     implicit none
 
     !
@@ -289,7 +292,7 @@ Contains
     ! !OUTPUT PARAMETERS:
     ! 
 
-    real :: q1 ! Umidade especifica [kg/kg]
+    real :: q  ! Umidade especifica [kg/kg]
 
     !
     !
@@ -305,17 +308,17 @@ Contains
     !-----------------------------------------------------------------------------!
     !BOC
     !
-    character(len=1024),parameter :: myname_=trim(myname)//'::q1'
+    character(len=1024),parameter :: myname_=trim(myname)//'::umes1'
 
-    q1 = w / (1.0 + w)
+    q  = w / (1.0 + w)
     !     q1 = q1 * 1000.0
 
-  end function q1
+  end subroutine umes1
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
   !
-  ! !IROUTINE:  q2
+  ! !IROUTINE:  umes2
   !
   ! !DESCRIPTION: Esta funcao calcula a umidade especifica [kg/kg]
   !               
@@ -324,7 +327,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  function q2(pres,td)
+  subroutine umes2(pres,td,q)
     implicit none
 
     !
@@ -338,7 +341,7 @@ Contains
     ! !OUTPUT PARAMETERS:
     ! 
 
-    real :: q2 ! Umidade especifica [kg/kg]
+    real :: q  ! Umidade especifica [kg/kg]
 
     !
     !
@@ -358,18 +361,18 @@ Contains
 
     real :: e
 
-    character(len=1024),parameter :: myname_=trim(myname)//'::q2'
+    character(len=1024),parameter :: myname_=trim(myname)//'::umes2'
 
     e  = 611.20*exp((17.67*Td)/(Td + 243.5)); 
-    q2 = (0.622 * e)/(pres - (0.378 * e)); 
+    q  = (0.622 * e)/(pres - (0.378 * e)); 
     !     q2 = q2 * 1000.0
 
-  end function q2
+  end subroutine umes2
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
   !
-  ! !IROUTINE:  q3
+  ! !IROUTINE:  umes3
   !
   ! !DESCRIPTION: Esta funcao calcula a umidade especifica [kg/kg]
   !               
@@ -378,7 +381,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  function q3(pres,t,rh)
+  subroutine umes3(pres,t,rh, q)
     implicit none
 
     !
@@ -394,7 +397,7 @@ Contains
     ! !OUTPUT PARAMETERS:
     ! 
 
-    real :: q3 ! Umidade especifica [kg/kg]
+    real :: q  ! Umidade especifica [kg/kg]
 
     !
     !
@@ -417,22 +420,22 @@ Contains
     real :: ee
     real :: w
 
-    character(len=1024),parameter :: myname_=trim(myname)//'::q3'
+    character(len=1024),parameter :: myname_=trim(myname)//'::umes3'
 
     eps = Rd / Rv
     es  = 611.20 * exp((17.67 * t)/(t + 243.5));
     ee  = es * ( rh / 100.0 );
     eps = Rd / Rv
     w   = eps * ( ee / (pres - ee) ) 
-    q3 = w / (1.0 + w)
+    q  = w / (1.0 + w)
 
-  end function q3
+  end subroutine umes3
   !EOC
 
   !-----------------------------------------------------------------------------!
   !BOP
   !
-  ! !IROUTINE:  td
+  ! !IROUTINE:  dptp
   !
   ! !DESCRIPTION: Esta funcao calcula a Temperatura do Ponto de Orvalho [C] 
   !               
@@ -441,7 +444,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  function td(t,rh)
+  subroutine tpor(t,rh, td)
     implicit none
 
     !
@@ -475,18 +478,18 @@ Contains
 
     real :: e, es
 
-    character(len=1024),parameter :: myname_=trim(myname)//'::td'
+    character(len=1024),parameter :: myname_=trim(myname)//'::dptp'
 
     es = 6.112 * exp((17.67 * t)/(t + 243.5)); 
     e = es * ( rh / 100.0 ); 
     Td = log(e/6.112)*243.5/(17.67-log(e/6.112)); 
 
-  end function td
+  end subroutine tpor
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
   !
-  ! !IROUTINE:  rh
+  ! !IROUTINE:  umrl
   !
   ! !DESCRIPTION: Esta função calcula a umidade relativa [%] a partir da
   !               razão de mistura [-], da pressao de vapor de saturacao [hPa] e
@@ -496,7 +499,7 @@ Contains
   ! !INTERFACE:
 
 
-  function rh(w,es,pres)
+  subroutine umrl(w,es,pres,rh)
     Implicit None
 
     !
@@ -526,7 +529,7 @@ Contains
 
     REAL :: ws, eps
 
-    character(len=1024),parameter :: myname_=trim(myname)//'::rh'
+    character(len=1024),parameter :: myname_=trim(myname)//'::umrl'
 
     eps = Rd / Rv
     ws  = (eps*es) / (pres - es);
@@ -535,13 +538,13 @@ Contains
     !  mask to rh > 100 %
     IF(rh .GT. 100.0) rh = 100.0
 
-  end function rh
+  end subroutine umrl
   !EOC
   !
   !-----------------------------------------------------------------------------!
   !BOP
   !
-  ! !IROUTINE:  Tv1
+  ! !IROUTINE:  vtmp2
   !
   ! !DESCRIPTION: Esta função calcula a temperatura virtual [C ou K] a partir da
   !               temperatura do ar [C ou K] e da Umidade especícia [Kg/Kg]
@@ -550,7 +553,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  function tv1(t,q)
+  subroutine vtmp2(t,q,tv )
 
     Implicit None
 
@@ -565,7 +568,7 @@ Contains
     ! !OUTPUT PARAMETERS:
     !
 
-    real :: tv1 ! temperatura virtural [C ou K]
+    real :: tv  ! temperatura virtural [C ou K]
 
     !
     !
@@ -578,17 +581,17 @@ Contains
     !BOC
     !
 
-    character(len=1024),parameter :: myname_=trim(myname)//'::tv1'
+    character(len=1024),parameter :: myname_=trim(myname)//'::vtmp2'
 
-    tv1 = t * ( 1 + 0.61 * ( q / ( 1 - q ) ) ) 
+    tv  = t * ( 1 + 0.61 * ( q / ( 1 - q ) ) ) 
 
-  end function tv1
+  end subroutine vtmp2
   !EOC
   !
   !-----------------------------------------------------------------------------!
   !BOP
   !
-  ! !IROUTINE:  Tv2
+  ! !IROUTINE:  vtmp1
   !
   ! !DESCRIPTION: Esta função calcula a temperatura virtual [C] a partir da
   !               temperatura do ar [C] e da Umidade Relativa [%] e da Pressao
@@ -598,7 +601,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  function tv2(t,rh,pres)
+  subroutine vtmp1(t,rh,pres,tv )
 
     Implicit None
 
@@ -614,7 +617,7 @@ Contains
     ! !OUTPUT PARAMETERS:
     !
 
-    real :: tv2 ! temperatura virtural [C]
+    real :: tv  ! temperatura virtural [C]
 
     !
     !
@@ -631,17 +634,17 @@ Contains
     real :: es, ee
     real :: w
 
-    character(len=1024),parameter :: myname_=trim(myname)//'::tv2'
+    character(len=1024),parameter :: myname_=trim(myname)//'::vtmp1'
 
     eps = Rd / Rv
     es  = 611.2*exp((17.67 * t)/(t+243.5))
     ee  = ( rh / 100.0 ) * es
     w   = eps * ( ee / (pres - ee) )
 
-    Tv2 = t * (1 + w / eps) / (1 + w)
+    Tv  = t * (1 + w / eps) / (1 + w)
 
 
-  end function tv2
+  end subroutine vtmp1
   !EOC
   !
   !-----------------------------------------------------------------------------!

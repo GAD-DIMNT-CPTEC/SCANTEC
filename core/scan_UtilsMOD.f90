@@ -21,11 +21,20 @@
 !BOP
 !
 MODULE scan_Utils
-   ! Modules from INPAK90 lib
    USE scantec_module
-   USE m_inpak90
-   USE m_die!, only : perr
-   use m_stdio
+   ! Modules from INPAK90 lib
+   USE m_inpak90, only: i90_LoadF, &
+                        i90_getVal,&
+                        i90_gint,  &
+                        i90_gfloat,&
+                        i90_gtoken,&
+                        i90_gline, &
+                        i90_label, &
+                        i90_perr,  &
+                        i90_die,   &
+                        i90_lcase
+   use m_constants, only: i4, r4
+   
    !
    IMPLICIT NONE
 
@@ -36,35 +45,6 @@ MODULE scan_Utils
 
    PUBLIC :: readcard
    PUBLIC :: banner
-
-!
-! KINDS
-!
-
-!   INTEGER, PUBLIC, PARAMETER :: I4B = SELECTED_INT_KIND(9)
-!   INTEGER, PUBLIC, PARAMETER :: I2B = SELECTED_INT_KIND(4)
-!   INTEGER, PUBLIC, PARAMETER :: I1B = SELECTED_INT_KIND(2)
-!   INTEGER, PUBLIC, PARAMETER :: SP  = KIND(1.0)
-!   INTEGER, PUBLIC, PARAMETER :: DP  = KIND(1.0D0)
-
-!
-! PARAMETERS
-!
-
-   INTEGER, PUBLIC, PARAMETER :: nvmx = 50   ! max number of variables
-   INTEGER, PUBLIC, PARAMETER :: nlmx = 50   ! max number of levels
-!
-! CONSTANTS
-!
-
-	REAL(SP), PUBLIC, PARAMETER :: PI      = 3.141592653589793238462643383279502884197_sp
-	REAL(SP), PUBLIC, PARAMETER :: PIO2    = 1.57079632679489661923132169163975144209858_sp
-	REAL(SP), PUBLIC, PARAMETER :: TWOPI   = 6.283185307179586476925286766559005768394_sp
-	REAL(SP), PUBLIC, PARAMETER :: SQRT2   = 1.41421356237309504880168872420969807856967_sp
-	REAL(SP), PUBLIC, PARAMETER :: EULER   = 0.5772156649015328606065120900824024310422_sp
-	REAL(DP), PUBLIC, PARAMETER :: PI_D    = 3.141592653589793238462643383279502884197_dp
-	REAL(DP), PUBLIC, PARAMETER :: PIO2_D  = 1.57079632679489661923132169163975144209858_dp
-	REAL(DP), PUBLIC, PARAMETER :: TWOPI_D = 6.283185307179586476925286766559005768394_dp
 
 !
 ! ISTES DERIVED TYPES DEVEM PASSAR PARA O modulo >>> scantec_module.f90 <<<
@@ -86,17 +66,10 @@ MODULE scan_Utils
       INTEGER :: ny
    END TYPE
 
-   TYPE, PUBLIC  :: variable
-      CHARACTER(len=15)          :: name
-      INTEGER                    :: nlevs
-      INTEGER, DIMENSION(nlmx)   :: levs
-   END TYPE
-
    TYPE, PUBLIC  :: RUNS
-      INTEGER                          :: Id
+      CHARACTER(len=300)               :: Id
       CHARACTER(len=300)               :: name
       CHARACTER(len=300)               :: file
-      TYPE(variable), DIMENSION(nvmx)  :: var
    END TYPE
 !
 ! Global Variables
@@ -107,9 +80,9 @@ MODULE scan_Utils
    INTEGER, PUBLIC   :: Forecast_time
    INTEGER, PUBLIC   :: ntime_forecast
    INTEGER, PUBLIC   :: ntime_steps
-   REAL(DP), PUBLIC  :: incr
+   REAL(r8), PUBLIC  :: incr
    INTEGER, PUBLIC   :: hist_time
-   REAL(DP), PUBLIC  :: hist_incr
+   REAL(r8), PUBLIC  :: hist_incr
 
    TYPE(domain), PUBLIC, DIMENSION(:), ALLOCATABLE    :: dom
 
@@ -145,12 +118,6 @@ MODULE scan_Utils
 ! INTERFACES
 !
 
-  INTERFACE get_value
-     MODULE PROCEDURE get_real, get_m_real,&
-                      get_int, get_m_int,&
-                      get_char, get_m_char
-  END INTERFACE get_value
-
 
    CONTAINS
 !
@@ -176,9 +143,8 @@ MODULE scan_Utils
 !
    SUBROUTINE readcard(istat)
       IMPLICIT NONE
-      CHARACTER(len=*),PARAMETER    :: myname_="readcard"
-      INTEGER                       :: I, J, iret, narg, ndom
       INTEGER, OPTIONAL,INTENT(OUT) :: istat
+      INTEGER                       :: I, J, narg, ndom
       CHARACTER(len=300)            :: config, formato
       LOGICAL                       :: exists
       INTEGER, ALLOCATABLE          :: tmp(:)
@@ -186,19 +152,13 @@ MODULE scan_Utils
       INTEGER, EXTERNAL             :: iargc
 #endif
 
-      !
-      ! Lista encadeada para leitura temporaria 
-      ! dos experimentos
-
-      type :: eplink
-         integer             :: id
-         character(len=1024) :: name
-         character(len=1024) :: file
-         type(eplink), pointer :: next => null()
-      end type eplink
-      type (eplink), pointer :: epraiz => null()
-      type (eplink), pointer :: epdado => null()
+      CHARACTER(len=*),PARAMETER    :: myname_="readcard"
       integer :: epcount
+      integer :: iret, ierr
+      character(len=256) :: ModelName
+      character(len=256) :: FileName
+      character(len=256) :: ExpName
+
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 ! !DESCRIPTION:
@@ -232,7 +192,7 @@ MODULE scan_Utils
 !            INQUIRE(FILE=trim(config),EXIST=exists)
 !            IF(.NOT. exists)THEN
 !               iret = -1
-!               call perr(myname_,'config file not found',iret)
+!               call i90_perr(myname_,'config file not found',iret)
 !               if(present(istat))istat=iret
 !               return
 !            END IF
@@ -242,7 +202,7 @@ MODULE scan_Utils
          call i90_LoadF ( TRIM(config), iret )
 
          if(iret /= 0) then
-            call perr(myname_,'i90_LoadF("'//trim(config)//'")',iret)
+            call i90_perr(myname_,'i90_LoadF("'//trim(config)//'")',iret)
              if(present(istat))istat=iret
             return
          endif
@@ -251,16 +211,17 @@ MODULE scan_Utils
 ! Reading time parameters
 !
          scantec%starting_time = huge(1)
-         call get_value ( 'Starting Time:',      scantec%starting_time, iret )
+         call i90_getVal ( 'Starting Time:',      scantec%starting_time, iret )
 
          scantec%ending_time = huge(1)
-         call get_value ( 'Ending Time:',        scantec%ending_time,   iret )
+         call i90_getVal ( 'Ending Time:',        scantec%ending_time,   iret )
 
-         call get_value ( 'Analisys Time Step:', scantec%atime_step,    iret )
-         call get_value ( 'Forecast Time Step:', scantec%ftime_step,    iret )
-         call get_value ( 'Forecast Total Time:',scantec%forecast_time, iret )
-         call get_value ( 'History Time:',       scantec%hist_time,     iret )
-         !call get_value ( 'Undefined Value:',    scantec%udef,          iret )
+         call i90_getVal ( 'Analisys Time Step:', scantec%atime_step,    iret )
+         call i90_getVal ( 'Forecast Time Step:', scantec%ftime_step,    iret )
+         call i90_getVal ( 'Forecast Total Time:',scantec%forecast_time, iret )
+         call i90_getVal ( 'History Time:',       scantec%hist_time,     iret )
+         !call i90_getVal ( 'Undefined Value:',    scantec%udef,          iret )
+         call i90_getVal ('scantec tables:', scantec%tables, iret)
 !
 ! Apply Sanity Checks on time specifications!
 !
@@ -270,7 +231,7 @@ MODULE scan_Utils
          if (scantec%starting_time .eq. huge(1) )then
 
             iret = 99
-            call perr(myname_,'Error to specify Starting Time :',iret)
+            call i90_perr(myname_,'Error to specify Starting Time :',iret)
             if(present(istat))istat=iret
             return
 
@@ -281,7 +242,7 @@ MODULE scan_Utils
          if (scantec%Ending_time .eq. huge(1) )then
 
             iret = 99
-            call perr(myname_,'Error to specify Ending Time :',iret)
+            call i90_perr(myname_,'Error to specify Ending Time :',iret)
             if(present(istat))istat=iret
             return
 
@@ -307,21 +268,21 @@ MODULE scan_Utils
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ! Reading Domain Specifications
 
-         call get_value ( 'run domain number:', ndom, iret )
+         call i90_getVal ( 'run domain number:', ndom, iret )
 
          ALLOCATE(dom(ndom),STAT=iret)
          if(iret/=0)then
-            call perr(myname_,'allocate(dom('//int2str(ndom)//'))',iret)
+            call i90_perr(myname_,'allocate(dom('//int2str(ndom)//'))',iret)
             if(present(istat))istat=iret
             return
          endif
 
-         call get_value ( 'run domain lower left lat:', dom(:)%ll_lat, iret )
-         call get_value ( 'run domain lower left lon:', dom(:)%ll_lon, iret )
-         call get_value ( 'run domain upper right lat:',dom(:)%ur_lat, iret )
-         call get_value ( 'run domain upper right lon:',dom(:)%ur_lon, iret )
-         call get_value ( 'run domain resolution dx:',  dom(:)%dx,     iret )
-         call get_value ( 'run domain resolution dy:',  dom(:)%dy,     iret )
+         call i90_getVal ( 'run domain lower left lat:', dom(:)%ll_lat, iret )
+         call i90_getVal ( 'run domain lower left lon:', dom(:)%ll_lon, iret )
+         call i90_getVal ( 'run domain upper right lat:',dom(:)%ur_lat, iret )
+         call i90_getVal ( 'run domain upper right lon:',dom(:)%ur_lon, iret )
+         call i90_getVal ( 'run domain resolution dx:',  dom(:)%dx,     iret )
+         call i90_getVal ( 'run domain resolution dy:',  dom(:)%dy,     iret )
 
          DO I=1,ndom
             dom(I)%nx = ((dom(I)%ur_lon-dom(I)%ll_lon)/dom(I)%dx ) + 1
@@ -349,153 +310,163 @@ MODULE scan_Utils
 !
 ! Reference File
 !
-         call get_value( 'Reference model:', Refer%Id ,  iret )
-         call get_value( 'Reference file:',  Refer%file, iret )
-         call get_value( 'Reference label:', Refer%name, iret )
-
-#ifdef DEBUG
-         WRITE(*,'(A)')'Reference'
-         WRITE(*,'(A,I2.2)')'  |---- Id     :',Refer%Id
-         WRITE(*,'(2A)')    '  |---- Name   :',TRIM(Refer%name)
-         WRITE(*,'(2A)')    '  |---- File   :',TRIM(Refer%file)
-#endif
+         call i90_getVal( 'Reference Model Name:', ModelName, ierr ); iret = ierr
+         call i90_getVal( 'Reference file:'      ,  FileName, ierr ); iret = iret + ierr
+         if(iret .eq. 0)then
+            call scantec%insertModel('Reference',trim(ModelName), 'refer', trim(FileName))
+         else
+            call i90_perr(trim(myname_),'You must configure a reference file', -1)
+         endif
 
 
 !
 ! Experiments
 !
-!         call i90_label ( 'Number of Experiments:', iret )
-!         scantec%nexp=i90_gint(iret)
-!         if(iret /= 0) then
-!            call perr(myname_,'i90_label("Number of Experiments:")',iret)
-!            if(present(istat))istat=iret
-!            return
-!         endif
-!
-!         ALLOCATE(Exper(scantec%nexp),STAT=iret)
 
          call i90_label ( 'Experiments:', iret )
          if(iret /= 0) then
-            call perr(myname_,'i90_label("Experiments:")',iret)
-            if(present(istat))istat=iret
+            call i90_perr(trim(myname_),'i90_label("Experiments:")',iret)
+            if(.not.present(istat)) call i90_die(trim(myname_))
+            istat=iret
             return
          endif
 
+         ! get experiment info, one by line of config file
          call i90_gline(iret)
-
-         if (iret .eq. 0)then
-            allocate(epraiz) ! Allocate begin of linked list
-            epdado => epraiz ! point dado to begin of linked list
-            epcount = 0
-         else
-            write(stderr,*)
-            write(stderr,'(2a,$)') myname_,': You must configure at least one experiment !'
-            write(stderr,*)
-            call die(myname_)
+         if(iret .ne. 0)then
+            call i90_perr(trim(myname_), 'You must configure at least one experiment !',-1)
+            call i90_die(myname_)
          endif
 
-
          do while (iret .eq. 0)
-            epdado%id = i90_gint(iret)
+
+            !--------------------------------------------------------------------
+            ! Used Model
+            call i90_Gtoken(ModelName,iret)
             if(iret /= 0) then
-               call perr(myname_,'i90_gint("Experiment model:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
-            call i90_Gtoken(epdado%name,iret)
-            if(iret /= 0) then
-               call perr(myname_,'i90_label("Experiment Name")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
-            call i90_Gtoken(epdado%file,iret)
-            if(iret /= 0) then
-               call perr(myname_,'i90_label("Experiment file_name_with_mask")',iret)
-               if(present(istat))istat=iret
+               call i90_perr(myname_,'i90_gint("Experiment Model Name:")',iret)
+               if(.not.present(istat)) call i90_die(trim(myname_))
+               istat=iret
                return
             endif
 
-            epcount = epcount + 1
+            ! Experiment Name
+            call i90_Gtoken(ExpName,iret)
+            if(iret /= 0) then
+               call i90_perr(trim(myname_),'i90_label("Experiment Name")',iret)
+               if(present(istat))call i90_die(trim(myname_))
+               istat=iret
+               return
+            endif
 
+            ! Experiment File
+            call i90_Gtoken(FileName,iret)
+            if(iret /= 0) then
+               call i90_perr(trim(myname_),'i90_label("Experiment file_name_with_mask")',iret)
+               if(present(istat))call i90_die(trim(myname_))
+               istat=iret
+               return
+            endif
+
+            !
+            !Insert model at scantec structure
+            !
+            call scantec%insertModel('Experiment',    &
+                                     trim(ModelName), &
+                                     trim(ExpName),   &
+                                     trim(FileName)   &
+                                     )
+
+            ! get next line
+            !    - iret =  0, next line ok
+            !    - iret = -1, end of buffer (some problem with table)
+            !    - iret = +1, end of table
             call i90_gline(iret)
-
-            allocate(epdado%next)
-            epdado => epdado%next
+            if(iret.lt.0)then
+               call i90_perr(trim(myname_),'getting experiment table.', iret)
+               call i90_die(trim(myname_))
+            endif
 
          enddo
 
-         scantec%nexp = epcount
+         ! Mantem a estrutura antiga, assim não preciso mexer em muitas coisas
+         ! neste momento
          ALLOCATE(Exper(scantec%nexp),STAT=iret)
+         scantec%currModel => scantec%FirstModel ! return to begin of linked list 
+         I = 0
+         DO while(associated(scantec%currModel))
+            if (trim(scantec%currModel%Type_) .eq. 'Reference')then
+               Refer%Id   = trim(scantec%currModel%Name_)
+               Refer%file = trim(scantec%currModel%FileName_)
+               Refer%name = trim(scantec%currModel%ExpName_)
 
-         epdado => epraiz ! return to begin of linked list 
-         DO I=1,scantec%nexp
-
-            Exper(I)%Id   = epdado%id
-            Exper(I)%name = trim(epdado%name)
-            Exper(I)%file = trim(epdado%file)
+            else if (trim(scantec%currModel%Type_) .eq. 'Experiment')then
+               i = i + 1
+               Exper(I)%Id   = trim(scantec%currModel%Name_)
+               Exper(I)%name = trim(scantec%currModel%ExpName_)
+               Exper(I)%file = trim(scantec%currModel%FileName_)
 
 #ifdef DEBUG
-            WRITE(*,'(A)')'Experiment'
-            WRITE(*,'(A,I2.2)')'  |---- Id     :',Exper(I)%Id
-            WRITE(*,'(2A)')    '  |---- Name   :',TRIM(Exper(I)%name)
-            WRITE(*,'(2A)')    '  |---- File   :',TRIM(Exper(I)%file)
+               WRITE(*,'(2A)')'Type : ', trim(scantec%currModel%Type_)
+               WRITE(*,'(2A)')'  |---- Model Name :',trim(scantec%currModel%Name_)
+               WRITE(*,'(2A)')'  |---- Exp Name   :',trim(scantec%currModel%ExpName_)
+               WRITE(*,'(2A)')'  |---- File       :',trim(scantec%currModel%FileName_)
 #endif
-            epdado=>epdado%next
+            endif 
+            scantec%currModel => scantec%currModel%next
          ENDDO
-
-         !
-         ! Deallocate raiz and dado.
-         ! linked list should be deallocated
-         ! each node manually
-         !
-
-         epdado => epraiz%next
-         do 
-            deallocate (epraiz)
-            if(.not.associated(epdado)) exit
-            epraiz => epdado
-            epdado => epdado%next
-         enddo
 
 !
 ! Climatology
 !
          call i90_label ( 'Use Climatology:', iret )
          if(iret == -2) then
-            call perr(myname_,'Climarology Not Found')
+            call i90_perr(myname_,'Climarology Not Found')
             scantec%cflag = 0
          else
             scantec%cflag = i90_gint(iret)
             if(iret /= 0) then
-               call perr(myname_,'i90_label("Use Climatology:")',iret)
-               if(present(istat))istat=iret
+               call i90_perr(trim(myname_),'i90_label("Use Climatology:")',iret)
+               if(.not.present(istat))call i90_die(trim(myname_))
+               istat=iret
                return
             endif
          endif
 
          IF(scantec%cflag.EQ.1)THEN
-            Clima%name='Climatology'
-            call i90_label ( 'Climatology Model Id:', iret )
-            Clima%Id = i90_gint(iret)
+            scantec%currModel => scantec%FirstModel
+            do while(associated(scantec%currModel%next))
+               scantec%currModel => scantec%currModel%next
+            enddo
+            allocate(scantec%currModel%next)
+            scantec%currModel => scantec%currModel%next
+            scantec%currModel%type_    = 'Climatology'
+            scantec%currModel%ExpName_ = 'Climatology'
+
+            call i90_label ( 'Climatology Model Name:', iret )
+            call i90_Gtoken(ModelName, iret)
             if(iret /= 0) then
-               call perr(myname_,'i90_gint("Climatology Model Id:")',iret)
-               if(present(istat))istat=iret
+               call i90_perr(trim(myname_),'i90_gint("Climatology Model Name:")',iret)
+               if(present(istat))call i90_die(trim(myname_))
+               istat=iret
                return
             endif
+            scantec%currModel%Name_ = trim(ModelName)
 
             call i90_label ( 'Climatology file:', iret )
-            call i90_Gtoken(Clima%file,iret)
+            call i90_Gtoken(FileName,iret)
             if(iret /= 0) then
-               call perr(myname_,'i90_label("Climatology file:")',iret)
-               if(present(istat))istat=iret
+               call i90_perr(trim(myname_),'i90_label("Climatology file:")',iret)
+               if(.not.present(istat))call i90_die(trim(myname_))
+               istat=iret
                return
             endif
+            scantec%currModel%FileName_ = trim(FileName)
             
 #ifdef DEBUG
             WRITE(*,'(A)')'Climatology'
-            WRITE(*,'(A,I2.2)')'  |---- Id     :',Clima%Id
-            WRITE(*,'(2A)')    '  |---- Dir    :',TRIM(Clima%name)
-            WRITE(*,'(2A)')    '  |---- File   :',TRIM(Clima%file)
+            WRITE(*,'(2A)')    '  |---- Model Name :', trim(scantec%currModel%Name_)
+            WRITE(*,'(2A)')    '  |---- File Name  :', trim(scantec%currModel%FileName_)
 #endif
          ELSE
 
@@ -511,185 +482,185 @@ MODULE scan_Utils
 !
 ! Precipitation
 !
-    !print*, '::: Lendo arquivos de Precipitacao :::' 
-         call i90_label ( 'Use Precipitation:', iret )
-         if(iret == -2) then
-            call perr(myname_,'Preciptarion Not Found')
-            Precipitation_Flag = 0
-!            if(present(istat))istat=iret
-!            return
+!    !print*, '::: Lendo arquivos de Precipitacao :::' 
+!         call i90_label ( 'Use Precipitation:', iret )
+!         if(iret == -2) then
+!            call i90_perr(myname_,'Preciptarion Not Found')
+!            Precipitation_Flag = 0
+!!            if(present(istat))istat=iret
+!!            return
+!!         endif
+!         else
+!            Precipitation_Flag = i90_gint(iret)
+!            if(iret /= 0) then
+!               call i90_perr(myname_,'i90_label("Use Precipitation:")',iret)
+!               if(present(istat))istat=iret
+!               return
+!            endif
 !         endif
-         else
-            Precipitation_Flag = i90_gint(iret)
-            if(iret /= 0) then
-               call perr(myname_,'i90_label("Use Precipitation:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
-         endif
-
-         IF(Precipitation_Flag .EQ. 1)THEN
-            Precip%name='Precipitation'
-            call i90_label ( 'Precipitation Model Id:', iret )
-            Precip%Id = i90_gint(iret)
-            if(iret /= 0) then
-               call perr(myname_,'i90_gint("Precipitation Model Id:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
-            
-            call i90_label ( 'Precipitation file:', iret )
-            call i90_Gtoken(Precip%file,iret)
-            if(iret /= 0) then
-               call perr(myname_,'i90_label("Precipitation file:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
-            
-            call i90_label ( 'Define o Range do Histograma:', iret )
-            hist%rang = i90_gfloat(iret)
-            if(iret /= 0) then
-               call perr(myname_,'i90_gint("Define o Range do Histograma:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
-            
-            call i90_label ( 'Define valor do limite da ultima classe do histograma:', iret )
-            hist%valor_limit = i90_gfloat(iret)
-            if(iret /= 0) then
-               call perr(myname_,'i90_gint("Define valor do limite da ultima classe do histograma:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif            
-            
-            call i90_label ( 'Define valor do minimo inferior da primeira classe do histograma:', iret )
-            hist%valor_min = i90_gfloat(iret)
-            if(iret /= 0) then
-               call perr(myname_,'i90_gint("Define valor do minimo inferior da primeira classe do histograma:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
-            
-            call i90_label ( 'Define qual Precipitacao deseja avaliar:', iret )
-            hist%tipo_precip = i90_gint(iret)
-            if(iret /= 0) then
-               call perr(myname_,'i90_gint("Define qual Precipitacao deseja avaliar:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
-            
-            call i90_label ( 'Define o periodo de acumulo de precpitacao da observacao:', iret )
-            hist%acumulo_obs = i90_gint(iret)
-            if(iret /= 0) then
-               call perr(myname_,'i90_gint("Define o periodo de acumulo de precpitacao da observacao:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
-            
-            call i90_label ( 'Define o periodo de acumulo de precpitacao do experimento:', iret )
-            hist%acumulo_exp = i90_gint(iret)
-            if(iret /= 0) then
-               call perr(myname_,'i90_gint("Define o periodo de acumulo de precpitacao do experimento:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
-            
-            
-#ifdef DEBUG
-            WRITE(*,'(A)')'Precipitation'
-            WRITE(*,'(A,I2.2)')'  |---- Id                 :',Precip%Id
-            WRITE(*,'(2A)')    '  |---- Dir                :',TRIM(Precip%name)
-            WRITE(*,'(2A)')    '  |---- File               :',TRIM(Precip%file)
-            WRITE(*,'(A,F4.2)')'  |---- Range              :',hist%rang
-            WRITE(*,'(A,F6.2)')'  |---- Valor Minimo       :',hist%valor_min
-            WRITE(*,'(A,F8.2)')'  |---- Valor Limite       :',hist%valor_limit
-            IF(hist%tipo_precip==21)THEN
-               WRITE(*,'(A)')'  |---- Precipitacao       : TOTAL'
-            ELSE
-               WRITE(*,'(A)')'  |---- Precipitacao       : CONVECTIVE'
-            ENDIF
-            WRITE(*,'(A,I2.2)')'  |---- Acumulo OBS        :',hist%acumulo_obs
-            WRITE(*,'(A,I2.2)')'  |---- Acumulo EXP        :',hist%acumulo_exp
-#endif
-          ELSE
-
-#ifdef DEBUG
-            WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
-            WRITE(*,'(a72)')'!                       Precipitation Not Found                       !'
-            WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
-#endif
-
-         ENDIF
+!
+!         IF(Precipitation_Flag .EQ. 1)THEN
+!            Precip%name='Precipitation'
+!            call i90_label ( 'Precipitation Model Id:', iret )
+!            Precip%Id = i90_gint(iret)
+!            if(iret /= 0) then
+!               call i90_perr(myname_,'i90_gint("Precipitation Model Id:")',iret)
+!               if(present(istat))istat=iret
+!               return
+!            endif
+!            
+!            call i90_label ( 'Precipitation file:', iret )
+!            call i90_Gtoken(Precip%file,iret)
+!            if(iret /= 0) then
+!               call i90_perr(myname_,'i90_label("Precipitation file:")',iret)
+!               if(present(istat))istat=iret
+!               return
+!            endif
+!            
+!            call i90_label ( 'Define o Range do Histograma:', iret )
+!            hist%rang = i90_gfloat(iret)
+!            if(iret /= 0) then
+!               call i90_perr(myname_,'i90_gint("Define o Range do Histograma:")',iret)
+!               if(present(istat))istat=iret
+!               return
+!            endif
+!            
+!            call i90_label ( 'Define valor do limite da ultima classe do histograma:', iret )
+!            hist%valor_limit = i90_gfloat(iret)
+!            if(iret /= 0) then
+!               call i90_perr(myname_,'i90_gint("Define valor do limite da ultima classe do histograma:")',iret)
+!               if(present(istat))istat=iret
+!               return
+!            endif            
+!            
+!            call i90_label ( 'Define valor do minimo inferior da primeira classe do histograma:', iret )
+!            hist%valor_min = i90_gfloat(iret)
+!            if(iret /= 0) then
+!               call i90_perr(myname_,'i90_gint("Define valor do minimo inferior da primeira classe do histograma:")',iret)
+!               if(present(istat))istat=iret
+!               return
+!            endif
+!            
+!            call i90_label ( 'Define qual Precipitacao deseja avaliar:', iret )
+!            hist%tipo_precip = i90_gint(iret)
+!            if(iret /= 0) then
+!               call i90_perr(myname_,'i90_gint("Define qual Precipitacao deseja avaliar:")',iret)
+!               if(present(istat))istat=iret
+!               return
+!            endif
+!            
+!            call i90_label ( 'Define o periodo de acumulo de precpitacao da observacao:', iret )
+!            hist%acumulo_obs = i90_gint(iret)
+!            if(iret /= 0) then
+!               call i90_perr(myname_,'i90_gint("Define o periodo de acumulo de precpitacao da observacao:")',iret)
+!               if(present(istat))istat=iret
+!               return
+!            endif
+!            
+!            call i90_label ( 'Define o periodo de acumulo de precpitacao do experimento:', iret )
+!            hist%acumulo_exp = i90_gint(iret)
+!            if(iret /= 0) then
+!               call i90_perr(myname_,'i90_gint("Define o periodo de acumulo de precpitacao do experimento:")',iret)
+!               if(present(istat))istat=iret
+!               return
+!            endif
+!            
+!            
+!#ifdef DEBUG
+!            WRITE(*,'(A)')'Precipitation'
+!            WRITE(*,'(A,I2.2)')'  |---- Id                 :',Precip%Id
+!            WRITE(*,'(2A)')    '  |---- Dir                :',TRIM(Precip%name)
+!            WRITE(*,'(2A)')    '  |---- File               :',TRIM(Precip%file)
+!            WRITE(*,'(A,F4.2)')'  |---- Range              :',hist%rang
+!            WRITE(*,'(A,F6.2)')'  |---- Valor Minimo       :',hist%valor_min
+!            WRITE(*,'(A,F8.2)')'  |---- Valor Limite       :',hist%valor_limit
+!            IF(hist%tipo_precip==21)THEN
+!               WRITE(*,'(A)')'  |---- Precipitacao       : TOTAL'
+!            ELSE
+!               WRITE(*,'(A)')'  |---- Precipitacao       : CONVECTIVE'
+!            ENDIF
+!            WRITE(*,'(A,I2.2)')'  |---- Acumulo OBS        :',hist%acumulo_obs
+!            WRITE(*,'(A,I2.2)')'  |---- Acumulo EXP        :',hist%acumulo_exp
+!#endif
+!          ELSE
+!
+!#ifdef DEBUG
+!            WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
+!            WRITE(*,'(a72)')'!                       Precipitation Not Found                       !'
+!            WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
+!#endif
+!
+!         ENDIF
 
 !-----------------------------------------------------------------------------------------------------------Paulo Dias
    
    
 !-----------------------------------------------------------------------------------------------------------Paulo Dias
 ! EOFs
-
-            call i90_label ( 'Use EOFs:', iret )
-            EOFs_Flag = i90_gint(iret)
-            if(iret /= 0) then
-               call perr(myname_,'i90_gint("Use EOFs:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
-            
-            call i90_label ( 'Define a quantidade de EOFs:', iret )
-            quant_EOFs = i90_gint(iret)
-            if(iret /= 0) then
-               call perr(myname_,'i90_gint("Define a quantidade de EOFs:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif           
-            
-#ifdef DEBUG
-            WRITE(*,'(A)')'Empirical Orthogonal Functions (EOF)'
-            WRITE(*,'(A,I2.2)')'  |---- Quantidade de EOF:',quant_EOFs
-            
-#endif
-
-
-!-----------------------------------------------------------------------------------------------------------Paulo Dias
-    
-         
 !
-! indices dos modelos
+!            call i90_label ( 'Use EOFs:', iret )
+!            EOFs_Flag = i90_gint(iret)
+!            if(iret /= 0) then
+!               call i90_perr(myname_,'i90_gint("Use EOFs:")',iret)
+!               if(present(istat))istat=iret
+!               return
+!            endif
+!            
+!            call i90_label ( 'Define a quantidade de EOFs:', iret )
+!            quant_EOFs = i90_gint(iret)
+!            if(iret /= 0) then
+!               call i90_perr(myname_,'i90_gint("Define a quantidade de EOFs:")',iret)
+!               if(present(istat))istat=iret
+!               return
+!            endif           
+!            
+!#ifdef DEBUG
+!            WRITE(*,'(A)')'Empirical Orthogonal Functions (EOF)'
+!            WRITE(*,'(A,I2.2)')'  |---- Quantidade de EOF:',quant_EOFs
+!            
+!#endif
 !
-
-         if(scantec%cflag.eq.1 .and. Precipitation_Flag.eq.0) then
-         
-               Allocate(tmp(scantec%nexp+2))
-               call unique((/Refer%id, Exper(:)%Id, Clima%Id/),tmp,I)
-
-               Allocate(scantec%Init_ModelID(I))
-               scantec%Init_ModelID(1:I) = tmp(1:I)
-
-               DeAllocate(tmp)
-
-         else if (scantec%cflag.eq.1 .and. Precipitation_Flag.eq.1) then
-              
-               Allocate(tmp(scantec%nexp+3))
-               call unique((/Refer%id, Exper(:)%Id, Clima%Id, Precip%Id/),tmp,I)
-
-               Allocate(scantec%Init_ModelID(I))
-               scantec%Init_ModelID(1:I) = tmp(1:I)
-
-               DeAllocate(tmp)
-
-
-         else
-
-            
-               Allocate(tmp(scantec%nexp+1))
-               call unique((/Refer%id, Exper(:)%Id/),tmp,I)
-
-               Allocate(scantec%Init_ModelID(I))
-               scantec%Init_ModelID(1:I) = tmp(1:I)
-
-               DeAllocate(tmp)
-         end if
-
+!
+!!-----------------------------------------------------------------------------------------------------------Paulo Dias
+!    
+!         
+!!
+!! indices dos modelos
+!!
+!
+!         if(scantec%cflag.eq.1 .and. Precipitation_Flag.eq.0) then
+!         
+!               Allocate(tmp(scantec%nexp+2))
+!               call unique((/Refer%id, Exper(:)%Id, Clima%Id/),tmp,I)
+!
+!               Allocate(scantec%Init_ModelID(I))
+!               scantec%Init_ModelID(1:I) = tmp(1:I)
+!
+!               DeAllocate(tmp)
+!
+!         else if (scantec%cflag.eq.1 .and. Precipitation_Flag.eq.1) then
+!              
+!               Allocate(tmp(scantec%nexp+3))
+!               call unique((/Refer%id, Exper(:)%Id, Clima%Id, Precip%Id/),tmp,I)
+!
+!               Allocate(scantec%Init_ModelID(I))
+!               scantec%Init_ModelID(1:I) = tmp(1:I)
+!
+!               DeAllocate(tmp)
+!
+!
+!         else
+!
+!            
+!               Allocate(tmp(scantec%nexp+1))
+!               call unique((/Refer%id, Exper(:)%Id/),tmp,I)
+!
+!               Allocate(scantec%Init_ModelID(I))
+!               scantec%Init_ModelID(1:I) = tmp(1:I)
+!
+!               DeAllocate(tmp)
+!         end if
+!
 !
 !------------------------------------------------------------------------------- !Paulo Dias
 ! Diretorio de Saida
@@ -697,7 +668,7 @@ MODULE scan_Utils
         call i90_label ( 'Output directory:', iret )
             call i90_Gtoken(scantec%output_dir,iret)
             if(iret /= 0) then
-               call perr(myname_,'i90_label("Output directory:")',iret)
+               call i90_perr(myname_,'i90_label("Output directory:")',iret)
                if(present(istat))istat=iret
                return
             endif
@@ -770,164 +741,5 @@ MODULE scan_Utils
 
   end subroutine
 
-!
-! rotinas para ler dados do namelist
-! usam o inpack90: libmpeu
-
-  subroutine get_real(label,value,iret)
-    implicit none
-    character(len=*), parameter    :: myname_="get_real"
-
-    character(len=*),  intent(in)  :: label
-    real,              intent(out) :: value
-    integer,           intent(out) :: iret
-
-    character(len=36) :: msg
-
-    iret = 0
-
-    call i90_label(label, iret)
-    if (iret .eq. 0 )then
-       value = i90_gfloat(iret)
-    else
-       write(msg,'(3A)')'i90_label("',trim(label),'")' 
-       call perr(myname_,msg,iret)
-       return
-    endif
-
-  endsubroutine get_real
-
-  subroutine get_m_real(label,value,iret)
-    implicit none
-    character(len=*), parameter    :: myname_="get_real"
-
-    character(len=*),  intent(in)  :: label
-    real, dimension(:),intent(out) :: value
-    integer,           intent(out) :: iret
-
-    integer           :: i, n
-    character(len=36) :: msg
-
-    n=size(value,dim=1)
-
-    iret = 0
-
-    call i90_label(label, iret)
-    if (iret .eq. 0 )then
-       do i=1,n
-          value(i) = i90_gfloat(iret)
-       enddo
-    else
-       write(msg,'(3A)')'i90_label("',trim(label),'")' 
-       call perr(myname_,msg,iret)
-       return
-    endif
-
-
-  endsubroutine get_m_real
-
-
-  subroutine get_int(label,value,iret)
-    implicit none
-    character(len=*), parameter    :: myname_="get_int"
-
-    character(len=*),  intent(in)  :: label
-    integer,           intent(out) :: value
-    integer,           intent(out) :: iret
-
-    character(len=36) :: msg
-
-    iret = 0
-
-    call i90_label(label, iret)
-    if (iret .eq. 0 )then
-       value = i90_gint(iret)
-    else
-       write(msg,'(3A)')'i90_label("',trim(label),'")' 
-       call perr(myname_,msg,iret)
-       return
-    endif
-
-  endsubroutine get_int
-
-  subroutine get_m_int(label,value,iret)
-    implicit none
-    character(len=*), parameter    :: myname_="get_int"
-
-    character(len=*),      intent(in)  :: label
-    integer, dimension(:), intent(out) :: value
-    integer,               intent(out) :: iret
-
-    integer           :: i, n
-    character(len=36) :: msg
- 
-    n=size(value)
-    iret = 0
-
-    call i90_label(label, iret)
-    if (iret .eq. 0 )then
-       do i=1,n
-          value(i) = i90_gint(iret)
-       enddo
-    else
-       write(msg,'(3A)')'i90_label("',trim(label),'")' 
-       call perr(myname_,msg,iret)
-       return
-    endif
-
-  endsubroutine get_m_int
-
-
-  subroutine get_char(label,value,iret)
-    implicit none
-    character(len=*), parameter    :: myname_="get_char"
-
-    character(len=*),  intent(in)  :: label
-    character(len=*),  intent(out) :: value
-    integer,           intent(out) :: iret
-
-
-    character(len=36) :: msg
-
-    iret = 0
-
-    call i90_label(label, iret)
-    if (iret .eq. 0 )then
-       call i90_Gtoken(value,iret)
-    else
-       write(msg,'(3A)')'i90_label("',trim(label),'")' 
-       call perr(myname_,msg,iret)
-       return
-    endif
-
-  endsubroutine get_char
-
-  subroutine get_m_char(label,value,iret)
-    implicit none
-    character(len=*), parameter    :: myname_="get_char"
-
-    character(len=*),                intent(in)  :: label
-    character(len=*), dimension(:),  intent(out) :: value
-    integer,                         intent(out) :: iret
-
-    integer           :: i, n
-    character(len=36) :: msg
- 
-    n=size(value)
-
-    iret = 0
-
-    call i90_label(label, iret)
-    if (iret .eq. 0 )then
-       do i=1,n
-          call i90_Gtoken(value(i),iret)
-       enddo
-    else
-       write(msg,'(3A)')'i90_label("',trim(label),'")' 
-       call perr(myname_,msg,iret)
-       return
-    endif
-
-  endsubroutine get_m_char
 
 END MODULE

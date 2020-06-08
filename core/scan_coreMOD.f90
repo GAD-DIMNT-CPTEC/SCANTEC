@@ -51,6 +51,7 @@ MODULE scan_coreMOD
   USE scan_OutputMOD , only: write_2d     !
   USE scan_bstatistic                     !
   USE m_ioutil
+  USE m_constants, only: r8
 !  use omp_lib
 
   IMPLICIT NONE
@@ -194,28 +195,28 @@ CONTAINS
 #endif
 
     !
-    !  1. Registering models to be used
+    !  1. condigure scantec grid and variable names
+    !
+
+    call data_config ( )
+
+    !
+    !  2. Registering models to be used and configure it
     !
 
     call scan_models_plugin()
 
     !
-    !  2. Registering observations to be used
+    !  3. Registering observations to be used
     !
 
 !    call scan_obs_plugin()
 
     !
-    !  3. Registering statistical Methods
+    !  4. Registering statistical Methods
     !
 
 !    call scan_stat_plugins()
-
-    !
-    !  4.
-    !
-
-    call data_config()
 
     !
     !  5. Allocating memory
@@ -228,15 +229,6 @@ CONTAINS
     !
 
     call data_init()
-
-    !
-    !  7. Models Init
-    !
-
-    DO I=1,size(scantec%Init_ModelID)
-       call config_model(scantec%Init_ModelID(I))
-    END DO
-
 
 
     !
@@ -288,8 +280,10 @@ CONTAINS
     !  1. Loop over time and experiments
     !
 
+     write(*,'(3A11)')'Analisys','Forecast','fct'
      DO WHILE (.NOT.is_last_step())
-        write(*,'(2(1x,I10.10),1x,2I3.2)')scantec%atime, scantec%ftime, int(abs(cal2jul(scantec%atime)-cal2jul(scantec%ftime))*24),scantec%ftime_idx
+        write(*,'(2(1x,I10.10),7x,I3.2"h")')scantec%atime, scantec%ftime,&
+              int(abs(cal2jul(scantec%atime)-cal2jul(scantec%ftime))*24)
         
         DO NExp=1,scantec%nexp
            CALL scan_ModelData ( NExp )  ! Load Files: Analisys, Forecast and Climatology
@@ -378,8 +372,8 @@ CONTAINS
 
   SUBROUTINE scan_NextStep()
      implicit none
-     REAL(DP) :: aincr
-     REAL(DP) :: fincr
+     REAL(r8) :: aincr
+     REAL(r8) :: fincr
      integer :: I, Nx, Ny
      integer :: ii, jj
 
