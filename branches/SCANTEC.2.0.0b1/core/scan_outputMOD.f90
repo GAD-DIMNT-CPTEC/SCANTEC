@@ -23,7 +23,7 @@
 MODULE scan_outputMOD
    USE scantec_module
    USE m_ioutil
-   USE m_die
+   USE m_inpak90, only: i90_perr
 
    IMPLICIT NONE
 
@@ -52,7 +52,7 @@ MODULE scan_outputMOD
 
       call opnieee(lu, trim(fname), status, ier)!, recl)
 	   if(ier.ne.0) then
-	      call perr(myname_,'opnieee("'//	&
+	      call i90_perr(myname_,'opnieee("'//	&
                    trim(fname)//'")',ier)
 	      return
 	   endif
@@ -61,7 +61,7 @@ MODULE scan_outputMOD
 
       call clsieee(lu,ier)
       if(ier/=0) then
-         call perr(myname_,'deallocate()',ier)
+         call i90_perr(myname_,'deallocate()',ier)
 !         if(.not.present(stat)) call die(myname_)
 !         stat=ier
          return

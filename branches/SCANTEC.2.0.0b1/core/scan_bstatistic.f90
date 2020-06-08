@@ -22,8 +22,7 @@ Module scan_bstatistic
 
   USE scantec_module                ! scantec types
   USE scan_dataMOD, only : scandata ! scantec data matrix
-  USE m_die                         ! Error Messages
-  USE m_stdio                       ! Module to defines std. I/O parameters
+  USE m_ioutil                      ! Module to defines std. I/O parameters
   USE m_string                      ! string manipulations
   use omp_lib
   USE scan_Utils, only: Exper 
@@ -56,9 +55,14 @@ Module scan_bstatistic
   end type bstat
 
   type(bstat), allocatable :: dado(:)
+  
+  type idxUndef
+     integer, allocatable :: pt(:)
+     type(idxUndef), pointer :: next => null()
+  end type
+  type(idxUndef), pointer :: idxFirstVar => null()
+  type(idxUndef), pointer :: idx => null()
 
-  integer, allocatable :: Idx(:,:)
-  integer              :: nidx
 
 
   character(len=512) :: FNameOut = '%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2'
@@ -113,42 +117,60 @@ Contains
     !BOC
     !
 
-    integer            :: i, j, npts
-    character(len=512) :: fname, fmt
-    integer            :: nymd, nhms
-    integer            :: fymd, fhms
+    character(len=512)   :: fname, fmt
+    integer              :: i, j
+    integer              :: nvar, npts
+    integer              :: istat
+    integer              :: nidx
+    integer              :: nymd, nhms
+    integer              :: fymd, fhms
+    logical, pointer     :: RefBitMap(:,:) => null()
+    logical, pointer     :: expBitMap(:,:) => null()
+    logical, allocatable :: bitMap(:,:)
 
     character(len=*),parameter :: myname_=myname//'::InitBstat'
 
 #ifdef DEBUG
     WRITE(stdout,'(     2A)')'Hello from ', myname_
 #endif
+    !
+    ! transferindo dados para o calculo dos indices
+    !
 
+    call scantec%getField('refer',reffield,istat)
+    call scantec%getBitMap('refer',refBitMap,istat)
 
+    call scantec%getField('clima',clmfield,istat)
+
+    call scantec%getField(Exper(run)%Name, expfield, istat)
+    call scantec%getBitMap(Exper(run)%Name, expBitMap, istat)
     !
     ! Identificando Indice dos pontos validos
     !
 
     npts = scantec%nxpt*scantec%nypt
+    nvar = scantec%nvar
 
-    Allocate(Idx(npts,scantec%nvar))
-    Idx = -1
+    ! Merge reference and experiment
+    allocate(bitMap(npts,nvar))
+    bitMap = refBitMap .and. expBitMap
 
-    DO i=1,scantec%nvar
-       nidx = count (scandata(run)%UdfIdx(1:npts,i))
-       Idx(1:nidx,i) = PACK ( (/(j,j=1,npts)/), mask = scandata(run)%UdfIdx(1:npts,i))
+    allocate(idxFirstVar)
+    idx => idxFirstVar
+
+    DO i=1,nvar
+       nidx = count (bitMap(1:npts,i))
+       allocate(idx%pt(nidx))
+       Idx%pt(1:nidx) = PACK ( (/(j,j=1,npts)/), mask = BitMap(1:npts,i))
+!       print*,trim(scantec%VarName(i)),count(bitmap(:,i)),count(refBitMap(:,i)),count(expBitMap(:,i)), nidx, count(idx%pt.gt.0)
+       if(i.lt.nvar)then
+          allocate(idx%next)
+          idx => idx%next
+       endif
     ENDDO
 
-
-    !
-    ! transferindo dados para o calculo dos indices
-    !
-
-    reffield => scandata(1)%reffield
-    clmfield => scandata(1)%clmfield
-    expfield => scandata(run)%expfield
-
-
+    deallocate(bitMap)
+    
     if(scantec%loop_count.eq.1)then
 
        !
@@ -202,7 +224,7 @@ Contains
             Status = 'replace'      &
             )
 
-       write(fmt,'(A4,I3.3,A5)')'(A9,',scantec%nvar,'A9)'
+       write(fmt,'(A7,I3.3,A8)')'(1x,A9,',scantec%nvar,'(1x,A9))'
        write(FUnitOut+0,fmt)'%Previsao',(scantec%VarName(i),i=1,scantec%nvar)
        write(FUnitOut+1,fmt)'%Previsao',(scantec%VarName(i),i=1,scantec%nvar)
        write(FUnitOut+2,fmt)'%Previsao',(scantec%VarName(i),i=1,scantec%nvar)
@@ -231,11 +253,6 @@ Contains
           dado(run)%rmse_field = 0.0
           dado(run)%vies_field = 0.0
           dado(run)%exp_mean_field = 0.0
-          DO i = 1, scantec%nvar
-             dado(run)%rmse_field(Idx(1:nidx,i),i,:) = 0.0 !scantec%udef
-             dado(run)%vies_field(Idx(1:nidx,i),i,:) = 0.0 !scantec%udef
-             dado(run)%exp_mean_field(Idx(1:nidx,i),i,:) = 0.0 !scantec%udef
-          ENDDO
 
          ! dado(i)%desp = 0.0 ! paulo dias
 
@@ -289,7 +306,12 @@ Contains
     ! Desalocando variaveis
     !
 
-    DeAllocate(Idx)
+    idx => IdxFirstVar%next
+    do while(associated(idx))
+       deallocate(idxFirstVar)
+       idxFirstVar => idx
+       idx => idxFirstVar%next
+    enddo
 
     !
     ! Fechando arquivo 
@@ -333,7 +355,7 @@ Contains
     !
 
     integer             :: i, j, k, p, v
-    integer             :: npts
+    integer             :: nidx, npts
     real                :: tmp, TmpRMSE, TmpVIES, TmpDiff1, TmpDiff2
     real, allocatable   :: anomfield(:,:)
         
@@ -351,9 +373,17 @@ Contains
 
     npts = scantec%nxpt*scantec%nypt
 
-
+    idx => idxFirstVar
     DO i = 1, scantec%nvar
-       nidx = count(Idx(:,i).gt.0)
+       nidx = count(Idx%pt.gt.0)
+       if (nidx .eq. 0)then
+          idx => idx%next
+          cycle
+       endif
+       !
+       ! PRECISO INCLUIR AQUI ALGO PARA CONTAR OS ARQUIVOS QUE SÃO LIDOS
+       ! PARA CADA VARIAVEL. AI UTILIZAR ISSO PRA FAZER A MÉDIA
+       !
        j    = scantec%ftime_idx
 
        TmpVIES = 0.0
@@ -361,7 +391,7 @@ Contains
 
        DO k=1,nidx
 
-          p = Idx(k,i)
+          p = Idx%pt(k)
           
           TmpDiff1 = expfield(p,i) - reffield(p,i)
           TmpDiff2 = TmpDiff1 * TmpDiff1
@@ -382,19 +412,19 @@ Contains
 
        if (scantec%cflag.eq.1)then
 
-          anomfield(Idx(1:nidx,i),1) = expfield(Idx(1:nidx,i),i)-clmfield(Idx(1:nidx,i),i)
-          anomfield(Idx(1:nidx,i),2) = reffield(Idx(1:nidx,i),i)-clmfield(Idx(1:nidx,i),i)
+          anomfield(Idx%pt,1) = expfield(Idx%pt,i)-clmfield(Idx%pt,i)
+          anomfield(Idx%pt,2) = reffield(Idx%pt,i)-clmfield(Idx%pt,i)
 
-          CALL corr(anomfield(Idx(1:nidx,i),1),&
-               anomfield(IdX(1:nidx,i),2),&
-               tmp              &
-              )
+          CALL corr(anomfield(Idx%pt,1),&
+                    anomfield(IdX%pt,2),&
+                    tmp              &
+                   )
 
        else
-          CALL corr(expfield(Idx(1:nidx,i),i),&
-               reffield(Idx(1:nidx,i),i),&
-               tmp             &
-              )
+          CALL corr(expfield(Idx%pt,i),&
+                    reffield(Idx%pt,i),&
+                    tmp             &
+                   )
        endif
 
        dado(run)%acor(i,j) = dado(run)%acor(i,j) + tmp
@@ -402,7 +432,7 @@ Contains
 !       EndDo
 
        DeAllocate(anomfield)
-
+       idx => idx%next
     ENDDO
     
     if ( scantec%time_step.eq.scantec%ntime_steps )then
@@ -452,14 +482,19 @@ Contains
     !BOC
     !
 
-    integer            :: iret,i,j
-    character(len=512) :: fname, fmt
-    integer            :: nymd, nhms
-    integer            :: fymd, fhms
-    integer            :: nidx
-    integer            :: npts
-    real               :: k
-    logical            :: isOpen
+    integer              :: iret,i,j
+    character(len=512)   :: fname, fmt
+    integer              :: nymd, nhms
+    integer              :: fymd, fhms
+    integer              :: nidx
+    integer              :: npts
+    integer              :: nvar
+    integer              :: istat
+    real                 :: k
+    logical              :: isOpen
+    logical, pointer     :: refBitMap(:,:) => null()
+    logical, pointer     :: expBitMap(:,:) => null()
+    logical, allocatable :: bitMap(:,:)
 
     inquire(unit=FUnitOut, opened=isOpen)
     if(.not.isOpen) then
@@ -513,7 +548,7 @@ Contains
            )           
     endif
 
-    write(fmt,'(A9,I3.3,A5)')'(6x,I3.3,',scantec%nvar,'F9.3)'
+    write(fmt,'(A9,I3.3,A6)')'(7x,I3.3,',scantec%nvar,'F10.3)'
 
     j = scantec%ftime_idx
 
@@ -528,17 +563,30 @@ Contains
     write(FunitOut+2,fmt)(j-1)*scantec%ftime_step,(dado(run)%acor(i,j),i=1,scantec%nvar)
 
     npts = scantec%nxpt*scantec%nypt
+    nvar = scantec%nvar
 
-    DO i=1,scantec%nvar
-        nidx = count (scandata(run)%UdfIdx(1:npts,i))
+    call scantec%getBitMap('refer',refBitMap,istat)
+    call scantec%getBitMap(Exper(run)%Name, expBitMap, istat)
 
-        dado(run)%rmse_Field(Idx(1:nidx,i),i,j) = sqrt(dado(run)%rmse_Field(Idx(1:nidx,i),i,j)/ scantec%ftime_count(j))
-        dado(run)%vies_Field(Idx(1:nidx,i),i,j) = dado(run)%vies_Field(Idx(1:nidx,i),i,j)/ scantec%ftime_count(j)
-        dado(run)%exp_mean_Field(Idx(1:nidx,i),i,j) = dado(run)%exp_mean_Field(Idx(1:nidx,i),i,j)/ scantec%ftime_count(j)
+    allocate(bitMap(npts,nvar))
+    bitMap = refBitMap .and. expBitMap
+    
+    idx => idxFirstVar
+    DO i=1,nvar
+        nidx = count (bitMap(1:npts,i))
+
+        dado(run)%rmse_Field(Idx%pt,i,j) = sqrt(dado(run)%rmse_Field(Idx%pt,i,j)/ scantec%ftime_count(j))
+        dado(run)%vies_Field(Idx%pt,i,j) = dado(run)%vies_Field(Idx%pt,i,j)/ scantec%ftime_count(j)
+        dado(run)%exp_mean_Field(Idx%pt,i,j) = dado(run)%exp_mean_Field(Idx%pt,i,j)/ scantec%ftime_count(j)
        
+        where(.not.bitmap(:,i)) dado(run)%rmse_Field(:,i,j) = scantec%udef
+        where(.not.bitmap(:,i)) dado(run)%vies_Field(:,i,j) = scantec%udef
+        where(.not.bitmap(:,i)) dado(run)%exp_mean_Field(:,i,j) = scantec%udef
+
         write(FunitOut+3)dado(run)%rmse_Field(:,i,j)
         write(FunitOut+4)dado(run)%vies_Field(:,i,j)
         write(FunitOut+5)dado(run)%exp_mean_Field(:,i,j)
+        idx => idx%next
     !print*,minval(dado(run)%rmse_Field(:,i,j)),maxval(dado(run)%rmse_Field(:,i,j))
     ENDDO
 

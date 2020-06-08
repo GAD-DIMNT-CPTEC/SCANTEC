@@ -25,19 +25,21 @@ GZIP    = gzip
 INSTALL = install
 
 # dirs
-MPEU_LIB = ../lib/mpeu
-MPEU_INC = ../lib/mpeu
+#MPEU_LIB = ../lib/mpeu
+#MPEU_INC = ../lib/mpeu
+BILIN_LIB = ../lib/BilinInterp
+BILIN_INC = ../lib/BilinInterp
 GRIB_LIB = ../lib/w3lib
 GRIB_INC = ../lib/w3lib
 incdir = ./
 srcdir = ./
 
 # default mode (max. optimization)
-mode = #dbg #pro
+mode = dbg #pro
 
 # header file directories
-CCFLAGS = -I$(incdir) -I$(MPEU_INC)
-FFLAGS  += -I$(incdir) -I$(MPEU_INC) 
+CCFLAGS = -I$(incdir) -I$(BILIN_INC)
+FFLAGS  += -I$(incdir) -I$(BILIN_INC) 
 
 # default flags
   FPPFLAGS = -C -E 
@@ -110,12 +112,13 @@ ifeq ($(SCAN_ARCH),GNU_Linux)
    FC  = gfortran
    LD  = gfortran
    AR  = ar
-   FFLAGS += -cpp -frecursive -ffree-line-length-none -Dgfortran #-DDEBUG
+#   FFLAGS += -cpp -frecursive -ffree-line-length-none -Dgfortran
+   FFLAGS += -cpp -ffree-line-length-none -Dgfortran 
 
 # add flags for debugging if requested
    ifeq (dbg,$(findstring dbg,$(mode)))
       CCFLAGS += 
-      FFLAGS  += -g  -DDEBUG 
+      FFLAGS  += -g -ggdb -O0 -DDEBUG -fbacktrace -Wuninitialized -fbounds-check -ffpe-trap=zero,invalid,overflow,underflow
       LDFLAGS += -g -pg
    endif
 
@@ -131,8 +134,8 @@ endif
 include Makefile-objs
 
 # additionnal libraries
-LIBDIRS = -L$(MPEU_LIB) -L$(GRIB_LIB) 
-LIBS    = -lmpeu  -lw3  #-llapack 
+LIBDIRS = -L$(BILIN_LIB) -L$(GRIB_LIB) 
+LIBS    = -lw3  -linterp #-llapack 
 
 PATH2=../bin
 
@@ -156,7 +159,7 @@ $(LIB): $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(notdir $(OBJS))
 
 
-$(BIN): $(OBJS) $(MPEU_LIB)/libmpeu.a 
+$(BIN): $(OBJS) $(BILIN_LIB)/libinterp.a 
 	@$(ECHO) ""
 	@$(ECHO) "Linking executable $(@F)"
 	@$(ECHO) ""

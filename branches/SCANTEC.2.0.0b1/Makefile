@@ -32,7 +32,7 @@ PRJDIRS = $(incdir)/w3lib $(incdir)/mpeu $(srcdir)
 .PHONY: $(MAKEFILE) all dep html clean install help
 
 # targets
-all: libw3.a libmpeu.a scantec.x 
+all: libw3.a libmpeu.a libinterp.a scantec.x 
 	mv $(srcdir)/scantec.x $(pathbin)
 	rm $(srcdir)/*.mod $(srcdir)/*.o
 
@@ -43,6 +43,11 @@ libw3.a:
 libmpeu.a:
 	@$(CD) $(incdir)/mpeu && \
 	    $(MAKE) -f $(MAKEFILE) $@
+
+libinterp.a:
+	@$(CD) $(incdir)/BilinInterp && \
+	    $(MAKE) -f $(MAKEFILE) $@
+
 
 scantec.x:
 	@$(CD) $(srcdir) && \

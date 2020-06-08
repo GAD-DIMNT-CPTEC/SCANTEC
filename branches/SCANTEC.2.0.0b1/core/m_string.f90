@@ -18,6 +18,7 @@ MODULE m_string
   PUBLIC :: str_template ! Replace variables in a template
   PUBLIC :: num2str      ! convert a number to string
   PUBLIC :: GetTokens    ! Get tokens by line
+  PUBLIC :: split
   PUBLIC :: find         ! find substring
 
   interface Str_Template            
@@ -450,7 +451,103 @@ subroutine GetTokens_(line,tokens,ntokens,del)
     idx=index(trim(tok),trim(str))
 
   end function indexstr
+  !-----------------------------------------------------------------------------!
+  !             Modeling and Development Division - DMD/CPTEC/INPE              !
+  !-----------------------------------------------------------------------------!
+  !BOP
+  !
+  ! !IROUTINE: split - parse string into an array using specified delimiters
+  !
+  ! !DESCRIPTION: parses a string using specified delimiter characters and
+  !               store tokens into an allocatable array
+  !
+  !
+  ! !INTERFACE:
+  !
 
+  subroutine split(str, ntokens, tokens, del)
+
+    !
+    ! !INPUT PARAMETERS:
+    !
+    character(len=*), intent(in) :: str
+    character(len=*), optional, intent(in) :: del
+    !
+    ! !OUTPUT PARAMETERS:
+    !
+    integer, intent(out) :: ntokens
+    character(len=*), allocatable, intent(out) :: tokens(:)
+
+    ! !REVISION HISTORY:
+    !
+    !   13 May 2020 - J. G. de Mattos -  Initial code.
+    !
+    !EOP
+    !-----------------------------------------------------------------------------!
+    !BOC
+
+    character, parameter :: BLK = achar(32)   ! blank (space)
+    character(len=1)     :: delimiter
+    integer              :: i, j
+    integer              :: StrLen
+
+    ! linked list to store temporary tokens
+    type token
+       character(len=10)    :: tk
+       type(token), pointer :: next => null()
+    endtype token
+    type(token), pointer :: root => null()
+    type(token), pointer :: current => null()
+
+    ! setting up delimter
+    delimiter = BLK
+    if (present(del)) delimiter = del
+
+    ! get string length
+    StrLen = len_trim(str)
+
+    ! at least we has one token
+    ntokens = 1
+
+    ! find tokens using delimiter
+    allocate (root)
+    current => root
+    j = 1
+    do i = 1, StrLen
+
+       if (str(i:i) == trim(delimiter)) then
+          ntokens = ntokens + 1
+          current%tk = str(j:i - 1)
+          allocate (current%next)
+          current => current%next
+          j = i + 1
+       endif
+
+    enddo
+    !get last token
+    current%tk = str(j:len_trim(str))
+
+    !copy tokens to output array
+    allocate (tokens(ntokens))
+    current => root
+    do i = 1, ntokens
+       tokens(i) = trim(current%tk)
+       current => current%next
+    enddo
+
+    !
+    ! deallocate temporary token list
+    !
+    current => root%next
+    do while (associated(current))
+       deallocate (root)
+       root => current
+       current => root%next
+    enddo
+
+  end subroutine split
+  !EOC
+  !-----------------------------------------------------------------------------!
 
 END MODULE m_string
 
