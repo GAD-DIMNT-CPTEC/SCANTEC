@@ -1,0 +1,76 @@
+#!/bin/sh
+ROOT_DIR=`pwd`
+while true
+do
+echo "------------------choose one of options-----------------"
+echo
+echo " 1 - Clean Environment"
+echo ""
+echo " 2 - GNU - Load GNU Gfortran Environment to LINUX and compile"
+echo ""
+echo " 3 - PGI XE - Load PGI Environment to XT/XE and compile"
+echo ""
+echo " 4 - INTEL - Load INTEL Environment to LINUX and compile"
+echo ""
+echo " E - Exit"
+#
+echo
+echo -n "Choose one of options (1-E): "
+read option
+echo
+case $option in
+#
+[1])
+echo "------------------cleanning environment-----------------"
+echo
+cd $ROOT_DIR; make clean
+echo
+echo "-------------------environment cleaned------------------"
+echo
+continue
+;;
+#
+[2])
+echo "--------------------loading environment-----------------"
+echo
+export SCAN_ARCH=GNU_Linux
+echo SCAN_ARCH=$SCAN_ARCH
+echo
+echo "--------------------environment loaded------------------"
+echo
+;;
+#
+[3])
+echo "--------------------loading environment-----------------"
+echo
+export SCAN_ARCH=cray_pgi
+echo SCAN_ARCH=$SCAN_ARCH
+echo
+echo "--------------------environment loaded------------------"
+echo
+;;
+#
+[4])
+echo "--------------------loading environment-----------------"
+echo
+export SCAN_ARCH=Darwin_intel
+echo SCAN_ARCH=$SCAN_ARCH
+echo
+echo "--------------------environment loaded------------------"
+echo
+;;
+#
+[E])
+echo
+echo "--------------------------exiting-----------------------"
+echo
+break
+;;
+#
+*)
+echo "invalid option"
+;;
+esac
+cd $ROOT_DIR; make
+break
+done
