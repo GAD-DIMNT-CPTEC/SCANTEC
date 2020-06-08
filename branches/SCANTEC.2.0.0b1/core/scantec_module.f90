@@ -1,6 +1,6 @@
 MODULE scantec_module
    use m_constants
-   use scan_ConvFunc
+!   use scan_ConvFunc
    
    implicit none
 !
