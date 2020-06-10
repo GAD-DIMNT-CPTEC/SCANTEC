@@ -73,6 +73,7 @@ MODULE scantec_module
 !
      contains
      procedure, public :: insertModel => insertModel_
+     procedure, public :: getModel => getModel_
      procedure, public :: getField => getField_
      procedure, public :: getBitMap => getBitMap_
      
@@ -310,6 +311,24 @@ MODULE scantec_module
          if(ModelType .eq. 'Experiment') self%nexp = self%nexp + 1
 
       end subroutine
+
+      function getModel_(self, MType_, MName_) result(Model)
+         class(scanType),  intent(inout) :: self
+         character(len=*), intent(in   ) :: MType_
+         character(len=*), intent(in   ) :: MName_
+         type(ModelType), pointer :: Model
+
+
+         Model => self%FirstModel
+         do while(associated(Model))
+            if (trim(Model%Name_) .eq. trim(MName_) .and.&
+                trim(Model%Type_) .eq. trim(MType_)) return
+             Model => Model%next
+         enddo
+
+         stop 'Model Name or Model Type not found! '//trim(MType_)//' -> '//trim(MName_)
+
+      end function
 
 !      subroutine CalcField(self,'')
 !

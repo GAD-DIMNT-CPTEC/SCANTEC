@@ -32,7 +32,8 @@ MODULE scan_Utils
                         i90_label, &
                         i90_perr,  &
                         i90_die,   &
-                        i90_lcase
+                        i90_lcase, &
+                        i90_fullRelease
    use m_constants, only: i4, r4
    
    !
@@ -389,33 +390,6 @@ MODULE scan_Utils
 
          enddo
 
-         ! Mantem a estrutura antiga, assim não preciso mexer em muitas coisas
-         ! neste momento
-         ALLOCATE(Exper(scantec%nexp),STAT=iret)
-         scantec%currModel => scantec%FirstModel ! return to begin of linked list 
-         I = 0
-         DO while(associated(scantec%currModel))
-            if (trim(scantec%currModel%Type_) .eq. 'Reference')then
-               Refer%Id   = trim(scantec%currModel%Name_)
-               Refer%file = trim(scantec%currModel%FileName_)
-               Refer%name = trim(scantec%currModel%ExpName_)
-
-            else if (trim(scantec%currModel%Type_) .eq. 'Experiment')then
-               i = i + 1
-               Exper(I)%Id   = trim(scantec%currModel%Name_)
-               Exper(I)%name = trim(scantec%currModel%ExpName_)
-               Exper(I)%file = trim(scantec%currModel%FileName_)
-
-#ifdef DEBUG
-               WRITE(*,'(2A)')'Type : ', trim(scantec%currModel%Type_)
-               WRITE(*,'(2A)')'  |---- Model Name :',trim(scantec%currModel%Name_)
-               WRITE(*,'(2A)')'  |---- Exp Name   :',trim(scantec%currModel%ExpName_)
-               WRITE(*,'(2A)')'  |---- File       :',trim(scantec%currModel%FileName_)
-#endif
-            endif 
-            scantec%currModel => scantec%currModel%next
-         ENDDO
-
 !
 ! Climatology
 !
@@ -434,14 +408,6 @@ MODULE scan_Utils
          endif
 
          IF(scantec%cflag.EQ.1)THEN
-            scantec%currModel => scantec%FirstModel
-            do while(associated(scantec%currModel%next))
-               scantec%currModel => scantec%currModel%next
-            enddo
-            allocate(scantec%currModel%next)
-            scantec%currModel => scantec%currModel%next
-            scantec%currModel%type_    = 'Climatology'
-            scantec%currModel%ExpName_ = 'Climatology'
 
             call i90_label ( 'Climatology Model Name:', iret )
             call i90_Gtoken(ModelName, iret)
@@ -451,7 +417,6 @@ MODULE scan_Utils
                istat=iret
                return
             endif
-            scantec%currModel%Name_ = trim(ModelName)
 
             call i90_label ( 'Climatology file:', iret )
             call i90_Gtoken(FileName,iret)
@@ -461,13 +426,12 @@ MODULE scan_Utils
                istat=iret
                return
             endif
-            scantec%currModel%FileName_ = trim(FileName)
             
-#ifdef DEBUG
-            WRITE(*,'(A)')'Climatology'
-            WRITE(*,'(2A)')    '  |---- Model Name :', trim(scantec%currModel%Name_)
-            WRITE(*,'(2A)')    '  |---- File Name  :', trim(scantec%currModel%FileName_)
-#endif
+            call scantec%insertModel('Climatology',   &
+                                     trim(ModelName), &
+                                     'clima',         &
+                                     trim(FileName)   &
+                                    )
          ELSE
 
 
@@ -476,6 +440,42 @@ MODULE scan_Utils
             WRITE(*,'(a72)')'!         The mean reference field will be used as climatology        !'
             WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
          ENDIF
+
+         !-----------------------------------------------------------------------------------!
+         ! Mantem a estrutura antiga, assim não preciso mexer em muitas coisas
+         ! neste momento
+         ALLOCATE(Exper(scantec%nexp),STAT=iret)
+         scantec%currModel => scantec%FirstModel ! return to begin of linked list 
+         I = 0
+         DO while(associated(scantec%currModel))
+            if (trim(scantec%currModel%Type_) .eq. 'Reference')then
+               Refer%Id   = trim(scantec%currModel%Name_)
+               Refer%file = trim(scantec%currModel%FileName_)
+               Refer%name = trim(scantec%currModel%ExpName_)
+
+            else if (trim(scantec%currModel%Type_) .eq. 'Climatology')then
+               clima%Id   = trim(ModelName)
+               clima%name = 'Climatology'
+               clima%file = trim(FileName)
+
+            else if (trim(scantec%currModel%Type_) .eq. 'Experiment')then
+               
+               i = i + 1
+               Exper(I)%Id   = trim(scantec%currModel%Name_)
+               Exper(I)%name = trim(scantec%currModel%ExpName_)
+               Exper(I)%file = trim(scantec%currModel%FileName_)
+
+            endif 
+
+#ifdef DEBUG
+               WRITE(*,'(2A)')'Type : ', trim(scantec%currModel%Type_)
+               WRITE(*,'(2A)')'  |---- Model Name :',trim(scantec%currModel%Name_)
+               WRITE(*,'(2A)')'  |---- Exp Name   :',trim(scantec%currModel%ExpName_)
+               WRITE(*,'(2A)')'  |---- File       :',trim(scantec%currModel%FileName_)
+#endif
+            scantec%currModel => scantec%currModel%next
+         ENDDO
+
          
 !-----------------------------------------------------------------------------------------------------------Paulo Dias
 
@@ -675,6 +675,14 @@ MODULE scan_Utils
 
 !Fim Diretorio de Saida
 !--------
+
+   call I90_fullRelease( iret )
+   if(iret /= 0) then
+      call i90_perr(myname_,'i90_fullRelease',iret)
+      if(present(istat))istat=iret
+      return
+   endif
+
 
    END SUBROUTINE
 

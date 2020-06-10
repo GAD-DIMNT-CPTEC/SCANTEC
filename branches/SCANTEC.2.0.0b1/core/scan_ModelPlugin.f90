@@ -1,11 +1,21 @@
 MODULE scan_Modelplugin
   use scantec_module
   use bilinInterp
-  use scan_readModel
-  use m_inpak90
-!  USE m_agcm
-!  USE m_clima50yr
-!  USE m_brams
+  use m_inpak90, only: i90_LoadF,  & 
+                       i90_getVal, &
+                       i90_gtoken, &
+                       i90_gfloat, &
+                       i90_gint,   &
+                       i90_gline,  &
+                       i90_lcase,  &
+                       i90_label,  &
+                       i90_perr,   &
+                       i90_die,    &
+                       i90_fullRelease
+   use m_ioutil
+   use m_constants, only: tinyStr, shortStr, normalStr,&
+                          i4, r4
+
   
   IMPLICIT NONE
   !BOP
@@ -32,14 +42,6 @@ MODULE scan_Modelplugin
   !EOP
 
   PRIVATE
-  !-------------------------------------------------------------------
-  ! Available Models
-  !-------------------------------------------------------------------
-
-!  integer, public, parameter :: templateId           = 0  ! Template
-!  integer, public, parameter :: AGCMId               = 1  ! AGCM/CPTEC
-!  integer, public, parameter :: bramsId              = 2  ! BRAMS 5KM / CPTEC
-!  integer, public, parameter :: clima50yrId          = 3  ! 50yr Climatology / CPTEC
 
   !-------------------------------------------------------------------
   ! !PUBLIC MEMBER FUNCTIONS:
@@ -53,66 +55,27 @@ MODULE scan_Modelplugin
   character(len=*),parameter :: myname='scan_Modelplugin'
 
 Contains
-!  !-------------------------------------------------------------------
-!  !BOP
-!  !
-!  ! !ROUTINE: scan_models_plugin
-!  !  \label{scan_models_plugin}
-!  !
-!  ! !DESCRIPTION:
-!  !
-!  ! This is a custom-defined plugin point for introducing a new Model. 
-!  ! The interface mandates that the following routines be implemented
-!  ! and registered for each of the Model that is included in scantec.
-!  !
-!  ! !INTERFACE:
-!    
-!  SUBROUTINE scan_Models_Plugin_
-!
-!    !  !REVISION HISTORY: 
-!    !  25 Oct 2011    J. G. de Mattos  Initial Specification
-!    !
-!    !------------------------------------------------------------------
-!    !BOC
-!    character(len=*),parameter :: myname_=myname//'::scan_Models_Plugin'
-!
-!    !------------------------------------------------------------------
-!    ! External Functions to read models
-!    !------------------------------------------------------------------
-!    ! Template
-!!    external template_init
-!    external template_read     
-!    ! AGCM/CPTEC
-!!    external agcm_init
-!!    external agcm_read
-!    ! Eta/CPTEC
-!!    external eta_init
-!    external eta_read 
-!
-!#ifdef DEBUG
-!    WRITE(6,'(     2A)')'Hello from ', myname_
-!#endif
-!
-!    !------------------------------------------------------------------
-!    ! Registering models
-!    !------------------------------------------------------------------
-!    ! Template
-!!    call registermodelinit(templateId,template_init)
-!    call registermodelread(templateId,template_read)
-!    ! AGCM/CPTEC
-!    call registermodelinit(AGCMId,agcm_init)
-!    call registermodelread(AGCMId,agcm_read)
-!    ! clima50yr/CPTEC
-!    call registermodelinit(Clima50yrId,clima50yr_init)
-!    call registermodelread(Clima50yrId,clima50yr_read)
-!
-!    ! BRAMS 5KM / CPTEC
-!    call registermodelinit(bramsId,brams_init)
-!    call registermodelread(bramsId,brams_read)
-!    
-!  END SUBROUTINE scan_models_plugin_
-  !EOC
   !-------------------------------------------------------------------
+  !BOP
+  !
+  ! !ROUTINE: scan_models_plugin
+  !  \label{scan_models_plugin}
+  !
+  ! !DESCRIPTION:
+  !
+  ! This is a custom-defined plugin point for introducing a new Model. 
+  ! The interface mandates that the following routines be implemented
+  ! and registered for each of the Model that is included in scantec.
+  !
+  ! !INTERFACE:
+    
+    !  !REVISION HISTORY: 
+    !  25 Oct 2011    J. G. de Mattos  Initial Specification
+    !  15 May 2020    J. G. de Mattos  Adapt to more generic 
+    !                                  model access
+    !
+    !------------------------------------------------------------------
+    !BOC
   subroutine scan_models_plugin
     !  !REVISION HISTORY: 
     !  18 May 2020    J. G. de Mattos  Initial Specification
@@ -156,131 +119,17 @@ Contains
        else
           ! For now support only Gaussian grid
           GDesc = 0
-          GDesc( 1) =       4!     6    Data representation type (see Code table 6)
-                                                !
-                                                !-------------------------------------------------------------------------------
-                                                !       Table 6
-                                                ! 0 Latitude/longitude grid - equidistant cylindrical or Plate Carrée projection
-                                                ! 1 Mercator projection
-                                                ! 2 Gnomonic projection
-                                                ! 3 Lambert conformal, secant or tangent, conic or bi-polar, projection
-                                                ! 4 Gaussian latitude/longitude grid
-                                                ! 5 Polar stereographic projection
-                                                ! ...
-                                                !
-                                                !-------------------------------------------------------------------------------
-                                                ! 7-32  Grid definition (according to data representation type - octet 6 above)
-                                                !-------------------------------------------------------------------------------
-                                                !
-          GDesc( 2) = xdim                      !  7- 8    Ni - number of points along a parallel
-          GDesc( 3) = ydim                      !  9-10    Nj - number of points along a meridian
-          GDesc( 4) = rlat(1)                   ! 11-13    La1 - latitude of first grid point
-          GDesc( 5) = rlon(1)                   ! 14-16    Lo1 - longitude of first grid point
-      
-                                                ! --------------------------------------------------------------
-          GDesc( 6) =     128!    17    Resolution and component flags (see Code table 7)
-                                                ! --------------------------------------------------------------
-                                                !
-                                                ! Bit No.   Value  Meaning
-              	                                 !    1        0    Direction increments not given
-                                                !             1    Direction increments given
-                                                !
-              	                                 !    2        0    Earth assumed spherical with radius 6367.47 km
-                                                !             1    Earth assumed oblate spheroidal with size as 
-                                                !                  determined by IAU in 1965 (6378.160 km, 6356.775 km, f=1/297.0)
-                                                !
-              	                                 !   3-4            Reserved
-                                                !
-                                                !    5        0    Resolved u- and v-components of vector quantities relative to easterly and northerly directions
-                                                !             1    Resolved u- and v-components of vector quantities relative to the defined grid in the direction
-                                                !                  of increasing x and y (or i and j) coordinates respectively
-                                                !
-                                                !   6-8       0    Reserved - set to zero
-                                                !    
-      
-          GDesc( 7) = rlat(ydim)                ! 18-20    La2 - latitude of last grid point
-          GDesc( 8) = rlon(xdim)                ! 21-23    Lo2 - longitude of last grid point
-          GDesc( 9) = (rlon(xdim)-rlon(1))/(xdim-1)! 24-25    Di - i direction increment
-          GDesc(10) = ydim/2.0                  ! 26-27    N - number of parallels between a pole and the equator
-      
-                                                ! --------------------------------------------------------------
-          GDesc(11) =       0!    28	   Scanning mode (flags - see Code table 8)
-                                                ! --------------------------------------------------------------
-                                                !    WMO Code table 8 - Scanning mode
-                                                !
-                                                ! Bit No.   Value  Meaning
-                                                !    1	     0    Points scan in +i direction
-              	                                 !             1    Points scan in -i direction
-                                                !    2        0    Points scan in -j direction
-              	                                 !             1    Points scan in +j direction
-                                                !    3        0    Adjacent points in i direction are consecutive
-              	                                 !             1    Adjacent points in j direction are consecutive
-                                                !  4-8        0	 Reserved
-                                                !
-                                                ! NOTES:
-                                                !
-                                                !   i direction: west to east along a parallel, or left to right along an X-axis.
-                                                !   j direction: south to north along a meridian, or bottom to top along a Y-axis.
-                                                !   -----------------------------------------------
-                                                !
-                                                ! Values to GDS(11)
-                                                !  Value  Result
-                                                !     0    0 0 0
-                                                !    32    0 0 1
-                                                !    64    0 1 0
-                                                !    96    0 1 1
-                                                !   128    1 0 0
-                                                !   160    1 0 1
-                                                !   192    1 1 0
-                                                !   224    1 1 1
-                                                !
-      
-          GDesc(12) =       0! 29-32    Set to zero (reserved)
-                                                !
-                                                !-------------------------------------------------------------------------------
-                                                !
-                                                ! 33-42 Extensions of grid definition for rotation or stretching of the coordinate system
-                                                !        or Lambert conformal projection or Mercator projection
-                                                !-------------------------------------------------------------------------------
-                                                !
-          GDesc(13) =       0! 33-35    Latitude of the southern pole in millidegrees (integer)
-                                                !          Latitude of pole of stretching in millidegrees (integer)
-          GDesc(14) =       0! 36-38    Longitude of the southern pole in millidegrees (integer)
-                                                !          Longitude of pole of stretching in millidegrees (integer)
-          GDesc(15) =       0! 39-42    Angle of rotation (represented in the same way as the reference value)
-                                                !          Stretching factor (representation as for the reference value)
-                                                !
-                                                !-------------------------------------------------------------------------------
-                                                !
-                                                ! 33-44 Extensions of grid definition for space view perspective projection
-                                                ! 33-52 Extensions of grid definition for stretched and rotated coordinate system
-                                                !
-                                                !-------------------------------------------------------------------------------
-                                                !
-          GDesc(16) =       0! 43-45    Latitude of pole of stretching in millidegrees (integer)
-          GDesc(17) =       0! 46-48    Longitude of pole of stretching in millidegrees (integer)
-          GDesc(18) =       0! 49-52    Stretching factor (representation as for the reference value)
-      
-                                                !-------------------------------------------------------------------------------
-          GDesc(19) =       0! PV	List of vertical coordinate parameters 
-                                                ! (length = NV x 4 octets); if present, then PL = 4NV + PV
-          GDesc(20) =       0! PL	List of numbers of points in each row 
-                                                ! (length = NROWS x 2 octets, where NROWS is the total number of rows defined within the grid description)
-                                                !
-                                                ! NOTES:
-                                                !
-                                                ! 1- Vertical coordinate parameters are used in association with hybrid vertical coordinate systems.
-      
-                                                ! 2- Hybrid systems, in the context, employ a means of representing vertical coordinates in terms
-                                                !    of a mathematical combination of pressure and sigma coordinates. When used in conjunction with
-                                                !    a surface pressure field and an appropriate mathematical expression, the vertical coordinate 
-                                                !    parameters may be used to interpret the hybrid vertical coordinate.
-                                                !
-                                                ! 3- Each vertical coordinate parameter is represented in 4 octets, using the scheme for representing
-                                                !    floating point numbers described in the Regulations.
-                                                !
-                                                !-------------------------------------------------------------------------------
-
+          GDesc( 1) =   4
+          GDesc( 2) = xdim
+          GDesc( 3) = ydim
+          GDesc( 4) = rlat(1)
+          GDesc( 5) = rlon(1)
+          GDesc( 6) =     128
+          GDesc( 7) = rlat(ydim)
+          GDesc( 8) = rlon(xdim)
+          GDesc( 9) = (rlon(xdim)-rlon(1))/(xdim-1)
+          GDesc(10) = ydim/2.0
+          
        endif
 
 
@@ -303,21 +152,484 @@ Contains
                                  scantec%currModel%n21, &
                                  scantec%currModel%n22  &
                                  )
-!       write(*,'(A,8F9.4,8i6)')trim(scantec%currModel%Name_),&
-!          minval(scantec%currModel%w11),maxval(scantec%currModel%w11),&
-!          minval(scantec%currModel%w12),maxval(scantec%currModel%w12),&
-!          minval(scantec%currModel%w21),maxval(scantec%currModel%w21),&
-!          minval(scantec%currModel%w22),maxval(scantec%currModel%w22),&
-!          minval(scantec%currModel%n11),maxval(scantec%currModel%n11),&
-!          minval(scantec%currModel%n12),maxval(scantec%currModel%n12),&
-!          minval(scantec%currModel%n21),maxval(scantec%currModel%n21),&
-!          minval(scantec%currModel%n22),maxval(scantec%currModel%n22)
+
        deallocate(rlon)
        deallocate(rlat)
        scantec%currModel => scantec%currModel%next
     enddo    
 
   end subroutine scan_models_plugin
+!-----------------------------------------------------------------------------!
+!EOC
+!-----------------------------------------------------------------------------!
+!             Modeling and Development Division - DMD/CPTEC/INPE              !
+!-----------------------------------------------------------------------------!
+!BOP
+!
+! !IROUTINE: readModelConf - Read model information from a configure file.
+!
+! !DESCRIPTION: this routine populate a data type grid with informations from
+!               each model by read a configure file that contain grid and
+!               variable informations.
+!
+! !INTERFACE:
+!
+   subroutine readModelConf(Model)
+
+!
+! !INPUT PARAMETERS:
+!
+      type(ModelType), intent(inout) :: Model
+
+! !REVISION HISTORY:
+!
+!   10 May 2020 - J. G. de Mattos -  Initial code.
+!
+!EOP
+!-----------------------------------------------------------------------------!
+!BOC
+      character(len=*),parameter :: myname_=myname//' :: readModelConf( )'
+
+      integer(kind = i4)           :: xpts, ypts, zpts
+      integer(kind = i4)           :: iret, i
+      real(kind = r4)              :: undef
+      real(kind = r4)              :: loni, lati, levi
+      real(kind = r4)              :: lonf, latf, levf
+      real(kind = r4)              :: dx, dy, dz
+      real(kind = r4), allocatable :: lon(:), lat(:), lev(:)
+
+      character(len=TinyStr)       :: ftype, dtype
+      character(len = normalStr)   :: fileModelConf
+      character(len = NormalStr)   :: msg
+      character(len = tinyStr)     :: svar
+      character(len = tinyStr)     :: mvar
+      logical :: found
+
+      type(GridDef), pointer :: DimTmp => null()
+
+      !
+      ! Open Configure File for model
+      !
+
+      fileModelConf = trim(scantec%tables)//'/'//trim(Model%Name_)//'.model'
+      inquire(file=trim(fileModelConf),exist=found)
+      if(.not.found)then
+         write(msg,'(2A)')'File not found :', trim(fileModelConf)
+         call i90_perr(trim(myname_),trim(msg),-1)
+         stop
+      endif
+      call i90_LoadF(trim(fileModelConf), iret)
+      if(iret.ne.0)then
+         write(msg,'(3A)')'i90_LoadF("',trim(fileModelConf),'")'
+         call i90_perr(trim(myname_),trim(msg),iret)
+         stop
+      endif
+
+#ifdef DEBUG
+      write(stdout,'(A)')' '
+      write(stdout,'(A,1x,A)')char(27)//'[32;1mGetting model info from:',&
+                              trim(Model%Name_)//'.model'//char(27)//'[m'
+#endif
+      !
+      ! Get information about model post-processed files
+      !
+      
+      ! ftype: should be binary, grib or netcdf file
+      call i90_getVal('ftype:',Model%fileType_)
+
+      ! undefined value used by model
+      call i90_getVal('undef:',Model%undef_)
+
+      ! Grid dimensions
+
+      allocate(Model%FirstGridInfo, stat=iret)
+      Model%gridInfo => Model%FirstGridInfo
+      DimTmp => Model%gridInfo
+
+      call GetDef(DimTmp,'xdim:',iret)
+      if(iret.ne.0)then
+         call i90_perr(trim(myname_),'GetDef( xdim ... )', iret)
+!         if (.not.present(istat)) stop
+!         istat = ierr
+         return
+      endif
+      !
+      ! longitude should be at 0 360.0
+      !
+
+      do i=1,DimTmp%num
+         DimTmp%coord(i) = mod(DimTmp%coord(i)+3600.0,360.0)
+      enddo      
+      !-------------------------------------------
+#ifdef DEBUG
+      call GDef_Print(Model%gridInfo)
+#endif
+      
+      allocate(Model%gridInfo%next)
+      Model%gridInfo => Model%gridInfo%next
+      DimTmp => Model%gridInfo
+
+      call GetDef(DimTmp,'ydim:',iret)
+      if(iret.ne.0)then
+         call i90_perr(trim(myname_),'GetDef( ydim ... )', iret)
+!         if (.not.present(istat)) stop
+!         istat = ierr
+         return
+      endif
+
+#ifdef DEBUG 
+      call GDef_Print(Model%gridInfo)
+#endif
+
+      allocate(Model%gridInfo%next)
+      Model%gridInfo => Model%gridInfo%next
+      DimTmp => Model%gridInfo
+      
+      call GetDef(DimTmp,'zdim:',iret)
+      if(iret.ne.0)then
+         call i90_perr(trim(myname_),'GetDef( zdim ... )', iret)
+!         if (.not.present(istat)) stop
+!         istat = ierr
+         return
+      endif
+  
+#ifdef DEBUG 
+      call GDef_Print(Model%gridInfo)
+#endif
+
+      !
+      ! Get information about variables
+      !
+      allocate(Model%FirstVar)
+      Model%var => Model%FirstVar
+      call i90_label('vars:',iret)
+      if(iret.eq.0)call i90_gline(iret)
+      if(iret.ne.0)then
+         call i90_perr(trim(myname_),'GetDef( variables ... )', iret)
+         call i90_die(trim(myname))
+      endif
+      do while(iret.eq.0)
+         ! get variable name and level from scantec
+         call i90_gtoken(svar, iret)
+         if (iret .ne. 0)then
+            call i90_perr(trim(myname_),'some issue with var list ... ', iret)
+            call i90_die(trim(myname))
+         endif
+
+         Model%var%Sys_ = i90_lcase(trim(svar))
+
+         ! get variable name and level from model
+         call i90_gtoken(mvar,iret)
+
+         if(iret.eq.0)then
+            select case(mvar(1:1))
+               ! if a variable model need be pre-processed to
+               ! obtain a scantec var
+               case ('@')
+                  ! Get function name and arguments
+                  Model%var%mod_   = trim(mvar(2:len_trim(mvar)))
+                  Model%var%deriv_ = .true.
+
+                  ! get arguments
+                  allocate(Model%var%FirstFuncArg)
+                  Model%var%funcArg => Model%var%FirstFuncArg
+                  call i90_gtoken(mvar,iret)
+                  if(iret .ne. 0)then
+                     call i90_perr(trim(myname_),'@func (need at least one function arg)', iret)
+                     call i90_die(trim(myname_)) ! não precisa matar o processo, so pular p/ outra var
+                  endif
+                  Model%var%funcArg%str_ = i90_lcase(trim(mvar))
+                  do while(iret .eq. 0)
+
+                     call i90_Gtoken(mvar,iret)
+                     if (iret .eq. 0) then
+                        allocate(Model%var%funcArg%next)
+                        Model%var%funcArg => Model%var%funcArg%next
+                        Model%var%funcArg%str_ = i90_lcase(trim(mvar))
+                     endif
+                     
+                  enddo
+
+               case default
+                  Model%var%mod_   = i90_lcase(trim(mvar))
+                  Model%var%deriv_ = .false.
+            end select
+         else
+           call i90_perr(trim(myname_),'some issue with model var name ... ', iret)
+           call i90_die(trim(myname))
+         endif
+         ! get next line
+         !    - iret =  0, next line ok
+         !    - iret = -1, end of buffer (some problem with table)
+         !    - iret = +1, end of table
+         call i90_gline(iret)
+         if(iret.eq.0)then
+            allocate(Model%var%next)
+            Model%var => Model%var%next
+         elseif(iret.lt.0)then
+            call i90_perr(trim(myname),'get var list', iret)
+            call i90_die(trim(myname))
+         endif
+      enddo
+
+      call i90_fullRelease(iret)
+      if(iret.lt.0)then
+         call i90_perr(trim(myname),'i90_fullRelease', iret)
+      endif
+
+#ifdef DEBUG
+      write(stdout,'(A)')''
+      write(stdout,'(A43)')char(27)//'[33;1mList of Model Variables'//char(27)//'[m'
+      write(stdout,'(A16,1x,A16)')'SCANTEC','Model'
+      Model%var => Model%FirstVar
+      do while(associated(Model%var))
+         write(stdout,'(A16,1x,A16)')trim(Model%var%Sys_),trim(Model%var%Mod_)
+         Model%var => Model%var%next
+      enddo
+      write(stdout,'(A)')''
+#endif
+
+
+   end subroutine
+!EOC
+!-----------------------------------------------------------------------------!
+!             Modeling and Development Division - DMD/CPTEC/INPE              !
+!-----------------------------------------------------------------------------!
+!BOP
+!
+! !IROUTINE: GetDef - Read dimension model information from file.
+!
+! !DESCRIPTION: this routine read information about dimension of the model from
+!               contain grid and variable informations.
+!
+! !INTERFACE:
+!
+
+  subroutine GetDef(GDef, label, ierr)
+
+!
+! !INPUT PARAMETERS:
+!
+
+    type(GridDef),     intent(inout) :: GDef
+    character(len=*),  intent(in   ) :: label
+!
+! !OUTPUT PARAMETERS:
+!
+    integer, optional, intent(  out) :: ierr
+
+! !REVISION HISTORY:
+!
+!   16 May 2013 - J. G. de Mattos - Initial code from m_GrADSfiles.f90
+!   10 May 2020 - J. G. de Mattos - adapt to read scantec model info
+!
+!EOP
+!-----------------------------------------------------------------------------!
+!BOC
+
+    character(len=*), parameter :: myname_ = myname//' :: GetDef(...)'
+
+    GDef%DName = trim(label)
+
+    call i90_label(trim(label),ierr)
+    if(ierr.ne.0)then
+       call i90_perr(trim(myname_),'i90_label( '//trim(label)//' ... )', ierr)
+       stop
+    endif
+
+    GDef%num = i90_Gint(ierr)
+    if(ierr.ne.0)then
+       call i90_perr(trim(myname_),'i90_Gint( '//trim(label)//'%num ... )', ierr)
+       stop
+    endif
+
+    call i90_GToken(GDef%mapping,ierr)
+    if(ierr.ne.0)then
+       call i90_perr(trim(myname_),'i90_GToken( '//trim(label)//'%mapping ... )', ierr)
+       stop
+    endif
+
+    select case (trim(i90_lcase(GDef%mapping)))
+
+    case('linear')
+
+       Gdef%start_coord = i90_GFloat(ierr)
+       if(ierr.ne.0)then
+          call i90_perr(trim(myname_),'i90_GFloat( '//trim(label)//'%start_coord ... )', ierr)
+          stop
+       endif
+
+       Gdef%incr_coord = i90_GFloat(ierr)
+       if(ierr.ne.0)then
+          call i90_perr(trim(myname_),'i90_GFloat( '//trim(label)//'%incr_coord ... )', ierr)
+          stop
+       endif
+
+       allocate(GDef%coord(GDef%num),stat=ierr)
+       if(ierr.ne.0)then
+          call i90_perr(trim(myname_),'Allocate( '//trim(label)//'%coord(:) ... )', ierr)
+          stop
+       endif
+
+       call GetLinCoords(GDef%start_coord, GDef%incr_coord, GDef%num, GDef%coord, ierr)
+       if(ierr.ne.0)then
+          call i90_perr(trim(myname_),'GetLinCoords( '//trim(label)//' ... )', ierr)
+          stop
+       endif
+
+    case('levels')
+
+       GDef%incr_coord = -1
+
+       allocate(GDef%coord(GDef%num),stat=ierr)
+       if(ierr.ne.0)then
+          call i90_perr(trim(myname_),'Allocate( '//trim(label)//'%coord(:) ... )', ierr)
+          stop
+       endif
+
+       call GetLevelsCoord( GDef%num, GDef%coord, ierr )
+       if(ierr.ne.0)then
+          call i90_perr(trim(myname_),'GetLevelsCoords( '//trim(label)//' ... )', ierr)
+          stop
+       endif
+
+       GDef%start_coord = GDef%coord(1)
+
+    case default
+
+       call i90_perr(trim(myname_),trim(label)//' not implemented yet!')
+
+    end select
+
+
+    return
+  end subroutine GetDef
+!EOC
+!-----------------------------------------------------------------------------!
+!             Modeling and Development Division - DMD/CPTEC/INPE              !
+!-----------------------------------------------------------------------------!
+!BOP
+!
+! !IROUTINE: GetLinCoords - calculate linear coordenates.
+!
+! !DESCRIPTION: this routine calculate linear coordinates from initial point to
+!               npts*incr.
+!
+! !INTERFACE:
+!
+
+  subroutine GetLinCoords( start, incr, npts, coord, istat )
+!
+! !INPUT PARAMETERS:
+!
+
+    real,              intent(in   ) :: start
+    real,              intent(in   ) :: incr
+    integer,           intent(in   ) :: npts
+!
+! !OUTPUT PARAMETERS:
+!
+    real,              intent(inout) :: coord(:)
+    integer, optional, intent(  out) :: istat
+
+! !REVISION HISTORY:
+!
+!   16 May 2013 - J. G. de Mattos - Initial code from m_GrADSfiles.f90
+!   10 May 2020 - J. G. de Mattos - adapt to read scantec model info
+!
+!EOP
+!-----------------------------------------------------------------------------!
+!BOC
+
+    integer :: i
+
+    do i = 1, npts
+       coord(i) = start + incr*(i-1)
+    enddo
+
+  end subroutine GetLinCoords
+!EOC
+!-----------------------------------------------------------------------------!
+!             Modeling and Development Division - DMD/CPTEC/INPE              !
+!-----------------------------------------------------------------------------!
+!BOP
+!
+! !IROUTINE: GetLevelsCoords - read levels coordenates.
+!
+! !DESCRIPTION: this routine read levels coordinates from configure file.
+!               
+!
+! !INTERFACE:
+!
+
+  subroutine GetLevelsCoord( npts, coord, istat )
+!
+! !INPUT PARAMETERS:
+!
+    integer,           intent(in   ) :: npts
+!
+! !OUTPUT PARAMETERS:
+!
+    real,              intent(inout) :: coord(:)
+    integer, optional, intent(  out) :: istat
+
+! !REVISION HISTORY:
+!
+!   16 May 2013 - J. G. de Mattos - Initial code from m_GrADSfiles.f90
+!   10 May 2020 - J. G. de Mattos - adapt to read scantec model info
+!
+!EOP
+!-----------------------------------------------------------------------------!
+!BOC
+
+    integer :: i
+    integer :: iret
+
+    i = 1
+    do while(i.le.npts)
+       coord(i) = i90_GFloat(iret)
+       if(iret.ne.0) then
+          call i90_GLine(iret)
+          i = i - 1
+       endif
+       i = i + 1
+    enddo
+
+  end subroutine GetLevelsCoord
+!EOC
+!-----------------------------------------------------------------------------!
+  subroutine GDef_Print( GDef )
+
+    type(GridDef), intent(in) :: GDef
+
+    if (trim(i90_lcase(GDef%mapping)).eq.'linear')then
+       write(stdout,'(1x,A,1x,I3,1x,A,1x,2F12.5)') &
+            trim(GDef%DName), GDef%num, trim(GDef%mapping), GDef%start_coord, GDef%incr_coord
+    else
+       write(stdout,'(1x,A,1x,I3,1x,A)') trim(GDef%DName), GDef%num, trim(GDef%mapping)
+       call PLevels_(GDef%coord)
+    endif
+
+  end subroutine GDef_Print
+
+  subroutine PLevels_(coord)
+
+    real, intent(in   ) :: coord(:)
+
+    integer :: count
+    integer :: i
+    integer :: n
+
+    n = size(coord)
+
+    count = 0
+    do while(count .lt. n )
+       write(*,'(8F12.5)')(coord(i),i = count+1,min(count+8,n))
+       count = count + 8
+    enddo
+
+
+  end subroutine PLevels_
 
 
 END MODULE scan_Modelplugin
