@@ -415,17 +415,17 @@ Contains
           anomfield(Idx%pt,1) = expfield(Idx%pt,i)-clmfield(Idx%pt,i)
           anomfield(Idx%pt,2) = reffield(Idx%pt,i)-clmfield(Idx%pt,i)
 
-          CALL corr(anomfield(Idx%pt,1),&
-                    anomfield(IdX%pt,2),&
-                    tmp              &
-                   )
-
        else
-          CALL corr(expfield(Idx%pt,i),&
-                    reffield(Idx%pt,i),&
-                    tmp             &
-                   )
+
+          anomfield(Idx%pt,1) = expField(Idx%pt,i) - sum(expField(Idx%pt,i))
+          anomfield(Idx%pt,2) = refField(Idx%pt,i) - sum(refField(Idx%pt,i))
+          
        endif
+
+       CALL corr(anomfield(Idx%pt,1),&
+                 anomfield(IdX%pt,2),&
+                 tmp              &
+                )
 
        dado(run)%acor(i,j) = dado(run)%acor(i,j) + tmp
 !
@@ -768,16 +768,18 @@ Contains
 
     NPts  = size(A,1)
 
-    Ma  = sum(A)/float(NPts)
-    Mb  = sum(B)/float(NPts)
+!    Ma  = sum(A)/float(NPts)
+!    Mb  = sum(B)/float(NPts)
+
+!    Sab = sum( (A-Ma)*(B-Mb) )
+!    Saa = sum( (A-Ma)*(A-Ma) )
+!    Sbb = sum( (B-Mb)*(B-Mb) )
 
 !Estatistica de correlacao de anomalia alterada pelo Joao
-     !Ma  = 0.0
-     !Mb  = 0.0
+    Sab = sum( A*B )
+    Saa = sum( A*A )
+    Sbb = sum( B*B )
     
-    Sab = sum( (A-Ma)*(B-Mb) )
-    Saa = sum( (A-Ma)*(A-Ma) )
-    Sbb = sum( (B-Mb)*(B-Mb) )
     Rho =  Sab/sqrt(Saa*Sbb)
 
 

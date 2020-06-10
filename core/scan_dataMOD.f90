@@ -28,34 +28,6 @@ MODULE scan_dataMOD
   IMPLICIT NONE
   PRIVATE
 
-
-  !
-  ! !PARAMETERS:
-  !
-  !  integer, public, Parameter :: NumVarAval = 20
-  !  character(len=8), public, parameter ::   VarName(1:NumVarAval) = (/ &
-  !                                           'VTMP-925',& ! Virtual Temperature @ 925 hPa [K]
-  !                                           'VTMP-850',& ! Virtual Temperature @ 850 hPa [K]
-  !                                           'VTMP-500',& ! Virtual Temperature @ 500 hPa [K]                                           
-  !                                           'TEMP-850',& ! Absolute Temperature @ 850 hPa [K]
-  !                                           'TEMP-500',& ! Absolute Temperature @ 500 hPa [K]
-  !                                           'TEMP-250',& ! Absolute Temperature @ 250 hPa [K]
-  !                                           'PSNM-000',& ! Pressure reduced to MSL [hPa]                                           
-  !                                           'UMES-925',& ! Specific Humidity @ 925 hPa [g/Kg]
-  !                                           'UMES-850',& ! Specific Humidity @ 850 hPa [g/Kg]
-  !                                           'UMES-500',& ! Specific Humidity @ 500 hPa [g/Kg]
-  !                                           'AGPL-925',& ! Inst. Precipitable Water @ 925 hPa [Kg/m2]
-  !                                           'ZGEO-850',& ! Geopotential height @ 850 hPa [gpm]
-  !                                           'ZGEO-500',& ! Geopotential height @ 500 hPa [gpm]
-  !                                           'ZGEO-250',& ! Geopotential height @ 250 hPa [gpm]
-  !                                           'UVEL-850',& ! Zonal Wind @ 850 hPa [m/s]
-  !                                           'UVEL-500',& ! Zonal Wind @ 500 hPa [m/s]
-  !                                           'UVEL-250',& ! Zonal Wind @ 250 hPa [m/s]
-  !                                           'VVEL-850',& ! Meridional Wind @ 850 hPa [m/s]
-  !                                           'VVEL-500',& ! Meridional Wind @ 500 hPa [m/s]
-  !                                           'VVEL-250' & ! Meridional Wind @  250 hPa [m/s]
-  !                                          /)
-
   !
   ! !PUBLIC TYPES
   !
@@ -249,21 +221,6 @@ CONTAINS
        currModel => currModel%next
     enddo
 
-!    allocate(scandata(scantec%nexp))
-!
-!    allocate(scandata(1)%reffield(scantec%nxpt*scantec%nypt,scantec%nvar))
-!    allocate(scandata(1)%tmpfield(scantec%nxpt*scantec%nypt,scantec%nvar))
-!    IF(scantec%cflag.EQ.1)allocate(scandata(1)%clmfield(scantec%nxpt*scantec%nypt,scantec%nvar))
-!
-!
-!    DO I=1,scantec%nexp
-!       allocate(scandata(I)%expfield(scantec%nxpt*scantec%nypt,scantec%nvar))
-!       allocate(scandata(I)%UdfIdx(scantec%nxpt*scantec%nypt,scantec%nvar))
-!    ENDDO
-
-     
-
-
   END SUBROUTINE allocate_data_mem
 
   SUBROUTINE data_init()
@@ -293,51 +250,6 @@ CONTAINS
 
   END SUBROUTINE release_data_mem
 
-
-!  SUBROUTINE ldata( type, e, Id, name )
-!    IMPLICIT NONE
-!    CHARACTER(LEN=*), INTENT(IN) :: type
-!    CHARACTER(LEN=*), INTENT(IN) :: Id
-!    INTEGER,          INTENT(IN) :: e
-!    CHARACTER(LEN=*), INTENT(IN) :: name
-!    INTEGER   :: stat
-!    INTEGER   :: I
-!
-!
-!    !    call load_data(Id, name//char(0))
-!    call loadData(Id, name)
-!#ifdef DEBUG  
-!    write(6,'(A,1x,A,1x,2F15.3)')                              &
-!         trim(type),': [MIN/MAX]::',   &
-!         minval(scandata(1)%tmpfield,mask=scandata(1)%tmpfield .ne. scantec%udef), &
-!         maxval(scandata(1)%tmpfield,mask=scandata(1)%tmpfield .ne. scantec%udef)
-!#endif
-!
-!    !
-!    ! Definindo pontos onde nao calcular indices estatisticos
-!    !
-!
-!    DO I=1,scantec%nvar
-!       where (scandata(1)%tmpfield(:,I) .eq. scantec%udef) scandata(e)%UdfIdx(:,I) = .false.
-!    ENDDO
-!
-!
-!
-!    !
-!    ! Selecionando qual eh o campo que esta sendo lido
-!    !
-!
-!    SELECT CASE(trim(type))
-!    CASE('R')
-!       scandata(e)%reffield = scandata(1)%tmpfield
-!    CASE('E')
-!       scandata(e)%expfield = scandata(1)%tmpfield
-!    CASE('C')
-!       scandata(e)%clmfield = scandata(1)%tmpfield
-!    END SELECT
-!
-!
-!  END SUBROUTINE ldata
 
   SUBROUTINE scan_ModelData( NExp )
     IMPLICIT NONE
@@ -430,12 +342,7 @@ CONTAINS
     character(len=10) :: VarName, VarLevel
 
     ! get model by name
-    currModel => scantec%FirstModel
-    do while(associated(currModel))
-       if (trim(currModel%Name_) .eq. trim(ModelName) .and.&
-           trim(currModel%Type_) .eq. trim(ExpType)) exit
-       currModel => currModel%next
-    enddo
+    currModel => scantec%getModel(ExpType, ModelName)
 
     write(*,'(3(1x,A))')trim(currModel%Name_),trim(currModel%Type_),trim(currModel%ExpName_)
 
@@ -492,20 +399,18 @@ CONTAINS
 
           call GrADS_input(gs, trim(VarName),1,idx,iField, iret)
 
-
           if(iret.ne.0)then
              call i90_perr(trim(myname_),'GrADS_input('//trim(VarName)//')',iret)
              call i90_die(trim(myname_))
           endif
 
        else
-!          write(*,'(A,1x)', advance='no')trim(ModelVar%Sys_)//'->'
-!          ModelVar%funcArg => ModelVar%FirstFuncArg
-!          do while(associated(ModelVar%funcArg))
-!             write(*,'(A,1x)', advance="no")trim(ModelVar%funcArg%str_)
-!             ModelVar%funcArg => ModelVar%funcArg%next
-!          enddo
-!          write(*,*)
+          Modelvar%funcArg => Modelvar%FirstfuncArg
+          do while(associated(Modelvar%funcArg))
+!             print*,trim(ModelVar%Mod_),' ',trim(modelVar%funcArg%str_)
+             modelVar%funcArg => modelVar%funcArg%next
+          enddo
+!          print*,'----'
           iField = undef
        endif
 
@@ -526,18 +431,9 @@ CONTAINS
             iret           &
             )
          where(.not.currModel%bitmap(:,i))currModel%Field(:,i) = scantec%udef
-!            print*,trim(scantec%VarName(i)),count(currModel%bitmap(:,i))
 
-!         write(*,'(A,1x,3I10,4F16.3)')trim(scantec%varName(i)),&
-!            count(currModel%Field(:,i).ne.scantec%udef),count(currModel%bitmap(:,i)),&
-!            size(currModel%Field(:,i)),&
-!            minval(iField,mask=iField.ne.undef),&
-!            maxval(iField,mask=iField.ne.undef),&
-!            minval(currModel%Field(:,i),mask=currModel%Field(:,i).ne.scantec%udef),&
-!            maxval(currModel%Field(:,i),mask=currModel%Field(:,i).ne.scantec%udef)
     enddo
 
-!    print*,'------------------------------'
     call GrADS_close(gs, iret) 
     deallocate(iField)
     deallocate(iBitMap)

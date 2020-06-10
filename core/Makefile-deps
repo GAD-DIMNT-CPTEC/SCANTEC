@@ -28,7 +28,7 @@ $(srcdir)/scan_MetForm.o scan_MetForm.o: \
 $(srcdir)/scan_ModelPlugin.o scan_ModelPlugin.o: \
 	$(srcdir)/scan_ModelPlugin.f90 \
 	$(srcdir)/m_inpak90.o \
-	$(srcdir)/scan_readModel.o \
+	$(srcdir)/m_constants.o \
 	$(srcdir)/scantec_module.o
 
 $(srcdir)/scan_UtilsMOD.o scan_UtilsMOD.o: \
@@ -72,11 +72,11 @@ $(srcdir)/scan_outputMOD.o scan_outputMOD.o: \
 	$(srcdir)/m_ioutil.o \
 	$(srcdir)/scantec_module.o
 
-$(srcdir)/scan_readModel.o scan_readModel.o: \
-	$(srcdir)/scan_readModel.f90 \
-	$(srcdir)/m_constants.o \
-	$(srcdir)/m_inpak90.o \
-	$(srcdir)/scantec_module.o
+#$(srcdir)/scan_readModel.o scan_readModel.o: \
+#	$(srcdir)/scan_readModel.f90 \
+#	$(srcdir)/m_constants.o \
+#	$(srcdir)/m_inpak90.o \
+#	$(srcdir)/scantec_module.o
 
 $(srcdir)/scandrv.o scandrv.o: \
 	$(srcdir)/scandrv.f90 \
