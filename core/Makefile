@@ -159,7 +159,7 @@ $(LIB): $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(notdir $(OBJS))
 
 
-$(BIN): $(OBJS) $(BILIN_LIB)/libinterp.a 
+$(BIN): $(OBJS) 
 	@$(ECHO) ""
 	@$(ECHO) "Linking executable $(@F)"
 	@$(ECHO) ""

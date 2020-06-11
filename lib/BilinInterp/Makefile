@@ -80,7 +80,7 @@ LIBDIRS =
 LIBS    =
 
 # target names
-LIB = libinterp
+LIB = libinterp.a
 
 # Not real file targets
 .PHONY: $(MAKEFILE) Makefile-deps Makefile-objs \
@@ -94,7 +94,7 @@ $(LIB): $(OBJS)
 	@$(ECHO) ""
 	@$(ECHO) "Creating archive $(@F)"
 	@$(ECHO) ""
-	$(AR) $(ARFLAGS) $@.a $(notdir $(OBJS))
+	$(AR) $(ARFLAGS) $@ $(notdir $(OBJS))
 
 #$(LIB): $(OBJS) 
 #	@$(ECHO) ""
