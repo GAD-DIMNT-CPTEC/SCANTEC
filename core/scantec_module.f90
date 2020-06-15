@@ -84,7 +84,7 @@ MODULE scantec_module
   type(scanType) :: scantec
 
   type ModelType
-     character(len=tinyStr) :: Name_
+     character(len=LongStr) :: Name_
      character(len=LongStr) :: FileName_
      character(len=tinyStr) :: FileType_
      character(len=tinyStr) :: ExpName_
