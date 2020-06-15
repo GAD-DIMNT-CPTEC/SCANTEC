@@ -108,6 +108,12 @@ MODULE scantec_module
      type(EvalVar), pointer :: FirstVar => null()
      
      type(ModelType),  pointer :: next => null()
+
+     contains
+        procedure, public :: getModelVar => getModelVar_
+        procedure, public :: getDimInfo => getDimInfo_
+        procedure, public :: getDimVec => getDimVec_
+        procedure, public :: getMapping => getMapping_
   end type
 
 
@@ -146,152 +152,15 @@ MODULE scantec_module
    
    contains
 
-      function getMapping(md, mdim) result(vdim)
-         type(ModelType),  intent(in   ) :: md
-         character(len=*), intent(in   ) :: mdim
-         character(len=ShortStr), pointer :: vdim
+!------------------------------------------------------------!
+!scanType
 
-         type(gridDef), pointer :: grid => null()
-
-         grid => md%FirstGridInfo
-         do while(associated(grid))
-            if(trim(mdim) .eq. trim(grid%DName))then
-               vdim => grid%mapping
-               return
-            endif
-            grid => grid%next
-         enddo
-
-      end function
-
-
-
-      subroutine getBitMap_(self, ExpName, BitMap, istat)
+      function getFirstModel(self) result(Model)
          class(scanType), intent(in) :: self
-         character(len=*), intent(in) :: ExpName
-         logical, pointer, intent(out) :: BitMap(:,:)
-         integer, optional, intent(out) :: istat
+         type(ModelType), pointer :: Model
 
-         type(ModelType), pointer :: Model => null()
-
-
-         if(present(istat)) istat = 0
          Model => self%FirstModel
-         do while(associated(Model))
-            if (trim(ExpName) .eq. trim(Model%ExpName_))then
-                BitMap => Model%BitMap
-                return
-             endif
-            Model => Model%next
-         enddo
-         if(present(istat)) then
-            istat = -1
-         else
-            write(stdout,'(A,1x,A)') 'unknow Experient Name',trim(ExpName)
-            stop
-         endif
-      end subroutine
-
-
-      subroutine getField_(self, ExpName, Field, istat)
-         class(scanType), intent(in) :: self
-         character(len=*), intent(in) :: ExpName
-         real, pointer, intent(out) :: Field(:,:)
-         integer, optional, intent(out) :: istat
-
-         type(ModelType), pointer :: Model => null()
-
-         if(present(istat)) istat = 0
-         Model => self%FirstModel
-         do while(associated(Model))
-            if (trim(ExpName) .eq. trim(Model%ExpName_))then
-                Field => Model%Field
-                return
-             endif
-            Model => Model%next
-         enddo
-         if(present(istat)) then
-            istat = -1
-         else
-            write(stdout,'(A,1x,A)')'unknow Experiment Name',trim(ExpName)
-            stop
-         endif
-      end subroutine
-
-
-      function getDimInfo(md, mdim) result(vdim)
-         type(ModelType),  intent(in   ) :: md
-         character(len=*), intent(in   ) :: mdim
-         integer, pointer :: vdim
-
-         type(gridDef), pointer :: grid => null()
-
-         grid => md%FirstGridInfo
-         do while(associated(grid))
-            if(trim(mdim) .eq. trim(grid%DName))then
-               vdim => grid%num
-               return
-            endif
-            grid => grid%next
-         enddo
-
       end function
-
-
-!      function getDim(md,mdim)result(vdim)
-!         type(ModelType),  intent(in   ) :: md
-!         character(len=*), intent(in   ) :: mdim
-!         class(*), pointer :: vdim
-!
-!         type(gridDef), pointer :: grid => null()
-!         grid => md%FirstGridInfo
-!         do while(associated(grid))
-!            if(trim(mdim) .eq. trim(grid%DName))then
-!               vdim => grid%coord
-!               return
-!            endif
-!            grid => grid%next
-!         enddo
-!         stop 'Dimension not found in '//trim(md%Name_)//'.model : '//trim(mdim)
-!
-!      end function
-
-      function getDimVec(md, mdim) result(vdim)
-         type(ModelType),  intent(in   ) :: md
-         character(len=*), intent(in   ) :: mdim
-         real, pointer :: vdim(:)
-
-         type(gridDef), pointer :: grid => null()
-         grid => md%FirstGridInfo
-         do while(associated(grid))
-            if(trim(mdim) .eq. trim(grid%DName))then
-               vdim => grid%coord
-               return
-            endif
-            grid => grid%next
-         enddo
-         write(stdout,'(A,1x,A,A,1x,A)')'Dimension not found in',&
-                           trim(md%Name_),'.model :',trim(mdim)
-         stop
-
-      end function
-
-
-      function getModelVar(md,VarName) result(varInfo)
-         type(ModelType),  intent(in) :: md
-         character(len=*), intent(in) :: VarName
-         type(EvalVar), pointer :: varInfo
-
-         type(EvalVar), pointer :: ModelVar => null()
-
-         VarInfo => md%FirstVar
-         do while(associated(VarInfo))
-            if(trim(VarName).eq.trim(VarInfo%Sys_)) return
-            VarInfo => VarInfo%next
-         enddo
-      end function
-
-
 
       subroutine insertModel_(self, ModelType, ModelName, ExpName, FileName)
          class(scanType),  intent(inout) :: self
@@ -338,8 +207,132 @@ MODULE scantec_module
 
       end function
 
-!      subroutine CalcField(self,'')
-!
-!      subroutine get
+      subroutine getField_(self, ExpName, Field, istat)
+         class(scanType), intent(in) :: self
+         character(len=*), intent(in) :: ExpName
+         real, pointer, intent(out) :: Field(:,:)
+         integer, optional, intent(out) :: istat
 
+         type(ModelType), pointer :: Model => null()
+
+         if(present(istat)) istat = 0
+         Model => self%FirstModel
+         do while(associated(Model))
+            if (trim(ExpName) .eq. trim(Model%ExpName_))then
+                Field => Model%Field
+                return
+             endif
+            Model => Model%next
+         enddo
+         if(present(istat)) then
+            istat = -1
+         else
+            write(stdout,'(A,1x,A)') 'unknow Experient Name',trim(ExpName)
+            stop
+         endif
+      end subroutine
+
+
+      subroutine getBitMap_(self, ExpName, BitMap, istat)
+         class(scanType), intent(in) :: self
+         character(len=*), intent(in) :: ExpName
+         logical, pointer, intent(out) :: BitMap(:,:)
+         integer, optional, intent(out) :: istat
+
+         type(ModelType), pointer :: Model => null()
+
+
+         if(present(istat)) istat = 0
+         Model => self%FirstModel
+         do while(associated(Model))
+            if (trim(ExpName) .eq. trim(Model%ExpName_))then
+                BitMap => Model%BitMap
+                return
+             endif
+            Model => Model%next
+         enddo
+         if(present(istat)) then
+            istat = -1
+         else
+            write(stdout,'(A,1x,A)')'unknow Experiment Name',trim(ExpName)
+            stop
+         endif
+      end subroutine
+
+!------------------------------------------!
+! ModelType
+
+      function getModelVar_(self,VarName) result(varInfo)
+         class(ModelType),  intent(in) :: self
+         character(len=*), intent(in) :: VarName
+         type(EvalVar), pointer :: varInfo
+
+         type(EvalVar), pointer :: ModelVar => null()
+
+         VarInfo => self%FirstVar
+         do while(associated(VarInfo))
+            if(trim(VarName).eq.trim(VarInfo%Sys_)) return
+            VarInfo => VarInfo%next
+         enddo
+      end function
+
+
+     function getDimInfo_(self, mdim) result(vdim)
+         class(ModelType),  intent(in   ) :: self
+         character(len=*), intent(in   ) :: mdim
+         integer, pointer :: vdim
+
+         type(gridDef), pointer :: grid => null()
+
+         grid => self%FirstGridInfo
+         do while(associated(grid))
+            if(trim(mdim) .eq. trim(grid%DName))then
+               vdim => grid%num
+               return
+            endif
+            grid => grid%next
+         enddo
+
+      end function
+
+
+      function getDimVec_(self, mdim) result(vdim)
+         class(ModelType),  intent(in   ) :: self
+         character(len=*), intent(in   ) :: mdim
+         real, pointer :: vdim(:)
+
+         type(gridDef), pointer :: grid => null()
+         grid => self%FirstGridInfo
+         do while(associated(grid))
+            if(trim(mdim) .eq. trim(grid%DName))then
+               vdim => grid%coord
+               return
+            endif
+            grid => grid%next
+         enddo
+         stop 'Dimension not found in '//trim(self%Name_)//'.model : '//trim(mdim)
+
+      end function
+
+      function getMapping_(self, mdim) result(vdim)
+         class(ModelType),  intent(in   ) :: self
+         character(len=*), intent(in   ) :: mdim
+         character(len=ShortStr), pointer :: vdim
+
+         type(gridDef), pointer :: grid => null()
+
+         grid => self%FirstGridInfo
+         do while(associated(grid))
+            if(trim(mdim) .eq. trim(grid%DName))then
+               vdim => grid%mapping
+               return
+            endif
+            grid => grid%next
+         enddo
+
+      end function
+
+
+
+ 
 END MODULE scantec_module

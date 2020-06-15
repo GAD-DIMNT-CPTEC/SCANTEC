@@ -337,27 +337,28 @@ CONTAINS
 
     logical, allocatable :: ibitmap(:), obitmap(:)
 
-    type(ModelType), pointer :: currModel => null()
+    type(ModelType), pointer :: Model => null()
     type(EvalVar), pointer :: ModelVar => null()
     character(len=10) :: VarName, VarLevel
 
     ! get model by name
-    currModel => scantec%getModel(ExpType, ModelName)
+    Model => scantec%getModel(ExpType, ModelName)
 
-    write(*,'(3(1x,A))')trim(currModel%Name_),trim(currModel%Type_),trim(currModel%ExpName_)
+    write(*,'(3(1x,A))')trim(Model%Name_),trim(Model%Type_),trim(Model%ExpName_)
 
     ! Open current model and get info
     call GrADS_open(gs,trim(FileName))
+
     xdef  = GrADS_getDim(gs, 'xdef')
     ydef  = GrADS_getDim(gs, 'ydef')
     zdef  = GrADS_getDim(gs, 'zdef')
     undef = GrADS_Undef(gs)
 
     ! Get model info from scantec table
-    Mxdef => getDimInfo(currModel,'xdim:')
-    Mydef => getDimInfo(currModel,'ydim:')
-    Mzdef => getDimInfo(currModel,'zdim:')
-    zlevs => getDimVec(currModel,'zdim:')
+    Mxdef => Model%getDimInfo('xdim:')
+    Mydef => Model%getDimInfo('ydim:')
+    Mzdef => Model%getDimInfo('zdim:')
+    zlevs => Model%getDimVec('zdim:')
 
     ! Sanity Check
     if (xdef .ne. Mxdef .or. &
@@ -366,7 +367,7 @@ CONTAINS
        write(stderr,    '(A,1x,A)')trim(myname_),'error:'
        write(stderr,      '(2x,A)')'Dimensions not match!'
        write(stderr,      '(2x,A)')'wrong info by xdef, ydef or zdef.'
-       write(stderr,'(2x,A,1x,2A)')'See ',trim(currModel%Name_),'.model'
+       write(stderr,'(2x,A,1x,2A)')'See ',trim(Model%Name_),'.model'
        call i90_die(trim(myname_))
     endif
 
@@ -375,7 +376,7 @@ CONTAINS
     allocate(iBitMap(xdef*ydef))
 
     do i=1,scantec%nvar
-       ModelVar => getModelVar(currModel,trim(scantec%varName(i)))
+       ModelVar => Model%getModelVar(trim(scantec%varName(i)))
 
        if (.not.ModelVar%deriv_)then
           !-------------------------------------------------------!
@@ -390,7 +391,7 @@ CONTAINS
           !-------------------------------------------------------!
           ! Get klevel - index of level
           
-          zlevs => getDimVec(currModel,'zdim:')
+          zlevs => Model%getDimVec('zdim:')
           idx  = minloc(zlevs-Level,mask=zlevs-Level.ge.0, dim=1)
 
           !
@@ -416,21 +417,15 @@ CONTAINS
 
        iBitmap = .true.
        where(iField.eq.undef) iBitMap = .false.
-       currModel%bitMap(:,i) = .false.
+       Model%bitMap(:,i) = .false.
+       
        call bilinear_interp( ibitmap, iField, scantec%udef, &
-            currModel%w11, &
-            currModel%w12, &
-            currModel%w21, &
-            currModel%w22, &
-            currModel%n11, &
-            currModel%n12, &
-            currModel%n21, &
-            currModel%n22, &
-            currModel%bitmap(:,i),&
-            currModel%Field(:,i), &
-            iret           &
-            )
-         where(.not.currModel%bitmap(:,i))currModel%Field(:,i) = scantec%udef
+                             Model%w11, Model%w12, Model%w21, Model%w22, &
+                             Model%n11, Model%n12, Model%n21, Model%n22, &
+                             Model%bitmap(:,i), Model%Field(:,i), &
+                             iret )
+
+         where(.not.Model%bitmap(:,i))Model%Field(:,i) = scantec%udef
 
     enddo
 
@@ -438,5 +433,23 @@ CONTAINS
     deallocate(iField)
     deallocate(iBitMap)
   END SUBROUTINE loadData
+
+!  subroutine getField(gs, FieldTag)
+!     type(GrADSfiles), intent(in) :: gs
+!     character(len=*), intent(in) :: FieldTag
+!
+!     
+!     ! parse fieldTag
+!     ! looking for a field name
+!     idx = index(FieldTag,':')
+!     Fname = FieldTag(1:idx-1)
+!     ! looking for aritmetic in field
+!
+!     ipls = index(FieldTag,'*')
+!     idiv = index(FieldTag,'/')
+!     iadd = index(FieldTag,'+')
+!     isub = index(FieldTag,'-')
+!
+!  end subroutine
 
 END MODULE scan_dataMOD
