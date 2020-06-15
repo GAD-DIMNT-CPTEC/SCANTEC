@@ -84,5 +84,6 @@ $(srcdir)/scandrv.o scandrv.o: \
 
 $(srcdir)/scantec_module.o scantec_module.o: \
 	$(srcdir)/scantec_module.f90 \
+	$(srcdir)/m_ioutil.o \
 	$(srcdir)/m_constants.o
 

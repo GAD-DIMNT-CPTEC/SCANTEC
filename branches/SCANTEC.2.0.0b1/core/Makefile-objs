@@ -2,6 +2,7 @@
 # fgen v0.3 (C) 1997,98 Beroud Jean-Marc
 
 OBJS = \
+	$(srcdir)/scantec_module.o \
 	$(srcdir)/m_GrADSfiles.o \
 	$(srcdir)/m_constants.o \
 	$(srcdir)/m_inpak90.o \
@@ -16,5 +17,4 @@ OBJS = \
 	$(srcdir)/scan_dataMOD.o \
 	$(srcdir)/scan_outputMOD.o \
 	$(srcdir)/scan_readModel.o \
-	$(srcdir)/scandrv.o \
-	$(srcdir)/scantec_module.o
+	$(srcdir)/scandrv.o 
