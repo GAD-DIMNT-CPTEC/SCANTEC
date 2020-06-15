@@ -75,6 +75,14 @@ CC      = gcc
 ARFLAGS = r
 endif
 
+ifeq ($(SCAN_ARCH),cray_cray)
+F77     = ftn
+FFLAGS  = $(BIT_FLAG) -x conditional_omp
+CFLAGS  = -O -DLINUX
+CC      = cc
+ARFLAGS = r
+endif
+
 ifeq ($(SCAN_ARCH),linux_ifc)
 ifeq ($(UMACHINE), ia64)
 BIT_FLAG = -DLINUX64

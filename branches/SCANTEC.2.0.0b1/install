@@ -8,7 +8,7 @@ echo " 1 - Clean Environment"
 echo ""
 echo " 2 - GNU - Load GNU Gfortran Environment to LINUX and compile"
 echo ""
-echo " 3 - PGI XE - Load PGI Environment to XT/XE and compile"
+echo " 3 - CCE XE - Load Cray Environment to XT/XE and compile"
 echo ""
 echo " 4 - INTEL - Load INTEL Environment to LINUX and compile"
 echo ""
@@ -43,7 +43,7 @@ echo
 [3])
 echo "--------------------loading environment-----------------"
 echo
-export SCAN_ARCH=cray_pgi
+export SCAN_ARCH=cray_cray
 echo SCAN_ARCH=$SCAN_ARCH
 echo
 echo "--------------------environment loaded------------------"

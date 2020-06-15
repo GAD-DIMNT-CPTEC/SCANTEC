@@ -26,22 +26,18 @@ srcdir = ./core
 
 pathbin = ./bin
 
-PRJDIRS = $(incdir)/w3lib $(incdir)/mpeu $(srcdir) 
+PRJDIRS = $(incdir)/w3lib $(incdir)/BilinInterp $(srcdir) 
 
 # Not real file targets
 .PHONY: $(MAKEFILE) all dep html clean install help
 
 # targets
-all: libw3.a libmpeu.a libinterp.a scantec.x 
+all: libw3.a libinterp.a scantec.x 
 	mv $(srcdir)/scantec.x $(pathbin)
 	rm $(srcdir)/*.mod $(srcdir)/*.o
 
 libw3.a:
 	@$(CD) $(incdir)/w3lib && \
-	    $(MAKE) -f $(MAKEFILE) $@
-
-libmpeu.a:
-	@$(CD) $(incdir)/mpeu && \
 	    $(MAKE) -f $(MAKEFILE) $@
 
 libinterp.a:

@@ -26,14 +26,10 @@ INSTALL = install
 srcdir = ./
 
 # preprocessor, compilers, linker & archiver
-FPP = gcc
-CC  = gcc
-FC  = gfortran
-LD  = gfortran
 AR  = ar
 
 # default mode (max. optimization)
-mode = dbg
+mode = #dbg
 
 # header file directories
 CCFLAGS = 
@@ -43,33 +39,75 @@ FFLAGS  =
 CPP_FLAGS      =  -C -P 
 CPP_F90FLAGS   =  -traditional-cpp 
 FPPFLAGS = -C -E
-CCFLAGS += -pipe
-FFLAGS  += -cpp -fPIC -fconvert=big-endian 
 LDFLAGS  = -shared -fPIC
 ARFLAGS  = -r
 
-# add flags for debugging if requested
-ifeq (dbg,$(findstring dbg,$(mode)))
-   CCFLAGS += -DEBUG -g -Wall -fbracktrace
-#   FFLAGS  += -DDEBUG -g -O0 -fimplicit-none -Wall -Wline-truncation -Wcharacter-truncation -Wsurprising -Waliasing -Wimplicit-interface -Wunused-parameter -fwhole-file -fcheck=all -pedantic -fbacktrace
-   FFLAGS += -DEBUG -O0 -g -ggdb -Wall -fbacktrace -fcheck=all -fcheck=bounds -Wuninitialized -ffpe-trap=zero,invalid,overflow,underflow
+ifeq ($(SCAN_ARCH),Darwin_intel)
+   FC  = ifort
+   LD  = ifort
 
-   LDFLAGS += -g
-endif
+   FFLAGS += -fpp -assume byterecl -heap-arrays 
+
+# add flags for debugging if requested
+   ifeq (dbg,$(findstring dbg,$(mode)))
+      FFLAGS  += -g -debug extended -O0 -traceback -fpe-all=0 -check all -pg -warn -DDEBUG
+      LDFLAGS += -g -pg
+   endif
 
 # add flags for profiling if requested
-ifeq (pro,$(findstring pro,$(mode)))
-   CCFLAGS += -pg
-   FFLAGS  += 
-   LDFLAGS += 
+   ifeq (pro,$(findstring pro,$(mode)))
+      FFLAGS  += -O3 -fast
+      LDFLAGS += 
+   endif
 endif
 
-# add flags for optimization if requested
-ifeq (opt,$(findstring opt,$(mode)))
-   CCFLAGS += -O2 -m486 -malign-loops=2 -malign-jumps=2 -malign-functions=2 -fno-strength-reduce
-   FFLAGS  += -O3 
-   LDFLAGS += 
+#
+# Flags to CCE on Cray
+#
+
+ifeq ($(SCAN_ARCH),cray_cray)
+   FC  = ftn
+   LD  = ftn
+   FFLAGS += -ffree -N255 -h nosecond_underscore -Ofp0 -ema
+   LDFLAGS += -h byteswapio
+# add flags for debugging if requested
+   ifeq (dbg,$(findstring dbg,$(mode)))
+      FFLAGS  += -eZ -G0 -DDEBUG -m2 -R bcdsp
+      LDFLAGS += -g -pg
+   endif
+
+	# add flags for profiling if requested
+   ifeq (pro,$(findstring pro,$(mode)))
+      FFLAGS  += -O3
+      LDFLAGS += 
+   endif
+
 endif
+#
+# Flags to GNU
+#
+
+ifeq ($(SCAN_ARCH),GNU_Linux)
+   FC  = gfortran
+   LD  = gfortran
+   FFLAGS += -ffree-line-length-none
+
+# add flags for debugging if requested
+   ifeq (dbg,$(findstring dbg,$(mode)))
+      FFLAGS  += -g -ggdb -O0 -DDEBUG -fbacktrace -Wuninitialized -fbounds-check -ffpe-trap=zero,invalid,overflow,underflow
+      LDFLAGS += -g -pg
+   endif
+
+	# add flags for profiling if requested
+   ifeq (pro,$(findstring pro,$(mode)))
+      CCFLAGS += 
+      FFLAGS  += -O3
+      LDFLAGS += 
+   endif
+
+endif
+
+
 
 # objectlist file
 include Makefile-objs
@@ -96,19 +134,13 @@ $(LIB): $(OBJS)
 	@$(ECHO) ""
 	$(AR) $(ARFLAGS) $@ $(notdir $(OBJS))
 
-#$(LIB): $(OBJS) 
-#	@$(ECHO) ""
-#	@$(ECHO) "Linking executable $(@F)"
-#	@$(ECHO) ""
-#	$(LD) $(LDFLAGS) $(notdir $(OBJS)) $(LIBDIRS) $(LIBS) -o $@.so
-
 # args for fgen & f2html
 FGENARGS   = -s $(srcdir) 
 F2HTMLARGS = $(srcdir) 
 
 # cleanup
 clean:
-	$(RM) -f $(BIN) $(LIB) $(notdir $(OBJS)) *.[dlMT] *.lst *.mod work.pc* core *.a
+	$(RM) -f $(BIN) $(LIB) $(notdir $(OBJS)) *.[dlMT] *.lst *.mod work.pc* core *.a *.i
 
 # installation
 LIBDIR = /usr/local/lib
