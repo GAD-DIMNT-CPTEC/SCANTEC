@@ -1,8 +1,10 @@
 MODULE scantec_module
    use m_constants
+   use m_ioutil, only: stdout
 !   use scan_ConvFunc
    
    implicit none
+
 !
 ! scantec data type
 !
@@ -185,7 +187,8 @@ MODULE scantec_module
          if(present(istat)) then
             istat = -1
          else
-            stop 'unknow Experiment Name '//trim(ExpName)
+            write(stdout,'(A,1x,A)') 'unknow Experient Name',trim(ExpName)
+            stop
          endif
       end subroutine
 
@@ -210,7 +213,8 @@ MODULE scantec_module
          if(present(istat)) then
             istat = -1
          else
-            stop 'unknow Experiment Name '//trim(ExpName)
+            write(stdout,'(A,1x,A)')'unknow Experiment Name',trim(ExpName)
+            stop
          endif
       end subroutine
 
@@ -266,7 +270,9 @@ MODULE scantec_module
             endif
             grid => grid%next
          enddo
-         stop 'Dimension not found in '//trim(md%Name_)//'.model : '//trim(mdim)
+         write(stdout,'(A,1x,A,A,1x,A)')'Dimension not found in',&
+                           trim(md%Name_),'.model :',trim(mdim)
+         stop
 
       end function
 
@@ -326,7 +332,9 @@ MODULE scantec_module
              Model => Model%next
          enddo
 
-         stop 'Model Name or Model Type not found! '//trim(MType_)//' -> '//trim(MName_)
+         write(stdout,'(A,3(1x,A))')'Model Name or Model Type not found!',&
+                  trim(MType_),'->',trim(MName_)
+         stop
 
       end function
 
