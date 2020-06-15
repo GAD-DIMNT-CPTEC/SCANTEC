@@ -90,19 +90,20 @@ Contains
     integer, pointer :: ydim => null()
     integer :: i, j, k
     character(len=ShortStr), pointer :: mapping => null()
+    type(ModelType), pointer :: Model => null()
 
-    scantec%currModel => scantec%FirstModel
-    do while(associated(scantec%currModel))
+    Model => scantec%FirstModel
+    do while(associated(Model))
     
-       call readModelConf(scantec%currModel)
+       call readModelConf(Model)
 
        ! compute weights to be used for interpolation
-       rlat => getDimVec(scantec%currModel, 'ydim:')
-       rlon => getDimVec(scantec%currModel, 'xdim:')
+       rlat => Model%getDimVec('ydim:')
+       rlon => Model%getDimVec('xdim:')
 
-       xdim => getDimInfo(scantec%currModel, 'xdim:')
-       ydim => getDimInfo(scantec%currModel, 'ydim:')
-       mapping => getMapping(scantec%currModel, 'xdim:')
+       xdim => Model%getDimInfo('xdim:')
+       ydim => Model%getDimInfo('ydim:')
+       mapping => Model%getMapping('xdim:')
 
        if (i90_lcase(mapping) .eq. 'linear')then
           GDesc = 0
@@ -133,29 +134,30 @@ Contains
        endif
 
 
-       allocate(scantec%currModel%w11(xdim*ydim))
-       allocate(scantec%currModel%w12(xdim*ydim))
-       allocate(scantec%currModel%w21(xdim*ydim))
-       allocate(scantec%currModel%w22(xdim*ydim))
-       allocate(scantec%currModel%n11(xdim*ydim))
-       allocate(scantec%currModel%n12(xdim*ydim))
-       allocate(scantec%currModel%n21(xdim*ydim))
-       allocate(scantec%currModel%n22(xdim*ydim))
+       allocate(Model%w11(xdim*ydim))
+       allocate(Model%w12(xdim*ydim))
+       allocate(Model%w21(xdim*ydim))
+       allocate(Model%w22(xdim*ydim))
+       allocate(Model%n11(xdim*ydim))
+       allocate(Model%n12(xdim*ydim))
+       allocate(Model%n21(xdim*ydim))
+       allocate(Model%n22(xdim*ydim))
 
-       call bilinear_interp_init(GDesc, scantec%GridDesc, &
-                                 scantec%currModel%w11, &
-                                 scantec%currModel%w12, &
-                                 scantec%currModel%w21, &
-                                 scantec%currModel%w22, &
-                                 scantec%currModel%n11, &
-                                 scantec%currModel%n12, &
-                                 scantec%currModel%n21, &
-                                 scantec%currModel%n22  &
+       call bilinear_interp_init(GDesc, &
+                                 scantec%GridDesc, &
+                                 Model%w11, &
+                                 Model%w12, &
+                                 Model%w21, &
+                                 Model%w22, &
+                                 Model%n11, &
+                                 Model%n12, &
+                                 Model%n21, &
+                                 Model%n22  &
                                  )
 
        deallocate(rlon)
        deallocate(rlat)
-       scantec%currModel => scantec%currModel%next
+       Model => Model%next
     enddo    
 
   end subroutine scan_models_plugin
