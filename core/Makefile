@@ -35,7 +35,7 @@ incdir = ./
 srcdir = ./
 
 # default mode (max. optimization)
-mode = dbg #pro
+mode = #dbg #pro
 
 # header file directories
 CCFLAGS = -I$(incdir) -I$(BILIN_INC)
