@@ -130,6 +130,33 @@ ifeq ($(SCAN_ARCH),GNU_Linux)
    endif
 
 endif
+
+ifeq ($(SCAN_ARCH),cray_cray)
+   FPP = ftn
+   CC  = ftn
+   FC  = ftn
+   LD  = ftn
+   AR  = ar
+   FFLAGS += -eZ -ffree -N255 -h nosecond_underscore -Ofp0 -ema
+
+# add flags for debugging if requested
+   ifeq (dbg,$(findstring dbg,$(mode)))
+      CCFLAGS += 
+      FFLAGS  += -eP -G0 -DDEBUG -m2 -R bcdsp
+      LDFLAGS += -g -pg
+   endif
+
+	# add flags for profiling if requested
+   ifeq (pro,$(findstring pro,$(mode)))
+      CCFLAGS += 
+      FFLAGS  += -O3
+      LDFLAGS += 
+   endif
+
+endif
+
+
+
 # objectlist file
 include Makefile-objs
 
@@ -181,7 +208,7 @@ html:
 
 # cleanup
 clean:
-	$(RM) -f $(BIN) $(LIB) $(notdir $(OBJS)) *.[dlMT] *.lst *.mod work.pc* core
+	$(RM) -f $(BIN) $(LIB) $(notdir $(OBJS)) *.[dlMT] *.lst *.mod work.pc* core *.i
 
 # installation
 LIBDIR = /usr/local/lib
