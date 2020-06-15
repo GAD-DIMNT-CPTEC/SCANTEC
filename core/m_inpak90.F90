@@ -3110,8 +3110,9 @@ end subroutine perr4_
 
 
   msg = char(27)//'[31;1m'//trim(where)//char(27)//'[m'
+  write(stdout,'(A)')trim(msg)
 
-  stop trim(msg)
+  stop
   
 end subroutine die0_
 
@@ -3151,7 +3152,9 @@ end subroutine die0_
       write(msg,'(3a)') where,':'//char(27)//'[31;1m Error:'//char(27)//'[m, '//trim(message)
   endif
 
-  stop trim(msg)
+  write(stdout,'(A)')trim(msg)
+
+  stop
   
 end subroutine die2_
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3189,7 +3192,9 @@ end subroutine die2_
   write(msg,'(10a)') where,':'//char(27)//'[31;1m Error:'//char(27)//'[m, ',&
    mesg1,'=',trim(adjustl(cval1)),', ',   &
    mesg2,'=',trim(adjustl(cval2)),'.'
-  stop trim(msg)
+
+  write(stdout,'(A)')trim(msg)
+  stop
 
 end subroutine die4_
 
