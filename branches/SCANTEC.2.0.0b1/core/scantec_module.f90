@@ -310,7 +310,9 @@ MODULE scantec_module
             endif
             grid => grid%next
          enddo
-         stop 'Dimension not found in '//trim(self%Name_)//'.model : '//trim(mdim)
+         write(stdout,'(A,1x,2A,1x,A)')'Dimension not found in',&
+                 trim(self%Name_),'.model :',trim(mdim)
+         stop
 
       end function
 
