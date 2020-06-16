@@ -162,7 +162,6 @@ Contains
        nidx = count (bitMap(1:npts,i))
        allocate(idx%pt(nidx))
        Idx%pt(1:nidx) = PACK ( (/(j,j=1,npts)/), mask = BitMap(1:npts,i))
-!       print*,trim(scantec%VarName(i)),count(bitmap(:,i)),count(refBitMap(:,i)),count(expBitMap(:,i)), nidx, count(idx%pt.gt.0)
        if(i.lt.nvar)then
           allocate(idx%next)
           idx => idx%next
@@ -257,6 +256,9 @@ Contains
          ! dado(i)%desp = 0.0 ! paulo dias
 
        !Enddo
+
+       ! write ctl
+       call writeCtl(FName)
 
     endif
 
@@ -496,19 +498,19 @@ Contains
     logical, pointer     :: expBitMap(:,:) => null()
     logical, allocatable :: bitMap(:,:)
 
-    inquire(unit=FUnitOut, opened=isOpen)
-    if(.not.isOpen) then
 
-       nymd = scantec%starting_time/100
-       nhms = MOD(scantec%starting_time,100) * 10000
-       fymd = scantec%ending_time/100
-       fhms = MOD(scantec%ending_time,100) * 10000
+    nymd = scantec%starting_time/100
+    nhms = MOD(scantec%starting_time,100) * 10000
+    fymd = scantec%ending_time/100
+    fhms = MOD(scantec%ending_time,100) * 10000
 
 !       fname = FNameOut
-       fname = trim(Exper(Run)%name)//'_'//trim(FNameOut)
+    fname = trim(Exper(Run)%name)//'_'//trim(FNameOut)
 
-       CALL str_template(FName, nymd, nhms, fymd, fhms, label=num2str(run,'(I2.2)'))
+    CALL str_template(FName, nymd, nhms, fymd, fhms, label=num2str(run,'(I2.2)'))
 
+    inquire(unit=FUnitOut, opened=isOpen)
+    if(.not.isOpen) then
 
        Open( unit   = FUnitOut+0,      &
             file   = trim(scantec%output_dir)//'/RMSE'//trim(Fname)//'T.scan',   &
@@ -599,14 +601,14 @@ Contains
     Close(FUnitOut+4)
     Close(FUnitOut+5)
     
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    !escrevento ctl para campos
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    !Obs* podera ser ajustado o nome usando Fname(ocorre erros quando as datas sao iguais)
-    !por isso o nome sem a variavel, com datas diferentes nao ocorre erros com o nome.
-    
-    !RMS    
-      open(150, file=trim(scantec%output_dir)//'/Campo_RMSE.ctl', status='unknown')
+  End Subroutine WriteBstat
+
+  subroutine writeCtl( FName )
+     character(len=*), intent(in) :: fname
+     integer :: i, j 
+
+      open(150, file=trim(scantec%output_dir)//'/RMSE'//trim(Fname)//'F.ctl',&
+                status='unknown')
       
       write(150,'(A,A)')'dset ^','RMSE'//trim(Fname)//'F.scan'
       write(150,'(A)')
@@ -621,35 +623,20 @@ Contains
       write(150,'(A)') 
       write(150,'(A,I3,A,I2,A)')'tdef  ',(scantec%forecast_time/scantec%atime_step)+1,' linear 00Z05AUG2014 ',scantec%atime_step,'HR'
       write(150,'(A)')
-      write(150,'(A)')'vars 22'
-      write(150,'(A)')'VT925 00 99 Virtual Temperature @ 925 hPa [K]'
-      write(150,'(A)')'VT850 00 99 Virtual Temperature @ 850 hPa [K]'
-      write(150,'(A)')'VT500 00 99 Virtual Temperature @ 500 hPa [K]'                                           
-      write(150,'(A)')'TM850 00 99 Absolute Temperature @ 850 hPa [K]'
-      write(150,'(A)')'TM500 00 99 Absolute Temperature @ 500 hPa [K]'
-      write(150,'(A)')'TM250 00 99 Absolute Temperature @ 250 hPa [K]'
-      write(150,'(A)')'PSNM0 00 99 Pressure reduced to snm [hPa]'                                           
-      write(150,'(A)')'SH925 00 99 Specific Humidity @ 925 hPa [g/Kg]'
-      write(150,'(A)')'SH850 00 99 Specific Humidity @ 850 hPa [g/Kg]'
-      write(150,'(A)')'SH500 00 99 Specific Humidity @ 500 hPa [g/Kg]'                                         
-      write(150,'(A)')'AG925 00 99 Inst. Precipitable Water @ 925 hPa [Kg/m2]'
-      write(150,'(A)')'ZG850 00 99 Geopotential height @ 850 hPa [gpm]'
-      write(150,'(A)')'ZG500 00 99 Geopotential height @ 500 hPa [gpm]'
-      write(150,'(A)')'ZG250 00 99 Geopotential height @ 250 hPa [gpm]'
-      write(150,'(A)')'UV850 00 99 Zonal Wind @ 850 hPa [m/s]'
-      write(150,'(A)')'UV500 00 99 Zonal Wind @ 500 hPa [m/s]'
-      write(150,'(A)')'UV250 00 99 Zonal Wind @ 250 hPa [m/s]'
-      write(150,'(A)')'VV850 00 99 Meridional Wind @ 850 hPa [m/s]'
-      write(150,'(A)')'VV500 00 99 Meridional Wind @ 500 hPa [m/s]'
-      write(150,'(A)')'VV250 00 99 Meridional Wind @  250 hPa [m/s]'
-      write(150,'(A)')'PC000 00 99 TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]'
-      write(150,'(A)')'PV001 00 99 CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]'
+      write(150,'(A,1x,I3)')'vars', scantec%nvar
+      do i=1,scantec%nvar
+         j = index(scantec%varName(i),':')
+         write(150,'(A,2(1x,A))')scantec%varName(i)(1:j-1)//scantec%varName(i)(j+1:len_trim(scantec%varName(i))),&
+                                '0 99',trim(scantec%varDesc(i))
+      enddo
       write(150,'(A)')'endvars'   
       
       close(150)
     
       !VIES   
-      open(151, file=trim(scantec%output_dir)//'/Campo_VIES.ctl', status='unknown')
+      open(151, file=trim(scantec%output_dir)//'/VIES'//trim(Fname)//'F.ctl',&
+                status='unknown')
+
       
       write(151,'(A,A)')'dset ^','VIES'//trim(Fname)//'F.scan'
       write(151,'(A)')
@@ -664,35 +651,19 @@ Contains
       write(151,'(A)') 
       write(151,'(A,I3,A,I2,A)')'tdef  ',(scantec%forecast_time/scantec%atime_step)+1,' linear 00Z05AUG2014 ',scantec%atime_step,'HR'
       write(151,'(A)')
-      write(151,'(A)')'vars 22'
-      write(151,'(A)')'VT925 00 99 Virtual Temperature @ 925 hPa [K]'
-      write(151,'(A)')'VT850 00 99 Virtual Temperature @ 850 hPa [K]'
-      write(151,'(A)')'VT500 00 99 Virtual Temperature @ 500 hPa [K]'                                           
-      write(151,'(A)')'TM850 00 99 Absolute Temperature @ 850 hPa [K]'
-      write(151,'(A)')'TM500 00 99 Absolute Temperature @ 500 hPa [K]'
-      write(151,'(A)')'TM250 00 99 Absolute Temperature @ 250 hPa [K]'
-      write(151,'(A)')'PSNM0 00 99 Pressure reduced to snm [hPa]'                                           
-      write(151,'(A)')'SH925 00 99 Specific Humidity @ 925 hPa [g/Kg]'
-      write(151,'(A)')'SH850 00 99 Specific Humidity @ 850 hPa [g/Kg]'
-      write(151,'(A)')'SH500 00 99 Specific Humidity @ 500 hPa [g/Kg]'                                         
-      write(151,'(A)')'AG925 00 99 Inst. Precipitable Water @ 925 hPa [Kg/m2]'
-      write(151,'(A)')'ZG850 00 99 Geopotential height @ 850 hPa [gpm]'
-      write(151,'(A)')'ZG500 00 99 Geopotential height @ 500 hPa [gpm]'
-      write(151,'(A)')'ZG250 00 99 Geopotential height @ 250 hPa [gpm]'
-      write(151,'(A)')'UV850 00 99 Zonal Wind @ 850 hPa [m/s]'
-      write(151,'(A)')'UV500 00 99 Zonal Wind @ 500 hPa [m/s]'
-      write(151,'(A)')'UV250 00 99 Zonal Wind @ 250 hPa [m/s]'
-      write(151,'(A)')'VV850 00 99 Meridional Wind @ 850 hPa [m/s]'
-      write(151,'(A)')'VV500 00 99 Meridional Wind @ 500 hPa [m/s]'
-      write(151,'(A)')'VV250 00 99 Meridional Wind @  250 hPa [m/s]'
-      write(151,'(A)')'PC000 00 99 TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]'
-      write(151,'(A)')'PV001 00 99 CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]'
+      write(151,'(A,1x,I3)')'vars', scantec%nvar
+      do i=1,scantec%nvar
+         j = index(scantec%varName(i),':')
+         write(151,'(A,2(1x,A))')scantec%varName(i)(1:j-1)//scantec%varName(i)(j+1:len_trim(scantec%varName(i))),&
+                                '0 99',trim(scantec%varDesc(i))
+      enddo
       write(151,'(A)')'endvars'   
       
       close(151)
       
       !MEAN   
-      open(152, file=trim(scantec%output_dir)//'/Campo_MEAN.ctl', status='unknown')
+      open(152, file=trim(scantec%output_dir)//'/MEAN'//trim(Fname)//'F.ctl',&
+                status='unknown')
       
       write(152,'(A,A)')'dset ^','MEAN'//trim(Fname)//'F.scan'
       write(152,'(A)')
@@ -707,37 +678,17 @@ Contains
       write(152,'(A)') 
       write(152,'(A,I3,A,I2,A)')'tdef  ',(scantec%forecast_time/scantec%atime_step)+1,' linear 00Z05AUG2014 ',scantec%atime_step,'HR'
       write(152,'(A)')
-      write(152,'(A)')'vars 22'
-      write(152,'(A)')'VT925 00 99 Virtual Temperature @ 925 hPa [K]'
-      write(152,'(A)')'VT850 00 99 Virtual Temperature @ 850 hPa [K]'
-      write(152,'(A)')'VT500 00 99 Virtual Temperature @ 500 hPa [K]'                                           
-      write(152,'(A)')'TM850 00 99 Absolute Temperature @ 850 hPa [K]'
-      write(152,'(A)')'TM500 00 99 Absolute Temperature @ 500 hPa [K]'
-      write(152,'(A)')'TM250 00 99 Absolute Temperature @ 250 hPa [K]'
-      write(152,'(A)')'PSNM0 00 99 Pressure reduced to snm [hPa]'                                           
-      write(152,'(A)')'SH925 00 99 Specific Humidity @ 925 hPa [g/Kg]'
-      write(152,'(A)')'SH850 00 99 Specific Humidity @ 850 hPa [g/Kg]'
-      write(152,'(A)')'SH500 00 99 Specific Humidity @ 500 hPa [g/Kg]'                                         
-      write(152,'(A)')'AG925 00 99 Inst. Precipitable Water @ 925 hPa [Kg/m2]'
-      write(152,'(A)')'ZG850 00 99 Geopotential height @ 850 hPa [gpm]'
-      write(152,'(A)')'ZG500 00 99 Geopotential height @ 500 hPa [gpm]'
-      write(152,'(A)')'ZG250 00 99 Geopotential height @ 250 hPa [gpm]'
-      write(152,'(A)')'UV850 00 99 Zonal Wind @ 850 hPa [m/s]'
-      write(152,'(A)')'UV500 00 99 Zonal Wind @ 500 hPa [m/s]'
-      write(152,'(A)')'UV250 00 99 Zonal Wind @ 250 hPa [m/s]'
-      write(152,'(A)')'VV850 00 99 Meridional Wind @ 850 hPa [m/s]'
-      write(152,'(A)')'VV500 00 99 Meridional Wind @ 500 hPa [m/s]'
-      write(152,'(A)')'VV250 00 99 Meridional Wind @  250 hPa [m/s]'
-      write(152,'(A)')'PC000 00 99 TOTAL PRECIPITATION @ 1000 hPa [kg/m2/day]'
-      write(152,'(A)')'PV001 00 99 CONVECTIVE PRECIPITATION @ 1000 hPa [kg/m2/day]'
-      write(152,'(A)')'endvars'   
+      write(152,'(A,1x,I3)')'vars', scantec%nvar
+      do i=1,scantec%nvar
+         j = index(scantec%varName(i),':')
+         write(152,'(A,2(1x,A))')scantec%varName(i)(1:j-1)//scantec%varName(i)(j+1:len_trim(scantec%varName(i))),&
+                                '0 99',trim(scantec%varDesc(i))
+      enddo
+      write(152,'(A)')'endvars'     
       
       close(152)
     
-    
-    
-
-  End Subroutine WriteBstat
+  End Subroutine writeCtl
   !EOC
   !
   !-----------------------------------------------------------------------------!

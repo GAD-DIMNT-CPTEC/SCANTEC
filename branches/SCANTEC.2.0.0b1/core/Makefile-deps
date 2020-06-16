@@ -63,6 +63,7 @@ $(srcdir)/scan_dataMOD.o scan_dataMOD.o: \
 	$(srcdir)/m_inpak90.o \
 	$(srcdir)/m_ioutil.o \
 	$(srcdir)/m_string.o \
+	$(srcdir)/m_constants.o \
 	$(srcdir)/scan_UtilsMOD.o \
 	$(srcdir)/scantec_module.o
 

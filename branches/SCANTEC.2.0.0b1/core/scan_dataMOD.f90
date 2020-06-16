@@ -19,6 +19,7 @@ MODULE scan_dataMOD
   !
 
   USE scantec_module    ! scantec types
+  USE m_constants
   USE m_string          ! String Manipulation
   USE scan_Utils, only: dom, Refer, Clima, Exper, Precip
   USE m_inpak90
@@ -91,9 +92,10 @@ CONTAINS
     IMPLICIT NONE
     integer :: I
     integer :: iret
-    character(len=256) :: scanVarsConf
+    character(len=NormalStr) :: scanVarsConf
     type vars
-       character(len=8)    :: vname
+       character(len=8)        :: vname
+       character(len=shortStr) :: vdesc
        type(vars), pointer :: next => null()
     end type vars
     integer :: nvars
@@ -101,7 +103,7 @@ CONTAINS
     type(vars), pointer :: curr => null()
 
     logical :: found
-    character(len=32) :: msg
+    character(len=smallStr) :: msg
 
     character(len=*),parameter :: myname_=myname//' :: readModelConf( )'
 
@@ -165,6 +167,13 @@ CONTAINS
           endif
        endif
 
+       call i90_gtoken(curr%vdesc, iret)
+       if(iret.ne.0)then
+          curr%vdesc = 'variable without description'
+       endif
+
+
+
        ! get next line
        !    - iret =  0, next line ok
        !    - iret = -1, end of buffer (some problem with table)
@@ -181,9 +190,11 @@ CONTAINS
     scantec%nvar = nVars
 
     Allocate(scantec%VarName(nVars))
+    Allocate(scantec%VarDesc(nVars))
     curr => First
     do i=1,nvars
        scantec%VarName(i) = i90_lcase(curr%vname)
+       scantec%VarDesc(i) = i90_lcase(curr%vdesc)
        curr => curr%next
     enddo
 
@@ -256,9 +267,9 @@ CONTAINS
     integer, intent(in) :: NExp
     integer             :: aymd, ahms
     integer             :: fymd, fhms
-    character(len=1024) :: Reference    ! Reference File Name
-    character(len=1024) :: Experiment   ! Experiment File Name
-    character(len=1024) :: Climatology  ! Climatology File Name
+    character(len=LongStr) :: Reference    ! Reference File Name
+    character(len=LongStr) :: Experiment   ! Experiment File Name
+    character(len=LongStr) :: Climatology  ! Climatology File Name
 
 
     aymd = scantec%atime/100

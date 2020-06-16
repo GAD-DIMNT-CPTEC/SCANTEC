@@ -27,7 +27,7 @@ MODULE scantec_module
      integer(kind = i4) :: atime_step         ! Analisys time step
      integer(kind = i4) :: ntime_steps        ! total # of Analisys time step
      real(kind = r8)    :: aincr              ! Analisys time increment
-     logical      :: atime_flag         ! is it a new date reference (not forecast)?
+     logical            :: atime_flag         ! is it a new date reference (not forecast)?
 
 !
 ! Forecast Variables
@@ -57,8 +57,9 @@ MODULE scantec_module
 !
 !
 !
-     integer(kind = i4)                  :: nvar
-     character(len=tinyStr), allocatable :: VarName(:)
+     integer(kind = i4)                   :: nvar
+     character(len=tinyStr), allocatable  :: VarName(:)
+     character(len=shortStr), allocatable :: VarDesc(:)
 !
 !    flag to use/no use climatology
 !
