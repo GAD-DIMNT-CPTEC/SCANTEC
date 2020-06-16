@@ -193,7 +193,7 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir):
                     
     return ds_table
 
-def plot_lines(dTable,Vars,Stats,outDir):
+def plot_lines(dTable,Vars,Stats,outDir,combine):
 
     """
     plot_lines
@@ -207,6 +207,7 @@ def plot_lines(dTable,Vars,Stats,outDir):
         Vars    : lista com os nomes e níveis das variáveis
         Stats   : lista com os nomes das estatísticas a serem processadas
         outDir  : string com o diretório com as tabelas do SCANTEC
+        combine : valor Booleano para combinar as curvas dos experimentos em um só gráfico
     
     Resultado
     ---------
@@ -216,29 +217,70 @@ def plot_lines(dTable,Vars,Stats,outDir):
     ---
         from scanplot import plot_lines
         
-        plot_lines(dTable,Vars,Stats,outDir)
+        plot_lines(dTable,Vars,Stats,outDir,combine=False)
     """
     
-    for table in list(dTable.keys()):
-        Stat = table[0:4]
-        fcts = fcts = dTable[table].loc[:,"%Previsao"].values
-        
-        
-        for var in range(len(Vars)):
-            vname = Vars[var]
-            ax = dTable[table].loc[:,[Vars[var][0].lower()]].plot(title=Vars[var][1], 
-                                                                  figsize=(8,5),
-                                                                  fontsize=12,
-                                                                  linewidth=3)
+    if combine:
 
-            ax.set_xticks(dTable[table].index)
-            ax.set_xticklabels(fcts)
+        for var in range(len(Vars)):
+       
+            for Stat in Stats:
+                Tables = list(filter(lambda x:Stat in x, [*dTable.keys()]))
+       
+                dfTables = []
+    
+                for table in Tables:
+                    df_exp = dTable[table].loc[:,[Vars[var][0].lower()]]
+                    dfTables.append(df_exp)
             
-            plt.ylabel(Stat)
-            plt.xlabel('Tempo')
+       
+                    #print(table,dfTables)
+        
+                fcts = dTable[table].loc[:,"%Previsao"].values
             
-            plt.grid()
+                ax = pd.concat(dfTables,axis=1).plot(title=Vars[var][1],
+                                                    figsize=(8,5),
+                                                    fontsize=12,
+                                                    linewidth=3)
+    
+                ax.legend(list(table[4:9]))
             
-            plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '.png', dpi=70) 
+                ax.set_xticks(dTable[table].index)
+                ax.set_xticklabels(fcts)
+
+                ax.legend(Tables)
+                
+                plt.ylabel(Stat)
+                plt.xlabel('Tempo')
+
+                plt.grid()
+                
+                plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '-combined.png', dpi=70) 
+              
+    else:
+            
+        for table in list(dTable.keys()):
+            Stat = table[0:4]
+            fcts = dTable[table].loc[:,"%Previsao"].values
+
+            for var in range(len(Vars)):
+                vname = Vars[var]
+            
+                ax = dTable[table].loc[:,[Vars[var][0].lower()]].plot(title=Vars[var][1], 
+                                                                      figsize=(8,5),
+                                                                      fontsize=12,
+                                                                      linewidth=3)
+ 
+                ax.set_xticks(dTable[table].index)
+                ax.set_xticklabels(fcts)
+        
+                ax.legend(table)
+            
+                plt.ylabel(Stat)
+                plt.xlabel('Tempo')
+        
+                plt.grid()
+            
+                plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '.png', dpi=70) 
                 
     return
