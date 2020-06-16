@@ -140,7 +140,7 @@ def read_namelists(basepath):
 
     return VarsLevs, Confs
 
-def get_dataframe(dataInicial,dataFinal,Stats,outDir):
+def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir):
 
     """
     get_dataframe
@@ -153,6 +153,7 @@ def get_dataframe(dataInicial,dataFinal,Stats,outDir):
         dataInicial : objeto datetime com a data inicial do experimento
         dataFinal   : objeto datetime com a data final do experimento
         Stats       : lista com os nomes das estatísticas a serem processadas
+        Exps        : lista com os nomes dos experimentos
         outDir      : string com o diretório com as tabelas do SCANTEC
     
     Resultado
@@ -166,9 +167,10 @@ def get_dataframe(dataInicial,dataFinal,Stats,outDir):
         dataInicial = data_conf["Starting Time"]
         dataFinal = data_conf["Ending Time"]
         Stats =  ["ACOR", "RMSE", "VIES"]
+        Exps = list(data_conf["Experiments"].keys())
         outDir = data_conf["Output directory"]
         
-        dTable = get_dataframe(dataInicial,dataFinal,Stats,outDir)
+        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
     """
     
     ds_table = {}
@@ -177,15 +179,17 @@ def get_dataframe(dataInicial,dataFinal,Stats,outDir):
                
         dataInicial_fmt = dataInicial.strftime("%Y%m%d%H")
         dataFinal_fmt = dataFinal.strftime("%Y%m%d%H")
-                
-        table = outDir + '/' + str(stat) + 'EXP01_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'T.scan'
+
+        for exp in Exps:
+        
+            table = outDir + '/' + str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'T.scan'
                  
-        lista_n = []
+            lista_n = []
 
-        if os.path.exists(table):
-            df_n = pd.read_csv(table, sep="\s+")
+            if os.path.exists(table):
+                df_n = pd.read_csv(table, sep="\s+")
 
-            ds_table[ntpath.basename(str(table))] = df_n    
+                ds_table[ntpath.basename(str(table))] = df_n    
                     
     return ds_table
 
@@ -199,10 +203,10 @@ def plot_lines(dTable,Vars,Stats,outDir):
     
     Parâmetros de entrada
     ---------------------
-        dTable : objeto dicionário com uma ou mais tabelas do SCANTEC
-        Vars   : lista com os nomes e níveis das variáveis
-        Stats  : lista com os nomes das estatísticas a serem processadas
-        outDir : string com o diretório com as tabelas do SCANTEC
+        dTable  : objeto dicionário com uma ou mais tabelas do SCANTEC
+        Vars    : lista com os nomes e níveis das variáveis
+        Stats   : lista com os nomes das estatísticas a serem processadas
+        outDir  : string com o diretório com as tabelas do SCANTEC
     
     Resultado
     ---------
@@ -218,12 +222,14 @@ def plot_lines(dTable,Vars,Stats,outDir):
     for table in list(dTable.keys()):
         Stat = table[0:4]
         fcts = fcts = dTable[table].loc[:,"%Previsao"].values
-        for i in range(len(Vars)):
-            vname = Vars[i]
-            ax = dTable[table].loc[:,[Vars[i][0].lower()]].plot(title=Vars[i][1], 
-                                                           figsize=(8,5),
-                                                           fontsize=12,
-                                                           linewidth=3)
+        
+        
+        for var in range(len(Vars)):
+            vname = Vars[var]
+            ax = dTable[table].loc[:,[Vars[var][0].lower()]].plot(title=Vars[var][1], 
+                                                                  figsize=(8,5),
+                                                                  fontsize=12,
+                                                                  linewidth=3)
 
             ax.set_xticks(dTable[table].index)
             ax.set_xticklabels(fcts)
@@ -233,6 +239,6 @@ def plot_lines(dTable,Vars,Stats,outDir):
             
             plt.grid()
             
-            plt.savefig(outDir + '/' + table + '-' + Vars[i][0] + '.png', dpi=70) 
-            
+            plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '.png', dpi=70) 
+                
     return
