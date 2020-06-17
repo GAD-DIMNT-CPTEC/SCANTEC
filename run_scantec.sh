@@ -38,7 +38,7 @@ then
   echo ""
   echo "Uso:"
   echo "./run_scantec.sh 1 - TestCase do BRAMS (Jan/2016)"
-  echo "./run_scantec.sh 2 - TestCase do G3DVAR (Ago/2014)"
+  echo "./run_scantec.sh 2 - TestCase do AGCM/G3DVAR (Ago/2014)"
   echo "./run_scantec.sh 3 - dados definidos pelo usuário"
   echo "" 
   exit 1
@@ -258,7 +258,7 @@ use_eof=0
 esac
 
 # Diretorio de saida do resultados
-saida_results=/home/carlos.bastarz/SCANTEC.2.0.0b1/dataout
+saida_results=$(pwd)/dataout
 
 if [ ! -e ${saida_results} ]; then mkdir -p ${saida_results}; fi
 
@@ -328,7 +328,7 @@ Ending Time: ${dataf}                  #Format  :: YYYYMMDDHH
 Analisys Time Step: ${passo_analise}   #Format  :: HH
 Forecast Time Step: ${passo_previsao}  #Format  :: HH
 Forecast Total Time: ${total_previsao} #Format  :: HH
-History Time:   48                     #Format  :: HH
+History Time: 48                       #Format  :: HH
 scantec tables: ${scantec_tables}
 
 #===================================================================================
@@ -357,14 +357,14 @@ scantec tables: ${scantec_tables}
 run domain number: 1 # Number of areas to analise
 
 # domain of each area
-#                    AREAS   1          2         3      4            5        6              7                8
-#                            1          Manaus    Global América Sul  Brasil   Hemisferio Sul Faixa Equatorial Hemisfério Norte
-run domain lower left lat:   ${lat_low} # -5.875  #-80   # -49.875    # -60.95 #  -35         # -80            # -20
-run domain lower left lon:   ${lon_low} #-65.625  #  0   # -82.625    # -82.95 #  -80         #   0            #   0
-run domain upper right lat:  ${lon_up}  #  5.375  # 80   #  11.375    #  20.95 #   10         # -20            #  80
-run domain upper right lon:  ${lat_up}  #-60.375  #360   # -35.375    # -33.95 #  -30         # 360            # 360
-run domain resolution dx:    ${dx}      #  0.5    #  0.4 #   0.4      #   0.1  #    0.4       #   0.4          #   0.4
-run domain resolution dy:    ${dy}      #  0.5    #  0.4 #   0.4      #   0.1  #    0.4       #   0.4          #   0.4
+#                    AREAS   1          2         3      4           5        6              7        8
+#                            1          Manaus    Global América Sul Brasil   Hemisferio Sul Trópicos Hemisfério Norte
+run domain lower left lat:   ${lat_low} # -5.875  #-80   # -49.875   # -60.95 #  -35         # -80    # -20
+run domain lower left lon:   ${lon_low} #-65.625  #  0   # -82.625   # -82.95 #  -80         #   0    #   0
+run domain upper right lat:  ${lon_up}  #  5.375  # 80   #  11.375   #  20.95 #   10         # -20    #  80
+run domain upper right lon:  ${lat_up}  #-60.375  #360   # -35.375   # -33.95 #  -30         # 360    # 360
+run domain resolution dx:    ${dx}      #  0.5    #  0.4 #   0.4     #   0.4  #    0.4       #   0.4  #   0.4
+run domain resolution dy:    ${dy}      #  0.5    #  0.4 #   0.4     #   0.4  #    0.4       #   0.4  #   0.4
 # Obs.: para o modelo GFS, colocar lon de 0 a 360 (360-valorLON)
 
 #======================================================================
@@ -390,7 +390,7 @@ ${pl_model_exper} EXP01 ${arq_prev}
 #
 Use Climatology: ${use_climatologia}  # 0-do not use, 1-use
 # Diretory prefix mask sulfix
-Climatology Model Name: 3
+Climatology Model Name: AGCM_CLIMATOLOGY.model
 Climatology file: ${arq_clim} 
 
 #=======
