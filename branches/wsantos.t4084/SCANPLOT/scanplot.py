@@ -12,13 +12,8 @@ Funções
 -------
     read_nemalists : lê os namelists e arquivos de definições do SCANTEC.
     get_dataframe  : transforma as tabelas do SCANTEC em dataframes.
-    plot_lines_d   : plota as tabelas do SCANTEC a partir de um dicionário de dataframes.
     plot_lines     : plota as tabelas do SCANTEC a partir dos dataframes.
-    
-TODO
-----
-    Inserir função para produzir o Scorecard.
-
+    plot_scorecard : resume as informações das tabelas em um scorecard.    
 """
 
 import re
@@ -28,6 +23,7 @@ import numpy as np
 import pandas as pd
 from datetime import date, datetime
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 def read_namelists(basepath):
 
@@ -283,4 +279,109 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
             
                 plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '.png', dpi=70) 
                 
+    return
+
+def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
+    """
+    plot_scorecard
+    ==============
+    
+    Esta função calcula o "Ganho Percentual*" e a "Mudança Fracional*" a partir 
+    das estatísticas do SCANTEC e plota os resultados na forma de um scorecard. 
+    São necessários dois experimentos.
+    
+    *Banos et al., 2018: Impacto da Assimilação de Perfis de Refratividade do 
+                         Satélite Metop-B nas Previsões de Tempo do CPTEC/INPE 
+                         Durante os Meses de Janeiro e Agosto de 2014.
+    
+    Parâmetros de entrada
+    ---------------------
+        dTable  : objeto dicionário com uma ou mais tabelas do SCANTEC
+        Vars    : lista com os nomes e níveis das variáveis
+        Stats   : lista com os nomes das estatísticas a serem processadas
+        Tstat   : tipo de score a ser calculado
+        outDir  : string com o diretório com as tabelas do SCANTEC
+    
+    Resultado
+    ---------
+        Figuras salvas no diretório definido na variável outDir (SCANTEC/dataout).
+    
+    Uso
+    ---
+        from scanplot import plot_scorecard
+        
+        plot_scorecard(dTable,Vars,Stats,Tstat,outDir)
+    """
+    
+    list_var = [ltuple[0].lower() for ltuple in Vars]
+
+    for Stat in Stats:
+        Tables = list(filter(lambda x:Stat in x, [*dTable.keys()]))
+    
+        p_table1 = pd.pivot_table(dTable[Tables[0]], index="%Previsao", values=list_var)
+        p_table2 = pd.pivot_table(dTable[Tables[1]], index="%Previsao", values=list_var)
+ 
+        if Tstat == "ganho":
+            # Porcentagem de ganho
+            if Stat == "ACOR":
+                score_table = ((p_table2[1:].T - p_table1[1:].T) / (1.0 - p_table1[1:].T)) * 100
+            elif Stat == "RMSE" or Stat == "VIES":
+                score_table = ((p_table2[1:].T - p_table1[1:].T) / (0.0 - p_table1[1:].T)) * 100
+        elif Tstat == "fc":
+            # Mudança fracional
+            score_table = (1.0 - (p_table2[1:].T / p_table1[1:].T))
+ 
+        # Figura
+        plt.figure(figsize = (8,6))
+    
+        sns.set(style="whitegrid", font_scale=1.25)
+        sns.set_context(rc={"xtick.major.size":  1.5,  "ytick.major.size": 1.5,
+                            "xtick.major.pad":   0.05,  "ytick.major.pad": 0.05,
+                            "xtick.major.width": 0.5, "ytick.major.width": 0.5,
+                            "xtick.minor.size":  1.5,  "ytick.minor.size": 1.5,
+                            "xtick.minor.pad":   0.05,  "ytick.minor.pad": 0.05,
+                            "xtick.minor.width": 0.5, "ytick.minor.width": 0.5})
+ 
+        if Tstat == "ganho":
+            ax = sns.heatmap(score_table, annot=True, fmt="1.0f", cmap="RdYlGn", 
+                               vmin=-100, vmax=100, center=0, linewidths=0.25,
+                               cbar_kws={"shrink": 1.0, 
+                                         "ticks": np.arange(-100,110,10),
+                                         "pad": 0.01,
+                                         "orientation": "vertical"})
+ 
+            cbar = ax.collections[0].colorbar
+            cbar.set_ticks([-100, -50, 0, 50, 100])
+            cbar.set_ticklabels(["pior", "-50%", "0", "50%", "melhor"])
+            
+            plt.title("Ganho " + str(Stat) + " (%)\n" + str(Tables[0][4:9]) + " X " + str(Tables[1][4:9]), fontsize=14)
+            
+            fig = ax.get_figure()
+ 
+        elif Tstat == "fc":
+            ax = sns.heatmap(score_table, annot=True, fmt="1.0f", cmap="RdYlGn", 
+                               vmin=-1, vmax=1, center=0, linewidths=0.25,
+                               cbar_kws={"shrink": 1.0, 
+                                         "ticks": np.arange(-1,2,1),
+                                         "pad": 0.01,
+                                         "orientation": "vertical"})
+ 
+            cbar = ax.collections[0].colorbar
+            cbar.set_ticks([-1, -0.5, 0, 0.5, 1])
+            cbar.set_ticklabels(["pior", "-0.5", "0", "0.5", "melhor"])
+ 
+            plt.title("Mudança Fracional " + str(Stat) + "\n" + str(Tables[0][4:9]) + " X " + str(Tables[1][4:9]), fontsize=14)
+    
+            fig = ax.get_figure()
+
+        plt.xlabel("Previsões")
+    
+        plt.figure()
+        plt.tight_layout()
+
+        fig.savefig(outDir + "/" + "scorecard_" + str(Tstat) + "_" + str(Stat) + "_" + str(Tables[0][4:9]) + "_" + str(Tables[1][4:9]) + "_" + str(Tables[0][10:20]) + "-" + str(Tables[0][20:30]) + ".png", bbox_inches="tight", dpi=70)
+        
+        plt.close()
+        plt.show()
+        
     return
