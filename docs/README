@@ -1,9 +1,28 @@
+!#-----------------------------------------------------------------------------!
+!#             Modeling and Development Division - DMD/CPTEC/INPE              !
+!#-----------------------------------------------------------------------------!
+!#BOP
+!# !TITLE: 
+!#      README para informar como deve ser instalado e executado o SCANTEC.
+!#
+!# !CONTENT:
+!#      Conjunto de informações com passo-a-passo para uso do sistema.
+!#
+!# !DESCRIPTION:
+!#      Veja informacões abaixo.
+!#
+!# !REVISION HISTORY: 
+!# 18 julho de 2017 - Carlos bastarz - Craindo a versão inicial.
+!#
+!# !REMARKS:
+!#
+!#EOP
+!#-----------------------------------------------------------------------------#
+!#BOC
 
-** Instrucoes para compilacao e execucao do scanTEC **
+** Instrucoes para compilacao e execucao do SCANTEC **
 
 Para compilação e execução siga os seguintes passos:
-
-Ultima atualizacao do README: 04/07/2016
 
 *************************************************************************************************************************
 Para instalação no supercomputador TUPA:
@@ -56,8 +75,6 @@ Use EOFs: 1
 
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Ultima atualizacao do README: 11/04/2016
 
 *************************************************************************************************************************
 Para instalação no supercomputador TUPA:
