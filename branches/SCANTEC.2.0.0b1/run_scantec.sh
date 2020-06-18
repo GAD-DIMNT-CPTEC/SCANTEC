@@ -13,8 +13,9 @@
 # ./run_scantec.sh N
 #                  
 #  N=1 TestCase utilizando dados do modelo BRAMS 05km para janeiro de 2016
-#  N=2 TestCase utilizando dados do AGCM (G3DVAR) para agosto 2014
-#  N=3 Configuração do usuário 
+#  N=2 TestCase utilizando dados do modelo ETA 05km para abril de 2020
+#  N=3 TestCase utilizando dados do BAM para agosto 2014
+#  N=4 Configuração do usuário 
 #
 # !Histórico de revisões: 
 #      20-05-2016 - Lucas Amarante - Versão inicial
@@ -22,7 +23,8 @@
 #      15-06-2016 - Carlos Bastarz - Ajustes, padronização e generalizações
 #      16-06-2016 - Claudio Pavani - Acrescentando mais um testeCase
 #      04-07-2016 - Lucas Amarante - Atualizando testcase e outors parametros
-#      15-07-2020 - Carlos Bastarz - Adaptações para o novo namelist
+#      15-06-2020 - Carlos Bastarz - Adaptações para o novo namelist
+#      18-06-2020 - Luiz Sapucci   - ajustes antes de publicação da versão beta
 #
 #EOP  
 #----------------------------------------------------------------------------------#
@@ -38,23 +40,25 @@ then
   echo ""
   echo "Uso:"
   echo "./run_scantec.sh 1 - TestCase do BRAMS (Jan/2016)"
-  echo "./run_scantec.sh 2 - TestCase do AGCM/G3DVAR (Ago/2014)"
-  echo "./run_scantec.sh 3 - dados definidos pelo usuário"
+  echo "./run_scantec.sh 2 - TestCase do ETA   (Abr/2020)"  
+  echo "./run_scantec.sh 3 - TestCase do BAM   (Ago/2014)"
+  echo "./run_scantec.sh 4 - dados definidos pelo usuário"
   echo "" 
   exit 1
 else
   export TESTCASE=${1} 
-  if [ ${TESTCASE} -gt 3 ]
+  if [ ${TESTCASE} -gt 4 ]
   then
     echo ""
     echo "Sistema Comunitário de Avaliação de modelos Numéricos de Tempo e Clima (SCANTEC)"
     echo "" 
-    echo "A opção TestCase não foi informada!"
+    echo "A opção TestCase desconhecida!"
     echo ""
     echo "Uso:"
     echo "./run_scantec.sh 1 - TestCase do BRAMS (Jan/2016)"
-    echo "./run_scantec.sh 2 - TestCase do G3DVAR (Ago/2014)"
-    echo "./run_scantec.sh 3 - dados definidos pelo usuário"
+    echo "./run_scantec.sh 2 - TestCase do ETA   (Abr/2020)"  
+    echo "./run_scantec.sh 3 - TestCase do BAM   (Ago/2014)"
+    echo "./run_scantec.sh 4 - dados definidos pelo usuário"
     echo ""
     exit 1
   fi
@@ -65,27 +69,39 @@ fi
 # Hostname da máquina
 maqui=$(hostname)
 
-# Diretório atual
+# Diretório atual do sistema
 dir_act=$(pwd)
 
 # Diretório com as tabelas do SCANTEC
 scantec_tables=${dir_act}/tables
 
+# Mudar aqui se o usuario desejar adaptar a uma outra heraquia de diretórios
+# Diretorio dos dados da rodada do usuario
+dir_data=${dir_act}
+mkdir -p ${dir_data}/logfile
+mkdir -p ${dir_data}/datain
+mkdir -p ${dir_data}/dataout
+
 # Data e arquivo de log
 RUNTM=$(date "+%Y%m%d.%H.%M")
-ARQlog=${dir_act}/scantec-${RUNTM}.log
+ARQlog=${dir_data}/logfile/scantec-${RUNTM}.log
 
-# Denifições dos testcases
+############################
+# Denifições dos testcases #
+############################
+
 case ${TESTCASE} in
 [1]) 
 
 # Configurações do TestCase BRAMS (NÃO ALTERAR!) 
 
+dir_test=TestBRAMS
+
 # Datas
 datai=2016010100
 dataf=2016010300
-passo_analise=06
-passo_previsao=06
+passo_analise=24
+passo_previsao=12
 total_previsao=36
 
 # Regiões
@@ -104,49 +120,74 @@ quant_exp=1
 pl_model_refer=brams
 
 # Análises
-if [ ${maqui:0:7} == "eslogin" ]
-then
-  arq_refer=/scratchin/grupos/das/projetos/gdad/public/SCANTEC/TestCase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.ctl
-elif [ ${maqui} == "itapemirim" ]
-then
-  arq_refer=/dados/das/public/SCANTEC/TestCase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.ctl
-fi
+arq_refer=/dados/das/public/SCANTEC/TestCase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.ctl
 
 # Experimentos
 # Plugin experimento
 pl_model_exper=brams
 
 # Previsões
-if [ ${maqui:0:7} == "eslogin" ]
-then
-  arq_prev=/scratchin/grupos/das/projetos/gdad/public/SCANTEC/TestCase/BRAMS/OPER.2016_exp5kmM/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.ctl
-elif [ ${maqui} == "itapemirim" ]
-then
-  arq_prev=/dados/das/public/SCANTEC/TestCase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.ctl
-fi
+arq_prev=/dados/das/public/SCANTEC/TestCase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.ctl
+
 
 # Climatologia
 use_climatologia=0
-if [ ${maqui:0:7} == "eslogin" ]
-then
-  arq_clim=/scratchin/grupos/das/projetos/gdad/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
-elif [ ${maqui} == "itapemirim" ]
-then
-  arq_clim=/dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
-fi
+arq_clim=/dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
 
-# Precipitação
-use_precipitacao=0
-
-# Cálculo EOF
-use_eof=0
 ;;
 
 [2])
 
 #--------------------------------------------------------------------#
-# Configuraçõees do TestCase AGCM/G3DVAR (NÃO ALTERAR!)              #
+# Configuraçõees do TestCase do ETA (NÃO ALTERAR!)                   #
 #--------------------------------------------------------------------#
+dir_test=TestETA
+
+# Datas
+datai=2020040400
+dataf=2020040812
+passo_analise=12
+passo_previsao=6
+total_previsao=72
+
+# Regiões
+lat_low=-51.000000 
+lon_low=-84.099998
+lat_up=15.0000
+lon_up=-25.999998 
+dx=0.05 
+dy=0.05 
+
+# Quantidade de experimentos
+quant_exp=1
+
+# Referências 
+# Plugin modelo
+pl_model_refer=ETA_ams_05km_22levs
+
+# Análises
+arq_refer=/dados/das/public/SCANTEC/TestCase/ETA/Eta_ams_05km202004/%d2/%h2/eta_05km_%y4%m2%d2%h2+%y4%m2%d2%h2.ctl
+
+# Experimento
+# Plugin experimento
+pl_model_exper=ETA_ams_05km_22levs
+
+# Previsões
+arq_prev=/dados/das/public/SCANTEC/TestCase/ETA/Eta_ams_05km202004/%d2/%h2/eta_05km_%y4%m2%d2%h2+%fy4%fm2%fd2%fh2.ctl 
+
+# Climatologia
+use_climatologia=0
+arq_clim=/dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
+
+;;
+
+[3])
+
+#--------------------------------------------------------------------#
+# Configuraçõees do TestCase BAM (NÃO ALTERAR!)              #
+#--------------------------------------------------------------------#
+
+dir_test=TestBAM
 
 # Datas
 datai=2014080500
@@ -171,49 +212,28 @@ quant_exp=1
 pl_model_refer=BAM_TQ0299L064_18levs
 
 # Análises
-if [ ${maqui:0:7} == "eslogin" ]
-then
-  arq_refer=/scratchin/grupos/das/projetos/gdad/public/SCANTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.ctl
-elif [ ${maqui} == "itapemirim" ]
-then
-  arq_refer=/dados/das/public/SCANTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.ctl
-fi
+arq_refer=/dados/das/public/SCANTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.ctl
 
 # Experimento
 # Plugin experimento
 pl_model_exper=BAM_TQ0299L064_18levs
 
 # Previsões
-if [ ${maqui:0:7} == "eslogin" ]
-then
-  arq_prev=/scratchin/grupos/das/projetos/gdad/public/SCANTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.ctl
-elif [ ${maqui} == "itapemirim" ]
-then
-  arq_prev=/dados/das/public/SCANTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.ctl
-fi
+arq_prev=/dados/das/public/SCANTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.ctl
 
 # Climatologia
 use_climatologia=0
-if [ ${maqui:0:7} == "eslogin" ]
-then
-  arq_clim=/scratchin/grupos/das/projetos/gdad/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
-elif [ ${maqui} == "itapemirim" ]
-then
-  arq_clim=/dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
-fi
+arq_clim=/dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
 
-# Precipitação
-use_precipitacao=0
-
-# Cálculo EOF
-use_eof=0
 ;;
+
  
-[3])
+[4])
 
 #--------------------------------------------------------------------#
 # Configurações do usuário (ALTERAR O QUE FOR NECESSÁRIO)            #
 #--------------------------------------------------------------------#
+
 
 # Datas
 datai=2016010100
@@ -248,17 +268,13 @@ arq_prev=diretorio_dados
 use_climatologia=0
 arq_clim=diretorio_climatologia/climatologia50yr.%mc.ctl
 
-# Precipitacao
-use_precipitacao=0
-
-# EOF
-use_eof=0
 ;;
 
 esac
 
 # Diretorio de saida do resultados
-saida_results=$(pwd)/dataout
+saida_results=${dir_data}/dataout/${dir_test}
+
 
 if [ ! -e ${saida_results} ]; then mkdir -p ${saida_results}; fi
 
@@ -290,8 +306,6 @@ echo " Previsões:                                "
 echo " ${arq_prev}                               "
 echo ""
 echo " Uso climatologia: ${use_climatologia}     "
-echo " Uso precipitação: ${use_precipitacao}     "
-echo " Uso eof:          ${use_eof}              "
 echo ""
 echo " Resultados:                               "
 echo " ${saida_results}                          "
@@ -361,8 +375,8 @@ run domain number: 1 # Number of areas to analise
 #                            1          Manaus    Global América Sul Brasil   Hemisferio Sul Trópicos Hemisfério Norte
 run domain lower left lat:   ${lat_low} # -5.875  #-80   # -49.875   # -60.95 #  -35         # -80    # -20
 run domain lower left lon:   ${lon_low} #-65.625  #  0   # -82.625   # -82.95 #  -80         #   0    #   0
-run domain upper right lat:  ${lon_up}  #  5.375  # 80   #  11.375   #  20.95 #   10         # -20    #  80
-run domain upper right lon:  ${lat_up}  #-60.375  #360   # -35.375   # -33.95 #  -30         # 360    # 360
+run domain upper right lat:  ${lat_up}  #  5.375  # 80   #  11.375   #  20.95 #   10         # -20    #  80
+run domain upper right lon:  ${lon_up}  #-60.375  #360   # -35.375   # -33.95 #  -30         # 360    # 360
 run domain resolution dx:    ${dx}      #  0.5    #  0.4 #   0.4     #   0.4  #    0.4       #   0.4  #   0.4
 run domain resolution dy:    ${dy}      #  0.5    #  0.4 #   0.4     #   0.4  #    0.4       #   0.4  #   0.4
 # Obs.: para o modelo GFS, colocar lon de 0 a 360 (360-valorLON)

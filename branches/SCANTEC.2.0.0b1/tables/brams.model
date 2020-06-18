@@ -1,8 +1,9 @@
 ftype: binary
 undef: -0.9990000E+34
-xdim: 337 linear -88.0910721      0.1908925
-ydim: 365 linear -47.0000000      0.1679895
-zdim:  19 levels 1000.0 925.0 900.0 850.0 800.0 750.0 700.0 650.0 600.0 550.0 500.0 450.0 400.0 350.0 300.0 250.0 200.0 150.0 100.0
+xdim: 1159 linear     -82.1330032      0.0476941
+ydim: 1367 linear     -47.0000000      0.0424741
+zdim:  19 levels     1000.0     925.0     900.0     850.0     800.0     750.0     700.0     650.0     600.0     550.0     500.0     450.0     400.0     350.0     300.0
+                      250.0     200.0     150.0     100.0
 #------------------------------------------------------#
 # A tabela de variáveis é preenchida da seguinte forma
 # A primeira coluna é o nome da variável do scantec, veja scantec.vars
@@ -21,7 +22,7 @@ psnm:000 sea_press:1000
 umes:925 @func umes tempc:925 rh:925
 umes:850 @func umes tempc:850 rh:850
 umes:500 @func umes tempc:500 rh:500
-agpl:925 @func const agpl 10
+agpl:925 @func const pwt 10 ok
 zgeo:850 geo:850
 zgeo:500 geo:500
 zgeo:250 geo:500
