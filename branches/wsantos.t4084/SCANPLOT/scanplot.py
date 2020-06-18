@@ -23,7 +23,9 @@ import numpy as np
 import pandas as pd
 from datetime import date, datetime
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 import seaborn as sns
+import skill_metrics as sm
 
 def read_namelists(basepath):
 
@@ -384,4 +386,90 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
         plt.close()
         plt.show()
         
+    return
+
+def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
+    """
+    plot_dTaylor
+    ==============
+    
+    Esta função plota o diagrama de Taylor a partir das tabelas de estatísticas
+    do SCANTEC, para um ou mais experimentos.
+    
+    Esta função utiliza o módulo SkillMetrics (https://pypi.org/project/SkillMetrics/). 
+    
+    Parâmetros de entrada
+    ---------------------
+        dTable    : objeto dicionário com uma ou mais tabelas do SCANTEC
+        Vars      : lista com os nomes e níveis das variáveis
+        data_conf : objeto dicionário com as configurações do SCANTEC
+        Stats     : lista com os nomes das estatísticas a serem processadas
+                    (são necessárias as tabelas ACOR, RMSE e VIES)
+        outDir    : string com o diretório com as tabelas do SCANTEC
+    
+    Resultado
+    ---------
+        Figuras salvas no diretório definido na variável outDir (SCANTEC/dataout).
+    
+    Uso
+    ---
+        from scanplot import plot_dTaylor
+        
+        plot_dTaylor(dTable,data_conf,Vars,Stats,outDir)
+    """
+    
+    # Ignore Seaborn and respect rcParams
+    sns.reset_orig()
+    
+    # Set the figure properties (optional)
+    rcParams["figure.figsize"] = [8.0, 6.5]
+    rcParams['lines.linewidth'] = 1 # line width for plots
+    rcParams.update({'font.size': 12}) # font size of axes text
+    rcParams['axes.titlepad'] = 40 # title vertical distance from plot
+    
+    Exps = [*data_conf['Experiments'].keys()]
+    
+    for exp in range(len(Exps)): 
+        
+        for var in range(len(Vars)):
+        
+            tAcor = list(filter(lambda x:'ACOR' in x, [*dTable.keys()]))[exp]
+            tRmse = list(filter(lambda x:'RMSE' in x, [*dTable.keys()]))[exp]
+            tVies = list(filter(lambda x:'VIES' in x, [*dTable.keys()]))[exp]
+    
+            bias  = dTable[tVies].loc[:,[Vars[var][0].lower()]].to_numpy()
+            ccoef = dTable[tAcor].loc[:,[Vars[var][0].lower()]].to_numpy()
+            crmsd = dTable[tRmse].loc[:,[Vars[var][0].lower()]].to_numpy()
+            sdev  = (dTable[tRmse].loc[:,[Vars[var][0].lower()]]**(1/2)).to_numpy()
+
+            biasT = bias.T
+            ccoefT = ccoef.T
+            crmsdT = crmsd.T
+            sdevT = sdev.T
+    
+            bias = np.squeeze(biasT)
+            ccoef = np.squeeze(ccoefT)
+            crmsd = np.squeeze(crmsdT)
+            sdev = np.squeeze(sdevT)
+    
+            label = [*dTable[tVies].loc[:,"%Previsao"].values]
+       
+            plt.figure()
+            plt.tight_layout()
+    
+            sm.taylor_diagram(sdev, crmsd, ccoef, markerLabel = label, 
+                              locationColorBar = 'EastOutside',
+                              markerDisplayed = 'colorBar', titleColorBar = 'Bias',
+                              markerLabelColor='black', markerSize=10,
+                              markerLegend='off', cmapzdata=bias,
+                              colRMS='g', styleRMS=':',  widthRMS=2.0, titleRMS='on',
+                              colSTD='b', styleSTD='-.', widthSTD=1.0, titleSTD ='on',
+                              colCOR='k', styleCOR='--', widthCOR=1.0, titleCOR='on')
+        
+            plt.title("Diagrama de Taylor " + str(Exps[exp]) + '\n' + str(Vars[var][1]), fontsize=14)
+
+            plt.savefig(outDir + '/dtaylor-' + str(Exps[exp]) + '-' + Vars[var][0] + '.png', bbox_inches="tight", dpi=70) 
+
+            plt.show()
+    
     return
