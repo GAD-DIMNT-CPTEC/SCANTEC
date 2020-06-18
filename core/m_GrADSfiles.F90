@@ -755,8 +755,8 @@ contains
     character(len=*), parameter :: myname_ = myname//'::opendset_'
     character(len=16) :: clen
 
-    ilen = 0
-    inquire (iolength=ilen) dbuf
+!    ilen = 0
+!    inquire (iolength=ilen) dbuf
 
     select case (dtype)
     case (tbin)
