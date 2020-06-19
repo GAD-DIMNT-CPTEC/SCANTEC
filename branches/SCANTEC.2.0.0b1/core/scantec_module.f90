@@ -93,6 +93,7 @@ MODULE scantec_module
      real(kind = r4)        :: undef_
 
      ! grid info
+     real                      :: GDesc(200)
      type(GridDef),    pointer :: gridInfo => null()
      type(GridDef),    pointer :: FirstGridInfo => null()
 
