@@ -22,13 +22,7 @@ zdim:    18 levels 1000 925 850 775 700 500 400 300 250 200 150 100 70 50 30 20 
 # ou então uma função (@func) que irá produzir a variável desejada, baseando-se
 # nas variáveis pré-existentes do modelo. Para o uso das funções veja o docu-
 # mento funcoes.readme
-#umes:925 umes:925
-#umes:850 umes:850
-#umes:500 umes:500
 vars:
-vtmp:925 @func vtmp atmt:925 rhmc:925
-vtmp:850 @func vtmp atmt:850 rhmc:850
-vtmp:500 @func vtmp atmt:500 rhmc:500
 temp:850 atmt:850
 temp:500 atmt:500
 temp:250 atmt:250
