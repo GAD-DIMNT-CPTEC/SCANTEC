@@ -230,9 +230,6 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
                 for table in Tables:
                     df_exp = dTable[table].loc[:,[Vars[var][0].lower()]]
                     dfTables.append(df_exp)
-            
-       
-                    #print(table,dfTables)
         
                 fcts = dTable[table].loc[:,"%Previsao"].values
             
@@ -250,6 +247,7 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
                 
                 plt.ylabel(Stat)
                 plt.xlabel('Tempo')
+                plt.xticks(rotation=90)
 
                 plt.grid()
                 
@@ -276,6 +274,7 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
             
                 plt.ylabel(Stat)
                 plt.xlabel('Tempo')
+                plt.xticks(rotation=90)
         
                 plt.grid()
             
@@ -336,7 +335,7 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
         # Figura
         plt.figure(figsize = (8,6))
     
-        sns.set(style="whitegrid", font_scale=1.25)
+        sns.set(style="whitegrid", font_scale=0.75)
         sns.set_context(rc={"xtick.major.size":  1.5,  "ytick.major.size": 1.5,
                             "xtick.major.pad":   0.05,  "ytick.major.pad": 0.05,
                             "xtick.major.width": 0.5, "ytick.major.width": 0.5,
