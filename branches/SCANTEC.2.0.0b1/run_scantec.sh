@@ -404,7 +404,7 @@ ${pl_model_exper} EXP01 ${arq_prev}
 #
 Use Climatology: ${use_climatologia}  # 0-do not use, 1-use
 # Diretory prefix mask sulfix
-Climatology Model Name: AGCM_CLIMATOLOGY.model
+Climatology Model Name: AGCM_TQ0062L028_50YR_CLIMATOLOGY_18levs
 Climatology file: ${arq_clim} 
 
 #=======
