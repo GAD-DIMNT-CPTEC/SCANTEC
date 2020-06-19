@@ -106,54 +106,32 @@ Contains
        mapping => Model%getMapping('xdim:')
 
        if (i90_lcase(mapping) .eq. 'linear')then
-          GDesc = 0
-          GDesc( 1) = 0
-          GDesc( 2) = xdim
-          GDesc( 3) = ydim
-          GDesc( 4) = rlat(1)
-          GDesc( 5) = rlon(1)
-          GDesc( 6) = 128
-          GDesc( 7) = rlat(ydim)
-          GDesc( 8) = rlon(xdim)
-          GDesc( 9) = (rlon(xdim)-rlon(1))/(xdim-1)
-          GDesc(10) = (rlat(ydim)-rlat(1))/(ydim-1)
+          Model%GDesc = 0
+          Model%GDesc( 1) = 0
+          Model%GDesc( 2) = xdim
+          Model%GDesc( 3) = ydim
+          Model%GDesc( 4) = rlat(1)
+          Model%GDesc( 5) = rlon(1)
+          Model%GDesc( 6) = 128
+          Model%GDesc( 7) = rlat(ydim)
+          Model%GDesc( 8) = rlon(xdim)
+          Model%GDesc( 9) = (rlon(xdim)-rlon(1))/(xdim-1)
+          Model%GDesc(10) = (rlat(ydim)-rlat(1))/(ydim-1)
        else
           ! For now support only Gaussian grid
-          GDesc = 0
-          GDesc( 1) =   4
-          GDesc( 2) = xdim
-          GDesc( 3) = ydim
-          GDesc( 4) = rlat(1)
-          GDesc( 5) = rlon(1)
-          GDesc( 6) =     128
-          GDesc( 7) = rlat(ydim)
-          GDesc( 8) = rlon(xdim)
-          GDesc( 9) = (rlon(xdim)-rlon(1))/(xdim-1)
-          GDesc(10) = ydim/2.0
+          Model%GDesc = 0
+          Model%GDesc( 1) =   4
+          Model%GDesc( 2) = xdim
+          Model%GDesc( 3) = ydim
+          Model%GDesc( 4) = rlat(1)
+          Model%GDesc( 5) = rlon(1)
+          Model%GDesc( 6) =     128
+          Model%GDesc( 7) = rlat(ydim)
+          Model%GDesc( 8) = rlon(xdim)
+          Model%GDesc( 9) = (rlon(xdim)-rlon(1))/(xdim-1)
+          Model%GDesc(10) = ydim/2.0
           
        endif
-
-
-       allocate(Model%w11(xdim*ydim))
-       allocate(Model%w12(xdim*ydim))
-       allocate(Model%w21(xdim*ydim))
-       allocate(Model%w22(xdim*ydim))
-       allocate(Model%n11(xdim*ydim))
-       allocate(Model%n12(xdim*ydim))
-       allocate(Model%n21(xdim*ydim))
-       allocate(Model%n22(xdim*ydim))
-
-       call bilinear_interp_init(GDesc, &
-                                 scantec%GridDesc, &
-                                 Model%w11, &
-                                 Model%w12, &
-                                 Model%w21, &
-                                 Model%w22, &
-                                 Model%n11, &
-                                 Model%n12, &
-                                 Model%n21, &
-                                 Model%n22  &
-                                 )
 
        deallocate(rlon)
        deallocate(rlat)

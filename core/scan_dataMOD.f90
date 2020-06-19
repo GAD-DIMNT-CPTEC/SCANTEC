@@ -25,7 +25,7 @@ MODULE scan_dataMOD
   USE m_inpak90
   USE m_ioutil
   USE m_GrADSfiles
-  USE BilinInterp, only: bilinear_interp
+  USE BilinInterp, only: bilinear_interp_init, bilinear_interp
   IMPLICIT NONE
   PRIVATE
 
@@ -223,13 +223,42 @@ CONTAINS
   SUBROUTINE allocate_data_mem()
     IMPLICIT NONE
     integer :: I
-    type(ModelType), pointer :: currModel => null()
+    integer :: nx
+    integer :: ny
+    integer :: nvar
+    type(ModelType), pointer :: Model => null()
 
-    currModel => scantec%FirstModel
-    do while(associated(currModel))
-       allocate(currModel%Field(scantec%nxpt*scantec%nypt,scantec%nvar))
-       allocate(currModel%bitMap(scantec%nxpt*scantec%nypt,scantec%nvar))
-       currModel => currModel%next
+    nx   = scantec%nxpt
+    ny   = scantec%nypt
+    nvar = scantec%nvar
+
+    Model => scantec%FirstModel
+    do while(associated(Model))
+       allocate(Model%Field(nx*ny,nvar))
+       allocate(Model%bitMap(nx*ny,nvar))
+
+       allocate(Model%w11(nx*ny))
+       allocate(Model%w12(nx*ny))
+       allocate(Model%w21(nx*ny))
+       allocate(Model%w22(nx*ny))
+       allocate(Model%n11(nx*ny))
+       allocate(Model%n12(nx*ny))
+       allocate(Model%n21(nx*ny))
+       allocate(Model%n22(nx*ny))
+
+       call bilinear_interp_init(Model%GDesc, &
+                                 scantec%GridDesc, &
+                                 Model%w11, &
+                                 Model%w12, &
+                                 Model%w21, &
+                                 Model%w22, &
+                                 Model%n11, &
+                                 Model%n12, &
+                                 Model%n21, &
+                                 Model%n22  &
+                                 )
+       
+       Model => Model%next
     enddo
 
   END SUBROUTINE allocate_data_mem
@@ -437,6 +466,8 @@ CONTAINS
                              iret )
 
          where(.not.Model%bitmap(:,i))Model%Field(:,i) = scantec%udef
+
+        nullify(ModelVar)
 
     enddo
 
