@@ -384,7 +384,9 @@ CONTAINS
     ! get model by name
     Model => scantec%getModel(ExpType, ModelName)
 
+#ifdef DEBUG
     write(*,'(3(1x,A))')trim(Model%Name_),trim(Model%Type_),trim(Model%ExpName_)
+#endif
 
     ! Open current model and get info
     call GrADS_open(gs,trim(FileName))
@@ -466,7 +468,10 @@ CONTAINS
                              iret )
 
          where(.not.Model%bitmap(:,i))Model%Field(:,i) = scantec%udef
-
+#ifdef DEBUG                 
+        write(*,'(I3,1x,2F16.5)')i,minval(Model%Field(:,i),mask=Model%Field(:,i).ne.scantec%udef),&
+                               maxval(Model%Field(:,i),mask=Model%Field(:,i).ne.scantec%udef)
+#endif
         nullify(ModelVar)
 
     enddo
