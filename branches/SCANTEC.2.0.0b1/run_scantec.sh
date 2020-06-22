@@ -257,7 +257,9 @@ pl_model_refer=prefixo_tabela_modelo
 # Análises
 arq_refer=diretorio_dados/arquivo_anl.ctl
 
-# Experimento
+# Quantidade de experimentos
+quant_exp=1
+
 #Plugin experimento
 pl_model_exper=prefixo_tabela_modelo/arquivo_fct.ctl
 
@@ -394,7 +396,7 @@ Reference file: ${arq_refer}
 #=================
 # Experiment Files
 #
-Experiments:
+Experiments: ${quant_exp}
 #ModelId Name Diretory File_Name_with_mask
 ${pl_model_exper} EXP01 ${arq_prev}
 ::
