@@ -117,21 +117,21 @@ quant_exp=1
 
 # Referencias
 # Plugin modelo
-pl_model_refer=brams
+pl_model_refer=BRAMS_5km_19levs
 
 # Análises
 arq_refer=/dados/das/public/SCANTEC/TestCase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.ctl
 
 # Experimentos
 # Plugin experimento
-pl_model_exper=brams
+pl_model_exper=BRAMS_5km_19levs
 
 # Previsões
 arq_prev=/dados/das/public/SCANTEC/TestCase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.ctl
 
 
 # Climatologia
-use_climatologia=0
+use_climatologia=1
 arq_clim=/dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
 
 ;;
@@ -147,7 +147,7 @@ dir_test=TestETA
 datai=2020040400
 dataf=2020040812
 passo_analise=12
-passo_previsao=6
+passo_previsao=12
 total_previsao=72
 
 # Regiões
