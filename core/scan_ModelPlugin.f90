@@ -335,7 +335,8 @@ Contains
                   Model%var%deriv_ = .false.
             end select
          else
-           call i90_perr(trim(myname_),'some issue with model var name ... ', iret)
+           call i90_perr(trim(myname_),'some issue with model var name ...', iret)
+           call i90_perr(trim(myname_),'look inside '//trim(Model%Name_)//'.model')
            call i90_die(trim(myname))
          endif
          ! get next line
