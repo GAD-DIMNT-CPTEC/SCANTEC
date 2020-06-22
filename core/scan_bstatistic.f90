@@ -359,6 +359,7 @@ Contains
     integer             :: i, j, k, p, v
     integer             :: nidx, npts
     real                :: tmp, TmpRMSE, TmpVIES, TmpDiff1, TmpDiff2
+    real                :: expMD, refMD
     real, allocatable   :: anomfield(:,:)
         
     integer :: ier
@@ -382,6 +383,9 @@ Contains
           idx => idx%next
           cycle
        endif
+       refMD = sum(refField(Idx%pt,i))/nidx
+       expMD = sum(expField(Idx%pt,i))/nidx
+       
        !
        ! PRECISO INCLUIR AQUI ALGO PARA CONTAR OS ARQUIVOS QUE SÃO LIDOS
        ! PARA CADA VARIAVEL. AI UTILIZAR ISSO PRA FAZER A MÉDIA
@@ -419,8 +423,8 @@ Contains
 
        else
 
-          anomfield(Idx%pt,1) = expField(Idx%pt,i) - sum(expField(Idx%pt,i))
-          anomfield(Idx%pt,2) = refField(Idx%pt,i) - sum(refField(Idx%pt,i))
+          anomfield(Idx%pt,1) = expField(Idx%pt,i) - expMD
+          anomfield(Idx%pt,2) = refField(Idx%pt,i) - refMD
           
        endif
 
@@ -731,9 +735,6 @@ Contains
     Saa = sum( A*A )
     Sbb = sum( B*B )
     
-    Rho =  Sab/sqrt(Saa*Sbb)
-
-
     Rho =  Sab/sqrt(Saa*Sbb)
 
 
