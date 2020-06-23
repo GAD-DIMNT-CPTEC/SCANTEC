@@ -27,6 +27,12 @@ from matplotlib import rcParams
 import seaborn as sns
 import skill_metrics as sm
 
+import ipywidgets as widgets
+from ipywidgets import interact, GridspecLayout, HBox, VBox, Layout
+from IPython.display import display, clear_output, Image
+
+plt.rcParams.update({'figure.max_open_warning': 0})
+
 def read_namelists(basepath):
 
     """
@@ -219,6 +225,8 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
     """
     
     if combine:
+        
+        fig, ax = plt.subplots()
 
         for var in range(len(Vars)):
        
@@ -238,12 +246,14 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
                                                     fontsize=12,
                                                     linewidth=3)
     
-                ax.legend(list(table[4:9]))
-            
                 ax.set_xticks(dTable[table].index)
                 ax.set_xticklabels(fcts)
 
-                ax.legend(Tables)
+                enames=[]
+                for table in Tables:
+                    enames.append(table[4:9])
+                    
+                ax.legend(enames)
                 
                 plt.ylabel(Stat)
                 plt.xlabel('Tempo')
@@ -253,7 +263,13 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
                 
                 plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '-combined.png', dpi=70) 
               
+            #plt.cla()
+                
+        plt.close(fig)
+                
     else:
+        
+        fig, ax = plt.subplots()
             
         for table in list(dTable.keys()):
             Stat = table[0:4]
@@ -269,8 +285,10 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
  
                 ax.set_xticks(dTable[table].index)
                 ax.set_xticklabels(fcts)
-        
-                ax.legend(table)
+       
+                ename = [table][0][4:9]
+    
+                ax.legend([ename])
             
                 plt.ylabel(Stat)
                 plt.xlabel('Tempo')
@@ -280,9 +298,14 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
             
                 plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '.png', dpi=70) 
                 
+            #plt.cla()
+                
+        plt.close(fig)
+        
     return
 
 def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
+    
     """
     plot_scorecard
     ==============
@@ -333,9 +356,9 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
             score_table = (1.0 - (p_table2[1:].T / p_table1[1:].T))
  
         # Figura
-        plt.figure(figsize = (8,6))
-    
-        sns.set(style="whitegrid", font_scale=0.75)
+        plt.figure(figsize = (15,10))
+        
+        sns.set(style="whitegrid", font_scale=0.90)
         sns.set_context(rc={"xtick.major.size":  1.5,  "ytick.major.size": 1.5,
                             "xtick.major.pad":   0.05,  "ytick.major.pad": 0.05,
                             "xtick.major.width": 0.5, "ytick.major.width": 0.5,
@@ -345,7 +368,7 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
  
         if Tstat == "ganho":
             ax = sns.heatmap(score_table, annot=True, fmt="1.0f", cmap="RdYlGn", 
-                               vmin=-100, vmax=100, center=0, linewidths=0.25,
+                               vmin=-100, vmax=100, center=0, linewidths=0.25, square=False,
                                cbar_kws={"shrink": 1.0, 
                                          "ticks": np.arange(-100,110,10),
                                          "pad": 0.01,
@@ -354,14 +377,15 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
             cbar = ax.collections[0].colorbar
             cbar.set_ticks([-100, -50, 0, 50, 100])
             cbar.set_ticklabels(["pior", "-50%", "0", "50%", "melhor"])
-            
+            cbar.ax.tick_params(labelsize=12)    
+                
             plt.title("Ganho " + str(Stat) + " (%)\n" + str(Tables[0][4:9]) + " X " + str(Tables[1][4:9]), fontsize=14)
             
             fig = ax.get_figure()
  
         elif Tstat == "fc":
             ax = sns.heatmap(score_table, annot=True, fmt="1.0f", cmap="RdYlGn", 
-                               vmin=-1, vmax=1, center=0, linewidths=0.25,
+                               vmin=-1, vmax=1, center=0, linewidths=0.25, square=False,
                                cbar_kws={"shrink": 1.0, 
                                          "ticks": np.arange(-1,2,1),
                                          "pad": 0.01,
@@ -370,12 +394,15 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
             cbar = ax.collections[0].colorbar
             cbar.set_ticks([-1, -0.5, 0, 0.5, 1])
             cbar.set_ticklabels(["pior", "-0.5", "0", "0.5", "melhor"])
+            cbar.ax.tick_params(labelsize=12)    
  
             plt.title("Mudança Fracional " + str(Stat) + "\n" + str(Tables[0][4:9]) + " X " + str(Tables[1][4:9]), fontsize=14)
     
             fig = ax.get_figure()
 
         plt.xlabel("Previsões")
+        plt.yticks(fontsize=12)
+        plt.xticks(rotation=90, fontsize=12)
     
         plt.figure()
         plt.tight_layout()
@@ -388,6 +415,7 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
     return
 
 def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
+    
     """
     plot_dTaylor
     ==============
@@ -428,6 +456,8 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
     
     Exps = [*data_conf['Experiments'].keys()]
     
+    fig = plt.figure()
+       
     for exp in range(len(Exps)): 
         
         for var in range(len(Vars)):
@@ -439,7 +469,7 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
             bias  = dTable[tVies].loc[:,[Vars[var][0].lower()]].to_numpy()
             ccoef = dTable[tAcor].loc[:,[Vars[var][0].lower()]].to_numpy()
             crmsd = dTable[tRmse].loc[:,[Vars[var][0].lower()]].to_numpy()
-            sdev  = (dTable[tRmse].loc[:,[Vars[var][0].lower()]]**(1/2)).to_numpy()
+            sdev  = (dTable[tRmse].loc[:,[Vars[var][0].lower()]]**(1/2)).to_numpy() # rever
 
             biasT = bias.T
             ccoefT = ccoef.T
@@ -452,8 +482,8 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
             sdev = np.squeeze(sdevT)
     
             label = [*dTable[tVies].loc[:,"%Previsao"].values]
-       
-            plt.figure()
+        
+            #plt.figure()
             plt.tight_layout()
     
             sm.taylor_diagram(sdev, crmsd, ccoef, markerLabel = label, 
@@ -470,5 +500,133 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
             plt.savefig(outDir + '/dtaylor-' + str(Exps[exp]) + '-' + Vars[var][0] + '.png', bbox_inches="tight", dpi=70) 
 
             plt.show()
+            
+    plt.close(fig)     
     
     return
+
+global datai 
+
+def show_buttons(data_vars,data_conf):
+
+    dataInicial = data_conf["Starting Time"]
+    dataFinal = data_conf["Ending Time"]
+    Vars = list(map(data_vars.get,[*data_vars.keys()]))
+    Stats = ["ACOR", "RMSE", "VIES"]
+    Exps = list(data_conf["Experiments"].keys())
+    outDir = data_conf["Output directory"]
+    
+    vexps = list(data_conf["Experiments"].keys())
+    
+    vlist = []
+    for i in [*data_vars.keys()]:
+        vlist.append(data_vars[i][0])
+    
+    dataInicial = widgets.DatePicker(
+        description='Data inicial:',
+        value=data_conf["Starting Time"],
+        layout={'width': 'auto'},    
+        disabled=False
+    )
+
+    dataFinal = widgets.DatePicker(
+        description='Data final:',
+        value=data_conf["Ending Time"],
+        layout={'width': 'auto'},    
+        disabled=False
+    )    
+    
+    Vars = widgets.SelectMultiple(
+        options=vlist,
+        value=[vlist[0]],
+        layout={'width': 'auto'},    
+        description='Variável(is) e Nível(is):',
+        disabled=False
+    )
+
+    Stats = widgets.SelectMultiple(
+        options=['ACOR', 'RMSE', 'MAE', 'VIES'],
+        value=['ACOR'],
+        layout={'width': 'auto'}, 
+        description='Estatística(s):',
+        disabled=False
+    )
+    
+    Exps = widgets.SelectMultiple(
+        options=vexps,
+        value=[vexps[0]],
+        layout={'width': 'auto'}, 
+        description='Experimento(s):',
+        disabled=False
+    )
+    
+    CaixaTexto = widgets.HTML(
+        value="Selecione as opções a seguir e clique no botar Salvar para guardar a seleção ou no botão Limpar para limpar a seleção.",
+        placeholder='Some HTML',
+        description='',
+    )
+    
+    Salvar = widgets.Button(
+        description='Salvar',
+        disabled=False,
+        button_style='success', # 'success', 'info', 'warning', 'danger' or ''
+        tooltip='Clique para salvar a seleção',
+        icon='' # (FontAwesome names without the `fa-` prefix) https://fontawesome.com/icons
+    )
+
+    Resetar = widgets.Button(
+        description='Resetar',
+    #    layout=style.layout,
+        disabled=False,
+        button_style='warning', # 'success', 'info', 'warning', 'danger' or ''
+        tooltip='Clique para resetar a seleção',
+        icon='' # (FontAwesome names without the `fa-` prefix) https://fontawesome.com/icons
+    )
+    
+    out = widgets.Output()
+
+    box_layout1 = Layout(display='flex',
+                    flex_flow='column',
+                    align_items='stretch',
+                    border='0px dotted #000000',
+                    padding='10px',
+                    margin='5px', 
+                    width='99%')
+
+    box_layout2 = Layout(display='flex',
+                    flex_flow='column',
+                    align_items='stretch',
+                    border='0px dotted #000000',
+                    padding='10px',
+                    margin='5px',
+                    width='50%')
+    
+    def on_reset_button_clicked(b):
+        Resetar.description = 'Resetar'
+        Resetar.button_style='warning'
+        with out:
+            clear_output()
+    
+    def on_save_button_clicked(change):
+        Salvar.description = 'Salvar'
+        Salvar.button_style='success'
+        datai = dataInicial.value
+        with out:
+            clear_output()
+            display(dataInicial.value,dataFinal.value,Vars.value,Stats.value,Exps.value)
+
+#    dataInicial.observe(on_save_button_clicked, names='value')
+            
+    Salvar.on_click(on_save_button_clicked)
+    Resetar.on_click(on_reset_button_clicked)
+    
+    top_box = VBox(children=[CaixaTexto],layout=box_layout1)
+    right_box = VBox(children=[dataInicial,dataFinal,Stats,HBox(children=[Salvar,Resetar])],layout=box_layout2)
+    left_box = VBox(children=[Exps,Vars],layout=box_layout2)
+    tab1 = VBox(children=[top_box, HBox(children=[right_box, left_box]),widgets.VBox([out])])
+#    tab2 = VBox(children=[widgets.VBox([out])])
+
+    tab = widgets.Tab(children=[tab1])#, tab2])
+    tab.set_title(0, 'Opções')
+
+    return VBox(children=[tab])
