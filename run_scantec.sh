@@ -131,7 +131,7 @@ arq_prev=/dados/das/public/SCANTEC/TestCase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/
 
 
 # Climatologia
-use_climatologia=1
+use_climatologia=0
 arq_clim=/dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
 
 ;;
@@ -281,7 +281,7 @@ saida_results=${dir_data}/dataout/${dir_test}
 if [ ! -e ${saida_results} ]; then mkdir -p ${saida_results}; fi
 
 echo ""
-echo " <<< INICIANDO TESTCASE SCANTEC >>>        " 
+echo " <<< INICIANDO SCANTEC >>>        " 
 echo ""
 echo " Configurações do testcase:                " 
 echo " ==========================                "  
@@ -311,6 +311,9 @@ echo " Uso climatologia: ${use_climatologia}     "
 echo ""
 echo " Resultados:                               "
 echo " ${saida_results}                          "
+echo ""
+echo " Arquivo de log:                           "
+echo " Log do processo: ${ARQlog}                "
 echo " ==========================                "  
 echo ""
 

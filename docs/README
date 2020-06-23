@@ -58,7 +58,11 @@ svn co https://svn.cptec.inpe.br/scamtec/branches/SCANTEC.2.0.0b1
 cd SCANTEC.2.0.0b1
 
 ------
-6º Para compilar o SCANTEC execute o script install com o comando:
+6º Mudar o modulo do compilador para o gray
+module swap PrgEnv-pgi PrgEnv-cray
+
+------
+7º Para compilar o SCANTEC execute o script install com o comando:
 ./install
 
 (a) Escolha a opção 3 para o compilador CCE XE do Tupa. - Load Cray Environment to XT/XE and compile
