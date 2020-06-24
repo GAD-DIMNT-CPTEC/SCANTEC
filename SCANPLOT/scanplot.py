@@ -12,8 +12,10 @@ Funções
 -------
     read_nemalists : lê os namelists e arquivos de definições do SCANTEC.
     get_dataframe  : transforma as tabelas do SCANTEC em dataframes.
-    plot_lines     : plota as tabelas do SCANTEC a partir dos dataframes.
-    plot_scorecard : resume as informações das tabelas em um scorecard.    
+    plot_lines     : plota gráficos de linha com os dataframes das tabelas do SCANTEC.
+    plot_scorecard : resume as informações dos dataframes com as tabelas do SCANTEC em scorecards.    
+    plot_dTaylor   : plota diagramas de Taylor a partir de dois experimentos utilizando 
+                     os dataframes com as tabelas do SCANTEC.    
 """
 
 import re
@@ -54,6 +56,7 @@ def read_namelists(basepath):
     Uso
     ---
         from scanplot import read_namelists
+        
         data_vars, data_conf = read_namelists("~/SCANTEC")
     """
     
@@ -166,7 +169,9 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir):
     
     Uso
     ---
-        from scanplot import get_dataframe
+        from scanplot import read_namelists, get_dataframe
+        
+        data_vars, data_conf = read_namelists("~/SCANTEC")
         
         dataInicial = data_conf["Starting Time"]
         dataFinal = data_conf["Ending Time"]
@@ -203,7 +208,7 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
     plot_lines
     ============
     
-    Esta função plota um gráfico de linha a partir de um dicionário de tabelas do SCANTEC.
+    Esta função plota gráficos de linha a partir de um dicionário de dataframes com as tabelas do SCANTEC.
     
     Parâmetros de entrada
     ---------------------
@@ -219,7 +224,18 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
     
     Uso
     ---
-        from scanplot import plot_lines
+        from scanplot import read_namelists, get_dataframe, plot_lines
+        
+        data_vars, data_conf = read_namelists("~/SCANTEC")
+        
+        dataInicial = data_conf["Starting Time"]
+        dataFinal = data_conf["Ending Time"]
+        Vars = list(map(data_vars.get,[*data_vars.keys()]))
+        Stats = ["ACOR", "RMSE", "VIES"]
+        Exps = list(data_conf["Experiments"].keys())
+        outDir = data_conf["Output directory"]
+        
+        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
         plot_lines(dTable,Vars,Stats,outDir,combine=False)
     """
@@ -332,7 +348,18 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
     
     Uso
     ---
-        from scanplot import plot_scorecard
+        from scanplot import read_namelists, get_dataframe, plot_scorecard
+        
+        data_vars, data_conf = read_namelists("~/SCANTEC")
+        
+        dataInicial = data_conf["Starting Time"]
+        dataFinal = data_conf["Ending Time"]
+        Vars = list(map(data_vars.get,[*data_vars.keys()]))
+        Stats = ["ACOR", "RMSE", "VIES"]
+        Exps = list(data_conf["Experiments"].keys())
+        outDir = data_conf["Output directory"]
+        
+        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
         plot_scorecard(dTable,Vars,Stats,Tstat,outDir)
     """
@@ -440,7 +467,18 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
     
     Uso
     ---
-        from scanplot import plot_dTaylor
+        from scanplot import read_namelists, get_dataframe, plot_dTaylor
+        
+        data_vars, data_conf = read_namelists("~/SCANTEC")
+        
+        dataInicial = data_conf["Starting Time"]
+        dataFinal = data_conf["Ending Time"]
+        Vars = list(map(data_vars.get,[*data_vars.keys()]))
+        Stats = ["ACOR", "RMSE", "VIES"]
+        Exps = list(data_conf["Experiments"].keys())
+        outDir = data_conf["Output directory"]
+        
+        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
         plot_dTaylor(dTable,data_conf,Vars,Stats,outDir)
     """
@@ -505,59 +543,80 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
     
     return
 
-global datai 
-
-def show_buttons(data_vars,data_conf):
-
-    dataInicial = data_conf["Starting Time"]
-    dataFinal = data_conf["Ending Time"]
-    Vars = list(map(data_vars.get,[*data_vars.keys()]))
-    Stats = ["ACOR", "RMSE", "VIES"]
-    Exps = list(data_conf["Experiments"].keys())
-    outDir = data_conf["Output directory"]
+def show_buttons(dvars,dconf):
+    """
+    show_buttons
+    ============
     
-    vexps = list(data_conf["Experiments"].keys())
+    Esta função mostra para o usuário uma interface gráfica mínima para a seleção visual 
+    das estatísticas, experimentos, variáveis e níveis.
+    
+    Parâmetros de entrada
+    ---------------------
+        dvars : objeto dicionário que conterá as variáveis e níveis do SCANTEC de acordo
+                com as escolhas do usuário
+        dconf : objeto dicionário que conterá as configurações do SCANTEC de acordo 
+                com as escolhas do usuário
+        
+    Resultado
+    ---------
+        Objetos com a interface gráfica mínima e dicionários com as variáveis e configurações
+        do SCANTEC.
+    
+    Uso
+    ---
+        from scanplot read_namelists, show_buttons
+        
+        data_vars, data_conf = read_namelists("~/SCANTEC")
+        
+        grid, dvars, dconf = show_buttons(data_vars, data_conf)
+        
+    Observações
+    -----------
+        Experimental, esta função não está acabada e deve funcionar apenas dentro do Jupyter.
+    """
+    
+    data_vars = dvars
+    data_conf = dconf
+    
+    Vars = list(map(dvars.get,[*dvars.keys()]))
+    Stats = ["ACOR", "RMSE", "VIES"]
+    Exps = list(dconf["Experiments"].keys())
+    outDir = dconf["Output directory"]
+    
+    vexps = list(dconf["Experiments"].keys())
     
     vlist = []
-    for i in [*data_vars.keys()]:
-        vlist.append(data_vars[i][0])
+    for i in [*dvars.keys()]:
+        vlist.append(dvars[i][0])
     
-    dataInicial = widgets.DatePicker(
-        description='Data inicial:',
-        value=data_conf["Starting Time"],
-        layout={'width': 'auto'},    
-        disabled=False
-    )
-
-    dataFinal = widgets.DatePicker(
-        description='Data final:',
-        value=data_conf["Ending Time"],
-        layout={'width': 'auto'},    
-        disabled=False
-    )    
+    style = {'description_width': 'initial'}
     
-    Vars = widgets.SelectMultiple(
+    SMVars = widgets.SelectMultiple(
         options=vlist,
         value=[vlist[0]],
-        layout={'width': 'auto'},    
+        layout={'width': '30%'},    
         description='Variável(is) e Nível(is):',
-        disabled=False
+        disabled=False,
+        style = style
     )
 
-    Stats = widgets.SelectMultiple(
+    SMStats = widgets.SelectMultiple(
         options=['ACOR', 'RMSE', 'MAE', 'VIES'],
         value=['ACOR'],
-        layout={'width': 'auto'}, 
+        layout={'width': '30%'}, 
         description='Estatística(s):',
-        disabled=False
+        disabled=False,
+        style = style
     )
     
-    Exps = widgets.SelectMultiple(
+    SMExps = widgets.SelectMultiple(
         options=vexps,
         value=[vexps[0]],
-        layout={'width': 'auto'}, 
+        layout={'width': '30%'}, 
         description='Experimento(s):',
-        disabled=False
+        disabled=False,
+        style = style
     )
     
     CaixaTexto = widgets.HTML(
@@ -569,64 +628,58 @@ def show_buttons(data_vars,data_conf):
     Salvar = widgets.Button(
         description='Salvar',
         disabled=False,
-        button_style='success', # 'success', 'info', 'warning', 'danger' or ''
+        button_style='success', 
         tooltip='Clique para salvar a seleção',
-        icon='' # (FontAwesome names without the `fa-` prefix) https://fontawesome.com/icons
+        icon='' 
     )
 
     Resetar = widgets.Button(
         description='Resetar',
-    #    layout=style.layout,
         disabled=False,
-        button_style='warning', # 'success', 'info', 'warning', 'danger' or ''
+        button_style='warning', 
         tooltip='Clique para resetar a seleção',
-        icon='' # (FontAwesome names without the `fa-` prefix) https://fontawesome.com/icons
+        icon='' 
     )
     
     out = widgets.Output()
 
-    box_layout1 = Layout(display='flex',
-                    flex_flow='column',
+    box_layout = Layout(display='flex',
+                    flex_flow='row',
                     align_items='stretch',
-                    border='0px dotted #000000',
+                    justify_content='center',
+                    border='1px dotted #000000',
                     padding='10px',
                     margin='5px', 
                     width='99%')
-
-    box_layout2 = Layout(display='flex',
-                    flex_flow='column',
-                    align_items='stretch',
-                    border='0px dotted #000000',
-                    padding='10px',
-                    margin='5px',
-                    width='50%')
     
     def on_reset_button_clicked(b):
-        Resetar.description = 'Resetar'
-        Resetar.button_style='warning'
+        Resetar.description = 'Limpar'
+        Resetar.button_style = 'warning'
         with out:
             clear_output()
     
     def on_save_button_clicked(change):
         Salvar.description = 'Salvar'
-        Salvar.button_style='success'
-        datai = dataInicial.value
+        Salvar.button_style = 'success'
         with out:
             clear_output()
-            display(dataInicial.value,dataFinal.value,Vars.value,Stats.value,Exps.value)
-
-#    dataInicial.observe(on_save_button_clicked, names='value')
-            
+            expsDict = {}
+            print(list(SMExps.value))
+            print(dconf)
+            for exp in list(SMExps.value):
+                expsDict[exp] = list(dconf["Experiments"][exp])
+                print(exp,expsDict)
+            data_conf["Experiments"] = expsDict
+        
     Salvar.on_click(on_save_button_clicked)
     Resetar.on_click(on_reset_button_clicked)
     
-    top_box = VBox(children=[CaixaTexto],layout=box_layout1)
-    right_box = VBox(children=[dataInicial,dataFinal,Stats,HBox(children=[Salvar,Resetar])],layout=box_layout2)
-    left_box = VBox(children=[Exps,Vars],layout=box_layout2)
-    tab1 = VBox(children=[top_box, HBox(children=[right_box, left_box]),widgets.VBox([out])])
-#    tab2 = VBox(children=[widgets.VBox([out])])
+    top_box = VBox(children=[CaixaTexto], layout=box_layout)
+    middle_box = HBox(children=[SMStats, SMExps, SMVars], layout=box_layout)
+    bottom_box = HBox(children=[Salvar, Resetar], layout=box_layout)
+    tab_opts = VBox(children=[top_box, middle_box, bottom_box, widgets.HBox([out])])
 
-    tab = widgets.Tab(children=[tab1])#, tab2])
+    tab = widgets.Tab(children=[tab_opts])
     tab.set_title(0, 'Opções')
 
-    return VBox(children=[tab])
+    return VBox(children=[tab]), data_vars, data_conf
