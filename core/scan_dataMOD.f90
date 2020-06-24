@@ -386,6 +386,7 @@ CONTAINS
 
 #ifdef DEBUG
     write(*,'(3(1x,A))')trim(Model%Name_),trim(Model%Type_),trim(Model%ExpName_)
+    write(*,'(2(1x,A))')'FileName:',trim(FileName)
 #endif
 
     ! Open current model and get info

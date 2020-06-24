@@ -24,9 +24,9 @@ endif
 ifeq ($(SCAN_ARCH),GNU_Linux)
  F77     = gfortran
  FFLAGS  = 
- CFLAGS  = -O -DLINUXF90
+ CFLAGS  = -O -DLINUX
  CC      = gcc
- ARFLAGS = 
+ ARFLAGS = r
 endif
 
 
@@ -63,13 +63,13 @@ SRC	= $(OBJ_MOD:.o=.f) $(OBJS:.o=.f) $(OBJS_CC:.o=.c)
 #
 
 $(LIB): $(OBJ_MOD) $(OBJS) $(OBJS_CC) 
-	ar $(ARFLAGS) -ruv $(LIB) $(OBJ_MOD) $(OBJS) $(OBJS_CC)
+	ar $(ARFLAGS) $(LIB) $(OBJ_MOD) $(OBJS) $(OBJS_CC)
 
 clean:
 	rm -f $(OBJ_MOD) $(OBJS) $(OBJS_CC) *.mod *.a
 
 .F.o:
-	$(F77) $(FFLAGS) -c -d $< 
+	$(F77) $(FFLAGS) -c $< 
 .f.o:
 	$(F77) $(FFLAGS) -c $< 
 .c.o:
