@@ -110,7 +110,7 @@ contains
     character(len=len(status)) :: Ustat
     integer :: i,ic
 
-
+    direct = .false.
 #ifdef _UNICOS
     character(len=128) :: attr
 

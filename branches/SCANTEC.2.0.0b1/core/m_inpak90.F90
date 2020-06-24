@@ -288,6 +288,7 @@ module m_inpak90
   public :: I90_perr
   public :: I90_die
   public :: I90_lcase
+  public :: I90_lua
 
   interface fltget
      module procedure fltgetsp, fltgetdp

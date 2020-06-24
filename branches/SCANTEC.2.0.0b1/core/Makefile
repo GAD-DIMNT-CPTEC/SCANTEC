@@ -29,8 +29,8 @@ INSTALL = install
 #MPEU_INC = ../lib/mpeu
 BILIN_LIB = ../lib/BilinInterp
 BILIN_INC = ../lib/BilinInterp
-GRIB_LIB = ../lib/w3lib
-GRIB_INC = ../lib/w3lib
+GRIB_LIB = ../lib/w3lib-2.0.6
+GRIB_INC = ../lib/w3lib-2.0.6
 incdir = ./
 srcdir = ./
 

@@ -19,6 +19,17 @@ module m_GrADSfiles
   ! Undefine Value
   !
   real, parameter :: UDEF_ = -9.9e+20
+  
+  ! This is because grib had a problem when open
+  ! many files. If we open, read and close a file,
+  ! in some times grib routine retain information 
+  ! about previous file and input some noise to data,
+  ! or can't read corretly a file.
+  ! using "exclude" we try save the number of 
+  ! previous openned units, and skip it to open
+  ! in a new number.
+  integer, parameter :: MaxLogUnit = 254 
+  integer, private   :: exclude(MaxLogUnit) = 0
 
   !
   ! Type of data
@@ -360,7 +371,11 @@ contains
        lu = gs%lu
        if (lu >= 0) close (lu)
 
-       gs%lu = luavail()
+!       gs%lu = luavail()
+       gs%lu = i90_lua(exclude)
+       i = minloc(exclude,1)
+       exclude(i) = gs%lu
+
        gs%dtype = tstation
        gs%dset = trim(ctl_file)
 
@@ -712,9 +727,13 @@ contains
     !         stat = ierr
     !         return
     !      endif
-    gs%lu = luavail()
+!    gs%lu = luavail()
+    gs%lu = i90_lua(exclude)
+    i = minloc(exclude,1)
+    exclude(i) = gs%lu
+
     gs%irec = 1
-    call opendset_(gs%lu, gs%dset, gs%opt%iacc, gs%dtype, gs%dbuf, gs%ilen, ierr)
+    call opendset_(gs%lu, gs%dset, gs%dtype, ierr)
     if (ierr /= 0) then
        call i90_perr(myname_, 'opendset_()', ierr)
        if (.not. present(stat)) call i90_die(myname_)
@@ -734,17 +753,13 @@ contains
   !
   ! !INTERFACE:
 
-  subroutine opendset_(lu, name, iacc, dtype, dbuf, ilen, ierr)
+  subroutine opendset_(lu, name, dtype, ierr)
     use m_ioutil, only: opnieee
     implicit none
 
     integer, intent(in)  :: lu
     character(len=*), intent(in)  :: name
-    logical, intent(in)  :: iacc
     integer, intent(in)  :: dtype
-    real*4, dimension(:, :), intent(in) :: dbuf
-
-    integer, intent(out) :: ilen
     integer, intent(out) :: ierr
 
     ! !REVISION HISTORY:
@@ -760,30 +775,14 @@ contains
 
     select case (dtype)
     case (tbin)
-       if (iacc) then
 
-          call opnieee(lu, trim(name), 'old', ierr)!, recl=ilen)
-          if (ierr .ne. 0) then
-             clen = '****************'
-             write (clen, '(i16)', iostat=ierr) ilen
-             clen = adjustl(clen)
-             call i90_perr(myname_, 'opnieee("'// &
-                  trim(name)//'",recl='// &
-                  trim(clen)//')', ierr)
-             return
-          endif
-
-       else
-
-          ilen = 0        ! reset %ilen to avoid confusion
-          call opnieee(lu, trim(name), 'old', ierr)
-          if (ierr .ne. 0) then
-             call i90_perr(myname_, 'opnieee("'// &
-                  trim(name)//'")', ierr)
-             return
-          endif
-
+       call opnieee(lu, trim(name), 'old', ierr)
+       if (ierr .ne. 0) then
+          call i90_perr(myname_, 'opnieee("'// &
+               trim(name)//'")', ierr)
+          return
        endif
+
     case (tgrib)
 
        call baopenr(lu, trim(name), ierr)
