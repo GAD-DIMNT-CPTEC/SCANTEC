@@ -347,6 +347,7 @@ Ending Time: ${dataf}                  #Format  :: YYYYMMDDHH
 Analisys Time Step: ${passo_analise}   #Format  :: HH
 Forecast Time Step: ${passo_previsao}  #Format  :: HH
 Forecast Total Time: ${total_previsao} #Format  :: HH
+Time Step Type: forward                # backward or forward
 History Time: 48                       #Format  :: HH
 scantec tables: ${scantec_tables}
 

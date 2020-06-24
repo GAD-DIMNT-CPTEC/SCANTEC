@@ -159,6 +159,7 @@ MODULE scan_Utils
       character(len=256) :: ModelName
       character(len=256) :: FileName
       character(len=256) :: ExpName
+      character(len=256) :: timeStepType
 
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
@@ -222,7 +223,23 @@ MODULE scan_Utils
          call i90_getVal ( 'Forecast Total Time:',scantec%forecast_time, iret )
          call i90_getVal ( 'History Time:',       scantec%hist_time,     iret )
          !call i90_getVal ( 'Undefined Value:',    scantec%udef,          iret )
-         call i90_getVal ('scantec tables:', scantec%tables, iret)
+
+         call i90_getVal ('scantec tables:', scantec%tables, iret, default='../tables')
+         call i90_getVal ('Time Step Type:', TimeStepType, iret, default = 'forward')
+
+         timeStepType = i90_lcase(TimeStepType)
+
+         if(trim(timeStepType) .eq. 'forward' .or. &
+            trim(timeStepType) .eq. 'backward')then
+
+            scantec%TimeStepType = i90_lcase(TimeStepType)
+            
+          else
+            call i90_perr(myname_,'wrong time step type: '//trim(timeStepType))
+            call i90_perr(myname_,'setting default type: forward')
+
+            scantec%TimeStepType = 'forward'
+         endif
 !
 ! Apply Sanity Checks on time specifications!
 !
@@ -258,6 +275,7 @@ MODULE scan_Utils
         write(*,'(A,x,I10.10)')'Starting Time:',     scantec%starting_time
         write(*,'(A,x,I10.10)')'Ending Time:',       scantec%ending_time
         write(*,'(A,x,I3.2)')'Time Step:',           scantec%time_step 
+        write(*,'(A,x,   A)')'Time Step Type:',      scantec%TimeStepType
         write(*,'(A,x,I3.2)')'Analisys Time Step:',  scantec%atime_step
         write(*,'(A,x,I3.2)')'Forecast Time Step:',  scantec%ftime_step
         write(*,'(A,x,I3.2)')'Forecast Total Time:', scantec%forecast_time
