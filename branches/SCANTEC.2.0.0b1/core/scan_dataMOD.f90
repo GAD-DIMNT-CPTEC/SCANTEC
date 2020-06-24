@@ -307,13 +307,25 @@ CONTAINS
     !
     ! 1. Create file name and Open 
     !
+    Reference  = TRIM(Refer%file)
+    Experiment = TRIM(Exper(NExp)%file)
+    Climatology= TRIM(Clima%file)
+
+    if(scantec%TimeStepType .eq. 'forward')then
+       CALL str_template(Climatology, fymd, fhms)
+       CALL str_template(  Reference, fymd, fhms)
+       CALL str_template( Experiment, aymd, ahms, fymd, fhms)
+    else
+       CALL str_template(Climatology, aymd, ahms)
+       CALL str_template(  Reference, aymd, ahms)
+       CALL str_template( Experiment, fymd, fhms, aymd, ahms)
+    endif
+
 
     !
     ! 1.1 Reference data file 
     !
 
-    Reference=TRIM(Refer%file)
-    CALL str_template(Reference, fymd,fhms)
     CALL loadData('Reference', Refer%Id, Reference)
 
     !
@@ -323,8 +335,6 @@ CONTAINS
     if (scantec%atime_flag)then
 
        IF(scantec%cflag.EQ.1)THEN
-          Climatology=TRIM(Clima%file)
-          CALL str_template(Climatology, fymd,fhms)
           CALL loadData('Climatology', Clima%Id, Climatology)
        END IF
 
@@ -341,14 +351,12 @@ CONTAINS
     ! 1.3 Experiment Data File
     !
 
-    Experiment = TRIM(Exper(NExp)%file)
 
     !Joao adicionou para verificar quando nao tem o link das 0h
 !    if (scantec%atime.eq.scantec%ftime)then
 !       CALL replace(Experiment, 'fct','icn')
 !    end if
 
-    CALL str_template(Experiment, aymd, ahms, fymd, fhms)
     CALL loadData('Experiment', Exper(NExp)%Id, Experiment)
 
   END SUBROUTINE scan_ModelData

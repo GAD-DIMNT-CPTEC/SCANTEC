@@ -282,8 +282,13 @@ CONTAINS
 
      write(*,'(3A11)')'Analisys','Forecast','fct'
      DO WHILE (.NOT.is_last_step())
-        write(*,'(2(1x,I10.10),7x,I3.2"h")')scantec%atime, scantec%ftime,&
-              int(abs(cal2jul(scantec%atime)-cal2jul(scantec%ftime))*24)
+        if(scantec%timeStepType .eq. 'forward')then
+           write(*,'(2(1x,I10.10),7x,I3.2"h")')scantec%atime, scantec%ftime,&
+                 int(abs(cal2jul(scantec%atime)-cal2jul(scantec%ftime))*24)
+        else
+           write(*,'(2(1x,I10.10),7x,I3.2"h")')scantec%ftime, scantec%atime,&
+                 int(abs(cal2jul(scantec%atime)-cal2jul(scantec%ftime))*24)
+        endif
         
         DO NExp=1,scantec%nexp
            CALL scan_ModelData ( NExp )  ! Load Files: Analisys, Forecast and Climatology
@@ -394,7 +399,13 @@ CONTAINS
      
      atimebufr               = scantec%atime
      scantec%atime           = jul2cal(cal2jul(scantec%starting_time)+aincr)
-     scantec%ftime           = jul2cal(cal2jul(scantec%atime)+fincr)
+
+     if(scantec%TimeStepType .eq. 'forward')then
+        scantec%ftime           = jul2cal(cal2jul(scantec%atime)+fincr)
+     else
+        scantec%ftime           = jul2cal(cal2jul(scantec%atime)-fincr)
+     endif
+
      scantec%ftime_idx       = jj
      scantec%ftime_count(jj) = scantec%ftime_count(jj) + 1
      scantec%atime_flag      = (atimebufr.ne.scantec%atime)
