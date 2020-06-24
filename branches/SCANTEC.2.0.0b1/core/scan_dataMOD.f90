@@ -38,8 +38,6 @@ MODULE scan_dataMOD
      real, allocatable :: expfield(:,:) ! experiment model field
      real, allocatable :: reffield(:,:) ! reference model field
      real, allocatable :: clmfield(:,:) ! climatology field
-
-
      logical, allocatable :: UdfIdx (:,:)
   end type model_dec_type
 
@@ -362,25 +360,37 @@ CONTAINS
 
     character(len=*),parameter :: myname_=myname//' :: loadData( )'
 
-    type(GrADSfiles) :: gs
+    ! Integer variables
+    integer :: i
+    integer :: idx
     integer :: xdef
     integer :: ydef
     integer :: zdef
     integer :: klev
-    integer :: i, idx, iret
+    integer :: iret
     integer, pointer :: Mxdef => null()
     integer, pointer :: Mydef => null()
     integer, pointer :: Mzdef => null()
-    real, pointer :: zlevs(:) => null()
+    
+    ! Real variables
     real    :: undef, level
+    real, pointer :: zlevs(:) => null()
     real, allocatable :: iField(:), oField(:)
 
-    logical, allocatable :: ibitmap(:), obitmap(:)
-
-    type(ModelType), pointer :: Model => null()
-    type(EvalVar), pointer :: ModelVar => null()
+    ! Character variables
     character(len=10) :: VarName, VarLevel
 
+    ! Logical variables
+    logical :: found
+    logical, allocatable :: ibitmap(:), obitmap(:)
+
+    ! derivated type variables
+    type(GrADSfiles) :: gs
+    type(ModelType), pointer :: Model => null()
+    type(EvalVar),   pointer :: ModelVar => null()
+!
+!---------------------------------------------------------------------!
+!
     ! get model by name
     Model => scantec%getModel(ExpType, ModelName)
 
@@ -390,6 +400,11 @@ CONTAINS
 #endif
 
     ! Open current model and get info
+    inquire(File=trim(FileName),exist=found)
+    if(.not.found)then
+       call i90_perr(trim(myname_),'File not found!'//trim(FileName), -1)
+       call i90_die(trim(myname_))       
+    endif
     call GrADS_open(gs,trim(FileName))
 
     xdef  = GrADS_getDim(gs, 'xdef')
