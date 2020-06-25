@@ -8,7 +8,7 @@ LIB	= libw3.a
 ifeq ($(SCAN_ARCH),cray_cray)
 F77     = ftn
 FFLAGS  = -x conditional_omp
-CFLAGS  = -O -DLINUXF90
+CFLAGS  = -O -DLINUX
 CC      = cc
 ARFLAGS = r
 endif
@@ -16,7 +16,7 @@ endif
 ifeq ($(SCAN_ARCH),Darwin_intel)
 F77     = ifort
 FFLAGS  = 
-CFLAGS  = -O -DLINUXF90
+CFLAGS  = -O -DLINUX
 CC      = gcc
 ARFLAGS = r
 endif
