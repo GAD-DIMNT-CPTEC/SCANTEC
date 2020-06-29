@@ -26,7 +26,7 @@ srcdir = ./core
 
 pathbin = ./bin
 
-PRJDIRS = $(incdir)/w3lib $(incdir)/BilinInterp $(srcdir) 
+PRJDIRS = $(incdir)/w3lib-2.0.6 $(incdir)/BilinInterp $(srcdir) 
 
 # Not real file targets
 .PHONY: $(MAKEFILE) all dep html clean install help
@@ -37,7 +37,7 @@ all: libw3.a libinterp.a scantec.x
 	rm $(srcdir)/*.mod $(srcdir)/*.o
 
 libw3.a:
-	@$(CD) $(incdir)/w3lib && \
+	@$(CD) $(incdir)/w3lib-2.0.6 && \
 	    $(MAKE) -f $(MAKEFILE) $@
 
 libinterp.a:
