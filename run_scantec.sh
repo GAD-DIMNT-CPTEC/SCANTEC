@@ -94,7 +94,7 @@ case ${TESTCASE} in
 [1]) 
 
 # Configurações do TestCase BRAMS (NÃO ALTERAR!) 
-
+MODELCASE=" <<<< TESTCASE BRAMS >>>>>"
 dir_test=TestBRAMS
 
 # Datas
@@ -141,14 +141,15 @@ arq_clim=/dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
 #--------------------------------------------------------------------#
 # Configuraçõees do TestCase do ETA (NÃO ALTERAR!)                   #
 #--------------------------------------------------------------------#
+MODELCASE=" <<<<< TESTCASE ETA >>>>>>"
 dir_test=TestETA
 
 # Datas
 datai=2020040400
-dataf=2020040812
-passo_analise=12
+dataf=2020040600
+passo_analise=24
 passo_previsao=12
-total_previsao=72
+total_previsao=36
 
 # Regiões
 lat_low=-51.000000 
@@ -186,7 +187,7 @@ arq_clim=/dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
 #--------------------------------------------------------------------#
 # Configuraçõees do TestCase BAM (NÃO ALTERAR!)              #
 #--------------------------------------------------------------------#
-
+MODELCASE=" <<<<< TESTCASE BAM  >>>>>>"
 dir_test=TestBAM
 
 # Datas
@@ -281,9 +282,10 @@ saida_results=${dir_data}/dataout/${dir_test}
 if [ ! -e ${saida_results} ]; then mkdir -p ${saida_results}; fi
 
 echo ""
-echo " <<< INICIANDO SCANTEC >>>        " 
+echo " <<< INICIANDO SCANTEC >>>        "
+echo ""${MODELCASE} 
 echo ""
-echo " Configurações do testcase:                " 
+echo " Configurações da avaliação:               " 
 echo " ==========================                "  
 echo " Data inicial:   ${datai}                  "
 echo " Data final:     ${dataf}                  "
@@ -318,7 +320,6 @@ echo " ==========================                "
 echo ""
 
 #--------------------------------------------------------------------#
-
 data=$(date)
  
 # Iniciando o processamento
