@@ -192,9 +192,19 @@ Para visualizar os resultados gerados pelo scantec é recomendado que se utilize
 Visualização de resultados usando o SCANPLOT
 **********************************************
 
+Para mais informações sobre o scanplot, acesse o arquivo SCANTEC.2.0.0b1/scanplot/README.md.
 
-Colocar aqui informações de como começar a usar o SCANPLOT e material de apoio sobre seu uso.
+Para usar o scanplot é preciso entrar na servidora ilopolis e utilizar o jupiter. Para isso com o brouser de internet logue com seu usuário no endereço 
+http://ilopolis.cptec.inpe.br/
 
+O sistema abrirá a arvore de diretórios. Nela é preciso abrir o diretorio onde foi instalado o SCANTEC e nele abra o diretorio scanplot e selecione o arquivo denominado:
+SCANPLOT.ipynb
+
+Abra a aba kernel, e depois a sub-aba "change kernel" e nela selecione "DASSCANPLOT"
+
+Caso não esteja disponivel esse ambiente para o ambiente do usuário, favor solicitar ao suporte a inclusão de seu usuario no grupo dasscanplot.
+
+Após isso, siga as intruções na tela. 
 
 ******************************************************************
 Adicionando outras versões ou modelos no SCANTEC
