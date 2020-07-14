@@ -9,12 +9,13 @@
 !#      Conjunto de informações com passo-a-passo para uso do sistema.
 !#
 !# !DESCRIPTION:
-!#      Veja informacões abaixo.
+!#      Veja informações abaixo.
 !#
 !# !REVISION HISTORY: 
-!# 18 julho de 2017 - Carlos bastarz - Craindo a versão inicial.
+!# 18 julho de 2017 - Carlos Bastarz - Criando a versão inicial.
 !# 22 junho de 2020 - Luiz Sapucci   - Ajustes para a versão SCANTEC beta da DMD
-!# 32 junho de 2020 - Luiz Sapucci   - Ajustes para a versão de entrega TAG do SCANTEC beta da DMD
+!# 30 junho de 2020 - Luiz Sapucci   - Ajustes para a versão de entrega TAG do SCANTEC beta da DMD
+!# 14 julho de 2020 - Luiz Sapucci   - Inclusão do SCANPLOT e informações para adicionar outros modelos.
 !#
 !# !REMARKS:
 !#
@@ -22,127 +23,139 @@
 !#----------------------------------------------------------------------------------------------#
 !#BOC
 
-** Instrucoes para compilacao e execucao do SCANTEC **
+** Instruções para compilação e execução do SCANTEC **
 
 ************************************************************************************************
                              Para compilação siga os seguintes passos:
 ************************************************************************************************
 
 Para a instalação, o sistema tem implementado um script criado para essa função, o qual prepara o 
-ambiente para a instalação, entra nos diretórios, em uma sequencia adequada e compila cada uma das
-bibliotecas e módulos que compôem o sistema e move o executavel para a pasta bin. Ele está preparado 
-para funcionar em diversos ambientes, maquinas virtuais do CPTEC, ou mesmo máquinas locais
+ambiente para a instalação, entra nos diretórios, em uma sequência adequada e compila cada uma das
+bibliotecas e módulos que compõem o sistema e move o executável para a pasta bin. Ele está preparado 
+para funcionar em diversos ambientes, máquinas virtuais do CPTEC, ou mesmo máquinas locais
 na mesa do usuário. Embora a versão idealizada deva funcionar também no tupã, a presente versão beta
 SCANTEC.2.0.0b1 está com problemas na compilação no tupã e deve ser evitado. Veja instruções 
 específicas para outras máquinas nas instruções abaixo.
 
 
 ************************************************
-Para instalação em maquinas virtuais e locais: 
+Para instalação em máquinas virtuais e locais: 
 ************************************************
 
-As maquina itapemerim e pesquisa foram utilizadas para validar a versão, a qual foi aprovada e podem ser utilizadas. 
+As máquinas itapemerim e pesquisa foram utilizadas para validar a versão, a qual foi aprovada e 
+podem ser utilizadas. 
 
-Em uma maquina qualquer que se deseja ter o SCANTEC funcionando, é necessario ter instalado:
+Em uma máquina qualquer que se deseja ter o SCANTEC funcionando, é necessário ter instalado:
 -compilador ifort ou o gfortran
 -package SVN (subversion)
 -biblioteca LAPACK
 
 ------
-1º Entrar em um diretorio de preferencia do usuario para realizar a instalação do SCANTEC
-cd $HOME 
+1º Entrar em um diretório de preferência do usuário para realizar a instalação do SCANTEC
+#> cd $HOME 
 
 ------
-2º Baixar a versao do SCANTEC do repositorio svn (projetos.cptec.inpe.br)
-svn co https://svn.cptec.inpe.br/scamtec/tags/SCANTEC.2.0.0b1
+2º Baixar a versão do SCANTEC do repositório svn (projetos.cptec.inpe.br)
+#> svn co https://svn.cptec.inpe.br/scamtec/tags/SCANTEC.2.0.0b1
 
 ------
-3º Entrar no diretorio do SCANTEC.2.0.0b1
-cd SCANTEC.2.0.0b1
+3º Entrar no diretório do SCANTEC.2.0.0b1
+#> cd SCANTEC.2.0.0b1
 
 ------
 4º Para compilar o SCANTEC execute o script install seguindo as instruções abaixo:
-./install
+#> ./install
 
 (a) Escolha a opção 2 para o compilador Gfortran local;
 (b) Acompanhe a compilação com as informações no terminal.
 (c) Verifique o sucesso do processo verificando a existência do arquivo SCANTEC.2.0.0b1/bin/scantec.x
-(d) Caso algum problema seja detectado e/ou precisar compilar novamente, use a opção 1 para o clean da compilação anterior.
+(d) Caso algum problema seja detectado e/ou precisar compilar novamente, use a opção 1 para o clean 
+    da compilação anterior.
 
 
 ************************************************************************************************
                        Para execução do scantec siga os seguintes passos:
 ************************************************************************************************
 
-Utilizar o Scantec é muito simples, basta editar um arquivo de configuração chamado SCANTEC.2.0.0b1/bin/scantec.conf
-e modificar as informações para adaptar para os dados do usuário. Há um conjunto de palavras chaves que antecedem a informação requerida pelo sistema.
-O leitor procura essas palavras chaves e armazena nas devidas variaveis a informação constante aṕos essas palavras chaves. 
-Veja a lista de informações requeridas e as respecivas palavras chaves no final desse README, com uma breve descrição de cada uma dessas informações.
+Utilizar o Scantec é muito simples, basta editar um arquivo de configuração chamado 
+SCANTEC.2.0.0b1/bin/scantec.conf e modificar as informações para adaptar para os dados do usuário.
+Há um conjunto de palavras chaves que antecedem a informação requerida pelo sistema.
+O leitor procura essas palavras chaves e armazena nas devidas variáveis a informação constante 
+após essas palavras chaves. Veja a lista de informações requeridas e as respectivas palavras chaves
+no final desse README, com uma breve descrição de cada uma dessas informações.
 
 ------
 1º Para utilizar o sistema basta entrar no diretório bin do scantec
-cd SCANTEC.2.0.0b1/bin/ 
+#> cd SCANTEC.2.0.0b1/bin/ 
 
 ------
-2º Editar o arquivo SCANTEC.2.0.0b1/bin/scantec.conf apropriadamente modificando as informações sem modificar as palavras chaves.
-vi scantec.conf
+2º Editar o arquivo SCANTEC.2.0.0b1/bin/scantec.conf apropriadamente modificando as informações 
+sem modificar as palavras chaves.
+#> vi scantec.conf
 
-3º Rodar o executavel do sistema com o comando 
-./scantec.x
+3º Rodar o executável do sistema com o comando 
+#> ./scantec.x
 
-4º De forma mais simplificada e mais versátivel, pode-se utilizar o script run_scantec.sh que modifica o scantec.conf apropriadamente, 
-chama o ./scantec.x e armazenas as informações em um arquivo de log. Esse mesmo script tem uma serie de testcase para permitir a 
-validação da versão instalada pelo usuário.
-cd SCANTEC.2.0.0b1/ 
-./run_scantec.sh
+4º De forma mais simplificada e mais versátil, pode-se utilizar o script run_scantec.sh que modifica
+o scantec.conf apropriadamente, chama o ./scantec.x e armazenas as informações em um arquivo de log. 
+Esse mesmo script tem uma serie de testcase para permitir a validação da versão instalada pelo usuário.
+#> cd SCANTEC.2.0.0b1/ 
+#> ./run_scantec.sh
 
 
 *****************************************
 Executado o SCANTEC com dados de testcase
 *****************************************
 
-Como os dados de entrada do testcase, de todas as 3 opções de modelos disponíveis estão no disco NetApp (/dados/das/public/SCANTEC/TestCase/),
-esses testes funcionam tanto na tupã como nas maquinas virtuais, itapemerim e outras que veem o NetApp. 
+Como os dados de entrada do testcase, de todas as 3 opções de modelos disponíveis estão no disco NetApp
+(/dados/das/public/SCANTEC/TestCase/), esses testes funcionam tanto no tupã como nas máquinas virtuais,
+ itapemerim e outras que veem o NetApp. 
 
 ------
-1º Para utilizar o sistema (tanto no tupa como nas maquinas virtuais) basta entrar no diretório raiz da instalação do scantec
-cd SCANTEC.2.0.0b1/
+1º Para utilizar o sistema (tanto no tupã como nas máquinas virtuais) basta entrar no diretório raiz da 
+instalação do scantec
+#> cd SCANTEC.2.0.0b1/
 
 ------
-2º Executar o script de execução do SCANTEC com um parametro na linha de comando:
-./run_scantec.sh [parametro]
+2º Executar o script de execução do SCANTEC com um parâmetro na linha de comando:
+#> ./run_scantec.sh [parâmetro]
 
-Sendo esse parametro as seguintes opções:
-./run_scantec.sh 1 - para fazer um TestCase do BRAMS (Jan/2016)
-./run_scantec.sh 2 - para fazer um TestCase do ETA   (Abr/2020)
-./run_scantec.sh 3 - para fazer um TestCase do BAM   (Ago/2014)
+Sendo esse parâmetro as seguintes opções:
+#> ./run_scantec.sh 1 - para fazer um TestCase do BRAMS (Jan/2016)
+#> ./run_scantec.sh 2 - para fazer um TestCase do ETA   (Abr/2020)
+#> ./run_scantec.sh 3 - para fazer um TestCase do BAM   (Ago/2014)
 
-Para cada uma dessas opções o script irá criar um novo arquivo SCANTEC.2.0.0b1/bin/scantec.conf colocando nele as informações necessárias 
-para rodar cada uma dos experimentos, já configurado o periodo dos dados, o passo de análise, passo de previsão e o periodo de integração 
-dos modelos. O formato dos aquivos disponiveis para os testes é configurado em arquivos colocados no diretório tables e para novos modelos,
-ou versões com diferentes resoluções ou dominios, novos arquivos tables devem ser disponibilizados no diretório  SCANTEC.2.0.0b1/tables. Para 
-mais informações sobre adicionar outros modelos veja a próxima seção intitulada "Adicionando outras versões ou modelos no SCANTEC".
+Para cada uma dessas opções o script irá criar um novo arquivo SCANTEC.2.0.0b1/bin/scantec.conf colocando
+nele as informações necessárias para rodar cada um dos experimentos, já configurado o período dos dados,
+o passo de análise, passo de previsão e o período de integração dos modelos. O formato dos arquivos
+disponíveis para os testes é configurado em arquivos colocados no diretório tables e para novos modelos,
+ou versões com diferentes resoluções ou domínios, novos arquivos tables devem ser disponibilizados no 
+diretório SCANTEC.2.0.0b1/tables. Para mais informações sobre adicionar outros modelos veja a próxima
+seção intitulada "Adicionando outras versões ou modelos no SCANTEC".
 
-A informações de saida dos testcases do SCANTEC são colocadas no diretório
+A informações de saída dos testcases do SCANTEC são colocadas no diretório
 SCANTEC.2.0.0b1/dataout/testMODEL onde MODEL e BRAMS, ETA ou BAM, dependendo da opção escolhida acima.
 
-Para visualizar os resultados gerados pelo scantec é recomendado que se utilize o SCANPLOT, ver mais detalhes na seção "Visualização de resultados usando o SCANPLOT" desse README.
+Para visualizar os resultados gerados pelo scantec é recomendado que se utilize o SCANPLOT, ver mais 
+detalhes na seção "Visualização de resultados usando o SCANPLOT" desse README.
 
 *****************************************
 Executado o SCANTEC com dados do usuário
 *****************************************
 
-Para rodar o runscantec.sh com as informações editadas pelo usuario use-o com a opção 4, mas antes é preciso editar o script e modificar apripriadamente as informações.
+Para rodar o runscantec.sh com as informações editadas pelo usuário use-o com a opção 4, mas antes é 
+preciso editar o script e modificar apropriadamente as informações.
 
 ------
-1º Para utilizar o sistema (tanto no tupa como nas maquinas virtuais) basta entrar no diretório raiz da instalação do scantec
-cd SCANTEC.2.0.0b1/
+1º Para utilizar o sistema (tanto no tupã como nas máquinas virtuais) basta entrar no diretório raiz 
+da instalação do scantec
+#> cd SCANTEC.2.0.0b1/
 
 ------
 2º Edite o scritp run_scantec.sh
-gedit run_scantec.sh
+#> gedit run_scantec.sh
 
-modifique apropriadamente as variaveis entre as linhas 239 a 272 da seguinte lista:
+modifique apropriadamente as variáveis entre as linhas 239 a 272 da seguinte lista:
 
 # Datas
 datai=2014080500
@@ -165,7 +178,7 @@ quant_exp=1
 # Referências Plugin modelo
 pl_model_refer=BAM_TQ0299L064_18levs
 
-# Endereço das Análises usadas como refencia 
+# Endereço das Análises usadas como referência 
 arq_refer=/dados/das/public/SCANTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.ctl
 
 # Plugin experimento
@@ -180,13 +193,14 @@ arq_clim=/dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
 
 ------
 3º Depois de salvar as modificações no scritp run_scantec.sh execute-o com a opção 4
-./run_scantec.sh 4 - para usar os dados definidos pelo usuario
+#> ./run_scantec.sh 4 - para usar os dados definidos pelo usuário
 
 ------
-4º Ver os resultados de saida do SCANTEC no diretório
-ls SCANTEC.2.0.0b1/dataout
+4º Ver os resultados de saída do SCANTEC no diretório
+#> ls SCANTEC.2.0.0b1/dataout
 
-Para visualizar os resultados gerados pelo scantec é recomendado que se utilize o SCANPLOT, ver mais detalhes na seção "Visualização de resultados usando o SCANPLOT" desse README.
+Para visualizar os resultados gerados pelo scantec é recomendado que se utilize o SCANPLOT, ver mais 
+detalhes na seção "Visualização de resultados usando o SCANPLOT" desse README.
 
 **********************************************
 Visualização de resultados usando o SCANPLOT
@@ -194,53 +208,148 @@ Visualização de resultados usando o SCANPLOT
 
 Para mais informações sobre o scanplot, acesse o arquivo SCANTEC.2.0.0b1/scanplot/README.md.
 
-Para usar o scanplot é preciso entrar na servidora ilopolis e utilizar o jupiter. Para isso com o brouser de internet logue com seu usuário no endereço 
-http://ilopolis.cptec.inpe.br/
+Para usar o scanplot é preciso entrar na servidora ilopolis e utilizar o jupiter. Para isso com o browser
+de internet logue com seu usuário no endereço http://ilopolis.cptec.inpe.br/
 
-O sistema abrirá a arvore de diretórios. Nela é preciso abrir o diretorio onde foi instalado o SCANTEC e nele abra o diretorio scanplot e selecione o arquivo denominado:
+O sistema abrirá a arvore de diretórios. Nela é preciso abrir o diretório onde foi instalado o SCANTEC 
+e nele abra o diretório scanplot e selecione o arquivo denominado:
 SCANPLOT.ipynb
 
 Abra a aba kernel, e depois a sub-aba "change kernel" e nela selecione "DASSCANPLOT"
 
-Caso não esteja disponivel esse ambiente para o ambiente do usuário, favor solicitar ao suporte a inclusão de seu usuario no grupo dasscanplot.
+Caso não esteja disponível esse ambiente para o ambiente do usuário, favor solicitar ao suporte a 
+inclusão de seu usuário no grupo dasscanplot. Um grupo específico para essa aplicação deverá ser criado 
+em breve pelo pessoal da computação do centro.
 
-Após isso, siga as intruções na tela. 
+Após isso, siga as instruções na tela. 
 
 ******************************************************************
 Adicionando outras versões ou modelos no SCANTEC
 ******************************************************************
 
-Colocar aqui informações do passo-a-passo de se adicionar outros modelos no scantec
+Para adicionar uma nova versão do modelo na lista das opções em que o sistema está preparado para 
+processar basta seguir as instruções descrita nessa seção. Inicialmente verifique se a versão desejada
+já não está implementada no sistema. Caso não, para incluir um novo modelo, ou versão, basta criar um 
+novo arquivo table (com extensão ".model") no diretório SCANTEC.2.0.0b1/tables com algumas 
+particularidades. 
 
+Obs1. Observe que modelos com resolução diferentes, ou recortes de modelos, ou mudanças no domínio, 
+ou mesmo com modificações no número de níveis realizados no pós processamento, requerem ajustes para 
+que o sistema seja capaz de ler os arquivos binários. 
 
+Obs2. Cabe salientar que apenas arquivos binários e grib1 são lidos pela atual 
+versão do sistema. Caso o modelo que deseja adicionar não esteja nesses formatos, precisam ser 
+convertidos ou terá que aguardar uma nova versão do sistema.
+
+A lista dos modelos já implementados na versão TAG SCANTEC.2.0.0b1 é a que segue com seus respectivos 
+arquivos tables que podem servir como exemplo para criar outros:
+Modelo BAM Truncamento 299 64 níveis com pós de 18 níveis:   BAM_TQ0299L064_18levs.model
+Modelo BAM Truncamento 299 64 níveis com pós de 28 níveis:   BAM_TQ0299L064_28levs.model
+Modelo BRAMS 5km de resolução horizontal e pós de 19 níveis: BRAMS_5km_19levs.model
+Modelo ETA 5km de resolução horizontal e pós de 22 níveis:   ETA_ams_05km_22levs.model
+
+Para adicionar um novo modelo basta editar um dos arquivos acima que mais se assemelha com o modelo
+desejado fazer os devidos ajustes e salvar com um nome apropriado (extensão .model) dentro do diretório 
+tables, e no arquivo de configuração (scantec.conf) ou se tiver usando o script run_scantec.sh, 
+assegure que o novo modelo ou versão seja lido com o arquivo table criado. Para isso na linha do 
+experimento em que esse modelo se refere a primeira palavra deve ser o nome do arquivo table.
+
+Obs3. Se esse arquivo é também utilizado como referência na avaliação o novo table deve também ser 
+colocado após a palavra  "Reference Model Name:" no config, como por exemplo:
+ Reference Model Name: ETA_ams_05km_22levs
+ 
+O importante que o novo arquivo table tenha as seguintes informações: 
+(a) Tipo de arquivo depois da palavra "ftype:";
+(b) Como os valores devem ser considerados indefinidos depois da palavra "undef:";
+(c) Dimensões da grad na longitude depois da palavra "xdim:";
+(d) Dimensões da grad na latitude depois da palavra "ydim:";
+(e) Número de níveis verticais do pós e a lista deles depois da palavra "zdim:";
+(f) Por fim uma tabela de variáveis depois da palavra "vars:"
+
+Veja exemplo do arquivo ETA_ams_05km_22levs.model:
+---------------
+ftype: grib
+undef: 1e+20
+xdim: 1162 linear -84.099998 0.050000
+ydim: 1320 linear -51.000000 0.050000
+zdim:   22 levels 1020 1000 950 925 900 850 800 750 700 650 600
+                   550  500 450 400 350 300 250 200 150 100 50
+---------------                  
+A tabela de variáveis é preenchida da seguinte forma (colunas separadas por espaço):  
+(a) A primeira coluna é o nome da variável do scantec, veja lista em tables/scantec.vars
+(b) A segunda coluna pode ser o nome da variável correspondente no modelo da forma como listado no ctl.
+
+Veja exemplo do arquivo ETA_ams_05km_22levs.model:
+---------------
+vars:
+temp:850 temp:850 
+temp:500 temp:500 
+temp:250 temp:250 
+psnm:000 pslm:1020 
+umes:925 umes:925 
+umes:850 umes:850 
+umes:500 umes:500 
+agpl:925 agpl:1020 
+zgeo:850 zgeo:850 
+zgeo:500 zgeo:500 
+zgeo:250 zgeo:500 
+uvel:850 uvel:850 
+uvel:500 uvel:500 
+uvel:250 uvel:250 
+vvel:850 vvel:850 
+vvel:500 vvel:500 
+vvel:250 vvel:250 
+---------------
+
+Caso o modelo não tenha a variável que o SCANTEC requer uma função pode ser chamada ao colocar na 
+segunda coluna a palavra "@func", a qual deverá produzir a variável desejada, baseando-se
+nas variáveis pré-existentes do modelo, as quais são colocadas nas colunas subsequentes. 
+
+Veja exemplo do arquivo ETA_ams_05km_22levs.model:
+vars:
+---------------
+vtmp:925 @func vtmp temp:925 umes:925
+vtmp:850 @func vtmp temp:850 umes:850
+vtmp:500 @func vtmp temp:500 umes:500
+---------------
+
+Nesses exemplos a temperatura virtual o modelo eta não tem disponível e é chamada uma 
+função para seu cálculo utilizando a temperatura e umidade nos respectivos níveis desejados. 
+
+Obs3. Essas funções ainda não estão disponíveis na versão beta e deverão estar disponibilizadas 
+para os usuários em breve na publicação da versão de entrega. Testes ainda devem ser realizados. 
+Para o uso das funções um documento chamado funcoes.readme será organizados para listar as 
+disponíveis e como as utilizar.
 
 **********************************************
 Informações contidas no aquivo conf do SCANTEC
 **********************************************
 
-O arquivo de configuração do SCANTEC é constituido de 5 grupos de informações:
-(a) periodo em avaliação;
-(b) Recorte comum dos dominios dos modelos em avaliação;
-(c) Endereços de tabelas e dos arquivos de saida dos resultados;
+O arquivo de configuração do SCANTEC é constituído de 5 grupos de informações:
+(a) período em avaliação;
+(b) Recorte comum dos domínios dos modelos em avaliação;
+(c) Endereços de tabelas e dos arquivos de saída dos resultados;
 (d) Endereços dos arquivos dos modelos em avaliação e plugins usados;
-(e) Informações sobre a climatologia usada no calculo do CCA;
+(e) Informações sobre a climatologia usada no cálculo do CCA;
 
-Para cada um desses grupos é apresentado as palavras chaves de cada informação, precedido por um exemplo depois de ":" e na linha anterior um comentário sobre essa informação.
+Para cada um desses grupos é apresentado as palavras chaves de cada informação, precedido por um 
+exemplo depois de ":" e na linha anterior um comentário sobre essa informação.
 
-(a)>>>>> Periodo de avaliação<<<<<<<<
-# Data inicial do periodo (primeira análise usada) 
+(a)>>>>> Período de avaliação<<<<<<<<
+# Data inicial do período (primeira análise usada) 
 Starting Time: 2020040400
 # Data Final do período (última análise usada)
 Ending Time: 2020040812  
-# Passo de tempo em horas entre as análises no periodo
+# Passo de tempo em horas entre as análises no período
 Analisys Time Step: 12   
-# Passo de tempo em horas das previsões avaliadas (tem que ser o mesmo passo das análises usadas como referência)
+# Passo de tempo em horas das previsões avaliadas (tem que ser o mesmo passo das análises usadas como 
+referência)
 Forecast Time Step: 6  
 # Tempo de integração do modelo em avaliação
 Forecast Total Time: 72
 
 (b)>>>>> Recorte dos modelos em avaliação <<<<<<<<
-# Numero de recortes, para o caso de se usar uma avaliação com diversos dominios
+# Número de recortes, para o caso de se usar uma avaliação com diversos domínios
 run domain number: 1
 # Latitude inferior do recorte 
 run domain lower left lat:   -51.000000 
@@ -255,30 +364,35 @@ run domain resolution dx:    0.05
 # Resolução em graus em latitude
 run domain resolution dy:    0.05     
 
-(c)>>>>> Endereços de plugins e saida <<<<<<<<
+(c)>>>>> Endereços de plugins e saída <<<<<<<<
 # Endereços onde são encontrados os plugins dos modelos. Arquivos com a extensão model
 scantec tables: /scratchin/grupos/das/home/luiz.sapucci/SCANTEC.2.0.0b1/tables
-# Diretorio de saida dos resultados do scantec
+# Diretório de saída dos resultados do scantec
 Output directory: /scratchin/grupos/das/home/luiz.sapucci/SCANTEC.2.0.0b1/dataout/ETA
 
 (d)>>>>> Endereços dos dados dos modelos <<<<<<<<
-# Nome do arquivo de configuração dos dados de referencia
+# Nome do arquivo de configuração dos dados de referência
 Reference Model Name: ETA_ams_05km_22levs
-# Endereço dos arquivos de análise usados como referencia na avaliação das previsões, bem como a configuração de como são escritos o nome dos arquivos. 
+# Endereço dos arquivos de análise usados como referência na avaliação das previsões, bem como a 
+configuração de como são escritos o nome dos arquivos. 
 Reference file: /dados/das/public/SCANTEC/TestCase/ETA/Eta_ams_05km202004/%d2/%h2/eta_05km_%y4%m2%d2%h2+%y4%m2%d2%h2.ctl
-# Quantidade de versões do modelos ou de diferentes modelos em avaliação 
+# Quantidade de versões dos modelos ou de diferentes modelos em avaliação 
 Experiments: 1
-# Tres informações em cada linha, o nome do arquivo de configuração o label do experimento e os endereços das previsao em avaliação, bem como a configuração de como são escritos o nome dos arquivos.
+# Três informações em cada linha, o nome do arquivo de configuração o label do experimento e os 
+endereços das previsões em avaliação, bem como a configuração de como são escritos o nome dos arquivos.
 ETA_ams_05km_22levs EXP01 /dados/das/public/SCANTEC/TestCase/ETA/Eta_ams_05km202004/%d2/%h2/eta_05km_%y4%m2%d2%h2+%fy4%fm2%fd2%fh2.ctl
 
 (e)>>>>> Endereços dos dados dos modelos <<<<<<<<
-# Uma opção de usar ou não a climatologia no calculo da CCA, sendo 1 para usar e 0 para não usar.
+# Uma opção de usar ou não a climatologia no cálculo da CCA, sendo 1 para usar e 0 para não usar.
 Use Climatology: 0  
-# Nome do arquivo de configuração dos dados de referencia
+# Nome do arquivo de configuração dos dados de referência
 Climatology Model Name: AGCM_CLIMATOLOGY.model
-# Endereço dos arquivos de climatologia usado no calculo do CCA, bem como a configuração de como são escritos o nome dos arquivos. 
+# Endereço dos arquivos de climatologia usado no cálculo do CCA, bem como a configuração de como são 
+escritos o nome dos arquivos. 
 Climatology file: /dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl 
 
-
+!#EOP
+!#----------------------------------------------------------------------------------------------#
+!#BOC
 
 
