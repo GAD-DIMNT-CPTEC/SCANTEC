@@ -6,12 +6,13 @@ scanplot
 ========
 
     Este módulo contém funções associadas à leitura das informações do namelist do SCANTEC
-    e à plotagem das tabelas do SCANTEC (ACOR, RMSE e VIES).
+    e à plotagem das tabelas do SCANTEC (ACOR, RMSE, MEAN e VIES).
     
 Funções
 -------
     read_nemalists : lê os namelists e arquivos de definições do SCANTEC.
     get_dataframe  : transforma as tabelas do SCANTEC em dataframes.
+    get_dataset    : transforma os campos com a distribuição espacial das estatísticas do SCANTEC datasets.
     plot_lines     : plota gráficos de linha com os dataframes das tabelas do SCANTEC.
     plot_scorecard : resume as informações dos dataframes com as tabelas do SCANTEC em scorecards.    
     plot_dTaylor   : plota diagramas de Taylor a partir de dois experimentos utilizando 
@@ -23,11 +24,14 @@ import os.path
 import ntpath
 import numpy as np
 import pandas as pd
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 import seaborn as sns
 import skill_metrics as sm
+
+import xarray as xr
+import cartopy.crs as ccrs
 
 import ipywidgets as widgets
 from ipywidgets import interact, GridspecLayout, HBox, VBox, Layout
@@ -110,6 +114,10 @@ def read_namelists(basepath):
           key_value(line)
         elif line.startswith('Forecast Time Step'):
           key_value(line)
+        elif line.startswith('Forecast Total Time'):
+          key_value(line)
+        elif line.startswith('Time Step Type'):
+          key_value(line)
         elif line.startswith('History Time'):
           key_value(line)
         elif line.startswith('scantec tables'):
@@ -151,7 +159,7 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir):
 
     """
     get_dataframe
-    ==========
+    =============
     
     Esta função transforma a(s) tabela(s) do SCANTEC em dataframe(s).
     
@@ -182,6 +190,7 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir):
         dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
     """
     
+    # Dicionário com o(s) dataframe(s)
     ds_table = {}
     
     for stat in Stats:
@@ -202,11 +211,130 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir):
                     
     return ds_table
 
+def get_dataset(data_conf,data_vars,Stats,Exps):
+       
+    """
+    get_dataset
+    ===========
+    
+    Esta função transforma o(s) campo(s) com a distribuição espacial da(s) 
+    estatística(s) do SCANTEC em dataset(s).
+    
+    Parâmetros de entrada
+    ---------------------
+        data_conf : dicionário com as configurações do SCANTEC
+        data_vars : dicionário com as variáveis avaliadas pelo SCANTEC
+        Stats     : lista com os nomes das estatísticas a serem processadas
+        Exps      : lista com os nomes dos experimentos
+    
+    Resultado
+    ---------
+        Dicionário com o(s) dataset(s) com a(s) distribuição(ões) espacial(is)
+        da(s) estatística(s) do SCANTEC.
+    
+    Uso
+    ---
+        from scanplot import read_namelists, get_dataset
+        
+        data_vars, data_conf = read_namelists("~/SCANTEC")
+        
+        Stats =  ["ACOR", "RMSE", "VIES"]
+        Exps = list(data_conf["Experiments"].keys())
+        
+        dSet = get_dataset(data_conf,data_vars,Stats,Exps)
+    """
+    
+    # Datas
+    dataInicial = data_conf["Starting Time"]
+    dataFinal = data_conf["Ending Time"]
+    t_step = str(data_conf["Forecast Time Step"]) + "H"
+    dataInicial_fmt = dataInicial.strftime("%Y%m%d%H")
+    dataFinal_fmt = dataFinal.strftime("%Y%m%d%H")
+
+    ftime = np.int(data_conf['Forecast Total Time'])
+    atime = np.int(data_conf['Analisys Time Step'])
+    tdef = np.int((ftime / atime) + 1)
+    dataFinal2 = dataInicial + timedelta(hours=np.int(tdef)*np.int(data_conf["Forecast Time Step"]))
+    times = pd.date_range(dataInicial, dataFinal2, freq=t_step)   
+    #tdef2 = len([*times])                     
+    print(times)
+    
+    # Tamanho e limites do domínio                           
+    lllat = np.float32(data_conf['run domain lower left lat'])
+    lllon = np.float32(data_conf['run domain lower left lon'])
+    urlat = np.float32(data_conf['run domain upper right lat'])
+    urlon = np.float32(data_conf['run domain upper right lon'])
+ 
+    gdx = np.float32(data_conf['run domain resolution dx'])
+    gdy = np.float32(data_conf['run domain resolution dy'])
+                               
+    xdef = np.int(((urlon - lllon) / gdx) + 1)
+    ydef = np.int(((urlat - lllat) / gdy) + 1)
+
+    # Latitudes e longitudes                           
+    lats = np.linspace(lllat, urlat, num=ydef)
+    lons = np.linspace(lllon, urlon, num=xdef)                      
+
+    outDir = data_conf['Output directory']
+    
+    # Variáveis                           
+    fnames = []
+
+    for i in [*data_vars.values()]:
+        fnames.append(i[0])                           
+ 
+    nvars = len(fnames)
+    
+    # Dicionário com o(s) dataset(s)
+    ds_field = {}
+    
+    for stat in Stats:
+               
+        dataInicial_fmt = dataInicial.strftime("%Y%m%d%H")
+        dataFinal_fmt = dataFinal.strftime("%Y%m%d%H")
+
+        for exp in Exps:
+        
+            fname = outDir + '/' + str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'F.scan'
+            
+            lista_n = []
+
+            if os.path.exists(fname):
+                print(fname)
+                              
+                dsl = []
+                ds = xr.Dataset()                           
+                                       
+                with open(fname,'rb') as f:
+                                       
+                    for t in np.arange(tdef): 
+                                       
+                        for i in np.arange(nvars):
+                                       
+                            data = np.fromfile(f, dtype=np.float32, count=xdef*ydef, offset=8)
+                                       
+                            field = np.reshape(data, (xdef, ydef), order='F')
+                                       
+                            ds[fnames[i]] = (('lon','lat'), field)
+                            ds.coords['lat'] = ('lat', lats)
+                            ds.coords['lon'] = ('lon', lons)
+                            ds.coords['time'] = [times[t]]
+                                       
+                            dst = ds.transpose('time', 'lat', 'lon')
+                                       
+                        dsl.append(dst)
+                
+                dsc = xr.concat(dsl, dim='time')                
+                
+                ds_field[ntpath.basename(str(fname))] = xr.concat(dsl, dim='time')
+                
+    return ds_field
+                           
 def plot_lines(dTable,Vars,Stats,outDir,combine):
 
     """
     plot_lines
-    ============
+    ==========
     
     Esta função plota gráficos de linha a partir de um dicionário de dataframes com as tabelas do SCANTEC.
     
@@ -445,7 +573,7 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
     
     """
     plot_dTaylor
-    ==============
+    ============
     
     Esta função plota o diagrama de Taylor a partir das tabelas de estatísticas
     do SCANTEC, para um ou mais experimentos.
@@ -481,6 +609,10 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
         dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
         plot_dTaylor(dTable,data_conf,Vars,Stats,outDir)
+        
+    Observações
+    -----------
+        Experimental, esta função considera o devio-padrão como a raiz qadrada do RMSE.
     """
     
     # Ignore Seaborn and respect rcParams
