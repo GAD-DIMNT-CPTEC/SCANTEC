@@ -253,10 +253,10 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
 
     ftime = np.int(data_conf['Forecast Total Time'])
     atime = np.int(data_conf['Analisys Time Step'])
-    tdef = np.int((ftime / atime) + 1)
+    #tdef = np.int((ftime / atime) + 1) # verificar, pois no arquivo CTL esta é a conta que é feita, mas no arquivo binário não!
     dataFinal2 = dataInicial + timedelta(hours=np.int(tdef)*np.int(data_conf["Forecast Time Step"]))
     times = pd.date_range(dataInicial, dataFinal2, freq=t_step)   
-    #tdef2 = len([*times])                     
+    tdef = len([*times])                     
     print(times)
     
     # Tamanho e limites do domínio                           
