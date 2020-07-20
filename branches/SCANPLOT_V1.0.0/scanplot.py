@@ -272,8 +272,10 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
     ydef = np.int(((urlat - lllat) / gdy) + 1)
 
     # Latitudes e longitudes                           
-    lats = np.linspace(lllat, urlat, num=ydef)
-    lons = np.linspace(lllon, urlon, num=xdef)                      
+#    lats = np.linspace(lllat, urlat, num=ydef)
+#    lons = np.linspace(lllon, urlon, num=xdef)                      
+    lats = np.arange(lllat, urlat, gdy)
+    lons = np.arange(lllon, urlon, gdx) 
 
     outDir = data_conf['Output directory']
     
