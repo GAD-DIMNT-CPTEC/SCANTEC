@@ -17,6 +17,7 @@ MODULE m_string
   PUBLIC :: replace      ! Replace a string by another
   PUBLIC :: str_template ! Replace variables in a template
   PUBLIC :: num2str      ! convert a number to string
+!  PUBLIC :: str2num      ! convert a number to string
   PUBLIC :: GetTokens    ! Get tokens by line
   PUBLIC :: split
   PUBLIC :: find         ! find substring
@@ -29,6 +30,10 @@ MODULE m_string
      module procedure replace_
   end interface
 
+!  interface str2num; module procedure &
+!        str2int, &
+!        str2float
+!  end interface
   interface num2str ; module procedure &
      int2str,   & ! convert integer to string
      float2str    ! convert float to string
@@ -417,6 +422,22 @@ subroutine GetTokens_(line,tokens,ntokens,del)
     float2str = adjustl(str)
   end function float2str
 
+!  integer function str2int(str)
+!     character(len=*), intent(in) :: str
+!     integer :: num
+!
+!     read(str,*)str2int
+!
+!  end function
+!
+!  real function str2float(str)
+!     character(len=*), intent(in) :: str
+!
+!     read(str,*)str2float
+!
+!  end function
+
+
   integer  function indexarray(str,tok) result(count)
     implicit none
 
@@ -548,6 +569,7 @@ subroutine GetTokens_(line,tokens,ntokens,del)
   end subroutine split
   !EOC
   !-----------------------------------------------------------------------------!
+
 
 END MODULE m_string
 

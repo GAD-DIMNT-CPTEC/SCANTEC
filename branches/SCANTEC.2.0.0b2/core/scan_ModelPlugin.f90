@@ -310,25 +310,25 @@ Contains
                   Model%var%mod_   = trim(mvar(2:len_trim(mvar)))
                   Model%var%deriv_ = .true.
 
-                  ! get arguments
-                  allocate(Model%var%FirstFuncArg)
-                  Model%var%funcArg => Model%var%FirstFuncArg
-                  call i90_gtoken(mvar,iret)
-                  if(iret .ne. 0)then
-                     call i90_perr(trim(myname_),'@func (need at least one function arg)', iret)
-                     call i90_die(trim(myname_)) ! não precisa matar o processo, so pular p/ outra var
-                  endif
-                  Model%var%funcArg%str_ = i90_lcase(trim(mvar))
-                  do while(iret .eq. 0)
-
-                     call i90_Gtoken(mvar,iret)
-                     if (iret .eq. 0) then
-                        allocate(Model%var%funcArg%next)
-                        Model%var%funcArg => Model%var%funcArg%next
-                        Model%var%funcArg%str_ = i90_lcase(trim(mvar))
-                     endif
-                     
-                  enddo
+!                  ! get arguments
+!                  allocate(Model%var%FirstFuncArg)
+!                  Model%var%funcArg => Model%var%FirstFuncArg
+!                  call i90_gtoken(mvar,iret)
+!                  if(iret .ne. 0)then
+!                     call i90_perr(trim(myname_),'@func (need at least one function arg)', iret)
+!                     call i90_die(trim(myname_)) ! não precisa matar o processo, so pular p/ outra var
+!                  endif
+!                  Model%var%funcArg%str_ = i90_lcase(trim(mvar))
+!                  do while(iret .eq. 0)
+!
+!                     call i90_Gtoken(mvar,iret)
+!                     if (iret .eq. 0) then
+!                        allocate(Model%var%funcArg%next)
+!                        Model%var%funcArg => Model%var%funcArg%next
+!                        Model%var%funcArg%str_ = i90_lcase(trim(mvar))
+!                     endif
+!                     
+!                  enddo
 
                case default
                   Model%var%mod_   = i90_lcase(trim(mvar))

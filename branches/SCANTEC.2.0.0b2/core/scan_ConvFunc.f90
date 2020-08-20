@@ -144,12 +144,28 @@ Contains
      character(len=512), allocatable :: tokens(:)
      
      integer :: i, j, k
+     integer :: idx
+     character(len=10) :: funcName
 
      call split(strg, ntokens, tokens)
 
-     do i=1,ntokens
-        print*, i, trim(tokens(i))
-     enddo
+     if (ntokens .gt. 1)then
+        print*, 'need get some vars and convert'
+        ! first we have the main function
+        idx = index(tokens(1),'@')
+        if (idx .ne. 1)then
+           print*, 'error'
+           stop
+        endif
+        ! get function name
+        funcName = tokens(1)(2:len_trim(tokens(1)))
+        do i=2,ntokens
+           call self%parse(tokens(i))
+        enddo
+     else
+        print*,'just get a var ', trim(tokens(ntokens))
+        
+     endif
      
   end subroutine
 

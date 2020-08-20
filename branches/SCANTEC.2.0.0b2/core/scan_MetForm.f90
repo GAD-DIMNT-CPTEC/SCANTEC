@@ -24,15 +24,15 @@ Module scan_MetForm
 
   public :: svap  ! Pressão de Vapor Saturado
   public :: vapp  ! Pressão de Vapor
-  public :: hmxr1 ! utiliza umidade especifica: w(q)
-  public :: hmxr2 ! utiliza pressão de vapor e pressao atm: w(p,e)
-  public :: umes1 ! utiliza somente razao de mistura: q(w)
-  public :: umes2 ! utiliza td e pressao atm: q(p,td)
-  public :: umes3 ! utiliza pressao atm, temperatura do ar e umidade relativa: q(p,t,rh)
+  public :: hmxr1 ! Razão de Mistura, utiliza umidade especifica: w(q)
+  public :: hmxr2 ! Razão de Misture, utiliza pressão de vapor e pressao atm: w(p,e)
+  public :: umes1 ! Umidade Específica, utiliza somente razao de mistura: q(w)
+  public :: umes2 ! Umidade Específica, utiliza td e pressao atm: q(p,td)
+  public :: umes3 ! Umidade Específica, utiliza pressao atm, temperatura do ar e umidade relativa: q(p,t,rh)
   public :: umrl  ! Umidade Relativa
   public :: tpor  ! Temperatura do Ponto de Orvalho
-  public :: vtmp1 ! utiliza temperatura do ar e Umidade Especifica: tv(t,q)
-  public :: vtmp2 ! utiliza temperatura do ar, umidade relativa e pressao atm: tv(t,rh,p)
+  public :: vtmp1 ! Temperatura Virtual, utiliza temperatura do ar e Umidade Especifica: tv(t,q)
+  public :: vtmp2 ! Temperatura Virtual, utiliza temperatura do ar, umidade relativa e pressao atm: tv(t,rh,p)
 
   interface umes
      module procedure umes1,& ! utiliza somente razao de mistura: q(w)
@@ -91,7 +91,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  subroutine svap(temp, es)
+  pure function svap(temp) result(es)
     implicit none
     !
     ! !INPUT PARAMETERS:
@@ -123,7 +123,7 @@ Contains
 
     es = 611.2*exp((17.67 * temp)/(temp+243.5))
 
-    end subroutine svap
+    end function svap
   !EOC
   !
   !-----------------------------------------------------------------------------!
@@ -136,7 +136,7 @@ Contains
   !\\
   !\\
   ! !INTERFACE:
-  subroutine vapp (es, rh, ee)
+  pure function vapp (es, rh)result(ee)
     implicit none
 
     !
@@ -150,7 +150,7 @@ Contains
     ! !OUTPUT PARAMETERS:
     !
 
-    real, intent(out) :: ee ! pressao de vapor [Pa]
+    real              :: ee ! pressao de vapor [Pa]
 
     !
     !
@@ -170,7 +170,7 @@ Contains
 
     ee = ( rh / 100.0 ) * es
 
-  end subroutine vapp
+  end function vapp
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
@@ -184,7 +184,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  subroutine hmxr2 (pres, ee, w)
+  pure function hmxr2 (pres, ee)result(w)
     implicit none
 
     !
@@ -223,7 +223,7 @@ Contains
 
     w  = eps * ( ee / (pres - ee) ) 
 
-  end subroutine hmxr2
+    end function hmxr2
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
@@ -237,7 +237,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  subroutine hmxr1(q, w)
+  pure function hmxr1(q) result(w)
 
     Implicit None
     !
@@ -265,7 +265,7 @@ Contains
 
     w  = (q / ( 1 - q ) )
 
-  end subroutine hmxr1
+  end function hmxr1
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
@@ -279,7 +279,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  subroutine umes1(w, q)
+  pure function umes1(w) result(q)
     implicit none
 
     !
@@ -313,7 +313,7 @@ Contains
     q  = w / (1.0 + w)
     !     q1 = q1 * 1000.0
 
-  end subroutine umes1
+  end function umes1
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
@@ -327,7 +327,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  subroutine umes2(pres,td,q)
+  pure function umes2(pres,td) result(q)
     implicit none
 
     !
@@ -367,7 +367,7 @@ Contains
     q  = (0.622 * e)/(pres - (0.378 * e)); 
     !     q2 = q2 * 1000.0
 
-  end subroutine umes2
+  end function umes2
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
@@ -381,7 +381,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  subroutine umes3(pres,t,rh, q)
+  pure function umes3(pres,t,rh) result(q)
     implicit none
 
     !
@@ -429,7 +429,7 @@ Contains
     w   = eps * ( ee / (pres - ee) ) 
     q  = w / (1.0 + w)
 
-  end subroutine umes3
+  end function umes3
   !EOC
 
   !-----------------------------------------------------------------------------!
@@ -444,7 +444,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  subroutine tpor(t,rh, td)
+  pure function tpor(t,rh) result(td)
     implicit none
 
     !
@@ -484,7 +484,7 @@ Contains
     e = es * ( rh / 100.0 ); 
     Td = log(e/6.112)*243.5/(17.67-log(e/6.112)); 
 
-  end subroutine tpor
+  end function tpor
   !EOC
   !-----------------------------------------------------------------------------!
   !BOP
@@ -499,7 +499,7 @@ Contains
   ! !INTERFACE:
 
 
-  subroutine umrl(w,es,pres,rh)
+  pure function umrl(w,es,pres) result(rh)
     Implicit None
 
     !
@@ -538,7 +538,7 @@ Contains
     !  mask to rh > 100 %
     IF(rh .GT. 100.0) rh = 100.0
 
-  end subroutine umrl
+  end function umrl
   !EOC
   !
   !-----------------------------------------------------------------------------!
@@ -553,7 +553,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  subroutine vtmp2(t,q,tv )
+  pure function vtmp2(t,q) result(tv)
 
     Implicit None
 
@@ -585,7 +585,7 @@ Contains
 
     tv  = t * ( 1 + 0.61 * ( q / ( 1 - q ) ) ) 
 
-  end subroutine vtmp2
+  end function vtmp2
   !EOC
   !
   !-----------------------------------------------------------------------------!
@@ -601,7 +601,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  subroutine vtmp1(t,rh,pres,tv )
+  pure function vtmp1(t,rh,pres) result(tv)
 
     Implicit None
 
@@ -644,7 +644,7 @@ Contains
     Tv  = t * (1 + w / eps) / (1 + w)
 
 
-  end subroutine vtmp1
+  end function vtmp1
   !EOC
   !
   !-----------------------------------------------------------------------------!
