@@ -472,11 +472,11 @@ CONTAINS
           endif
 
        else
-          Modelvar%funcArg => Modelvar%FirstfuncArg
-          do while(associated(Modelvar%funcArg))
-!             print*,trim(ModelVar%Mod_),' ',trim(modelVar%funcArg%str_)
-             modelVar%funcArg => modelVar%funcArg%next
-          enddo
+!          Modelvar%funcArg => Modelvar%FirstfuncArg
+!          do while(associated(Modelvar%funcArg))
+!!             print*,trim(ModelVar%Mod_),' ',trim(modelVar%funcArg%str_)
+!             modelVar%funcArg => modelVar%funcArg%next
+!          enddo
 !          print*,'----'
           iField = undef
        endif

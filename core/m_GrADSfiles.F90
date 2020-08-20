@@ -35,7 +35,7 @@ module m_GrADSfiles
   ! Type of data
   !
 
-  integer, parameter :: ntypes = 4 ! # of supported types
+  integer, parameter :: ntypes = 2!4 ! # of supported types
 
   integer, parameter :: tbin = 1 ! binary ieee
   integer, parameter :: tgrib = 2 ! grid
@@ -252,8 +252,8 @@ contains
 
     tname(tbin) = 'bin'
     tname(tgrib) = 'grib'
-    tname(tnetcdf) = 'netcdf'
-    tname(tstation) = 'station'
+!    tname(tnetcdf) = 'netcdf'
+!    tname(tstation) = 'station'
 
     !
     ! Setting default options
