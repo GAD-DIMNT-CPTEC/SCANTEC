@@ -22,6 +22,13 @@ $(srcdir)/m_string.o m_string.o: \
 $(srcdir)/m_time.o m_time.o: \
 	$(srcdir)/m_time.f90
 
+$(srcdir)/varType.o varType.o: \
+	$(srcdir)/varType.f90
+
+$(srcdir)/MathExpress.o MathExpress.o: \
+	$(srcdir)/MathExpress.f90 \
+	$(srcdir)/varType.o
+
 $(srcdir)/scan_MetForm.o scan_MetForm.o: \
 	$(srcdir)/scan_MetForm.f90
 
@@ -49,6 +56,7 @@ $(srcdir)/scan_coreMOD.o scan_coreMOD.o: \
 	$(srcdir)/scan_coreMOD.f90 \
 	$(srcdir)/m_ioutil.o \
 	$(srcdir)/m_string.o \
+	$(srcdir)/scan_MathPlugin.o \
 	$(srcdir)/scan_bstatistic.o \
 	$(srcdir)/scan_dataMOD.o \
 	$(srcdir)/scan_ModelPlugin.o \
@@ -64,6 +72,8 @@ $(srcdir)/scan_dataMOD.o scan_dataMOD.o: \
 	$(srcdir)/m_ioutil.o \
 	$(srcdir)/m_string.o \
 	$(srcdir)/m_constants.o \
+	$(srcdir)/MathExpress.o \
+	$(srcdir)/varType.o \
 	$(srcdir)/scan_UtilsMOD.o \
 	$(srcdir)/scantec_module.o
 
@@ -86,5 +96,13 @@ $(srcdir)/scandrv.o scandrv.o: \
 $(srcdir)/scantec_module.o scantec_module.o: \
 	$(srcdir)/scantec_module.f90 \
 	$(srcdir)/m_ioutil.o \
+	$(srcdir)/MathExpress.o \
 	$(srcdir)/m_constants.o
+
+$(srcdir)/scan_MathPlugin.o scan_MathPlugin.o: \
+	$(srcdir)/scan_MathPlugin.f90 \
+	$(srcdir)/MathExpress.o \
+	$(srcdir)/scan_MetForm.o \
+	$(srcdir)/scantec_module.o
+
 

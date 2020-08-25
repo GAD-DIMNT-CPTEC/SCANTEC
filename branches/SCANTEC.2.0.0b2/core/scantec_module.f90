@@ -1,6 +1,7 @@
 MODULE scantec_module
   use m_constants
   use m_ioutil, only: stdout
+  use MathExpress, only: MathOper
   !   use scan_ConvFunc
 
   implicit none
@@ -71,6 +72,10 @@ MODULE scantec_module
      integer, pointer         :: nexp => null()
      type(ModelType), pointer :: CurrModel  => null()
      type(ModelType), pointer :: FirstModel => null()
+
+     ! for mathematical evaluation
+
+     class(MathOper), pointer :: MathEval => null()
 
      !
      ! routines

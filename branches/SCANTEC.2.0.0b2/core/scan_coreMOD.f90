@@ -52,6 +52,7 @@ MODULE scan_coreMOD
   USE scan_bstatistic                     !
   USE m_ioutil
   USE m_constants, only: r8
+  USE scan_MathPlugin
 !  use omp_lib
 
   IMPLICIT NONE
@@ -150,6 +151,10 @@ CONTAINS
     Allocate(scantec%ftime_count(scantec%ntime_forecast))
     scantec%ftime_count    = 0
     scantec%ftime_count(1) = 1
+
+    ! 4. Initialize Mathematical Expressions
+
+    call scan_mathPlugin_Init()
 
 #ifdef DEBUG    
    write(6,'(A,F9.3)')'history increment    :',scantec%hist_incr

@@ -9,6 +9,8 @@ OBJS = \
 	$(srcdir)/m_ioutil.o \
 	$(srcdir)/m_string.o \
 	$(srcdir)/m_time.o \
+	$(srcdir)/varType.o \
+	$(srcdir)/MathExpress.o \
 	$(srcdir)/scan_MetForm.o \
 	$(srcdir)/scan_ModelPlugin.o \
 	$(srcdir)/scan_UtilsMOD.o \
@@ -17,4 +19,5 @@ OBJS = \
 	$(srcdir)/scan_dataMOD.o \
 	$(srcdir)/scan_outputMOD.o \
 	$(srcdir)/scan_readModel.o \
+	$(srcdir)/scan_MathPlugin.o \
 	$(srcdir)/scandrv.o 
