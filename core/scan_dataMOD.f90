@@ -26,6 +26,8 @@ MODULE scan_dataMOD
   USE m_ioutil
   USE m_GrADSfiles
   USE BilinInterp, only: bilinear_interp_init, bilinear_interp
+  USE varType
+  USE MathExpress, only: tokenize
   IMPLICIT NONE
   PRIVATE
 
@@ -369,7 +371,7 @@ CONTAINS
     character(len=*),parameter :: myname_=myname//' :: loadData( )'
 
     ! Integer variables
-    integer :: i
+    integer :: i, j, k
     integer :: idx
     integer :: xdef
     integer :: ydef
@@ -396,6 +398,12 @@ CONTAINS
     type(GrADSfiles) :: gs
     type(ModelType), pointer :: Model => null()
     type(EvalVar),   pointer :: ModelVar => null()
+
+    ! to be used by functions
+    class(variable), allocatable :: vars(:)
+    integer :: ntokens, nvars
+    character(len=50), allocatable :: tokens(:)
+    character(len=32), allocatable :: outExp(:)
 !
 !---------------------------------------------------------------------!
 !
@@ -444,7 +452,12 @@ CONTAINS
     do i=1,scantec%nvar
        ModelVar => Model%getModelVar(trim(scantec%varName(i)))
 
-       if (.not.ModelVar%deriv_)then
+       call tokenize(ModelVar%Mod_, ntokens, tokens)
+
+       if (ntokens .eq. 1)then
+          ! No mathematical expression, just need get
+          ! a model field
+          !
           !-------------------------------------------------------!
           ! Get model var info
 
@@ -471,14 +484,60 @@ CONTAINS
              call i90_die(trim(myname_))
           endif
 
+       else if (ntokens .gt. 1)then
+          ! Need evaluate a mathematical
+          ! expression to get a model field
+          !
+
+          ! count how many variables 
+          ! there are in ModelExpression
+          !
+          nvars = 0
+          do k=1,ntokens
+             idx = index(trim(tokens(k)),':')
+             if (idx .gt. 0) nvars = nvars + 1
+          enddo
+          allocate(vars(nvars))
+          j=0
+          do k=1,ntokens
+             idx = index(trim(tokens(k)),':')
+             if (idx .gt. 0)then
+                VarName  = tokens(k)(1:idx-1)
+                VarLevel = tokens(k)(idx+1:len_trim(tokens(k)))
+                read(VarLevel,*) Level
+    
+                !
+                !-------------------------------------------------------!
+                ! Get klevel - index of level
+                
+                zlevs => Model%getDimVec('zdim:')
+                idx  = minloc(zlevs-Level,mask=zlevs-Level.ge.0, dim=1)
+                !
+                !-------------------------------------------------------!
+                ! get field
+                allocate(iField(xdef*ydef))
+                call GrADS_input(gs, trim(VarName),1,idx,iField, iret)
+    
+                if(iret.ne.0)then
+                   call i90_perr(trim(myname_),'GrADS_input('//trim(VarName)//')',iret)
+                   call i90_die(trim(myname_))
+                endif
+    
+                j=j+1
+                call vars(j)%put(trim(tokens(k)),iField)
+                deallocate(iField)
+    
+             endif
+          enddo
+    
+          call scantec%MathEval%infix2postfix(ModelVar%Mod_,outExp)
+
+          allocate(iField(xdef*ydef))
+          call scantec%MathEval%evalPostFix(outExp, iField, vars)
+          
        else
-!          Modelvar%funcArg => Modelvar%FirstfuncArg
-!          do while(associated(Modelvar%funcArg))
-!!             print*,trim(ModelVar%Mod_),' ',trim(modelVar%funcArg%str_)
-!             modelVar%funcArg => modelVar%funcArg%next
-!          enddo
-!          print*,'----'
-          iField = undef
+          call i90_perr(trim(myname_),'wrong '//trim(ModelName)//'.model',iret)
+          call i90_die(trim(myname_))
        endif
 
        iBitmap = .true.
@@ -505,22 +564,5 @@ CONTAINS
     deallocate(iBitMap)
   END SUBROUTINE loadData
 
-!  subroutine getField(gs, FieldTag)
-!     type(GrADSfiles), intent(in) :: gs
-!     character(len=*), intent(in) :: FieldTag
-!
-!     
-!     ! parse fieldTag
-!     ! looking for a field name
-!     idx = index(FieldTag,':')
-!     Fname = FieldTag(1:idx-1)
-!     ! looking for aritmetic in field
-!
-!     ipls = index(FieldTag,'*')
-!     idiv = index(FieldTag,'/')
-!     iadd = index(FieldTag,'+')
-!     isub = index(FieldTag,'-')
-!
-!  end subroutine
 
 END MODULE scan_dataMOD

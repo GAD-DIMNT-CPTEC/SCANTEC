@@ -435,7 +435,7 @@ Contains
   !-----------------------------------------------------------------------------!
   !BOP
   !
-  ! !IROUTINE:  dptp
+  ! !IROUTINE:  tpor
   !
   ! !DESCRIPTION: Esta funcao calcula a Temperatura do Ponto de Orvalho [C] 
   !               
