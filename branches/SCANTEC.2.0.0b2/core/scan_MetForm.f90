@@ -499,16 +499,16 @@ Contains
   ! !INTERFACE:
 
 
-  pure function umrl(w,es,pres) result(rh)
+  pure function umrl(pres,w,es) result(rh)
     Implicit None
 
     !
     ! !INPUT PARAMETERS:
     !
 
+    real, intent(in) :: pres ! Presão Atmosférica [Pa]
     real, intent(in) :: w    ! Razão de Mistura [-]
     real, intent(in) :: es   ! Presão de Vapor Saturada [Pa]
-    real, intent(in) :: pres ! Presão Atmosférica [Pa]
 
     !
     ! !OUTPUT PARAMETERS:
@@ -601,7 +601,7 @@ Contains
   !\\
   ! !INTERFACE:
 
-  pure function vtmp1(t,rh,pres) result(tv)
+  pure function vtmp1(pres,t,rh) result(tv)
 
     Implicit None
 
@@ -609,9 +609,9 @@ Contains
     ! !INPUT PARAMETERS:
     !
 
+    real, intent(in) :: pres ! Pressão Atmosferica [Pa]
     real, intent(in) :: t    ! temperatura do ar [C]
     real, intent(in) :: rh   ! Umidade Relativa [%]
-    real, intent(in) :: pres ! Pressão Atmosferica [Pa]
 
     !
     ! !OUTPUT PARAMETERS:
