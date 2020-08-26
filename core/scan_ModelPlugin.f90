@@ -181,8 +181,8 @@ Contains
       character(len=TinyStr)       :: ftype, dtype
       character(len = normalStr)   :: fileModelConf
       character(len = NormalStr)   :: msg
-      character(len = tinyStr)     :: svar
-      character(len = tinyStr)     :: mvar
+      character(len = shortStr)    :: svar
+      character(len = shortStr)    :: mvar
       logical :: found
 
       type(GridDef), pointer :: DimTmp => null()
@@ -300,16 +300,31 @@ Contains
 
          ! get variable name and level from model
          call i90_gtoken(mvar,iret)
+         if (iret .eq. 0)then
+            Model%var%mod_ = i90_lcase(trim(mvar))
+         else
+            call i90_perr(trim(myname_),'some issue with model var name ...', iret)
+            call i90_perr(trim(myname_),'look inside '//trim(Model%Name_)//'.model')
+            call i90_die(trim(myname))
+         endif
+         ! some times user made a mathexpress with blank space
+         ! so, get it and merge
+         do while (iret .eq. 0)
+            call i90_gtoken(mvar,iret)
+            if (iret .eq. 0)then
+               Model%var%mod_ = trim(Model%var%mod_)//trim(i90_lcase(mvar))
+            endif
+         enddo
 
-         if(iret.eq.0)then
-            select case(mvar(1:1))
-               ! if a variable model need be pre-processed to
-               ! obtain a scantec var
-               case ('@')
-                  ! Get function name and arguments
-                  Model%var%mod_   = trim(mvar(2:len_trim(mvar)))
-                  Model%var%deriv_ = .true.
-
+!         if(iret.eq.0)then
+!            select case(mvar(1:1))
+!               ! if a variable model need be pre-processed to
+!               ! obtain a scantec var
+!               case ('@')
+!                  ! Get function name and arguments
+!                  Model%var%mod_   = trim(mvar(2:len_trim(mvar)))
+!                  Model%var%deriv_ = .true.
+!
 !                  ! get arguments
 !                  allocate(Model%var%FirstFuncArg)
 !                  Model%var%funcArg => Model%var%FirstFuncArg
@@ -329,16 +344,16 @@ Contains
 !                     endif
 !                     
 !                  enddo
-
-               case default
-                  Model%var%mod_   = i90_lcase(trim(mvar))
-                  Model%var%deriv_ = .false.
-            end select
-         else
-           call i90_perr(trim(myname_),'some issue with model var name ...', iret)
-           call i90_perr(trim(myname_),'look inside '//trim(Model%Name_)//'.model')
-           call i90_die(trim(myname))
-         endif
+!
+!               case default
+!                  Model%var%mod_   = i90_lcase(trim(mvar))
+!                  Model%var%deriv_ = .false.
+!            end select
+!         else
+!           call i90_perr(trim(myname_),'some issue with model var name ...', iret)
+!           call i90_perr(trim(myname_),'look inside '//trim(Model%Name_)//'.model')
+!           call i90_die(trim(myname))
+!         endif
          ! get next line
          !    - iret =  0, next line ok
          !    - iret = -1, end of buffer (some problem with table)
@@ -361,10 +376,10 @@ Contains
 #ifdef DEBUG
       write(stdout,'(A)')''
       write(stdout,'(A43)')char(27)//'[33;1mList of Model Variables'//char(27)//'[m'
-      write(stdout,'(A16,1x,A16)')'SCANTEC','Model'
+      write(stdout,'(A16,1x,A64)')'SCANTEC','Model'
       Model%var => Model%FirstVar
       do while(associated(Model%var))
-         write(stdout,'(A16,1x,A16)')trim(Model%var%Sys_),trim(Model%var%Mod_)
+         write(stdout,'(A16,1x,A64)')trim(Model%var%Sys_),trim(Model%var%Mod_)
          Model%var => Model%var%next
       enddo
       write(stdout,'(A)')''
@@ -584,10 +599,10 @@ Contains
     type(GridDef), intent(in) :: GDef
 
     if (trim(i90_lcase(GDef%mapping)).eq.'linear')then
-       write(stdout,'(1x,A,1x,I3,1x,A,1x,2F12.5)') &
+       write(stdout,'(1x,A,1x,I6,1x,A,1x,2F12.5)') &
             trim(GDef%DName), GDef%num, trim(GDef%mapping), GDef%start_coord, GDef%incr_coord
     else
-       write(stdout,'(1x,A,1x,I3,1x,A)') trim(GDef%DName), GDef%num, trim(GDef%mapping)
+       write(stdout,'(1x,A,1x,I6,1x,A)') trim(GDef%DName), GDef%num, trim(GDef%mapping)
        call PLevels_(GDef%coord)
     endif
 

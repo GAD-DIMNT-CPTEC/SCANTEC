@@ -735,7 +735,11 @@ Contains
     Saa = sum( A*A )
     Sbb = sum( B*B )
     
-    Rho =  Sab/sqrt(Saa*Sbb)
+    if (saa.eq.0.0 .or. sbb .eq. 0.0)then
+       Rho = scantec%udef
+    else
+       Rho =  Sab/sqrt(Saa*Sbb)
+    endif
 
 
     return

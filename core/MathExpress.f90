@@ -21,6 +21,7 @@ module MathExpress
 !  public :: infix2postfix ! convert from infix notation to postfix notation
 !  public :: evalPostfix   ! evaluate a equation in postfix notation
   public :: tokenize
+  public :: getType
 !  public :: indx
   public :: MathOper
   public :: tfunc1
@@ -285,18 +286,12 @@ contains
           output(j) = trim(token(i))
        else if (isOper .and. trim(token(i)).eq.',')then
           do n = top, 1, -1
-             if ( trim(stack(n)) .eq. '(')then
-                stack(n) = BLK
-                top = top - 1
-                exit
-             endif
+             if ( trim(stack(n)) .eq. '(') exit
              j = j + 1
              output(j) = trim(stack(n))
              stack(n)  = BLK
              top = top - 1
           enddo
-
-
           ! If the token is an opening parenthesis, push it to the stack.
           ! This marks the beginning of an expression that should be 
           ! evaluated separately.
@@ -560,7 +555,7 @@ contains
   !
   ! !INTERFACE:
   !
-  subroutine evalPostfixA_(self, MathExpress, val, vars)
+  subroutine evalPostfixA_(self, MathExpress, val, vars, undef)
 
     !
     ! !INPUT PARAMETER:
@@ -568,6 +563,7 @@ contains
     class(MathOper),           intent(inout) :: self
     character(len=*),          intent(in   ) :: MathExpress(:)
     class(variable), optional, intent(in   ) :: vars(:)
+    real,            optional, intent(in   ) :: undef
     ! 
     ! !OUTPUT PARAMETERS:
     !
@@ -652,9 +648,20 @@ contains
                 call stack(top)%get(opd1)
 
                 allocate(result_(isize))
-                do j=1,isize
-                   result_(j) = oper%func(opd1(j))
-                enddo
+
+                if (present(undef))then
+                   do j=1,isize
+                      if (opd1(j).eq.undef)then
+                         result_(j) = undef
+                      else
+                         result_(j) = oper%func(opd1(j))
+                      endif
+                   enddo
+                else
+                   do j=1,isize
+                      result_(j) = oper%func(opd1(j))
+                   enddo
+                endif
 
                 call stack(top)%put('func', result_)
 
@@ -662,8 +669,6 @@ contains
                 deallocate(result_)
 
              class is (tfunc2)
-!                call verify(stack(top))
-!                call verify(stack(top-1))
                 
                 allocate(opd2(isize))
                 call stack(top)%get(opd2)
@@ -673,9 +678,20 @@ contains
                 call stack(top)%get(opd1)
 
                 allocate(result_(isize))
-                do j=1,isize
-                   result_(j) = oper%func(opd1(j), opd2(j))
-                enddo
+
+                if (present(undef))then
+                   do j=1,isize
+                      if (opd1(j).eq.undef.or.opd2(j).eq.undef)then
+                         result_(j) = undef
+                      else
+                         result_(j) = oper%func(opd1(j), opd2(j))
+                      endif
+                   enddo
+                else
+                   do j=1,isize
+                      result_(j) = oper%func(opd1(j), opd2(j))
+                   enddo
+                endif
                 call stack(top)%put('func', result_)
 
                 deallocate(opd2)
@@ -696,9 +712,19 @@ contains
                 call stack(top)%get(opd1)
 
                 allocate(result_(isize))
-                do j=1,isize
-                   result_(j) = oper%func(opd1(j), opd2(j), opd3(j))
-                enddo
+                if (present(undef))then
+                   do j=1,isize
+                      if (opd1(j).eq.undef.or.opd2(j).eq.undef.or.opd3(j).eq.undef)then
+                         result_(j) = undef
+                      else
+                         result_(j) = oper%func(opd1(j), opd2(j), opd3(j))
+                      endif
+                   enddo
+                else
+                   do j=1,isize
+                      result_(j) = oper%func(opd1(j), opd2(j), opd3(j))
+                   enddo
+                endif
                 call stack(top)%put('func', result_)
 
                 deallocate(opd3)
@@ -884,7 +910,7 @@ contains
    character(len=3) :: stype
 
    type token
-      character(len=10) :: tok_
+      character(len=50) :: tok_
       character(len=3)  :: type_
       type(token), pointer :: next =>  null()
    end type
@@ -930,14 +956,16 @@ contains
 !
 !           cycle
 !       endif
-!       print*, str(i:i), stype
+!       print*, str(i:i),' ',stype,' ', tkns%type_
        if (stype.eq.tkns%type_ .and. stype .ne.'sym')then
           tkns%tok_  = trim(tkns%tok_)//str(i:i)
-       else if (stype.eq.'num' .and. tkns%type_ .eq. 'cha')then
+       else if (tkns%type_ .eq. 'num' .and. str(i:i).eq.'.')then
           tkns%tok_  = trim(tkns%tok_)//str(i:i)
-       else if (tkns%type_.eq.'cha' .and. str(i:i).eq.':')then
+       else if (tkns%type_ .eq. 'cha' .and. stype .eq.'num')then
           tkns%tok_  = trim(tkns%tok_)//str(i:i)
-       else if (tkns%type_.eq.'num' .and. str(i:i).eq.'.')then
+       else if (tkns%type_ .eq. 'cha' .and. str(i:i).eq.':')then
+          tkns%tok_  = trim(tkns%tok_)//str(i:i)
+       else if (tkns%type_ .eq. 'cha' .and. str(i:i).eq.'_')then
           tkns%tok_  = trim(tkns%tok_)//str(i:i)
        else if (tkns%type_.eq.'sym' .and. tkns%tok_.ne.')' .and. str(i:i).eq.'-')then
           
@@ -960,6 +988,7 @@ contains
           tkns%next => newToken
           tkns => tkns%next
        endif
+
    enddo
 
    !copy tokens to output array and

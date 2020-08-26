@@ -219,8 +219,13 @@ module varType
          this%Name_ = trim(Name_)
          if(present(value_))then
             isize_ = size(value_)
-            avg_   = sum(value_)/iSize_
-            std_   = sum(Value_-avg_)/(iSize_-1)
+            if (iSize_ .gt. 1)then
+               avg_   = sum(value_)/iSize_
+               std_   = sum(Value_-avg_)/(iSize_-1)
+            else
+               avg_ = value_(1)
+               std_ = 0.0
+            endif
             this%len_ = iSize_
             this%avg_ = avg_
             this%std_ = std_

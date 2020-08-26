@@ -404,6 +404,7 @@ CONTAINS
     integer :: ntokens, nvars
     character(len=50), allocatable :: tokens(:)
     character(len=32), allocatable :: outExp(:)
+    character(len=32) :: fmtt
 !
 !---------------------------------------------------------------------!
 !
@@ -446,14 +447,26 @@ CONTAINS
     endif
 
     ! Get field and interpolate for scantec grid
-    allocate(iField(xdef*ydef))
-    allocate(iBitMap(xdef*ydef))
 
     do i=1,scantec%nvar
        ModelVar => Model%getModelVar(trim(scantec%varName(i)))
+       ! When model doesn't have a variable
+       ! ModelVar will return null() and 
+       ! Field will be set to undef
+       
+       if (.not.associated(ModelVar))then
+          Model%Field(:,i)  = scantec%udef
+          Model%bitmap(:,i) = .false.
+          write(stdout,*)
+          write(stdout, '(A)')char(27)//'[31;1mWARNING:'//char(27)//'[m'
+          write(stdout,'(1x,3(1x,A))')'Variable',trim(scantec%varName(i)),'not set at model config file'
+          write(stdout,*)
+          write(stdout,'(2x,A,1x,2A)')'See ',trim(Model%Name_),'.model'
+          write(stdout,*)
+          cycle
+       endif
 
        call tokenize(ModelVar%Mod_, ntokens, tokens)
-
        if (ntokens .eq. 1)then
           ! No mathematical expression, just need get
           ! a model field
@@ -477,6 +490,7 @@ CONTAINS
           !-------------------------------------------------------!
           ! get field
 
+          allocate(iField(xdef*ydef))
           call GrADS_input(gs, trim(VarName),1,idx,iField, iret)
 
           if(iret.ne.0)then
@@ -529,18 +543,24 @@ CONTAINS
     
              endif
           enddo
-    
+!          print*, trim(ModelVar%Mod_)
           call scantec%MathEval%infix2postfix(ModelVar%Mod_,outExp)
+!          write(fmtt,'(A1,I2,A7)')'(',size(outExp),'(A,1x))'
+!          write(*,fmtt)(trim(outExp(k)),k=1,size(outExp))
 
           allocate(iField(xdef*ydef))
-          call scantec%MathEval%evalPostFix(outExp, iField, vars)
+          call scantec%MathEval%evalPostFix(outExp, iField, vars, undef)
+
+          deallocate(vars)
           
        else
           call i90_perr(trim(myname_),'wrong '//trim(ModelName)//'.model',iret)
           call i90_die(trim(myname_))
        endif
 
+       allocate(iBitMap(xdef*ydef))
        iBitmap = .true.
+       
        where(iField.eq.undef) iBitMap = .false.
        Model%bitMap(:,i) = .false.
        
@@ -549,19 +569,22 @@ CONTAINS
                              Model%n11, Model%n12, Model%n21, Model%n22, &
                              Model%bitmap(:,i), Model%Field(:,i), &
                              iret )
-
-         where(.not.Model%bitmap(:,i))Model%Field(:,i) = scantec%udef
+      
+       deallocate(iField)
+       deallocate(iBitMap)
+       
+       where(.not.Model%bitmap(:,i))Model%Field(:,i) = scantec%udef
 #ifdef DEBUG                 
-        write(*,'(I3,1x,2F16.5)')i,minval(Model%Field(:,i),mask=Model%Field(:,i).ne.scantec%udef),&
+       write(*,'(I3,1x,2F16.5)')i,minval(Model%Field(:,i),mask=Model%Field(:,i).ne.scantec%udef),&
                                maxval(Model%Field(:,i),mask=Model%Field(:,i).ne.scantec%udef)
 #endif
-        nullify(ModelVar)
+       nullify(ModelVar)
 
     enddo
 
     call GrADS_close(gs, iret) 
-    deallocate(iField)
-    deallocate(iBitMap)
+!    deallocate(iField)
+!    deallocate(iBitMap)
   END SUBROUTINE loadData
 
 

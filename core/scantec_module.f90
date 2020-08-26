@@ -136,14 +136,14 @@ MODULE scantec_module
   endtype GridDef
 
   type EvalVar
-     character(len=tinyStr) :: Sys_ ! Scantec variable name
-     character(len=tinyStr) :: mod_ ! Model variable name
+     character(len=shortStr) :: Sys_ ! Scantec variable name
+     character(len=shortStr) :: mod_ ! Model variable name
 
      ! Information about variable if it need be 
      ! derivate from others variables
-     logical          :: deriv_ ! .true. need use function to obtain model variavle
-     type(strArray), pointer :: funcArg => null()
-     type(strArray), pointer :: FirstFuncArg => null()
+!     logical          :: deriv_ ! .true. need use function to obtain model variavle
+!     type(strArray), pointer :: funcArg => null()
+!     type(strArray), pointer :: FirstFuncArg => null()
 
      ! Field info
      real(kind = r4), pointer :: Field(:) => null()
@@ -282,6 +282,9 @@ contains
        if(trim(VarName).eq.trim(VarInfo%Sys_)) return
        VarInfo => VarInfo%next
     enddo
+
+    write(stdout,'(A,1x,A)')'unknow variable Name',trim(VarName)
+
   end function getModelVar_
 
 

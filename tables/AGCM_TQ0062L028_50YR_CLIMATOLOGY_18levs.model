@@ -23,10 +23,16 @@ zdim:    18 levels 1000 925 850 775 700 500 400 300 250 200 150 100 70 50 30 20 
 # nas variáveis pré-existentes do modelo. Para o uso das funções veja o docu-
 # mento funcoes.readme
 vars:
+vtmp:925 vtmp1(92500,atmt:925,rhmt:925)
+vtmp:850 vtmp1(85000,atmt:850,rhmt:850)
+vtmp:500 vtmp1(50000,atmt:500,rhmt:500)
 temp:850 atmt:850
 temp:500 atmt:500
 temp:250 atmt:250
 psnm:000 spmt:1000
+umes:925 umes3(92500.0,atmt:925,rhmt:925)
+umes:850 umes3(85000.0,atmt:850,rhmt:850)
+umes:500 umes3(50000.0,atmt:500,rhmt:500)
 agpl:925 pwat:1000
 zgeo:850 ghmt:850
 zgeo:500 ghmt:500

@@ -18,6 +18,5 @@ OBJS = \
 	$(srcdir)/scan_coreMOD.o \
 	$(srcdir)/scan_dataMOD.o \
 	$(srcdir)/scan_outputMOD.o \
-	$(srcdir)/scan_readModel.o \
 	$(srcdir)/scan_MathPlugin.o \
 	$(srcdir)/scandrv.o 
