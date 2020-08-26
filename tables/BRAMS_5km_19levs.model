@@ -12,17 +12,17 @@ zdim:  19 levels     1000.0     925.0     900.0     850.0     800.0     750.0   
 # nas variáveis pré-existentes do modelo. Para o uso das funções veja o docu-
 # mento funcoes.readme
 vars:
-vtmp:925 @func vtmp tempc:925 rh:925
-vtmp:850 @func vtmp tempc:850 rh:850
-vtmp:500 @func vtmp tempc:500 rh:500
+vtmp:925 vtmp2((tempc:925+275.16),rh:925)
+vtmp:850 vtmp2((tempc:850+275.16),rh:850)
+vtmp:850 vtmp2((tempc:500+275.16),rh:500)
 temp:850 tempc:850
 temp:500 tempc:500
 temp:250 tempc:250
 psnm:000 sea_press:1000
-umes:925 @func umes tempc:925 rh:925
-umes:850 @func umes tempc:850 rh:850
-umes:500 @func umes tempc:500 rh:500
-agpl:925 @func const pwt 10 ok
+umes:925 umes3(92500.0,tempc:925,rh:925)
+umes:850 umes3(85000.0,tempc:850,rh:850)
+umes:500 umes3(50000.0,tempc:500,rh:500)
+agpl:925 pwt:1000*10.0
 zgeo:850 geo:850
 zgeo:500 geo:500
 zgeo:250 geo:500

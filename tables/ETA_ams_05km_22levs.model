@@ -12,9 +12,9 @@ zdim:   22 levels 1020 1000 950 925 900 850 800 750 700 650 600
 # nas variáveis pré-existentes do modelo. Para o uso das funções veja o docu-
 # mento funcoes.readme
 vars:
-vtmp:925 @func vtmp temp:925 umes:925
-vtmp:850 @func vtmp temp:850 umes:850
-vtmp:500 @func vtmp temp:500 umes:500
+vtmp:925 vtmp2(temp:925,umes:925)
+vtmp:850 vtmp2(temp:850,umes:850)
+vtmp:500 vtmp2(temp:500,umes:500)
 temp:850 temp:850 
 temp:500 temp:500 
 temp:250 temp:250 
