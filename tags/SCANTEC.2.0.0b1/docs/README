@@ -57,21 +57,21 @@ Em uma máquina qualquer que se deseja ter o SCANTEC funcionando, é necessário
 
 Abaixe e instale o pacote seguindo os passos abaixo:
 
-1º Baixar a versão beta de distribuição do SCANTEC disponível em 
+1º Abaixe a versão beta de distribuição do SCANTEC disponível em 
 https://projetos.cptec.inpe.br/attachments/download/8937/SCANTEC.2.0.0b1.tar, cujo o repositório
-fonte é: https://svn.cptec.inpe.br/scamtec/tags/SCANTEC.2.0.0b1 em sua maquina local e envie para
+fonte é: https://svn.cptec.inpe.br/scamtec/tags/SCANTEC.2.0.0b1 em sua máquina local e envie para
 a máquina itapemirim.
 $ scp SCANTEC.2.0.0b1.tar usuario@itapemirim.cptec.inpe.br:/home/usuario
 
-2º Faça login na maquina itapemirim
+2º Faça login na máquina itapemirim
 $ ssh usuario@itapemirim.cptec.inpe.br -XC
 
-3º Entrar em um diretório de preferência do usuário para realizar a instalação do SCANTEC 
-(/home/usuario por exemplo) e destarjei o pacote nele copiado:
+3º Entre em um diretório de preferência do usuário para realizar a instalação do SCANTEC 
+(/home/usuario por exemplo) e descompacte o pacote nele copiado:
 $ cd $HOME 
 $ tar -xvf SCANTEC.2.0.0b1.tar
 
-4º Entrar no diretório do SCANTEC.2.0.0b1:
+4º Entre no diretório do SCANTEC.2.0.0b1:
 $ cd SCANTEC.2.0.0b1
 
 5º Para compilar o SCANTEC execute o script install seguindo as instruções abaixo:
@@ -80,8 +80,8 @@ $ ./install
 (a) Escolha a opção 2 para o compilador Gfortran local;
 (b) Acompanhe a compilação com as informações no terminal.
 (c) Verifique o sucesso do processo verificando a existência do arquivo SCANTEC.2.0.0b1/bin/scantec.x
-(d) Caso algum problema seja detectado e/ou precisar compilar novamente, use a opção 1 para o clean 
-    da compilação anterior.
+(d) Caso algum problema seja detectado ou precise compilar novamente, use a opção 1 para limpar
+    a compilação anterior.
 
 ************************************************************************************************
 
@@ -89,19 +89,21 @@ h2. 2 Para execução do scantec siga os seguintes passos:
 
 ************************************************************************************************
 
-Utilizar o Scantec é muito simples, basta editar um arquivo de configuração chamado 
-SCANTEC.2.0.0b1/bin/scantec.conf e modificar as informações para adaptar para os dados do usuário.
-Há um conjunto de palavras chaves que antecedem a informação requerida pelo sistema.
-O leitor procura essas palavras chaves e armazena nas devidas variáveis a informação constante 
+Para utilizar o Scantec é preciso editar um arquivo de configuração chamado 
+SCANTEC.2.0.0b1/bin/scantec.conf e modificar as informações para adaptar para os dados do usuário
+salvando a versão modificada no diretorio SCANTEC.2.0.0b1/bin. Entre nesse diretório bin, e 
+acione o executavel scantec.x, gerado na compilação. Para edição do arquivo de configuração 
+scantec.conf, há um conjunto de palavras chaves que antecedem a informação requerida pelo sistema.
+O usuário procura essas palavras chaves e armazena nas devidas variáveis a informação constante 
 após essas palavras chaves. Veja a lista de informações requeridas e as respectivas palavras chaves
 no final desse README, com uma breve descrição de cada uma dessas informações.
 
-1º Para utilizar o sistema basta entrar no diretório bin do scantec
+1º Para utilizar o sistema entre no diretório bin do scantec
 $ cd SCANTEC.2.0.0b1/bin/ 
 
-2º Editar o arquivo SCANTEC.2.0.0b1/core/scantec.conf apropriadamente modifique as informações 
-solicitadas sem modificar as palavras chaves e salve a versão modificada no diretorio SCANTEC.2.0.0b1/bin/.
-$ cp SCANTEC.2.0.0b1/core/scantec.conf scantec.conf
+2º Edite o arquivo SCANTEC.2.0.0b1/core/scantec.conf apropriadamente modifique as informações 
+solicitadas sem modificar as palavras chaves e salve a versão modificada no diretório SCANTEC.2.0.0b1/bin/.
+$ cp ../core/scantec.conf scantec.conf
 $ vi scantec.conf
 
 3º Rodar o executável do sistema com o comando 
@@ -128,7 +130,7 @@ Como os dados de entrada do testcase, de todas as 3 opções de modelos disponí
 instalação do scantec
 $ cd SCANTEC.2.0.0b1/
 
-2º Executar o script de execução do SCANTEC com um parâmetro na linha de comando:
+2º Execute o script de execução do SCANTEC com um parâmetro na linha de comando:
 $ ./run_scantec.sh [parâmetro]
 
 Sendo esse parâmetro as seguintes opções:
@@ -145,25 +147,25 @@ diretório SCANTEC.2.0.0b1/tables. Para mais informações sobre adicionar outro
 seção intitulada "Adicionando outras versões ou modelos no SCANTEC".
 
 A informações de saída dos testcases do SCANTEC são colocadas no diretório
-SCANTEC.2.0.0b1/dataout/testMODEL onde MODEL e BRAMS, ETA ou BAM, dependendo da opção escolhida acima.
+SCANTEC.2.0.0b1/dataout/TestMODEL onde MODEL e BRAMS, ETA ou BAM, dependendo da opção escolhida acima.
 Para visualizar os resultados gerados pelo scantec é recomendado que se utilize o SCANPLOT, ver mais 
 detalhes na seção "Visualização de resultados usando o SCANPLOT" desse README.
 
 *****************************************
 
-h3. 2.2 Executado o SCANTEC com dados do usuário
+h3. 2.2 Executando o SCANTEC com dados do usuário
 
 *****************************************
 
-Para rodar o runscantec.sh com as informações editadas pelo usuário use-o com a opção 4, mas antes é 
+Para rodar o run_scantec.sh com as informações editadas pelo usuário use-o com a opção 4, mas antes é 
 preciso editar o script e modificar apropriadamente as informações.
 
-1º Para utilizar o sistema (tanto no tupã como nas máquinas virtuais) basta entrar no diretório raiz 
+1º Para utilizar o sistema (tanto no tupã como nas máquinas virtuais) entre no diretório raiz 
 da instalação do scantec
 $ cd SCANTEC.2.0.0b1/
 
 2º Edite o scritp run_scantec.sh
-$ gedit run_scantec.sh
+$ vi run_scantec.sh
 
 modifique apropriadamente as variáveis entre as linhas 239 a 272 da seguinte lista:
 
@@ -238,7 +240,7 @@ h3. 3.1 Configuração do ambiente para utilização do SCANPLOT
 Para usar o SCANPLOT é preciso uma configuração inicial do ambiente o que é feito com os seguintes 
 passos:
 
-1º Faça login na maquina itapemirim
+1º Faça login na máquina itapemirim
 $ ssh usuario@itapemirim.cptec.inpe.br -XC
 
 2º Crie a seguinte estrutura de diretórios em /scripts/das/$USER
@@ -248,7 +250,7 @@ $ cd conda
 $ mkdir envs pkgs
 
 OBS.1: Depois disso verifique se no diretório /scripts/das/$USER/conda existem os diretórios envs e pkgs;
-OBS.2: Caso não exista o diretorio /scripts/das/$USER é preciso entrar em contato com o suporte para que seu user seja adicionado no grupo das e esse diretório seja criado;
+OBS.2: Caso não exista o diretório /scripts/das/$USER é preciso entrar em contato com o suporte para que seu user seja adicionado no grupo das e esse diretório seja criado;
 OBS.3: Um grupo específico para essa aplicação deverá ser criado em breve pelo pessoal da computação do centro.
 
 3º Crie o arquivo .condarc em seu HOME contendo as seguintes informações (troque o #USER# pelo seu username no sistema, o mesmo da variável USER):
@@ -263,7 +265,9 @@ OBS.3: Um grupo específico para essa aplicação deverá ser criado em breve pe
       - conda-forge
       - defaults
 
-4º Para isso crie um arquivo com o nome .condarc com seu editor preferido e copie o conteúdo acima (trocando o #USER# pelo seu username no sistema) e salve em seu home. Caso não consiga execute os comando abaixo.
+4º Para isso crie um arquivo com o nome .condarc com seu editor preferido e copie o conteúdo acima 
+(trocando o #USER# pelo seu username no sistema) e salve em seu home. Caso não consiga execute os
+comando abaixo que copiaram o arquivo do user luiz.sapucci e o modificará apropriadamente.
 $ cd $HOME
 $ cp ~luiz.sapucci/.condarc .condarc 
 $ sed -i "s/luiz.sapucci/${USER}/" .condarc
@@ -288,10 +292,21 @@ disponivel um tutorial detalhado de como usar o SCANPLOT. Selecione clicando o m
 denominado Tutorial_SCANPLOT.ipynb.
 
 4º Depois de acompanhar todo o tutorial, abra a aba "Kernel", e depois a sub-aba "change kernel" 
-e nela selecione a opção "DASSCANPLOT".
+e nela selecione a opção "DASSCANPLOT" que carregará o kernel DASSCANPLOT nesse notbook, o que é 
+indicado na caixinha no canto superior direito da tela.
 
-5º Abra o arquivo SCANTEC.2.0.0b1/scanplot/SCANPLOT.ipynb e utilize o scanplot seguindo o 
-passo-a-passo nessa página.
+5º Abra o arquivo SCANTEC.2.0.0b1/scanplot/SCANPLOT.ipynb e utilize o SCANPLOT executando cada um
+das linhas de comandos, seguindo o passo-a-passo nessa página.
+
+6º Caso não tenho familiaridade com o Jupyter, observe que para executar os comandos clique 
+sucessivamente o botão "Run", o cursor indicará o comando sendo executado e os resultados são 
+apresentados nas linhas posteriores ao comando nessa mesma página.
+
+7º Observe que no terceiro comando é necessário ajustar os dados para o seu usuário e o local onde
+rodou o scantec.
+
+8º Acompanhe os resultados e salve as figuras que desejar em seu disco como convencionalmente é 
+feito com seu navegador.
 
 Também está disponível um tutorial do SCANTEC que dá a possibilidade de instalar e utilizar todo o 
 sistema via notebook do jupiter, o que abre algumas facilidades interessantes. Para isso abra o 
