@@ -130,6 +130,11 @@ CONTAINS
     scantec%loop_count     = 1
     scantec%atime_flag     = .true.
 
+    ! Sanity Check
+    if (scantec%atime_step .gt. scantec%ftime_step)then
+       write(stdout,*)'ERROR: Analisys Time Step should be less or equal to Forecast Time Step'
+       stop
+    endif
 
     scantec%hist_incr      = real(scantec%hist_time/24.0d0)
     scantec%aincr          = real(scantec%atime_step/24.0d0)
