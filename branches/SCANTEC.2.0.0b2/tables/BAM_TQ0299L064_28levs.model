@@ -1,3 +1,8 @@
+#--------------------------------------------------------------------------------#
+#                                  SCANTEC - 2020
+#                        Arquivo de configuração do modelo
+#--------------------------------------------------------------------------------#
+
 ftype: grib
 undef: 9.999E+20
 xdim: 900 linear    0.000   0.4000000000
@@ -62,13 +67,17 @@ ydim: 450 levels
 zdim:    28 levels  1000  975  950  925  900  875  850  800  750  725
                   700  675  650  600  500  300  250  200  150  100
                    70   50   40   30   20   10    5    3
-#------------------------------------------------------#
-# A tabela de variáveis é preenchida da seguinte forma
-# A primeira coluna é o nome da variável do scantec, veja scantec.vars
-# A segunda coluna pode ser o nome da variável correspondente no modelo
-# ou então uma função (@func) que irá produzir a variável desejada, baseando-se
-# nas variáveis pré-existentes do modelo. Para o uso das funções veja o docu-
-# mento funcoes.readme
+                   
+#--------------------------------------------------------------------------------#
+# A tabela de variáveis é preenchida da seguinte forma:
+#
+# * A primeira coluna é o nome da variável do scantec, veja scantec.vars.
+# * A segunda coluna pode ser o nome da variável correspondente no modelo
+#   ou então uma função que irá produzir a variável desejada, baseando-se
+#   nas variáveis pré-existentes do modelo. Para o uso das funções veja o
+#   documento funcoes.readme dentro do diretório docs.
+#--------------------------------------------------------------------------------#
+
 vars:
 vtmp:925 vtmp2(temp:925,umes:925)
 vtmp:850 vtmp2(temp:850,umes:850)
@@ -83,7 +92,7 @@ umes:500 umes:500
 agpl:925 agpl:1000
 zgeo:850 zgeo:850
 zgeo:500 zgeo:500
-zgeo:250 zgeo:500
+zgeo:250 zgeo:250
 uvel:850 uvel:850
 uvel:500 uvel:500
 uvel:250 uvel:250
