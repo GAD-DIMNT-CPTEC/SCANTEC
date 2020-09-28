@@ -1,20 +1,20 @@
-A partir da versão 2.0.0 beta 2, o SCANTEC com o uso de funções para
+A partir da versão 2.0.0 beta 2, o SCANTEC conta com o uso de funções para
 ajustes nas variáveis que serão avaliadas.
 
 Para a intercomparação entre diferentes modelos torna-se necessário que todas
-as variáveis sejam compatíveis, ou seja, possuam a mesma unidade, além disso,
-nem todos os modelos possuem as mesmas variáveis. Então são necessários ajustes 
-para que tal compatibilidade seja satisfeita. Nas versões anteriores do SCANTEC
+as variáveis sejam compatíveis entre si (ou seja, que possuam a mesma unidade), 
+além disso, nem todos os modelos possuem as mesmas variáveis. Então são necessários
+ajustes para que tal compatibilidade seja satisfeita. Nas versões anteriores do SCANTEC
 esta compatilibidade era realizada dentro da rotina de leitura de cada modelo, 
 o que tornava necessária a recompilação do código toda vez que um novo modelo 
-fosse incluío ao SCANTEC. A partir a versão 2.0.0 beta 1, os modelos são incluídos
+fosse incluído ao SCANTEC. A partir a versão 2.0.0 beta 1, os modelos são incluídos
 por meio de tabelas que devem descrever as características básicas de cada modelo,
-tal como número de pontos de grade, resolução horizontal, número de níveis 
-vertivais e as variáveis que devem ser avaliadas que são compatíveis com as 
+tal como o número de pontos de grade, a resolução horizontal, o número de níveis 
+verticais e as variáveis que devem ser avaliadas que são compatíveis com as 
 variáveis padrão do SCANTEC.
 
-A inclusão do uso de função está disponível a partir da versão 2.0.0 beta 2 que
-inclui um conjunto de funções implícitas, que serão apresentadas a seguir, no
+A inclusão do uso de funções está disponível a partir da versão 2.0.0 beta 2 que
+inclui um conjunto de funções implícitas, que serão apresentadas a seguir. No
 entanto, novas funções poderão ser incluídas pelo usuário.
 
 Funções implícitas do SCANTEC 2.0.0 beta 2:
