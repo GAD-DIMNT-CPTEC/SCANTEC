@@ -432,7 +432,7 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
                 ax.set_xticks(dTable[table].index)
                 ax.set_xticklabels(fcts)
        
-                ename = [table.split('_')[0][4:]]
+                ename = table.split('_')[0][4:]
 
                 ax.legend([ename])
             
