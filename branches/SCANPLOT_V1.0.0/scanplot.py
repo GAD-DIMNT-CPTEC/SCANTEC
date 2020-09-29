@@ -397,7 +397,7 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
 
                 enames=[]
                 for table in Tables:
-                    enames.append(table[4:9])
+                    enames.append(table.split('_')[0][4:])
                     
                 ax.legend(enames)
                 
@@ -432,8 +432,8 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
                 ax.set_xticks(dTable[table].index)
                 ax.set_xticklabels(fcts)
        
-                ename = [table][0][4:9]
-    
+                ename = [table.split('_')[0][4:]]
+
                 ax.legend([ename])
             
                 plt.ylabel(Stat)
