@@ -450,7 +450,7 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
         
     return
 
-def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
+def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir):
     
     """
     plot_scorecard
@@ -491,7 +491,7 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
         
         dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        plot_scorecard(dTable,Vars,Stats,Tstat,outDir)
+        plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir)
     """
     
     list_var = [ltuple[0].lower() for ltuple in Vars]
@@ -499,8 +499,11 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
     for Stat in Stats:
         Tables = list(filter(lambda x:Stat in x, [*dTable.keys()]))
     
-        p_table1 = pd.pivot_table(dTable[Tables[0]], index="%Previsao", values=list_var)
-        p_table2 = pd.pivot_table(dTable[Tables[1]], index="%Previsao", values=list_var)
+        exp1 = [s for s in Tables if Exps[0] in s][0]
+        exp2 = [s for s in Tables if Exps[1] in s][0]
+    
+        p_table1 = pd.pivot_table(dTable[exp1], index="%Previsao", values=list_var)
+        p_table2 = pd.pivot_table(dTable[exp2], index="%Previsao", values=list_var)
  
         if Tstat == "ganho":
             # Porcentagem de ganho
@@ -536,7 +539,7 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
             cbar.set_ticklabels(["pior", "-50%", "0", "50%", "melhor"])
             cbar.ax.tick_params(labelsize=12)    
                 
-            plt.title("Ganho " + str(Stat) + " (%)\n" + str(Tables[0][4:9]) + " X " + str(Tables[1][4:9]), fontsize=14)
+            plt.title("Ganho " + str(Stat) + " (%)\n" + Exps[0] + " X " + Exps[1], fontsize=14)
             
             fig = ax.get_figure()
  
@@ -553,7 +556,7 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,outDir):
             cbar.set_ticklabels(["pior", "-0.5", "0", "0.5", "melhor"])
             cbar.ax.tick_params(labelsize=12)    
  
-            plt.title("Mudança Fracional " + str(Stat) + "\n" + str(Tables[0][4:9]) + " X " + str(Tables[1][4:9]), fontsize=14)
+            plt.title("Mudança Fracional " + str(Stat) + "\n" + Exps[0] + " X " + Exps[1], fontsize=14)
     
             fig = ax.get_figure()
 
