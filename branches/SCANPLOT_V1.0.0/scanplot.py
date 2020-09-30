@@ -22,12 +22,18 @@ Funções
 import re
 import os.path
 import ntpath
+
 import numpy as np
 import pandas as pd
+
 from datetime import date, datetime, timedelta
+
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
+
 import seaborn as sns
+
 import skill_metrics as sm
 
 import xarray as xr
@@ -369,6 +375,9 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
         
         plot_lines(dTable,Vars,Stats,outDir,combine=False)
     """
+    
+    # Ignore Seaborn and respect rcParams
+    sns.reset_orig()
     
     if combine:
         
