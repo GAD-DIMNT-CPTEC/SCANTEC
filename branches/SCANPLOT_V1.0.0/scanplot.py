@@ -1,6 +1,13 @@
 #! /usr/bin/env python3
 #-*- coding: utf-8 -*-
 
+# Carlos Frederico Bastarz (carlos.bastarz@inpe.br)
+# Wanderson Henrique dos Santos (wanderson.santos@inpe.br)
+# João Gerd Zell de Mattos (joao.gerd@inpe.br)
+# Luiz Fernando Sapucci (luiz.sapucci@inpe.br)
+#
+# Instituto Nacional de Pesquisas Espaciais (2019, 2020)
+
 """
 scanplot
 ========
@@ -10,13 +17,14 @@ scanplot
     
 Funções
 -------
-    read_nemalists : lê os namelists e arquivos de definições do SCANTEC.
-    get_dataframe  : transforma as tabelas do SCANTEC em dataframes.
-    get_dataset    : transforma os campos com a distribuição espacial das estatísticas do SCANTEC datasets.
-    plot_lines     : plota gráficos de linha com os dataframes das tabelas do SCANTEC.
-    plot_scorecard : resume as informações dos dataframes com as tabelas do SCANTEC em scorecards.    
-    plot_dTaylor   : plota diagramas de Taylor a partir de dois experimentos utilizando 
-                     os dataframes com as tabelas do SCANTEC.    
+    read_nemalists      : lê os namelists e arquivos de definições do SCANTEC.
+    get_dataframe       : transforma as tabelas do SCANTEC em dataframes.
+    get_dataset         : transforma os campos com a distribuição espacial das estatísticas do SCANTEC datasets.
+    plot_lines          : plota gráficos de linha com os dataframes das tabelas do SCANTEC.
+    plot_lines_tStudent : plota gráficos de linha com os dataframes das tabelas do SCANTEC.
+    plot_scorecard      : resume as informações dos dataframes com as tabelas do SCANTEC em scorecards.    
+    plot_dTaylor        : plota diagramas de Taylor a partir de dois experimentos utilizando 
+                          os dataframes com as tabelas do SCANTEC.    
 """
 
 import re
@@ -35,6 +43,9 @@ from matplotlib import rcParams
 import seaborn as sns
 
 import skill_metrics as sm
+
+from scipy.stats import t
+from scipy.stats import ttest_ind
 
 import xarray as xr
 import cartopy.crs as ccrs
@@ -161,7 +172,7 @@ def read_namelists(basepath):
 
     return VarsLevs, Confs
 
-def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir):
+def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series):
 
     """
     get_dataframe
@@ -176,6 +187,9 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir):
         Stats       : lista com os nomes das estatísticas a serem processadas
         Exps        : lista com os nomes dos experimentos
         outDir      : string com o diretório com as tabelas do SCANTEC
+        series      : valor Booleano para ler uma série temporal das tabelas do SCANTEC
+                      series=False, lê as tabelas do SCANTEC geradas para a avaliação de um período
+                      series=True, lê as tabelas do SCANTEC geradas para a avaliação dos dias dentro de um período
     
     Resultado
     ---------
@@ -193,28 +207,52 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir):
         Exps = list(data_conf["Experiments"].keys())
         outDir = data_conf["Output directory"]
         
-        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
+        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series=False)
     """
     
     # Dicionário com o(s) dataframe(s)
-    ds_table = {}
+    ds_table = {}       
     
-    for stat in Stats:
-               
-        dataInicial_fmt = dataInicial.strftime("%Y%m%d%H")
-        dataFinal_fmt = dataFinal.strftime("%Y%m%d%H")
+    if series:
+    
+        while (dataInicial <= dataFinal):
+            
+            dataInicial_fmt = dataInicial.strftime("%Y%m%d%H")
+            dataFinal_fmt = dataFinal.strftime("%Y%m%d%H")
+            
+            for stat in Stats:
+    
+                for exp in Exps:
+            
+                    table = outDir + '/' + str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataInicial_fmt) + 'T.scan'
+                         
+                    lista_n = []
+    
+                    if os.path.exists(table):
+                        df_n = pd.read_csv(table, sep="\s+")
+    
+                        ds_table[ntpath.basename(str(table))] = df_n    
+                        
+            dataInicial = dataInicial + timedelta(hours=24) # pegar esta informação do namelist (timedelta)   
 
-        for exp in Exps:
+    else:
         
-            table = outDir + '/' + str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'T.scan'
-                 
-            lista_n = []
-
-            if os.path.exists(table):
-                df_n = pd.read_csv(table, sep="\s+")
-
-                ds_table[ntpath.basename(str(table))] = df_n    
-                    
+        for stat in Stats:
+                   
+            dataInicial_fmt = dataInicial.strftime("%Y%m%d%H")
+            dataFinal_fmt = dataFinal.strftime("%Y%m%d%H")
+    
+            for exp in Exps:
+            
+                table = outDir + '/' + str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'T.scan'
+                     
+                lista_n = []
+    
+                if os.path.exists(table):
+                    df_n = pd.read_csv(table, sep="\s+")
+    
+                    ds_table[ntpath.basename(str(table))] = df_n    
+        
     return ds_table
 
 def get_dataset(data_conf,data_vars,Stats,Exps):
@@ -459,6 +497,298 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
         
     return
 
+###############################################################################
+
+def concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,Var,series):
+
+    """
+    concat_tables_and_loc
+    =====================
+    
+    Esta função concatena um dicionário de tabelas do SCANTEC em um único dataframe e 
+    retorna uma lista com as séries das variáveis e experimentos escolhidos.
+    
+    Parâmetros de entrada
+    ---------------------
+        dTable      : objeto dicionário com uma ou mais tabelas do SCANTEC
+        dataInicial : objeto datetime com a data inicial do experimento
+        dataFinal   : objeto datetime com a data final do experimento
+        Exps        : lista com os nomes das estatísticas a serem processadas
+        Var         : nome da variável na tabela de correlação de anomalia do SCANTEC 
+        series      : valor Booleano para combinar as curvas dos experimentos em um só gráfico
+    
+    Resultado
+    ---------
+        Lista com as séries das variáveis e experimentos escolhidos.
+    
+    Uso
+    ---
+        from scanplot import read_namelists, get_dataframe, concat_tables_and_loc
+        
+        data_vars, data_conf = read_namelists("~/SCANTEC")
+        
+        dataInicial = data_conf["Starting Time"]
+        dataFinal = data_conf["Ending Time"]
+        Vars = list(map(data_vars.get,[*data_vars.keys()]))
+        Var = Vars[0][0].lower()
+        Stats = ["ACOR", "RMSE", "VIES"]
+        Exps = list(data_conf["Experiments"].keys())
+        outDir = data_conf["Output directory"]
+        
+        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
+        
+        varlev_exps = concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,Var,series=False)
+    """
+    
+    datai_fmt = dataInicial.strftime("%Y%m%d%H")
+    dataf_fmt = dataFinal.strftime("%Y%m%d%H")
+
+    cTable = pd.concat(dTable, axis=0, join='outer', ignore_index=False, keys=None, sort=True)    
+    
+    varlev_exps = []
+    
+    if series:
+    
+        for exp in Exps:
+        
+            fname_exp_datai = 'ACOR' + str(exp) + '_' + datai_fmt + datai_fmt + 'T.scan'
+            fname_exp_dataf = 'ACOR' + str(exp) + '_' + dataf_fmt + dataf_fmt + 'T.scan'
+            
+            varlev_dia_exp = cTable.sort_index(0).loc[fname_exp_datai:fname_exp_dataf, str(Var)]
+            
+            varlev_exps.append(varlev_dia_exp)
+        
+    else: 
+    
+        for exp in Exps:
+        
+            fname_exp = 'ACOR' + str(exp) + '_' + datai_fmt + dataf_fmt + 'T.scan'
+            
+            varlev_exp = cTable.loc[fname_exp, str(Var)]
+        
+            varlev_exps.append(varlev_exp)
+        
+    return varlev_exps
+
+def df_fill_nan(varlev_exps,varlev_dia_exps):
+    
+    """
+    df_fill_nan
+    ===========
+    
+    Esta função completa os dataframes até um tamanho específico.
+    
+    Parâmetros de entrada
+    ---------------------
+        varlev_exps      : lista de dataframes com as variáveis avaliadas para um período
+        varlev_dia_exps  : lista de dataframes com as variáveis avaliadas para todos os dias de um período
+    
+    Resultado
+    ---------
+        Lista de dataframes completados com NaN até o tamanho do maior dataframe.
+    
+    Uso
+    ---
+        from scanplot import read_namelists, get_dataframe, concat_tables_and_loc, df_fill_nan
+        
+        data_vars, data_conf = read_namelists("~/SCANTEC")
+        
+        dataInicial = data_conf["Starting Time"]
+        dataFinal = data_conf["Ending Time"]
+        Vars = list(map(data_vars.get,[*data_vars.keys()]))
+        Stats = ["ACOR", "RMSE", "VIES"]
+        Exps = list(data_conf["Experiments"].keys())
+        outDir = data_conf["Output directory"]
+        
+        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
+        
+        varlev_exps = concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,series=False)
+        
+        lst_varlev_dia_exps_rsp = df_fill_nan(varlev_exps,varlev_dia_exps)
+    """
+    
+    lst_shapes = []
+    
+    for varlev_exp, varlev_dia_exp in zip(varlev_exps, varlev_dia_exps):
+        
+        shape_exp = int(varlev_dia_exp.shape[0] / varlev_exp.shape[0]), int(varlev_exp.shape[0])
+        lst_shapes.append(shape_exp)
+    
+    shape_exp_max = sorted(lst_shapes, key=lambda x: x[1], reverse=True)[0]
+    shape_exp_min = sorted(lst_shapes, key=lambda x: x[1], reverse=False)[0]
+    
+    varlev_dia_exps_rsp = []
+    
+    for varlev_dia_exp, shape_exp in zip(varlev_dia_exps, lst_shapes):
+    
+        varlev_dia_exp_rsp = pd.DataFrame(varlev_dia_exp.values.reshape(shape_exp)) 
+    
+        if shape_exp < shape_exp_max:  
+            df_nan = pd.DataFrame(np.nan, index=np.arange(shape_exp_max[0]), columns=np.arange(shape_exp[1],shape_exp_max[1]))
+            varlev_dia_exp_rsp = varlev_dia_exp_rsp.join(df_nan)
+    
+        varlev_dia_exps_rsp.append(varlev_dia_exp_rsp)
+    
+    return varlev_dia_exps_rsp
+
+def calc_tStudent(lst_varlev_dia_exps_rsp):
+    
+    """
+    calc_tStudent
+    ===========
+    
+    Esta função calcula o teste de significância t-Student com intervalo de confiânça de 95%.
+    
+    Parâmetros de entrada
+    ---------------------
+        lst_varlev_dia_exps_rsp : lista de dataframes com as variáveis avaliadas para um período
+    
+    Resultado
+    ---------
+        Resultado do teste de significância e valores críticos para serem utilizados pela função
+        plot_lines_tStudent.
+    
+    Uso
+    ---
+        from scanplot import read_namelists, get_dataframe, concat_tables_and_loc, df_fill_nan, calc_tStudent
+        
+        data_vars, data_conf = read_namelists("~/SCANTEC")
+        
+        dataInicial = data_conf["Starting Time"]
+        dataFinal = data_conf["Ending Time"]
+        Vars = list(map(data_vars.get,[*data_vars.keys()]))
+        Stats = ["ACOR", "RMSE", "VIES"]
+        Exps = list(data_conf["Experiments"].keys())
+        outDir = data_conf["Output directory"]
+        
+        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
+        
+        varlev_exps = concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,series=False)
+        
+        lst_varlev_dia_exps_rsp = df_fill_nan(varlev_exps,varlev_dia_exps)
+        
+        ldrom_exp, ldrosup_exp, ldroinf_exp = calc_tStudent(lst_varlev_dia_exps_rsp)
+    """
+    
+    lst_drom_exp = []
+    lst_drosup_exp = []
+    lst_droinf_exp = []
+    
+    for varlev_dia_exp_rsp in lst_varlev_dia_exps_rsp[1:]:
+    
+        dzm_exp = ((0.5 * np.log((1.0 + 0.5 * (lst_varlev_dia_exps_rsp[0] - varlev_dia_exp_rsp)) / 
+                                 (1.0 - 0.5 * (lst_varlev_dia_exps_rsp[0] - varlev_dia_exp_rsp)))))
+        
+        med_exp = dzm_exp.mean()   
+        var_exp = dzm_exp.var()
+    
+        stat, pval = ttest_ind(lst_varlev_dia_exps_rsp[0], varlev_dia_exp_rsp, equal_var=False)
+    
+        dof_exp = lst_varlev_dia_exps_rsp[0].shape[0] + varlev_dia_exp_rsp.shape[0] - 2.0    
+    
+        texp = t.ppf(pval, dof_exp)
+    
+        dzc_exp = texp * (np.sqrt(var_exp / dof_exp))
+        
+        drom_exp   = 2.0 * (np.exp(2.0 * med_exp) - 1.0) / (np.exp(2.0 * med_exp) + 1.0)
+        lst_drom_exp.append(drom_exp)
+        
+        drosup_exp = 2.0 * (np.exp(2.0 * dzc_exp) - 1.0) / (np.exp(2.0 * dzc_exp) + 1.0)
+        lst_drosup_exp.append(drosup_exp)
+        
+        droinf_exp = 2.0 * (np.exp(-2.0 * dzc_exp )- 1.0) / (np.exp(-2.0 * dzc_exp) + 1.0)
+        lst_droinf_exp.append(droinf_exp)
+    
+    return lst_drom_exp, lst_drosup_exp, lst_droinf_exp
+
+def plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps):
+        
+    """
+    plot_lines_tStudent
+    ===================
+    
+    Esta função plota gráficos de linha acompanhados dos resultados do teste de significância t-Student.
+    Os gráficos são plotados apenas com base nas tabelas de correlação de anomalia do SCANTEC.
+    
+    Parâmetros de entrada
+    ---------------------
+        Exps         : lista com os nomes dos experimentos
+        ldrom_exp    : curva do teste referente ao experimento
+        ldrosup_exp  : limite superior do teste
+        ldroinf_exp  : limite inferior do teste
+        varlev_exps  : dataframes com as variáveis dos experimentos
+    
+    Resultado
+    ---------
+        Resultado do teste de significância e valores críticos para serem utilizados pela função
+        plot_lines_tStudent.
+    
+    Uso
+    ---
+        from scanplot import read_namelists, get_dataframe, concat_tables_and_loc, 
+        from scanplot import df_fill_nan, calc_tStudent, plot_lines_tStudent
+        
+        data_vars, data_conf = read_namelists("~/SCANTEC")
+        
+        dataInicial = data_conf["Starting Time"]
+        dataFinal = data_conf["Ending Time"]
+        Vars = list(map(data_vars.get,[*data_vars.keys()]))
+        Stats = ["ACOR", "RMSE", "VIES"]
+        Exps = list(data_conf["Experiments"].keys())
+        outDir = data_conf["Output directory"]
+        
+        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
+        
+        varlev_exps = concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,series=False)
+        
+        lst_varlev_dia_exps_rsp = df_fill_nan(varlev_exps,varlev_dia_exps)
+        
+        ldrom_exp, ldrosup_exp, ldroinf_exp = calc_tStudent(lst_varlev_dia_exps_rsp)
+        
+        plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps)
+    """        
+        
+    # Ignore Seaborn and respect rcParams
+    sns.reset_orig()    
+    
+    colors = ['black', 'red', 'green', 'blue', 'orange', 'brown', 'cyan', 'magenta']
+    
+    fig, axs = plt.subplots(2, sharex=True, sharey=False, gridspec_kw={'hspace': 0}, figsize = (8,6))
+    
+    j = 0
+    
+    for i, varlev_exp in enumerate(varlev_exps):
+        if i == 0:
+            axs[0].plot(varlev_exp, color=colors[j], linestyle='--', label=str(Exps[j]))
+        else:
+            axs[0].plot(varlev_exp, color=colors[j], label=str(Exps[j]))
+          
+        axs[0].grid(color='grey', linestyle='--', linewidth=0.5)
+        axs[0].legend()
+        
+        j += 1
+        
+    j = 1
+        
+    for drosup_exp, droinf_exp, drom_exp in zip(ldrosup_exp,ldroinf_exp,ldrom_exp):
+        
+        axs[1].bar(range(0, len(drosup_exp)), drosup_exp, color=(0, 0, 0, 0), edgecolor=colors[j], align='center')
+        axs[1].bar(range(0, len(droinf_exp)), droinf_exp, color=(0, 0, 0, 0), edgecolor=colors[j], align='center')
+        
+        axs[1].plot(drom_exp, color=colors[j])
+
+        j += 1
+        
+    axs[1].axhline(color='black', linewidth=0.5)
+    axs[1].grid(color='grey', linestyle='--', linewidth=0.5)
+        
+    for ax in axs:
+        ax.label_outer()        
+        
+    return
+
+###############################################################################
+
 def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir):
     
     """
@@ -690,6 +1020,7 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
     return
 
 def show_buttons(dvars,dconf):
+    
     """
     show_buttons
     ============
