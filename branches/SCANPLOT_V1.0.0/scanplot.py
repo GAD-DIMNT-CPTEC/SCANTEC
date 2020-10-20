@@ -1,6 +1,8 @@
 #! /usr/bin/env python3
 #-*- coding: utf-8 -*-
 
+# SCANPLOT_V1.1.0a
+#
 # Carlos Frederico Bastarz (carlos.bastarz@inpe.br)
 # Wanderson Henrique dos Santos (wanderson.santos@inpe.br)
 # João Gerd Zell de Mattos (joao.gerd@inpe.br)
@@ -630,7 +632,7 @@ def df_fill_nan(varlev_exps,varlev_dia_exps):
         varlev_dia_exps_rsp.append(varlev_dia_exp_rsp)
     
     return varlev_dia_exps_rsp
-
+   
 def calc_tStudent(lst_varlev_dia_exps_rsp):
     
     """
