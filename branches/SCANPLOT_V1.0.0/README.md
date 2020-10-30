@@ -1,57 +1,22 @@
-# SCANPLOT - Um sistema simples de plotagem para o SCANTEC (V1.0.0)
+# SCANPLOT - Um sistema de plotagem simples para o SCANTEC
 
-24 de Junho de 2020
+O SCANPLOT é um módulo escrito em linguagem Python preparado para ler e plotar as tabelas com as estatísticas do Sistema Comunitário de Avaliação de modelos Numéricos de Tempo e Clima (SCANTEC). O seu uso pode ser feito por meio da linha de comando ou através do Jupyter Notebook. O SCANPLOT transforma as tabelas do SCANTEC em dataframes do Pandas e pode ser facilmente extendido a partir da introdução de funções para a plotagem destes dataframes na forma como o usuário precisar.
 
-Este pacote é composto do módulo principal scanplot.py, do notebook Jupyter SCANPLOT.ipynb e do arquivo SCANPLOT.yml. O módulo scanplot.py contém funções que são utilizadas para transformar as tabelas do SCANTEC em dataframes do Pandas. Outras funções do scanplot.py foram preparadas para facilitar o processo de plotagem e servem como template e/ou exemplos para que os usuários possam desenvolver as suas próprias funções, as quais podem também ser incluídas no SCANPLOT em versões futuras.
+Esta versão do `scanplot` está organizada da seguinte forma:
 
-## Notas desta versão
+1. `core_scanplot`: contém funções relacionadas com a leitura dos arquivos de configuração do SCANTEC;
+2. `data_structures`: contém funções relacionadas com as estruturas de dados utilizadas pelo SCANPLOT;
+3. `aux_functions`: contém funções auxiliadas utilizadas por outras partes do módulo;
+4. `plot_functions`: contém funções relacionadas com a plotagem as estruturas de dados do SCANPLOT;
+5. `gui_functions`: contém funções relacionadas com as widgets do Jupyter Notebook.
 
-Nesta versão V1.0.0, estão incluídas as seguintes funções:
+As principais funções do módulo são as seguintes:
 
-1. read_nemalists: lê os namelists e arquivos de definições do SCANTEC;
-2. get_dataframe : transforma as tabelas do SCANTEC em dataframes;
-3. plot_lines    : plota gráficos de linha com os dataframes das tabelas do SCANTEC;
-4. plot_scorecard: resume as informações dos dataframes com as tabelas do SCANTEC em scorecards;    
-5. plot_dTaylor  : plota diagramas de Taylor a partir de dois experimentos utilizando os dataframes com as tabelas do SCANTEC.
+1. `read_namelists`: esta função lê os arquivos de namelist e definições dos modelos do SCANTEC;
+2. `get_dataframe`: esta função transforma uma ou mais tabelas em dataframes do Pandas, acessíveis por meio de um dicionário;
+3. `plot_lines`: esta função plota gráficos de linhas a partir dos dataframes;
+3. `plot_lines_tStudent`: esta função plota gráficos de linhas a partir dos dataframes, acompanhadas com o teste de significância t de Student;
+4. `plot_scorecard`: esta função plota um scorecard a partir dos dataframes;
+5. `plot_dTaylor`: esta função plota um diagrama de Taylor a partir dos dataframes.
 
-Desenvolvido pelos colaboradores do CPTEC, para os colaboradores do CPTEC.
-
-## Uso na máquina Ilopolis
-
-O SCANPLOT está preparado para ser utilizado na máquina Ilopolis, por meio do Jupyter-Hub. O Jupyter-Hub é um servidor do Jupyter e permite que os usuários do SCANPLOT possam utilizar o módulo scanplot.py para explorar as tabelas do SCANTEC e plotar os gráficos com as estatísticas calculadas. O acesso ao Jupyter-Hub da máquina Ilopolis, pode ser feito a partir do seguinte endereço: http://ilopolis.cptec.inpe.br. Para logar, o usuário deverá inserir seu login e senha do NIS.
-
-No ambiente do Jupyter-Hub na máquina Ilopolis, o usuário terá acesso à sua estrutura de arquivos. O usuário poderá obter uma cópia do SCANPLOT com o seguinte comando (através da linha de comando*):
-
-$ svn export https://svn.cptec.inpe.br/scamtec/tags/SCANPLOT_V1.0.0
-
-Recomenda-se que esta cópia seja feita dentro da área de scripts do usuário em /scripts/grupos/usuario.
-
-*A interface do Jupyter-Hub permite que o usuário abra uma seção do terminal, onde o comando acima poderá ser digitado. Para abrir uma seção do terminal a partir da interface do Jupyter-Hub, clique em 'New > Other > Terminal'. Se o usuário preferir, poderá efetuar login na máquina Ilopolis via SSH.
-
-Com a cópia do SCANPLOT no seu diretório de trabalho, a partir da interface do Jupyter-Hub, o usuário deverá procurar pelo arquivo SCANPLOT.ipynb e seguir as instruções que lá se encontram. É importante notar que um ambiente específico para o uso do SCANPLOT deverá ser configurado. No arquivo SCANPLOT.yml estão listados os pacotes e versões necessários para a configuração do ambiente. Contate o administrador do seu grupo e solicite a criação deste ambiente.
-
-## Uso em máquina local
-
-É possível utilizar o pacote SCANPLOT em outras máquinas além da Ilopolis. Para isso configurar um ambiente de uso e desenvolvimentos do SCANPLOT, recomenda-se a instalação do pacote Anaconda Python e dos pacotes que estão listados no arquivo SCANPLOT.yml.
-
-Com o Anaconda Pyhton instalado na máquina, o usuário deverá revisar o valor do parâmetro 'prefix: /scripts/das/conda/envs/SCANPLOT' e ajustar de acordo com a sua necessidade e preferência.
-
-Para criar o ambiente para o uso do SCANPLOT, utilize o comando a seguir:
-
-$ conda env create -f SCANPLOT.yml
-
-Após a criação do ambiente, o usuário deverá ativá-lo:
-
-$ conda activate SCANPLOT
-
-O SCANPLOT poderá ser utilizado tanto pela linha de comando quando pela interface do Jupyter (recomendado). Para abrir uma seção do Jupyter, basta digitar (dentro do ambiente SCANPLOT):
-
-$ jupyter-notebook
-
-Pelo navegador, na interface do Jupyter, o usuário deverá selecionar o kernel adequado. Para isso, deverá clicar em 'Kernel > Change kernel > SCANPLOT'. O kernel SCANPLOT (ou outro nome que faça referência ao SCANPLOT), é o nome do ambiente de desenvolvimntos que foi criado na etapa anterior.
-
-## Notas finais
-
-O desenvolvimento do SCANPLOT está aberto para a contribuição de todos os usuários. O código principal está disponível no repositório do SCANTEC em https://projetos.cptec.inpe.br/projects/scamtec e um fóruns para discussões e troca de idéias sobre as funções e cenários de uso do SCANTEC e do SCANPLOT estão disponíveis em https://projetos.cptec.inpe.br/projects/scamtec/boards.
-
-Grupo de Desenvolvimento em Assimilação de Dados
+Copyright (C) 2020 INPE
