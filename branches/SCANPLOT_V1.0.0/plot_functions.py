@@ -30,8 +30,6 @@ import skill_metrics as sm
 from scipy.stats import t
 from scipy.stats import ttest_ind
 
-plt.rcParams.update({'figure.max_open_warning': 0})
-
 def plot_lines(dTable,Vars,Stats,outDir,combine):
 
     """
@@ -54,9 +52,9 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
     
     Uso
     ---
-        from scanplot import read_namelists, get_dataframe, plot_lines
+        import scanplot 
         
-        data_vars, data_conf = read_namelists("~/SCANTEC")
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
         
         dataInicial = data_conf["Starting Time"]
         dataFinal = data_conf["Ending Time"]
@@ -65,9 +63,9 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
         Exps = list(data_conf["Experiments"].keys())
         outDir = data_conf["Output directory"]
         
-        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
+        dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        plot_lines(dTable,Vars,Stats,outDir,combine=False)
+        scanplot.plot_lines(dTable,Vars,Stats,outDir,combine=False)
     """
     
     # Ignore Seaborn and respect rcParams
@@ -76,6 +74,7 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
     if combine:
         
         fig, ax = plt.subplots()
+        plt.rcParams.update({'figure.max_open_warning': 0})
 
         for var in range(len(Vars)):
        
@@ -93,7 +92,7 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
                 ax = pd.concat(dfTables,axis=1).plot(title=Vars[var][1],
                                                     figsize=(8,5),
                                                     fontsize=12,
-                                                    linewidth=3)
+                                                    linewidth=1.5)
     
                 ax.set_xticks(dTable[table].index)
                 ax.set_xticklabels(fcts)
@@ -108,21 +107,20 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
                 plt.xlabel('Tempo')
                 plt.xticks(rotation=90)
 
-                plt.grid()
+                plt.grid(color='grey', linestyle='--', linewidth=0.5)
                 
                 plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '-combined.png', dpi=70) 
               
-            #plt.cla()
-                
         plt.close(fig)
                 
     else:
-        
-        fig, ax = plt.subplots()
             
         for table in list(dTable.keys()):
             Stat = table[0:4]
             fcts = dTable[table].loc[:,"%Previsao"].values
+
+            fig, ax = plt.subplots()
+            plt.rcParams.update({'figure.max_open_warning': 0})
 
             for var in range(len(Vars)):
                 vname = Vars[var]
@@ -130,7 +128,7 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
                 ax = dTable[table].loc[:,[Vars[var][0].lower()]].plot(title=Vars[var][1], 
                                                                       figsize=(8,5),
                                                                       fontsize=12,
-                                                                      linewidth=3)
+                                                                      linewidth=1.5)
  
                 ax.set_xticks(dTable[table].index)
                 ax.set_xticklabels(fcts)
@@ -143,13 +141,11 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
                 plt.xlabel('Tempo')
                 plt.xticks(rotation=90)
         
-                plt.grid()
+                plt.grid(color='grey', linestyle='--', linewidth=0.5)
             
                 plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '.png', dpi=70) 
                 
-            #plt.cla()
-                
-        plt.close(fig)
+            plt.close(fig)
         
     return
 
@@ -177,10 +173,9 @@ def plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps):
     
     Uso
     ---
-        from scanplot import read_namelists, get_dataframe, concat_tables_and_loc, 
-        from scanplot import df_fill_nan, calc_tStudent, plot_lines_tStudent
+        import scanplot 
         
-        data_vars, data_conf = read_namelists("~/SCANTEC")
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
         
         dataInicial = data_conf["Starting Time"]
         dataFinal = data_conf["Ending Time"]
@@ -189,15 +184,19 @@ def plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps):
         Exps = list(data_conf["Experiments"].keys())
         outDir = data_conf["Output directory"]
         
-        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
+        dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        varlev_exps = concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,series=False)
+        varlev_exps = scanplot.concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,series=False)
         
-        lst_varlev_dia_exps_rsp = df_fill_nan(varlev_exps,varlev_dia_exps)
+        lst_varlev_dia_exps_rsp = scanplot.df_fill_nan(varlev_exps,varlev_dia_exps)
         
-        ldrom_exp, ldrosup_exp, ldroinf_exp = calc_tStudent(lst_varlev_dia_exps_rsp)
+        ldrom_exp, ldrosup_exp, ldroinf_exp = scanplot.calc_tStudent(lst_varlev_dia_exps_rsp)
         
-        plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps)
+        scanplot.plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps)
+
+    Observações
+    -----------
+        Experimental, esta função necessita ser validada.
     """        
         
     # Ignore Seaborn and respect rcParams
@@ -211,9 +210,9 @@ def plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps):
     
     for i, varlev_exp in enumerate(varlev_exps):
         if i == 0:
-            axs[0].plot(varlev_exp, color=colors[j], linestyle='--', label=str(Exps[j]))
+            axs[0].plot(varlev_exp, color=colors[j], linestyle='--', label=str(Exps[j]), linewidth=1.5)
         else:
-            axs[0].plot(varlev_exp, color=colors[j], label=str(Exps[j]))
+            axs[0].plot(varlev_exp, color=colors[j], label=str(Exps[j]), linewidth=1.5)
           
         axs[0].grid(color='grey', linestyle='--', linewidth=0.5)
         axs[0].legend()
@@ -224,8 +223,8 @@ def plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps):
         
     for drosup_exp, droinf_exp, drom_exp in zip(ldrosup_exp,ldroinf_exp,ldrom_exp):
         
-        axs[1].bar(range(0, len(drosup_exp)), drosup_exp, color=(0, 0, 0, 0), edgecolor=colors[j], align='center')
-        axs[1].bar(range(0, len(droinf_exp)), droinf_exp, color=(0, 0, 0, 0), edgecolor=colors[j], align='center')
+        axs[1].bar(range(0, len(drosup_exp)), drosup_exp, color=(0, 0, 0, 0), edgecolor=colors[j], align='center', linewidth=1.5)
+        axs[1].bar(range(0, len(droinf_exp)), droinf_exp, color=(0, 0, 0, 0), edgecolor=colors[j], align='center', linewidth=1.5)
         
         axs[1].plot(drom_exp, color=colors[j])
 
@@ -238,8 +237,6 @@ def plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps):
         ax.label_outer()        
         
     return
-
-###############################################################################
 
 def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir):
     
@@ -269,9 +266,9 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir):
     
     Uso
     ---
-        from scanplot import read_namelists, get_dataframe, plot_scorecard
+        import scanplot 
         
-        data_vars, data_conf = read_namelists("~/SCANTEC")
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
         
         dataInicial = data_conf["Starting Time"]
         dataFinal = data_conf["Ending Time"]
@@ -280,9 +277,9 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir):
         Exps = list(data_conf["Experiments"].keys())
         outDir = data_conf["Output directory"]
         
-        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
+        dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir)
+        scanplot.plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir)
     """
     
     list_var = [ltuple[0].lower() for ltuple in Vars]
@@ -391,9 +388,9 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
     
     Uso
     ---
-        from scanplot import read_namelists, get_dataframe, plot_dTaylor
+        import scanplot 
         
-        data_vars, data_conf = read_namelists("~/SCANTEC")
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
         
         dataInicial = data_conf["Starting Time"]
         dataFinal = data_conf["Ending Time"]
@@ -402,9 +399,9 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
         Exps = list(data_conf["Experiments"].keys())
         outDir = data_conf["Output directory"]
         
-        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
+        dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        plot_dTaylor(dTable,data_conf,Vars,Stats,outDir)
+        scanplot.plot_dTaylor(dTable,data_conf,Vars,Stats,outDir)
         
     Observações
     -----------

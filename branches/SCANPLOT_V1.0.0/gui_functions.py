@@ -43,15 +43,15 @@ def show_buttons(dvars,dconf):
     
     Uso
     ---
-        from scanplot read_namelists, show_buttons
+        import scanplot 
         
-        data_vars, data_conf = read_namelists("~/SCANTEC")
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
         
-        grid, dvars, dconf = show_buttons(data_vars, data_conf)
+        grid, dvars, dconf = scanplot.show_buttons(data_vars, data_conf)
         
     Observações
     -----------
-        Experimental, esta função não está acabada e deve funcionar apenas dentro do Jupyter.
+        Experimental, esta função não está finalizada e foi projetada para uso apenas dentro do Jupyter.
     """
     
     data_vars = dvars

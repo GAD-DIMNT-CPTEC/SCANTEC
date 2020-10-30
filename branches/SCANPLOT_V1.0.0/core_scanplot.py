@@ -45,9 +45,9 @@ def read_namelists(basepath):
     
     Uso
     ---
-        from scanplot import read_namelists
+        import scanplot
         
-        data_vars, data_conf = read_namelists("~/SCANTEC")
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
     """
     
     # Lê o arquivo scantec.vars e transforma a lista de variáveis e níveis e um dicionário

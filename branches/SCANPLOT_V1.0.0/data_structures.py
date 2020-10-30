@@ -53,9 +53,9 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series):
     
     Uso
     ---
-        from scanplot import read_namelists, get_dataframe
+        import scanplot 
         
-        data_vars, data_conf = read_namelists("~/SCANTEC")
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
         
         dataInicial = data_conf["Starting Time"]
         dataFinal = data_conf["Ending Time"]
@@ -63,7 +63,7 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series):
         Exps = list(data_conf["Experiments"].keys())
         outDir = data_conf["Output directory"]
         
-        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series=False)
+        dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series=False)
     """
     
     # Dicionário com o(s) dataframe(s)
@@ -134,14 +134,14 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
     
     Uso
     ---
-        from scanplot import read_namelists, get_dataset
+        import scanplot 
         
-        data_vars, data_conf = read_namelists("~/SCANTEC")
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
         
         Stats =  ["ACOR", "RMSE", "VIES"]
         Exps = list(data_conf["Experiments"].keys())
         
-        dSet = get_dataset(data_conf,data_vars,Stats,Exps)
+        dSet = scanplot.get_dataset(data_conf,data_vars,Stats,Exps)
     """
     
     # Datas

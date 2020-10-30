@@ -48,9 +48,9 @@ def concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,Var,series):
     
     Uso
     ---
-        from scanplot import read_namelists, get_dataframe, concat_tables_and_loc
+        import scanplot
         
-        data_vars, data_conf = read_namelists("~/SCANTEC")
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
         
         dataInicial = data_conf["Starting Time"]
         dataFinal = data_conf["Ending Time"]
@@ -60,9 +60,9 @@ def concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,Var,series):
         Exps = list(data_conf["Experiments"].keys())
         outDir = data_conf["Output directory"]
         
-        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
+        dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        varlev_exps = concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,Var,series=False)
+        varlev_exps = scanplot.concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,Var,series=False)
     """
     
     datai_fmt = dataInicial.strftime("%Y%m%d%H")
@@ -114,9 +114,9 @@ def df_fill_nan(varlev_exps,varlev_dia_exps):
     
     Uso
     ---
-        from scanplot import read_namelists, get_dataframe, concat_tables_and_loc, df_fill_nan
+        import scanplot 
         
-        data_vars, data_conf = read_namelists("~/SCANTEC")
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
         
         dataInicial = data_conf["Starting Time"]
         dataFinal = data_conf["Ending Time"]
@@ -125,11 +125,11 @@ def df_fill_nan(varlev_exps,varlev_dia_exps):
         Exps = list(data_conf["Experiments"].keys())
         outDir = data_conf["Output directory"]
         
-        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
+        dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        varlev_exps = concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,series=False)
+        varlev_exps = scanplot.concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,series=False)
         
-        lst_varlev_dia_exps_rsp = df_fill_nan(varlev_exps,varlev_dia_exps)
+        lst_varlev_dia_exps_rsp = scanplot.df_fill_nan(varlev_exps,varlev_dia_exps)
     """
     
     lst_shapes = []
@@ -175,9 +175,9 @@ def calc_tStudent(lst_varlev_dia_exps_rsp):
     
     Uso
     ---
-        from scanplot import read_namelists, get_dataframe, concat_tables_and_loc, df_fill_nan, calc_tStudent
+        import scanplot
         
-        data_vars, data_conf = read_namelists("~/SCANTEC")
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
         
         dataInicial = data_conf["Starting Time"]
         dataFinal = data_conf["Ending Time"]
@@ -186,13 +186,13 @@ def calc_tStudent(lst_varlev_dia_exps_rsp):
         Exps = list(data_conf["Experiments"].keys())
         outDir = data_conf["Output directory"]
         
-        dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
+        dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        varlev_exps = concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,series=False)
+        varlev_exps = scanplot.concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,series=False)
         
-        lst_varlev_dia_exps_rsp = df_fill_nan(varlev_exps,varlev_dia_exps)
+        lst_varlev_dia_exps_rsp = scanplot.df_fill_nan(varlev_exps,varlev_dia_exps)
         
-        ldrom_exp, ldrosup_exp, ldroinf_exp = calc_tStudent(lst_varlev_dia_exps_rsp)
+        ldrom_exp, ldrosup_exp, ldroinf_exp = scanplot.calc_tStudent(lst_varlev_dia_exps_rsp)
     """
     
     lst_drom_exp = []
