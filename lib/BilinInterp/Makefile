@@ -88,8 +88,8 @@ endif
 #
 
 ifeq ($(SCAN_ARCH),GNU_Linux)
-   FC  = gfortran
-   LD  = gfortran
+   FC  = gfortran-9
+   LD  = gfortran-9
    FFLAGS += -ffree-line-length-none
 
 # add flags for debugging if requested

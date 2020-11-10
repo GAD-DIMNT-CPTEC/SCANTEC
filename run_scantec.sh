@@ -101,7 +101,7 @@ dir_test=TestBRAMS
 datai=2016010100
 dataf=2016010300
 passo_analise=24
-passo_previsao=12
+passo_previsao=24
 total_previsao=36
 
 # Regiões
@@ -120,19 +120,19 @@ quant_exp=1
 pl_model_refer=BRAMS_5km_19levs
 
 # Análises
-arq_refer=/dados/das/public/SCANTEC/TestCase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.ctl
+arq_refer=/dados/das/pesq1/public/SCANTEC/TestCase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%y4%m2%d200-A-%y4-%m2-%d2-000000-g1.ctl
 
 # Experimentos
 # Plugin experimento
 pl_model_exper=BRAMS_5km_19levs
 
 # Previsões
-arq_prev=/dados/das/public/SCANTEC/TestCase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.ctl
+arq_prev=/dados/das/pesq1/public/SCANTEC/TestCase/BRAMS/OPER.2016_exp5kmM/%y4%m2%d200/BRAMS5.exp5kmM_%iy4%im2%id200-A-%fy4-%fm2-%fd2-%fh20000-g1.ctl
 
 
 # Climatologia
-use_climatologia=0
-arq_clim=/dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
+use_climatologia=1
+arq_clim=/dados/das/pesq1/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
 
 ;;
 
@@ -147,7 +147,7 @@ dir_test=TestETA
 # Datas
 datai=2020040400
 dataf=2020040600
-passo_analise=24
+passo_analise=12
 passo_previsao=12
 total_previsao=36
 
@@ -167,18 +167,18 @@ quant_exp=1
 pl_model_refer=ETA_ams_05km_22levs
 
 # Análises
-arq_refer=/dados/das/public/SCANTEC/TestCase/ETA/Eta_ams_05km202004/%d2/%h2/eta_05km_%y4%m2%d2%h2+%y4%m2%d2%h2.ctl
+arq_refer=/dados/das/pesq1/public/SCANTEC/TestCase/ETA/Eta_ams_05km202004/%d2/%h2/eta_05km_%y4%m2%d2%h2+%y4%m2%d2%h2.ctl
 
 # Experimento
 # Plugin experimento
 pl_model_exper=ETA_ams_05km_22levs
 
 # Previsões
-arq_prev=/dados/das/public/SCANTEC/TestCase/ETA/Eta_ams_05km202004/%d2/%h2/eta_05km_%y4%m2%d2%h2+%fy4%fm2%fd2%fh2.ctl 
+arq_prev=/dados/das/pesq1/public/SCANTEC/TestCase/ETA/Eta_ams_05km202004/%d2/%h2/eta_05km_%y4%m2%d2%h2+%fy4%fm2%fd2%fh2.ctl 
 
 # Climatologia
-use_climatologia=0
-arq_clim=/dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
+use_climatologia=1
+arq_clim=/dados/das/pesq1/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
 
 ;;
 
@@ -213,18 +213,18 @@ quant_exp=1
 pl_model_refer=BAM_TQ0299L064_18levs
 
 # Análises
-arq_refer=/dados/das/public/SCANTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.ctl
+arq_refer=/dados/das/pesq1/public/SCANTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.ctl
 
 # Experimento
 # Plugin experimento
 pl_model_exper=BAM_TQ0299L064_18levs
 
 # Previsões
-arq_prev=/dados/das/public/SCANTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.ctl
+arq_prev=/dados/das/pesq1/public/SCANTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.ctl
 
 # Climatologia
-use_climatologia=0
-arq_clim=/dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
+use_climatologia=1
+arq_clim=/dados/das/pesq1/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
 
 ;;
 
