@@ -23,7 +23,7 @@ zdim:  19 levels     1000.0     925.0     900.0     850.0     800.0     750.0   
 vars:
 vtmp:925 vtmp2(tempc:925+273.16,umes3(92500.0,tempc:925,rh:925))
 vtmp:850 vtmp2(tempc:850+273.16,umes3(85000.0,tempc:850,rh:850))
-vtmp:850 vtmp2(tempc:500+273.16,umes3(50000.0,tempc:500,rh:500))
+vtmp:500 vtmp2(tempc:500+273.16,umes3(50000.0,tempc:500,rh:500))
 temp:850 tempc:850
 temp:500 tempc:500
 temp:250 tempc:250
