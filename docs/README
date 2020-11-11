@@ -40,8 +40,8 @@ para funcionar em diversos ambientes, máquinas virtuais do CPTEC, ou mesmo máq
 na mesa do usuário. 
 
 *OBS.0:* %{color:red}  Embora a versão idealizada deva funcionar também no tupã, a presente versão beta
-SCANTEC.2.0.0b2 requer recursos do compilador mais atuais o que não é disponivel ainda na tupã e por 
-isso não está hapta. Veja instruções específicas para outras máquinas nas instruções abaixo.%
+SCANTEC.2.0.0b2 requer recursos mais atuais do compilador fortran, o que não é disponível ainda na tupã
+e por isso não está hapta. Veja instruções específicas para outras máquinas nas instruções abaixo.%
 
 ************************************************
 
@@ -86,7 +86,7 @@ $ ./install
 (d) Caso algum problema seja detectado ou precise compilar novamente, use a opção 1 para limpar
     a compilação anterior.
     
-Além da itapemirim as seguintes máquinas virtuais o scantec também funciona:
+Além da itapemirim as seguintes máquinas virtuais o scantec também funciona corretamente:
 - borebi
 - ribeira
 - colorado 
@@ -259,10 +259,12 @@ $ cd conda
 $ mkdir envs pkgs
 
 OBS.1: Depois disso verifique se no diretório /scripts/das/$USER/conda existem os diretórios envs e pkgs;
-OBS.2: Caso não exista o diretório /scripts/das/$USER é preciso entrar em contato com o suporte para que seu user seja adicionado no grupo das e esse diretório seja criado;
+OBS.2: Caso não exista o diretório /scripts/das/$USER é preciso entrar em contato com o suporte para que seu 
+       user seja adicionado no grupo das e esse diretório seja criado;
 OBS.3: Um grupo específico para essa aplicação deverá ser criado em breve pelo pessoal da computação do centro.
 
-3º Crie o arquivo .condarc em seu HOME contendo as seguintes informações (troque o #USER# pelo seu username no sistema, o mesmo da variável USER):
+3º Crie o arquivo .condarc em seu HOME contendo as seguintes informações (troque o #USER# pelo seu username no 
+sistema, o mesmo da variável USER):
     envs_dirs:
       - /scripts/das/conda/envs
       - /scripts/das/#USER#/conda/envs
@@ -533,8 +535,8 @@ ETA_ams_05km_22levs EXP01 /dados/das/public/SCANTEC/TestCase/ETA/Eta_ams_05km202
 
 (e)>>>>> Endereços dos dados dos modelos <<<<<<<<
 
-* Uma opção de usar ou não a climatologia no cálculo da CCA, sendo 1 para usar e 0 para não usar. Caso 0 seja selecionado as 
-análises de referência são utilizadas para o calculo do CCA.
+* Uma opção de usar ou não a climatologia no cálculo da CCA, sendo 1 para usar e 0 para não usar. Caso 
+o valor 0 seja selecionado as análises de referência são utilizadas para o cálculo do CCA.
 
 Use Climatology: 0  
 
