@@ -32,7 +32,7 @@ Funções
     plot_dTaylor        : plota diagramas de Taylor a partir de dois experimentos utilizando
                           os dataframes com as tabelas do SCANTEC.
 """
-  
+
 from core_scanplot import read_namelists
 from data_structures import get_dataframe, get_dataset
 from aux_functions import concat_tables_and_loc, df_fill_nan, calc_tStudent 

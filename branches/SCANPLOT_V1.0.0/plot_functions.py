@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import global_variables as gvars
+
 import numpy as np
 import pandas as pd
 
@@ -30,7 +32,7 @@ import skill_metrics as sm
 from scipy.stats import t
 from scipy.stats import ttest_ind
 
-def plot_lines(dTable,Vars,Stats,outDir,combine):
+def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
 
     """
     plot_lines
@@ -44,7 +46,12 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
         Vars    : lista com os nomes e níveis das variáveis
         Stats   : lista com os nomes das estatísticas a serem processadas
         outDir  : string com o diretório com as tabelas do SCANTEC
+
+    Parâmetros de entrada opcionais
+    -------------------------------
         combine : valor Booleano para combinar as curvas dos experimentos em um só gráfico
+                  combine=False (valor padrão), plota as curvas em gráficos separados
+                  combine=True, plota as curvas das mesmas estatísticas no mesmo gráfico
     
     Resultado
     ---------
@@ -65,9 +72,25 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
         
         dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        scanplot.plot_lines(dTable,Vars,Stats,outDir,combine=False)
+        scanplot.plot_lines(dTable,Vars,Stats,outDir)
     """
-    
+  
+    # Verifica se foram passados os argumentos opcionais e atribui os valores
+
+    global tExt
+
+    if 'combine' in kwargs:
+        combine = kwargs['combine']
+    else:
+        combine = gvars.combine
+
+    if 'tExt' in kwargs:
+        tExt = kwargs['tExt']      
+        # Atualiza o valor global de tExt
+        gvars.tExt = tExt
+    else:
+        tExt = gvars.tExt
+
     # Ignore Seaborn and respect rcParams
     sns.reset_orig()
     
@@ -84,7 +107,10 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
                 dfTables = []
     
                 for table in Tables:
-                    df_exp = dTable[table].loc[:,[Vars[var][0].lower()]]
+                    if tExt == 'scan':
+                        df_exp = dTable[table].loc[:,[Vars[var][0].lower()]]
+                    else:
+                        df_exp = dTable[table].loc[:,[Vars[var][0]]]
                     dfTables.append(df_exp)
         
                 fcts = dTable[table].loc[:,"%Previsao"].values
@@ -92,7 +118,8 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
                 ax = pd.concat(dfTables,axis=1).plot(title=Vars[var][1],
                                                     figsize=(8,5),
                                                     fontsize=12,
-                                                    linewidth=1.5)
+                                                    linewidth=1.5,
+                                                    marker='o')
     
                 ax.set_xticks(dTable[table].index)
                 ax.set_xticklabels(fcts)
@@ -104,9 +131,14 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
                 ax.legend(enames)
                 
                 plt.ylabel(Stat)
-                plt.xlabel('Tempo')
+                plt.xlabel('Horas de Integração')
                 plt.xticks(rotation=90)
 
+                if Stat == 'ACOR':
+                    plt.axhline(y=0.5, color='black', linestyle='-', linewidth=1)
+                else:
+                    plt.axhline(y=0.0, color='black', linestyle='-', linewidth=1)
+  
                 plt.grid(color='grey', linestyle='--', linewidth=0.5)
                 
                 plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '-combined.png', dpi=70) 
@@ -124,11 +156,19 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
 
             for var in range(len(Vars)):
                 vname = Vars[var]
-            
-                ax = dTable[table].loc[:,[Vars[var][0].lower()]].plot(title=Vars[var][1], 
-                                                                      figsize=(8,5),
-                                                                      fontsize=12,
-                                                                      linewidth=1.5)
+
+                if tExt == 'scan':            
+                    ax = dTable[table].loc[:,[Vars[var][0].lower()]].plot(title=Vars[var][1], 
+                                                                          figsize=(8,5),
+                                                                          fontsize=12,
+                                                                          linewidth=1.5,
+                                                                          marker='o')
+                else:
+                    ax = dTable[table].loc[:,[Vars[var][0]]].plot(title=Vars[var][1], 
+                                                                          figsize=(8,5),
+                                                                          fontsize=12,
+                                                                          linewidth=1.5,
+                                                                          marker='o')
  
                 ax.set_xticks(dTable[table].index)
                 ax.set_xticklabels(fcts)
@@ -138,9 +178,14 @@ def plot_lines(dTable,Vars,Stats,outDir,combine):
                 ax.legend([ename])
             
                 plt.ylabel(Stat)
-                plt.xlabel('Tempo')
+                plt.xlabel('Horas de Integração')
                 plt.xticks(rotation=90)
-        
+      
+                if Stat == 'ACOR':
+                    plt.axhline(y=0.5, color='black', linestyle='-', linewidth=1)
+                else:
+                    plt.axhline(y=0.0, color='black', linestyle='-', linewidth=1)
+  
                 plt.grid(color='grey', linestyle='--', linewidth=0.5)
             
                 plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '.png', dpi=70) 
@@ -274,15 +319,25 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir):
         dataFinal = data_conf["Ending Time"]
         Vars = list(map(data_vars.get,[*data_vars.keys()]))
         Stats = ["ACOR", "RMSE", "VIES"]
-        Exps = list(data_conf["Experiments"].keys())
+
+        Exps = ["EXP1", "EXP2"]
+
         outDir = data_conf["Output directory"]
         
         dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
         scanplot.plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir)
+
+    Observações
+    -----------
+        Nos scorecards, as cores sempre indicam os ganhos do segundo experimento com relação ao primeiro.
+        Portanto, os tons mais intensos de verde, indicam que o 'EXP2' apresentam maior ganho em relação 
+        ao 'EXP1' ou que a mudança fracional é maior.
     """
-    
-    list_var = [ltuple[0].lower() for ltuple in Vars]
+    if tExt == 'scan': 
+        list_var = [ltuple[0].lower() for ltuple in Vars]
+    else:
+        list_var = [ltuple[0] for ltuple in Vars]
 
     for Stat in Stats:
         Tables = list(filter(lambda x:Stat in x, [*dTable.keys()]))
@@ -348,7 +403,7 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir):
     
             fig = ax.get_figure()
 
-        plt.xlabel("Previsões")
+        plt.xlabel("Horas de Integração")
         plt.yticks(fontsize=12)
         plt.xticks(rotation=90, fontsize=12)
     

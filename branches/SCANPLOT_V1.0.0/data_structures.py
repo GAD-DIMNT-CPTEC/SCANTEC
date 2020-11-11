@@ -16,8 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import global_variables as gvars
+
 import re
-import os.path
+import os
 import ntpath
 
 import numpy as np
@@ -28,7 +30,7 @@ from datetime import date, datetime, timedelta
 import xarray as xr
 import cartopy.crs as ccrs
 
-def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series):
+def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,**kwargs):
 
     """
     get_dataframe
@@ -43,9 +45,15 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series):
         Stats       : lista com os nomes das estatísticas a serem processadas
         Exps        : lista com os nomes dos experimentos
         outDir      : string com o diretório com as tabelas do SCANTEC
+
+    Parâmetros de entrada opcionais
+    -------------------------------
         series      : valor Booleano para ler uma série temporal das tabelas do SCANTEC
-                      series=False, lê as tabelas do SCANTEC geradas para a avaliação de um período
+                      series=False (valor padrão), lê as tabelas do SCANTEC geradas para a avaliação de um período
                       series=True, lê as tabelas do SCANTEC geradas para a avaliação dos dias dentro de um período
+        tExt        : string com o extensão dos nomes das tabelas do SCANTEC
+                      tExt='scan' (valor padrão), considera as tabelas do SCANTEC
+                      tExt='scam', considera os nomes das tabelas das versões antigas do SCANTEC
     
     Resultado
     ---------
@@ -63,9 +71,25 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series):
         Exps = list(data_conf["Experiments"].keys())
         outDir = data_conf["Output directory"]
         
-        dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series=False)
+        dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
     """
-    
+
+    # Verifica se foram passados os argumentos opcionais e atribui os valores
+
+    global tExt
+
+    if 'series' in kwargs:
+        series = kwargs['series']
+    else:
+        series = gvars.series
+
+    if 'tExt' in kwargs:
+        tExt = kwargs['tExt']
+        # Atualiza o valor global de tExt
+        gvars.tExt = tExt
+    else:
+        tExt = gvars.tExt
+
     # Dicionário com o(s) dataframe(s)
     ds_table = {}       
     
@@ -80,7 +104,8 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series):
     
                 for exp in Exps:
             
-                    table = outDir + '/' + str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataInicial_fmt) + 'T.scan'
+                    table_name = stat + exp + '_' + dataInicial_fmt + dataInicial_fmt + 'T.' + tExt
+                    table = os.path.join(outDir, table_name) 
                          
                     lista_n = []
     
@@ -100,8 +125,9 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series):
     
             for exp in Exps:
             
-                table = outDir + '/' + str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'T.scan'
-                     
+                table_name = stat + exp + '_' + dataInicial_fmt + dataFinal_fmt + 'T.' + tExt 
+                table = os.path.join(outDir, table_name) 
+
                 lista_n = []
     
                 if os.path.exists(table):

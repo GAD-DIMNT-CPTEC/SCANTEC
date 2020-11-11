@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
-import os.path
+import os
 import ntpath
 
 import numpy as np
@@ -51,8 +51,8 @@ def read_namelists(basepath):
     """
     
     # Lê o arquivo scantec.vars e transforma a lista de variáveis e níveis e um dicionário
-    filename = str(basepath) + '/tables/scantec.vars'
-     
+    filename = os.path.join(basepath, 'tables/scantec.vars') 
+    
     VarsLevs = {}
     
     # Com o método "with open", o arquivo é fechado automaticamente ao final
@@ -64,7 +64,7 @@ def read_namelists(basepath):
           VarsLevs[idx] = (varlevdesc[0], varlevdesc[1].strip('\"'))
         
     # Lê do arquivo scantec.conf e transforma as informações principais em um dicionário
-    filename = str(basepath) + '/bin/scantec.conf'
+    filename = os.path.join(basepath, 'bin/scantec.conf') 
     
     # A função a seguir lê a linha com a informação requerida e cria uma lista com os elementos separados 
     # de acordo com o separador ':'
