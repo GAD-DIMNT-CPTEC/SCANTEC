@@ -25,6 +25,7 @@
 #      04-07-2016 - Lucas Amarante - Atualizando testcase e outors parametros
 #      15-06-2020 - Carlos Bastarz - Adaptações para o novo namelist
 #      18-06-2020 - Luiz Sapucci   - ajustes antes de publicação da versão beta
+#      11-11-2020 - Luiz Sapucci   - ajustes do diretorio dados dados/das na beta2
 #
 #EOP  
 #----------------------------------------------------------------------------------#
@@ -301,13 +302,13 @@ echo " Lon up:  ${lon_up}                        "
 echo ""
 echo " Quantidade de experimentos: ${quant_exp}  "
 echo ""
-echo " Num. plugin referência: ${pl_model_refer} "
+echo " Plugin da referência: ${pl_model_refer}   "
 echo " Análise:                                  "
 echo " ${arq_refer}                              "
 echo ""
-echo " Num. plugin experimento: ${pl_model_exper}"
+echo " Plugin experimento: ${pl_model_exper}     "
 echo " Previsões:                                "
-echo " ${arq_prev}                               "
+echo " ${arq_prev}                               "  
 echo ""
 echo " Uso climatologia: ${use_climatologia}     "
 echo ""
