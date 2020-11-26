@@ -18,6 +18,7 @@
 
 import global_variables as gvars
 
+import os
 import numpy as np
 import pandas as pd
 
@@ -52,10 +53,13 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
         combine : valor Booleano para combinar as curvas dos experimentos em um só gráfico
                   combine=False (valor padrão), plota as curvas em gráficos separados
                   combine=True, plota as curvas das mesmas estatísticas no mesmo gráfico
-    
+        tExt    : string com o extensão dos nomes das tabelas do SCANTEC
+                  tExt='scan' (valor padrão), considera as tabelas do SCANTEC
+                  tExt='scam', considera os nomes das tabelas das versões antigas do SCANTEC        
+   
     Resultado
     ---------
-        Figuras salvas no diretório definido na variável outDir (SCANTEC/dataout).
+        Figuras salvas no diretório definido na variável outDir (SCANEC/dataout).
     
     Uso
     ---
@@ -141,7 +145,7 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
   
                 plt.grid(color='grey', linestyle='--', linewidth=0.5)
                 
-                plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '-combined.png', dpi=70) 
+                plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '-combined.png', dpi=120) 
               
         plt.close(fig)
                 
@@ -188,7 +192,7 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
   
                 plt.grid(color='grey', linestyle='--', linewidth=0.5)
             
-                plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '.png', dpi=70) 
+                plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '.png', dpi=120) 
                 
             plt.close(fig)
         
@@ -283,7 +287,7 @@ def plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps):
         
     return
 
-def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir):
+def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
     
     """
     plot_scorecard
@@ -305,6 +309,12 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir):
         Tstat   : tipo de score a ser calculado
         outDir  : string com o diretório com as tabelas do SCANTEC
     
+    Parâmetros de entrada opcionais
+    -------------------------------
+        tExt    : string com o extensão dos nomes das tabelas do SCANTEC
+                  tExt='scan' (valor padrão), considera as tabelas do SCANTEC
+                  tExt='scam', considera os nomes das tabelas das versões antigas do SCANTEC
+
     Resultado
     ---------
         Figuras salvas no diretório definido na variável outDir (SCANTEC/dataout).
@@ -334,6 +344,18 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir):
         Portanto, os tons mais intensos de verde, indicam que o 'EXP2' apresentam maior ganho em relação 
         ao 'EXP1' ou que a mudança fracional é maior.
     """
+
+    # Verifica se foram passados os argumentos opcionais e atribui os valores
+
+    global tExt
+
+    if 'tExt' in kwargs:
+        tExt = kwargs['tExt']      
+        # Atualiza o valor global de tExt
+        gvars.tExt = tExt
+    else:
+        tExt = gvars.tExt
+
     if tExt == 'scan': 
         list_var = [ltuple[0].lower() for ltuple in Vars]
     else:
@@ -382,7 +404,7 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir):
             cbar.set_ticklabels(["pior", "-50%", "0", "50%", "melhor"])
             cbar.ax.tick_params(labelsize=12)    
                 
-            plt.title("Ganho " + str(Stat) + " (%)\n" + Exps[0] + " X " + Exps[1], fontsize=14)
+            plt.title("Ganho " + str(Stat) + " (%) - " + str(Tables[0][9:19]) + "-" + str(Tables[0][19:29]) + "\n" + Exps[0] + " Vs. " + Exps[1], fontsize=14)
             
             fig = ax.get_figure()
  
@@ -399,8 +421,8 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir):
             cbar.set_ticklabels(["pior", "-0.5", "0", "0.5", "melhor"])
             cbar.ax.tick_params(labelsize=12)    
  
-            plt.title("Mudança Fracional " + str(Stat) + "\n" + Exps[0] + " X " + Exps[1], fontsize=14)
-    
+            plt.title("Mudança Fracional " + str(Stat) + " - " + str(Tables[0][9:19]) + "-" + str(Tables[0][19:29]) + "\n" + Exps[0] + " Vs. " + Exps[1], fontsize=14)
+   
             fig = ax.get_figure()
 
         plt.xlabel("Horas de Integração")
@@ -410,7 +432,9 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir):
         plt.figure()
         plt.tight_layout()
 
-        fig.savefig(outDir + "/" + "scorecard_" + str(Tstat) + "_" + str(Stat) + "_" + str(Tables[0][4:9]) + "_" + str(Tables[1][4:9]) + "_" + str(Tables[0][10:20]) + "-" + str(Tables[0][20:30]) + ".png", bbox_inches="tight", dpi=70)
+        fig_name = "scorecard_" + str(Tstat) + "_" + str(Stat) + "_" + str(Exps[0]) + "_" + str(Exps[1]) + "_" + str(Tables[0][9:19]) + "-" + str(Tables[0][19:29]) + ".png"
+
+        fig.savefig(os.path.join(outDir, fig_name), bbox_inches="tight", dpi=120)
         
         plt.close()
         plt.show()
@@ -515,7 +539,7 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
         
             plt.title("Diagrama de Taylor " + str(Exps[exp]) + '\n' + str(Vars[var][1]), fontsize=14)
 
-            plt.savefig(outDir + '/dtaylor-' + str(Exps[exp]) + '-' + Vars[var][0] + '.png', bbox_inches="tight", dpi=70) 
+            plt.savefig(outDir + '/dtaylor-' + str(Exps[exp]) + '-' + Vars[var][0] + '.png', bbox_inches="tight", dpi=120) 
 
             plt.show()
             

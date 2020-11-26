@@ -106,7 +106,7 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,**kwargs):
             
                     table_name = stat + exp + '_' + dataInicial_fmt + dataInicial_fmt + 'T.' + tExt
                     table = os.path.join(outDir, table_name) 
-                         
+
                     lista_n = []
     
                     if os.path.exists(table):
