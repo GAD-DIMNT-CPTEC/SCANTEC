@@ -50,6 +50,7 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
 
     Parâmetros de entrada opcionais
     -------------------------------
+        figDir  : string com o diretório onde as figuras serão salvas
         combine : valor Booleano para combinar as curvas dos experimentos em um só gráfico
                   combine=False (valor padrão), plota as curvas em gráficos separados
                   combine=True, plota as curvas das mesmas estatísticas no mesmo gráfico
@@ -59,7 +60,8 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
    
     Resultado
     ---------
-        Figuras salvas no diretório definido na variável outDir (SCANEC/dataout).
+        Figuras salvas no diretório definido na variável outDir ou figDir. Se figDir não
+        for passado, então as figuras são salvas no diretório outDir (SCANTEC/dataout).
     
     Uso
     ---
@@ -73,10 +75,12 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
         Stats = ["ACOR", "RMSE", "VIES"]
         Exps = list(data_conf["Experiments"].keys())
         outDir = data_conf["Output directory"]
-        
+       
+        figDir = data_conf["Output directory"]
+ 
         dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        scanplot.plot_lines(dTable,Vars,Stats,outDir)
+        scanplot.plot_lines(dTable,Vars,Stats,outDir,figDir=figDir)
     """
   
     # Verifica se foram passados os argumentos opcionais e atribui os valores
@@ -94,6 +98,11 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
         gvars.tExt = tExt
     else:
         tExt = gvars.tExt
+
+    if 'figDir' in kwargs:
+        figDir = kwargs['figDir']
+    else:
+        figDir = outDir
 
     # Ignore Seaborn and respect rcParams
     sns.reset_orig()
@@ -118,7 +127,7 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
                     dfTables.append(df_exp)
         
                 fcts = dTable[table].loc[:,"%Previsao"].values
-            
+
                 ax = pd.concat(dfTables,axis=1).plot(title=Vars[var][1],
                                                     figsize=(8,5),
                                                     fontsize=12,
@@ -145,7 +154,8 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
   
                 plt.grid(color='grey', linestyle='--', linewidth=0.5)
                 
-                plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '-combined.png', dpi=120) 
+                fig_name = table + '-' + Vars[var][0] + '-combined.png'
+                plt.savefig(os.path.join(figDir, fig_name), dpi=120)
               
         plt.close(fig)
                 
@@ -192,7 +202,8 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
   
                 plt.grid(color='grey', linestyle='--', linewidth=0.5)
             
-                plt.savefig(outDir + '/' + table + '-' + Vars[var][0] + '.png', dpi=120) 
+                fig_name = table + '-' + Vars[var][0] + '.png'
+                plt.savefig(os.path.join(figDir, fig_name), dpi=120)
                 
             plt.close(fig)
         
@@ -311,6 +322,7 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
     
     Parâmetros de entrada opcionais
     -------------------------------
+        figDir  : string com o diretório onde as figuras serão salvas
         tExt    : string com o extensão dos nomes das tabelas do SCANTEC
                   tExt='scan' (valor padrão), considera as tabelas do SCANTEC
                   tExt='scam', considera os nomes das tabelas das versões antigas do SCANTEC
@@ -333,10 +345,12 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
         Exps = ["EXP1", "EXP2"]
 
         outDir = data_conf["Output directory"]
+
+        figDir = data_conf["Output directory"]
         
         dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        scanplot.plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir)
+        scanplot.plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,figDir=figDir)
 
     Observações
     -----------
@@ -355,6 +369,11 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
         gvars.tExt = tExt
     else:
         tExt = gvars.tExt
+
+    if 'figDir' in kwargs:
+        figDir = kwargs['figDir']
+    else:
+        figDir = outDir
 
     if tExt == 'scan': 
         list_var = [ltuple[0].lower() for ltuple in Vars]
@@ -434,7 +453,7 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
 
         fig_name = "scorecard_" + str(Tstat) + "_" + str(Stat) + "_" + str(Exps[0]) + "_" + str(Exps[1]) + "_" + str(Tables[0][9:19]) + "-" + str(Tables[0][19:29]) + ".png"
 
-        fig.savefig(os.path.join(outDir, fig_name), bbox_inches="tight", dpi=120)
+        fig.savefig(os.path.join(figDir, fig_name), bbox_inches="tight", dpi=120)
         
         plt.close()
         plt.show()

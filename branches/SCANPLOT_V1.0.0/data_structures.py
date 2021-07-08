@@ -179,11 +179,17 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
 
     ftime = np.int(data_conf['Forecast Total Time'])
     atime = np.int(data_conf['Analisys Time Step'])
-    #tdef = np.int((ftime / atime) + 1) # verificar, pois no arquivo CTL esta é a conta que é feita, mas no arquivo binário não!
+    tdef = np.int((ftime / atime) + 1) # verificar, pois no arquivo CTL esta é a conta que é feita, mas no arquivo binário não!
     dataFinal2 = dataInicial + timedelta(hours=np.int(tdef)*np.int(data_conf["Forecast Time Step"]))
-    times = pd.date_range(dataInicial, dataFinal2, freq=t_step)   
+    #times = pd.date_range(dataInicial, dataFinal2, freq=t_step)  
+    times = pd.date_range(dataInicial, dataFinal, freq=t_step)  
     tdef = len([*times])                     
+    #tdef = 8
+    print('Starting Time',dataInicial)
+    print('Ending Time',dataFinal)
     print(times)
+    print(tdef)
+    print(np.arange(tdef))
     
     # Tamanho e limites do domínio                           
     lllat = np.float32(data_conf['run domain lower left lat'])
@@ -198,10 +204,10 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
     ydef = np.int(((urlat - lllat) / gdy) + 1)
 
     # Latitudes e longitudes                           
-#    lats = np.linspace(lllat, urlat, num=ydef)
-#    lons = np.linspace(lllon, urlon, num=xdef)                      
-    lats = np.arange(lllat, urlat, gdy)
-    lons = np.arange(lllon, urlon, gdx) 
+    lats = np.linspace(lllat, urlat, num=ydef)
+    lons = np.linspace(lllon, urlon, num=xdef)                      
+#    lats = np.arange(lllat, urlat, gdy)
+#    lons = np.arange(lllon, urlon, gdx) # fica com tamanho menor (-1 ponto)
 
     outDir = data_conf['Output directory']
     
@@ -213,6 +219,8 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
  
     nvars = len(fnames)
     
+    #print(nvars,fnames)
+    
     # Dicionário com o(s) dataset(s)
     ds_field = {}
     
@@ -223,12 +231,13 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
 
         for exp in Exps:
         
-            fname = outDir + '/' + str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'F.scan'
+            file_name = str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'F.scan'
+            fname = os.path.join(outDir, file_name)
             
             lista_n = []
 
             if os.path.exists(fname):
-                print(fname)
+                #print(fname)
                               
                 dsl = []
                 ds = xr.Dataset()                           
@@ -238,11 +247,22 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
                     for t in np.arange(tdef): 
                                        
                         for i in np.arange(nvars):
-                                       
+                                 
+                            #s2d = str(xdef*ydef) + 'float32'
+                            #pad = '8b'  
+                                
+                            #dt = [ ('pad1', pad),  ('field', s2d), ('pad2', pad) ]    
+                                
+                            #dt_obj = np.dtype(dt)#, align=True)    
+                                
+                            #data = np.fromfile(f, dtype=np.float32, count=xdef*ydef, offset=8)    
+                                
                             data = np.fromfile(f, dtype=np.float32, count=xdef*ydef, offset=8)
                                        
-                            field = np.reshape(data, (xdef, ydef), order='F')
-                                       
+                            field = np.reshape(data, (xdef, ydef), order='F')  
+                                                       
+                            print(t, stat, exp, i)
+                            
                             ds[fnames[i]] = (('lon','lat'), field)
                             ds.coords['lat'] = ('lat', lats)
                             ds.coords['lon'] = ('lon', lons)

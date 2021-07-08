@@ -19,3 +19,4 @@
 combine = False
 series = False
 tExt = 'scan'
+figDir = None
