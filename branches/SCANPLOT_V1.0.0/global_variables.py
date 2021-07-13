@@ -20,3 +20,6 @@ combine = False
 series = False
 tExt = 'scan'
 figDir = None
+showFig = False
+saveFig = False
+lineStyles = False

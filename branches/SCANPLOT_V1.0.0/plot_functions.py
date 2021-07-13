@@ -26,12 +26,16 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
+from IPython import get_ipython
+
 import seaborn as sns
 
 import skill_metrics as sm
 
 from scipy.stats import t
 from scipy.stats import ttest_ind
+
+ipython = get_ipython()
 
 def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
 
@@ -50,6 +54,12 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
 
     Parâmetros de entrada opcionais
     -------------------------------
+        showFig : valor Booleano para mostrar ou não as figuras durante a plotagem
+                  showFig=False (valor padrão), não mostra as figuras (mais rápido)
+                  showFig=True, mostra as figuras (mais lento)
+        saveFig : valor Booleano para salvar ou não as figuras durante a plotagem
+                  saveFig=False (valor padrão), não salva as figuras
+                  saveFig=True, salva as figuras
         figDir  : string com o diretório onde as figuras serão salvas
         combine : valor Booleano para combinar as curvas dos experimentos em um só gráfico
                   combine=False (valor padrão), plota as curvas em gráficos separados
@@ -80,7 +90,7 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
  
         dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        scanplot.plot_lines(dTable,Vars,Stats,outDir,figDir=figDir)
+        scanplot.plot_lines(dTable,Vars,Stats,outDir,showFig=True,saveFig=True,figDir=figDir)
     """
   
     # Verifica se foram passados os argumentos opcionais e atribui os valores
@@ -101,14 +111,47 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
 
     if 'figDir' in kwargs:
         figDir = kwargs['figDir']
+        # Verifica se o diretório figDir existe e cria se necessário
+        if not os.path.exists(figDir):
+            os.makedirs(figDir)
     else:
         figDir = outDir
+
+    if 'showFig' in kwargs:
+        showFig = kwargs['showFig']
+    else:
+        showFig = gvars.showFig
+
+    if 'saveFig' in kwargs:
+        saveFig = kwargs['saveFig']
+    else:
+        saveFig = gvars.saveFig
+
+    if 'lineStyles' in kwargs:
+        lineStyles = kwargs['lineStyles']
+    else:
+        lineStyles = gvars.lineStyles
+
+    # https://stackoverflow.com/questions/43545050/using-matplotlib-notebook-after-matplotlib-inline-in-jupyter-notebook-doesnt
+    # https://www.codegrepper.com/code-examples/python/use+ipython+magic+in+script
+    ipython.magic("matplotlib Agg")           
+    ipython.magic("matplotlib Agg")           
+    import matplotlib.pyplot as plt
 
     # Ignore Seaborn and respect rcParams
     sns.reset_orig()
     
     if combine:
-        
+     
+        if showFig:
+            ipython.magic("matplotlib inline")           
+            ipython.magic("matplotlib inline")           
+            import matplotlib.pyplot as plt
+        else:
+            ipython.magic("matplotlib Agg")           
+            ipython.magic("matplotlib Agg")           
+            import matplotlib.pyplot as plt
+
         fig, ax = plt.subplots()
         plt.rcParams.update({'figure.max_open_warning': 0})
 
@@ -128,12 +171,19 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
         
                 fcts = dTable[table].loc[:,"%Previsao"].values
 
-                ax = pd.concat(dfTables,axis=1).plot(title=Vars[var][1],
-                                                    figsize=(8,5),
-                                                    fontsize=12,
-                                                    linewidth=1.5,
-                                                    marker='o')
-    
+                if lineStyles:
+                    ax = pd.concat(dfTables,axis=1).plot(title=Vars[var][1],
+                                                         figsize=(8,5),
+                                                         fontsize=12,
+                                                         linewidth=1.5,
+                                                         style=lineStyles)
+                else:
+                    ax = pd.concat(dfTables,axis=1).plot(title=Vars[var][1],
+                                                         figsize=(8,5),
+                                                         fontsize=12,
+                                                         linewidth=1.5,
+                                                         marker='o')
+
                 ax.set_xticks(dTable[table].index)
                 ax.set_xticklabels(fcts)
 
@@ -153,12 +203,13 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
                     plt.axhline(y=0.0, color='black', linestyle='-', linewidth=1)
   
                 plt.grid(color='grey', linestyle='--', linewidth=0.5)
-                
-                fig_name = table + '-' + Vars[var][0] + '-combined.png'
-                plt.savefig(os.path.join(figDir, fig_name), dpi=120)
-              
+               
+                if saveFig: 
+                    fig_name = table + '-' + Vars[var][0] + '-combined.png'
+                    plt.savefig(os.path.join(figDir, fig_name), dpi=120)
+
         plt.close(fig)
-                
+
     else:
             
         for table in list(dTable.keys()):
@@ -179,10 +230,10 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
                                                                           marker='o')
                 else:
                     ax = dTable[table].loc[:,[Vars[var][0]]].plot(title=Vars[var][1], 
-                                                                          figsize=(8,5),
-                                                                          fontsize=12,
-                                                                          linewidth=1.5,
-                                                                          marker='o')
+                                                                  figsize=(8,5),
+                                                                  fontsize=12,
+                                                                  linewidth=1.5,
+                                                                  marker='o')
  
                 ax.set_xticks(dTable[table].index)
                 ax.set_xticklabels(fcts)
@@ -201,9 +252,10 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
                     plt.axhline(y=0.0, color='black', linestyle='-', linewidth=1)
   
                 plt.grid(color='grey', linestyle='--', linewidth=0.5)
-            
-                fig_name = table + '-' + Vars[var][0] + '.png'
-                plt.savefig(os.path.join(figDir, fig_name), dpi=120)
+ 
+                if saveFig:            
+                    fig_name = table + '-' + Vars[var][0] + '.png'
+                    plt.savefig(os.path.join(figDir, fig_name), dpi=120)
                 
             plt.close(fig)
         
@@ -322,6 +374,9 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
     
     Parâmetros de entrada opcionais
     -------------------------------
+        showFig: valor Booleano para mostrar ou não as figuras durante a plotagem
+                  showFig=False (valor padrão), não mostra as figuras (mais rápido)
+                  showFig=True, mostra as figuras (mais lento)
         figDir  : string com o diretório onde as figuras serão salvas
         tExt    : string com o extensão dos nomes das tabelas do SCANTEC
                   tExt='scan' (valor padrão), considera as tabelas do SCANTEC
@@ -350,7 +405,7 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
         
         dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        scanplot.plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,figDir=figDir)
+        scanplot.plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,showFig=True,figDir=figDir)
 
     Observações
     -----------
@@ -374,6 +429,11 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
         figDir = kwargs['figDir']
     else:
         figDir = outDir
+
+    if 'showFig' in kwargs:
+        showFig = kwargs['showFig']
+    else:
+        showFig = gvars.showFig
 
     if tExt == 'scan': 
         list_var = [ltuple[0].lower() for ltuple in Vars]
@@ -460,7 +520,7 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
         
     return
 
-def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
+def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
     
     """
     plot_dTaylor
@@ -480,6 +540,13 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
                     (são necessárias as tabelas ACOR, RMSE e VIES)
         outDir    : string com o diretório com as tabelas do SCANTEC
     
+    Parâmetros de entrada opcionais
+    -------------------------------
+        showFig: valor Booleano para mostrar ou não as figuras durante a plotagem
+                  showFig=False (valor padrão), não mostra as figuras (mais rápido)
+                  showFig=True, mostra as figuras (mais lento)
+        figDir  : string com o diretório onde as figuras serão salvas
+
     Resultado
     ---------
         Figuras salvas no diretório definido na variável outDir (SCANTEC/dataout).
@@ -497,15 +564,29 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
         Exps = list(data_conf["Experiments"].keys())
         outDir = data_conf["Output directory"]
         
+        figDir = data_conf["Output directory"]
+
         dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        scanplot.plot_dTaylor(dTable,data_conf,Vars,Stats,outDir)
+        scanplot.plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,showFig=True,figDir=figDir)
         
     Observações
     -----------
         Experimental, esta função considera o devio-padrão como a raiz qadrada do RMSE.
     """
     
+    # Verifica se foram passados os argumentos opcionais e atribui os valores
+
+    if 'figDir' in kwargs:
+        figDir = kwargs['figDir']
+    else:
+        figDir = outDir
+
+    if 'showFig' in kwargs:
+        showFig = kwargs['showFig']
+    else:
+        showFig = gvars.showFig
+
     # Ignore Seaborn and respect rcParams
     sns.reset_orig()
     
@@ -558,10 +639,12 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir):
         
             plt.title("Diagrama de Taylor " + str(Exps[exp]) + '\n' + str(Vars[var][1]), fontsize=14)
 
-            plt.savefig(outDir + '/dtaylor-' + str(Exps[exp]) + '-' + Vars[var][0] + '.png', bbox_inches="tight", dpi=120) 
+            fig_name = 'dtaylor-' + str(Exps[exp]) + '-' + Vars[var][0] + '.png'
+            #plt.savefig(outDir + '/dtaylor-' + str(Exps[exp]) + '-' + Vars[var][0] + '.png', bbox_inches="tight", dpi=120) 
+            plt.savefig(os.path.join(figDir, fig_name), bbox_inches="tight", dpi=120)
 
             plt.show()
             
     plt.close(fig)     
-    
+
     return
