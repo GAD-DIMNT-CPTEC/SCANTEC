@@ -54,19 +54,21 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
 
     Parâmetros de entrada opcionais
     -------------------------------
-        showFig : valor Booleano para mostrar ou não as figuras durante a plotagem
-                  showFig=False (valor padrão), não mostra as figuras (mais rápido)
-                  showFig=True, mostra as figuras (mais lento)
-        saveFig : valor Booleano para salvar ou não as figuras durante a plotagem
-                  saveFig=False (valor padrão), não salva as figuras
-                  saveFig=True, salva as figuras
-        figDir  : string com o diretório onde as figuras serão salvas
-        combine : valor Booleano para combinar as curvas dos experimentos em um só gráfico
-                  combine=False (valor padrão), plota as curvas em gráficos separados
-                  combine=True, plota as curvas das mesmas estatísticas no mesmo gráfico
-        tExt    : string com o extensão dos nomes das tabelas do SCANTEC
-                  tExt='scan' (valor padrão), considera as tabelas do SCANTEC
-                  tExt='scam', considera os nomes das tabelas das versões antigas do SCANTEC        
+        showFig    : valor Booleano para mostrar ou não as figuras durante a plotagem
+                     showFig=False (valor padrão), não mostra as figuras (mais rápido)
+                     showFig=True, mostra as figuras (mais lento)
+        saveFig    : valor Booleano para salvar ou não as figuras durante a plotagem
+                     saveFig=False (valor padrão), não salva as figuras
+                     saveFig=True, salva as figuras
+        lineStyles : lista com as cores e os estilos das linhas (o número de elementos
+                     da lista deve ser igual ao número de experimentos)
+        figDir     : string com o diretório onde as figuras serão salvas
+        combine    : valor Booleano para combinar as curvas dos experimentos em um só gráfico
+                     combine=False (valor padrão), plota as curvas em gráficos separados
+                     combine=True, plota as curvas das mesmas estatísticas no mesmo gráfico
+        tExt       : string com o extensão dos nomes das tabelas do SCANTEC
+                     tExt='scan' (valor padrão), considera as tabelas do SCANTEC
+                     tExt='scam', considera os nomes das tabelas das versões antigas do SCANTEC        
    
     Resultado
     ---------
@@ -88,15 +90,17 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
        
         figDir = data_conf["Output directory"]
  
+        lineStyles = ['k-', 'b-', 'b--', 'r-', 'r--']
+
         dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        scanplot.plot_lines(dTable,Vars,Stats,outDir,showFig=True,saveFig=True,figDir=figDir)
+        scanplot.plot_lines(dTable,Vars,Stats,outDir,showFig=True,saveFig=True,lineStyles=lineStyles,figDir=figDir)
     """
   
-    # Verifica se foram passados os argumentos opcionais e atribui os valores
-
+    # tExt é uma variável global e o seu valor é sempre atualizado
     global tExt
 
+    # Verifica se foram passados os argumentos opcionais e atribui os valores
     if 'combine' in kwargs:
         combine = kwargs['combine']
     else:
@@ -132,15 +136,20 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
     else:
         lineStyles = gvars.lineStyles
 
-    # https://stackoverflow.com/questions/43545050/using-matplotlib-notebook-after-matplotlib-inline-in-jupyter-notebook-doesnt
-    # https://www.codegrepper.com/code-examples/python/use+ipython+magic+in+script
+    # Define o backend de plotagem do matplotlib
+    # Agg: não mostra os gráficos
+    # inline: mostra os gráficos
+    # Refs:
+    # * https://stackoverflow.com/questions/43545050/using-matplotlib-notebook-after-matplotlib-inline-in-jupyter-notebook-doesnt
+    # * https://www.codegrepper.com/code-examples/python/use+ipython+magic+in+script
     ipython.magic("matplotlib Agg")           
     ipython.magic("matplotlib Agg")           
     import matplotlib.pyplot as plt
 
-    # Ignore Seaborn and respect rcParams
+    # Reseta os parâmetros de aspecto do Seaborn
     sns.reset_orig()
-    
+
+    # Opção combine=True    
     if combine:
      
         if showFig:
@@ -158,8 +167,10 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
         for var in range(len(Vars)):
        
             for Stat in Stats:
+                # Nomes das tabelas
                 Tables = list(filter(lambda x:Stat in x, [*dTable.keys()]))
        
+                # Lista de tabelas a serem plotadas
                 dfTables = []
     
                 for table in Tables:
@@ -171,12 +182,15 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
         
                 fcts = dTable[table].loc[:,"%Previsao"].values
 
+                # Cria o objeto com o gráfico principal
+                # Se lineStyles=True
                 if lineStyles:
                     ax = pd.concat(dfTables,axis=1).plot(title=Vars[var][1],
                                                          figsize=(8,5),
                                                          fontsize=12,
                                                          linewidth=1.5,
                                                          style=lineStyles)
+                # Se lineStyles=False (padrão)
                 else:
                     ax = pd.concat(dfTables,axis=1).plot(title=Vars[var][1],
                                                          figsize=(8,5),
@@ -187,6 +201,7 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
                 ax.set_xticks(dTable[table].index)
                 ax.set_xticklabels(fcts)
 
+                # Legendas
                 enames=[]
                 for table in Tables:
                     enames.append(table.split('_')[0][4:])
@@ -197,21 +212,34 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
                 plt.xlabel('Horas de Integração')
                 plt.xticks(rotation=90)
 
+                # Plota y=0.5 para ACOR e y=0.0 para demais tabelas
                 if Stat == 'ACOR':
                     plt.axhline(y=0.5, color='black', linestyle='-', linewidth=1)
                 else:
                     plt.axhline(y=0.0, color='black', linestyle='-', linewidth=1)
   
+                # Grade do gráfico
                 plt.grid(color='grey', linestyle='--', linewidth=0.5)
                
+                # Se saveFig=True
                 if saveFig: 
-                    fig_name = table + '-' + Vars[var][0] + '-combined.png'
-                    plt.savefig(os.path.join(figDir, fig_name), dpi=120)
+                    fig_name = table.replace(str(tExt),'') + Vars[var][0] + '-combined.png'
+                    plt.savefig(os.path.join(figDir, fig_name), bbox_inches='tight', dpi=120)
 
         plt.close(fig)
 
+    # Opção combine=False (padrão)
     else:
             
+        if showFig:
+            ipython.magic("matplotlib inline")           
+            ipython.magic("matplotlib inline")           
+            import matplotlib.pyplot as plt
+        else:
+            ipython.magic("matplotlib Agg")           
+            ipython.magic("matplotlib Agg")           
+            import matplotlib.pyplot as plt
+
         for table in list(dTable.keys()):
             Stat = table[0:4]
             fcts = dTable[table].loc[:,"%Previsao"].values
@@ -254,14 +282,14 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
                 plt.grid(color='grey', linestyle='--', linewidth=0.5)
  
                 if saveFig:            
-                    fig_name = table + '-' + Vars[var][0] + '.png'
-                    plt.savefig(os.path.join(figDir, fig_name), dpi=120)
+                    fig_name = table.replace(str(tExt),'') + Vars[var][0] + '.png'
+                    plt.savefig(os.path.join(figDir, fig_name), bbox_inches='tight', dpi=120)
                 
             plt.close(fig)
         
     return
 
-def plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps):
+def plot_lines_tStudent(dataInicial,dataFinal,dTable_series,Exps,Var,VarName,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps,outDir,**kwargs):
         
     """
     plot_lines_tStudent
@@ -278,10 +306,21 @@ def plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps):
         ldroinf_exp  : limite inferior do teste
         varlev_exps  : dataframes com as variáveis dos experimentos
     
+    Parâmetros de entrada opcionais
+    -------------------------------
+        showFig    : valor Booleano para mostrar ou não as figuras durante a plotagem
+                     showFig=False (valor padrão), não mostra as figuras (mais rápido)
+                     showFig=True, mostra as figuras (mais lento)
+        saveFig    : valor Booleano para salvar ou não as figuras durante a plotagem
+                     saveFig=False (valor padrão), não salva as figuras
+                     saveFig=True, salva as figuras
+        figDir     : string com o diretório onde as figuras serão salvas
+
     Resultado
     ---------
         Resultado do teste de significância e valores críticos para serem utilizados pela função
-        plot_lines_tStudent.
+        plot_lines_tStudent. Figuras salvas no diretório definido na variável outDir ou figDir. 
+        Se figDir não for passado, então as figuras são salvas no diretório outDir (SCANTEC/dataout).
     
     Uso
     ---
@@ -295,31 +334,97 @@ def plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps):
         Stats = ["ACOR", "RMSE", "VIES"]
         Exps = list(data_conf["Experiments"].keys())
         outDir = data_conf["Output directory"]
-        
-        dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
-        
+       
+        Var = Vars[0][0].lower()
+        VarName = Vars[0][1]
+ 
+        dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series=False)
+
+        dTable_series = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series=True)
+
         varlev_exps = scanplot.concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,series=False)
-        
+       
+        varlev_dia_exps = scanplot.concat_tables_and_loc(dTable_series,dataInicial,dataFinal,Exps,Var,series=True)
+ 
         lst_varlev_dia_exps_rsp = scanplot.df_fill_nan(varlev_exps,varlev_dia_exps)
         
         ldrom_exp, ldrosup_exp, ldroinf_exp = scanplot.calc_tStudent(lst_varlev_dia_exps_rsp)
         
-        scanplot.plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps)
+        scanplot.plot_lines_tStudent(dataInicial,dataFinal,dTable_series,Exps,Var,VarName,ldrom_exp,
+                                     ldrosup_exp,ldroinf_exp,varlev_exps,outDir,
+                                     figDir=figDir,saveFig=True,showFig=True)
 
     Observações
     -----------
-        Experimental, esta função necessita ser validada.
+        * Experimental, esta função necessita ser validada;
+        * Na presente versão, apenas uma variável e nível pode ser plotada. 
     """        
+
+    # tExt é uma variável global e o seu valor é sempre atualizado
+    global tExt
+
+#    # Verifica se foram passados os argumentos opcionais e atribui os valores
+#    if 'combine' in kwargs:
+#        combine = kwargs['combine']
+#    else:
+#        combine = gvars.combine
+
+    if 'tExt' in kwargs:
+        tExt = kwargs['tExt']      
+        # Atualiza o valor global de tExt
+        gvars.tExt = tExt
+    else:
+        tExt = gvars.tExt
+
+    if 'figDir' in kwargs:
+        figDir = kwargs['figDir']
+        # Verifica se o diretório figDir existe e cria se necessário
+        if not os.path.exists(figDir):
+            os.makedirs(figDir)
+    else:
+        figDir = outDir
+
+    if 'showFig' in kwargs:
+        showFig = kwargs['showFig']
+    else:
+        showFig = gvars.showFig
+
+    if 'saveFig' in kwargs:
+        saveFig = kwargs['saveFig']
+    else:
+        saveFig = gvars.saveFig
+
+    if 'lineStyles' in kwargs:
+        lineStyles = kwargs['lineStyles']
+    else:
+        lineStyles = gvars.lineStyles
+
+    ipython.magic("matplotlib Agg")           
+    ipython.magic("matplotlib Agg")           
+    import matplotlib.pyplot as plt
+
+    if showFig:
+        ipython.magic("matplotlib inline")           
+        ipython.magic("matplotlib inline")           
+        import matplotlib.pyplot as plt
+    else:
+        ipython.magic("matplotlib Agg")           
+        ipython.magic("matplotlib Agg")           
+        import matplotlib.pyplot as plt
         
     # Ignore Seaborn and respect rcParams
     sns.reset_orig()    
-    
+   
+    datai = dataInicial.strftime('%Y%m%d%H')
+    dataf = dataFinal.strftime('%Y%m%d%H')
+ 
     colors = ['black', 'red', 'green', 'blue', 'orange', 'brown', 'cyan', 'magenta']
     
     fig, axs = plt.subplots(2, sharex=True, sharey=False, gridspec_kw={'hspace': 0}, figsize = (8,6))
     
     j = 0
-    
+   
+    # Curvas da correlação de anomalias 
     for i, varlev_exp in enumerate(varlev_exps):
         if i == 0:
             axs[0].plot(varlev_exp, color=colors[j], linestyle='--', label=str(Exps[j]), linewidth=1.5)
@@ -331,8 +436,11 @@ def plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps):
         
         j += 1
         
+    plt.ylabel('ACOR')
+
     j = 1
         
+    # Curvas do teste t-Student
     for drosup_exp, droinf_exp, drom_exp in zip(ldrosup_exp,ldroinf_exp,ldrom_exp):
         
         axs[1].bar(range(0, len(drosup_exp)), drosup_exp, color=(0, 0, 0, 0), edgecolor=colors[j], align='center', linewidth=1.5)
@@ -347,7 +455,26 @@ def plot_lines_tStudent(Exps,ldrom_exp,ldrosup_exp,ldroinf_exp,varlev_exps):
         
     for ax in axs:
         ax.label_outer()        
-        
+
+    axs[0].set_title(str(VarName))
+    axs[1].set_xlabel('Horas de Integração')
+    axs[0].set_ylabel('ACOR')
+    axs[1].set_ylabel('Valor Crítico')        
+    plt.xticks(rotation=90)
+
+    axs[1].text(0.01, 0.93, "Diferença em relação ao " + Exps[0], transform=ax.transAxes);
+    axs[1].text(0.01, 0.18, "Diferenças na ACOR possuem significância", transform=ax.transAxes);
+    axs[1].text(0.01, 0.10, "de 95% quando as curvas estão fora das", transform=ax.transAxes);
+    axs[1].text(0.01, 0.02, "suas respectivas barras", transform=ax.transAxes);
+
+    fcts = dTable_series[list(dTable_series.keys())[0]].loc[:,"%Previsao"].values
+    axs[1].set_xticks(dTable_series[list(dTable_series.keys())[0]].index)
+    axs[1].set_xticklabels(fcts)
+
+    if saveFig:            
+        fig_name = 'ACOREXPS' + str(datai) + str(dataf) + '_' + Var.replace(':','').upper() + '_' + 'tStudent.png'
+        plt.savefig(os.path.join(figDir, fig_name), bbox_inches='tight', dpi=120)
+
     return
 
 def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
@@ -374,17 +501,21 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
     
     Parâmetros de entrada opcionais
     -------------------------------
-        showFig: valor Booleano para mostrar ou não as figuras durante a plotagem
-                  showFig=False (valor padrão), não mostra as figuras (mais rápido)
-                  showFig=True, mostra as figuras (mais lento)
-        figDir  : string com o diretório onde as figuras serão salvas
-        tExt    : string com o extensão dos nomes das tabelas do SCANTEC
-                  tExt='scan' (valor padrão), considera as tabelas do SCANTEC
-                  tExt='scam', considera os nomes das tabelas das versões antigas do SCANTEC
+        showFig    : valor Booleano para mostrar ou não as figuras durante a plotagem
+                     showFig=False (valor padrão), não mostra as figuras (mais rápido)
+                     showFig=True, mostra as figuras (mais lento)
+        saveFig    : valor Booleano para salvar ou não as figuras durante a plotagem
+                     saveFig=False (valor padrão), não salva as figuras
+                     saveFig=True, salva as figuras
+        figDir     : string com o diretório onde as figuras serão salvas
+        tExt       : string com o extensão dos nomes das tabelas do SCANTEC
+                     tExt='scan' (valor padrão), considera as tabelas do SCANTEC
+                     tExt='scam', considera os nomes das tabelas das versões antigas do SCANTEC
 
     Resultado
     ---------
-        Figuras salvas no diretório definido na variável outDir (SCANTEC/dataout).
+        Figuras salvas no diretório definido na variável outDir ou figDir. Se figDir não
+        for passado, então as figuras são salvas no diretório outDir (SCANTEC/dataout).
     
     Uso
     ---
@@ -405,7 +536,7 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
         
         dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        scanplot.plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,showFig=True,figDir=figDir)
+        scanplot.plot_scorecard(dTable,Vars,Stats,'ganho',Exps,outDir,figDir=figDir,showFig=True,saveFig=True)
 
     Observações
     -----------
@@ -434,6 +565,24 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
         showFig = kwargs['showFig']
     else:
         showFig = gvars.showFig
+
+    if 'saveFig' in kwargs:
+        saveFig = kwargs['saveFig']
+    else:
+        saveFig = gvars.saveFig
+
+    ipython.magic("matplotlib Agg")           
+    ipython.magic("matplotlib Agg")           
+    import matplotlib.pyplot as plt
+
+    if showFig:
+        ipython.magic("matplotlib inline")           
+        ipython.magic("matplotlib inline")           
+        import matplotlib.pyplot as plt
+    else:
+        ipython.magic("matplotlib Agg")           
+        ipython.magic("matplotlib Agg")           
+        import matplotlib.pyplot as plt
 
     if tExt == 'scan': 
         list_var = [ltuple[0].lower() for ltuple in Vars]
@@ -511,9 +660,10 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
         plt.figure()
         plt.tight_layout()
 
-        fig_name = "scorecard_" + str(Tstat) + "_" + str(Stat) + "_" + str(Exps[0]) + "_" + str(Exps[1]) + "_" + str(Tables[0][9:19]) + "-" + str(Tables[0][19:29]) + ".png"
+        if saveFig:
+            fig_name = "scorecard_" + str(Tstat) + "_" + str(Stat) + "_" + str(Exps[0]) + "_" + str(Exps[1]) + "_" + str(Tables[0][9:19]) + "-" + str(Tables[0][19:29]) + ".png"
 
-        fig.savefig(os.path.join(figDir, fig_name), bbox_inches="tight", dpi=120)
+            fig.savefig(os.path.join(figDir, fig_name), bbox_inches="tight", dpi=120)
         
         plt.close()
         plt.show()
@@ -542,14 +692,18 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
     
     Parâmetros de entrada opcionais
     -------------------------------
-        showFig: valor Booleano para mostrar ou não as figuras durante a plotagem
-                  showFig=False (valor padrão), não mostra as figuras (mais rápido)
-                  showFig=True, mostra as figuras (mais lento)
-        figDir  : string com o diretório onde as figuras serão salvas
+        showFig    : valor Booleano para mostrar ou não as figuras durante a plotagem
+                     showFig=False (valor padrão), não mostra as figuras (mais rápido)
+                     showFig=True, mostra as figuras (mais lento)
+        saveFig    : valor Booleano para salvar ou não as figuras durante a plotagem
+                     saveFig=False (valor padrão), não salva as figuras
+                     saveFig=True, salva as figuras
+        figDir     : string com o diretório onde as figuras serão salvas
 
     Resultado
     ---------
-        Figuras salvas no diretório definido na variável outDir (SCANTEC/dataout).
+        Figuras salvas no diretório definido na variável outDir ou figDir. Se figDir não
+        for passado, então as figuras são salvas no diretório outDir (SCANTEC/dataout).
     
     Uso
     ---
@@ -568,8 +722,8 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
 
         dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
         
-        scanplot.plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,showFig=True,figDir=figDir)
-        
+        scanplot.plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,figDir=figDir,showFig=True,saveFig=True)       
+ 
     Observações
     -----------
         Experimental, esta função considera o devio-padrão como a raiz qadrada do RMSE.
@@ -586,6 +740,24 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
         showFig = kwargs['showFig']
     else:
         showFig = gvars.showFig
+
+    if 'saveFig' in kwargs:
+        saveFig = kwargs['saveFig']
+    else:
+        saveFig = gvars.saveFig
+
+    ipython.magic("matplotlib Agg")           
+    ipython.magic("matplotlib Agg")           
+    import matplotlib.pyplot as plt
+
+    if showFig:
+        ipython.magic("matplotlib inline")           
+        ipython.magic("matplotlib inline")           
+        import matplotlib.pyplot as plt
+    else:
+        ipython.magic("matplotlib Agg")           
+        ipython.magic("matplotlib Agg")           
+        import matplotlib.pyplot as plt
 
     # Ignore Seaborn and respect rcParams
     sns.reset_orig()
@@ -639,9 +811,9 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
         
             plt.title("Diagrama de Taylor " + str(Exps[exp]) + '\n' + str(Vars[var][1]), fontsize=14)
 
-            fig_name = 'dtaylor-' + str(Exps[exp]) + '-' + Vars[var][0] + '.png'
-            #plt.savefig(outDir + '/dtaylor-' + str(Exps[exp]) + '-' + Vars[var][0] + '.png', bbox_inches="tight", dpi=120) 
-            plt.savefig(os.path.join(figDir, fig_name), bbox_inches="tight", dpi=120)
+            if saveFig:
+                fig_name = 'dtaylor-' + str(Exps[exp]) + '-' + Vars[var][0] + '.png'
+                plt.savefig(os.path.join(figDir, fig_name), bbox_inches="tight", dpi=120)
 
             plt.show()
             

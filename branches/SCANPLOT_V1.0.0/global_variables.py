@@ -22,4 +22,4 @@ tExt = 'scan'
 figDir = None
 showFig = False
 saveFig = False
-lineStyles = False
+lineStyles = None
