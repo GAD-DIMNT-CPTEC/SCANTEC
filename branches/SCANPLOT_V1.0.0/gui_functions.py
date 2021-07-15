@@ -32,9 +32,9 @@ def show_buttons(dvars,dconf):
     Parâmetros de entrada
     ---------------------
         dvars : objeto dicionário que conterá as variáveis e níveis do SCANTEC de acordo
-                com as escolhas do usuário
+                com as escolhas do usuário;
         dconf : objeto dicionário que conterá as configurações do SCANTEC de acordo 
-                com as escolhas do usuário
+                com as escolhas do usuário.
         
     Resultado
     ---------

@@ -23,12 +23,12 @@ scanplot
 
 Funções
 -------
-    read_nemalists      : lê os namelists e arquivos de definições do SCANTEC.
-    get_dataframe       : transforma as tabelas do SCANTEC em dataframes.
-    get_dataset         : transforma os campos com a distribuição espacial das estatísticas do SCANTEC datasets.
-    plot_lines          : plota gráficos de linha com os dataframes das tabelas do SCANTEC.
-    plot_lines_tStudent : plota gráficos de linha com os dataframes das tabelas do SCANTEC.
-    plot_scorecard      : resume as informações dos dataframes com as tabelas do SCANTEC em scorecards.
+    read_nemalists      : lê os namelists e arquivos de definições do SCANTEC;
+    get_dataframe       : transforma as tabelas do SCANTEC em dataframes;
+    get_dataset         : transforma os campos com a distribuição espacial das estatísticas do SCANTEC datasets;
+    plot_lines          : plota gráficos de linha com os dataframes das tabelas do SCANTEC;
+    plot_lines_tStudent : plota gráficos de linha com os dataframes das tabelas do SCANTEC;
+    plot_scorecard      : resume as informações dos dataframes com as tabelas do SCANTEC em scorecards;
     plot_dTaylor        : plota diagramas de Taylor a partir de dois experimentos utilizando
                           os dataframes com as tabelas do SCANTEC.
 """

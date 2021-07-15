@@ -35,12 +35,12 @@ def concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,Var,series):
     
     Parâmetros de entrada
     ---------------------
-        dTable      : objeto dicionário com uma ou mais tabelas do SCANTEC
-        dataInicial : objeto datetime com a data inicial do experimento
-        dataFinal   : objeto datetime com a data final do experimento
-        Exps        : lista com os nomes das estatísticas a serem processadas
-        Var         : nome da variável na tabela de correlação de anomalia do SCANTEC 
-        series      : valor Booleano para combinar as curvas dos experimentos em um só gráfico
+        dTable      : objeto dicionário com uma ou mais tabelas do SCANTEC;
+        dataInicial : objeto datetime com a data inicial do experimento;
+        dataFinal   : objeto datetime com a data final do experimento;
+        Exps        : lista com os nomes das estatísticas a serem processadas;
+        Var         : nome da variável na tabela de correlação de anomalia do SCANTEC;
+        series      : valor Booleano para combinar as curvas dos experimentos em um só gráfico.
     
     Resultado
     ---------
@@ -105,8 +105,8 @@ def df_fill_nan(varlev_exps,varlev_dia_exps):
     
     Parâmetros de entrada
     ---------------------
-        varlev_exps      : lista de dataframes com as variáveis avaliadas para um período
-        varlev_dia_exps  : lista de dataframes com as variáveis avaliadas para todos os dias de um período
+        varlev_exps     : lista de dataframes com as variáveis avaliadas para um período;
+        varlev_dia_exps : lista de dataframes com as variáveis avaliadas para todos os dias de um período.
     
     Resultado
     ---------
@@ -166,7 +166,7 @@ def calc_tStudent(lst_varlev_dia_exps_rsp):
     
     Parâmetros de entrada
     ---------------------
-        lst_varlev_dia_exps_rsp : lista de dataframes com as variáveis avaliadas para um período
+        lst_varlev_dia_exps_rsp : lista de dataframes com as variáveis avaliadas para um período.
     
     Resultado
     ---------

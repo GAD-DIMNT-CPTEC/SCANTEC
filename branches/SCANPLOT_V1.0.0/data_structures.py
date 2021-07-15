@@ -40,20 +40,20 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,**kwargs):
     
     Parâmetros de entrada
     ---------------------
-        dataInicial : objeto datetime com a data inicial do experimento
-        dataFinal   : objeto datetime com a data final do experimento
-        Stats       : lista com os nomes das estatísticas a serem processadas
-        Exps        : lista com os nomes dos experimentos
-        outDir      : string com o diretório com as tabelas do SCANTEC
+        dataInicial : objeto datetime com a data inicial do experimento;
+        dataFinal   : objeto datetime com a data final do experimento;
+        Stats       : lista com os nomes das estatísticas a serem processadas;
+        Exps        : lista com os nomes dos experimentos;
+        outDir      : string com o diretório com as tabelas do SCANTEC.
 
     Parâmetros de entrada opcionais
     -------------------------------
-        series      : valor Booleano para ler uma série temporal das tabelas do SCANTEC
-                      series=False (valor padrão), lê as tabelas do SCANTEC geradas para a avaliação de um período
-                      series=True, lê as tabelas do SCANTEC geradas para a avaliação dos dias dentro de um período
-        tExt        : string com o extensão dos nomes das tabelas do SCANTEC
-                      tExt='scan' (valor padrão), considera as tabelas do SCANTEC
-                      tExt='scam', considera os nomes das tabelas das versões antigas do SCANTEC
+        series : valor Booleano para ler uma série temporal das tabelas do SCANTEC:
+                 * series=False (valor padrão), lê as tabelas do SCANTEC geradas para a avaliação de um período;
+                 * series=True, lê as tabelas do SCANTEC geradas para a avaliação dos dias dentro de um período;
+        tExt   : string com o extensão dos nomes das tabelas do SCANTEC:
+                 * tExt='scan' (valor padrão), considera as tabelas do SCANTEC;
+                 * tExt='scam', considera os nomes das tabelas das versões antigas do SCANTEC.
     
     Resultado
     ---------
@@ -148,10 +148,10 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
     
     Parâmetros de entrada
     ---------------------
-        data_conf : dicionário com as configurações do SCANTEC
-        data_vars : dicionário com as variáveis avaliadas pelo SCANTEC
-        Stats     : lista com os nomes das estatísticas a serem processadas
-        Exps      : lista com os nomes dos experimentos
+        data_conf : dicionário com as configurações do SCANTEC;
+        data_vars : dicionário com as variáveis avaliadas pelo SCANTEC;
+        Stats     : lista com os nomes das estatísticas a serem processadas;
+        Exps      : lista com os nomes dos experimentos.
     
     Resultado
     ---------

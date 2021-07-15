@@ -40,8 +40,8 @@ def read_namelists(basepath):
         
     Resultados
     ----------
-        VarsLevs : dicionário com as variáveis, níveis e nomes definidos no arquivo scantec.vars
-        Confs    : dicionário com as definições contidas no arquivo scantec.conf
+        VarsLevs : dicionário com as variáveis, níveis e nomes definidos no arquivo scantec.vars;
+        Confs    : dicionário com as definições contidas no arquivo scantec.conf.
     
     Uso
     ---
