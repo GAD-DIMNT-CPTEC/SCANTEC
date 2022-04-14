@@ -257,7 +257,7 @@ contains
     ! initialize mathematical operators
 
     if (.not.associated(self%head))then
-       print*,trim(myname_)//' :: error : not initialized ...'
+       print*,trim(myname_)//':: ERROR : not initialized ...'
        stop
 !       call self%initialize()
     endif
@@ -476,7 +476,7 @@ contains
     ! initialize mathematical operators
 
     if (.not.associated(self%head))then
-       print*,trim(myname_)//' :: error : not initialized ...'
+       print*,trim(myname_)//':: ERROR : not initialized ...'
        stop
 !       call self%initialize()
     endif
@@ -592,11 +592,12 @@ contains
 
     class(variable), allocatable :: stack(:)
     real :: operand
+    logical :: isNumber
 
     ! initialize mathematical operators
 
     if (.not.associated(self%head))then
-       print*,trim(myname_)//' :: error : not initialized ...'
+       print*,trim(myname_)//':: ERROR : not initialized ...'
        stop
 !       call self%initialize()
     endif
@@ -616,19 +617,29 @@ contains
           ! push it to the top of the stack
 
           top = top + 1
-          
-          ! verify if is a variable
-          isVar = 0
-          do j=1,size(vars)
-            if (trim(MathExpress(i)) .eq. trim(vars(j)%v%name_))then
-               isVar = j
-               stack(top) = vars(j)
-               exit
-            endif
-          enddo
-          if (isVar .eq. 0)then
+         
+          isNumber = isnum(trim(MathExpress(i)))
+
+          if (isNumber)then
              read(MathExpress(i),*)operand
              call stack(top)%put('oper',operand)
+          else
+             ! verify if is a variable
+             isVar = 0
+             do j=1,size(vars)
+               if (trim(MathExpress(i)) .eq. trim(vars(j)%v%name_))then
+                  isVar = j
+                  stack(top) = vars(j)
+                  exit
+               endif
+             enddo
+             ! is not a variable, so show an error mensage
+             ! and stop.
+             if (isVar .eq. 0)then
+                print*,trim(myname_)//':: ERROR : '//trim(MathExpress(i))// &
+                       ' is not a variable nor a function!'
+                stop
+             endif
           endif
 
        else
