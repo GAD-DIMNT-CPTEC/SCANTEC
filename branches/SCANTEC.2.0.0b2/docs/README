@@ -41,7 +41,7 @@ na mesa do usuário.
 
 *OBS.0:* %{color:red}  Embora a versão idealizada deva funcionar também no tupã, a presente versão beta
 SCANTEC.2.0.0b2 requer recursos mais atuais do compilador fortran, o que não é disponível ainda na tupã
-e por isso não está hapta. Veja instruções específicas para outras máquinas nas instruções abaixo.%
+e por isso não está apta. Veja instruções específicas para outras máquinas nas instruções abaixo.%
 
 ************************************************
 
@@ -58,9 +58,9 @@ Em uma outra máquina qualquer que se deseja ter o SCANTEC funcionando, é neces
 -package SVN (subversion)
 -biblioteca LAPACK
 
-Abaixe e instale o pacote seguindo os passos abaixo:
+Faça o download e instale o pacote seguindo os passos abaixo:
 
-1º Abaixe a versão beta de distribuição do SCANTEC disponível em 
+1º Faça o download da versão beta de distribuição do SCANTEC disponível em 
 https://projetos.cptec.inpe.br/attachments/download/8937/SCANTEC.2.0.0b2.tar, cujo o repositório
 fonte é: https://svn.cptec.inpe.br/scamtec/tags/SCANTEC.2.0.0b2 em sua máquina local e envie para
 a máquina itapemirim.
@@ -86,7 +86,7 @@ $ ./install
 (d) Caso algum problema seja detectado ou precise compilar novamente, use a opção 1 para limpar
     a compilação anterior.
     
-Além da itapemirim as seguintes máquinas virtuais o scantec também funciona corretamente:
+Além da itapemirim, as seguintes máquinas virtuais o scantec também funciona corretamente:
 - borebi
 - ribeira
 - colorado 
