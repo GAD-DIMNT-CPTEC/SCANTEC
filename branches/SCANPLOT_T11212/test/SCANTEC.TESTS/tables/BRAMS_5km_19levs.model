@@ -1,0 +1,44 @@
+#--------------------------------------------------------------------------------#
+#                                  SCANTEC - 2020
+#                        Arquivo de configuração do modelo
+#--------------------------------------------------------------------------------#
+
+ftype: binary
+undef: -0.9990000E+34
+xdim: 1159 linear     -82.1330032      0.0476941
+ydim: 1367 linear     -47.0000000      0.0424741
+zdim:  19 levels     1000.0     925.0     900.0     850.0     800.0     750.0     700.0     650.0     600.0     550.0     500.0     450.0     400.0     350.0     300.0
+                      250.0     200.0     150.0     100.0
+                      
+#--------------------------------------------------------------------------------#
+# A tabela de variáveis é preenchida da seguinte forma:
+#
+# * A primeira coluna é o nome da variável do scantec, veja scantec.vars.
+# * A segunda coluna pode ser o nome da variável correspondente no modelo
+#   ou então uma função que irá produzir a variável desejada, baseando-se
+#   nas variáveis pré-existentes do modelo. Para o uso das funções veja o
+#   documento funcoes.readme dentro do diretório docs.
+#--------------------------------------------------------------------------------#
+
+vars:
+vtmp:925 vtmp2(tempc:925+273.16,umes3(92500.0,tempc:925,rh:925))
+vtmp:850 vtmp2(tempc:850+273.16,umes3(85000.0,tempc:850,rh:850))
+vtmp:850 vtmp2(tempc:500+273.16,umes3(50000.0,tempc:500,rh:500))
+temp:850 tempc:850
+temp:500 tempc:500
+temp:250 tempc:250
+psnm:000 sea_press:1000
+umes:925 umes3(92500.0,tempc:925,rh:925)
+umes:850 umes3(85000.0,tempc:850,rh:850)
+umes:500 umes3(50000.0,tempc:500,rh:500)
+agpl:925 pwt:1000*10.0
+zgeo:850 geo:850
+zgeo:500 geo:500
+zgeo:250 geo:250
+uvel:850 ue_avg:850
+uvel:500 ue_avg:500
+uvel:250 ue_avg:250
+vvel:850 ve_avg:850
+vvel:500 ve_avg:500
+vvel:250 ve_avg:250
+::
