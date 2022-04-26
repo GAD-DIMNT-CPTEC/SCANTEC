@@ -19,4 +19,4 @@ As principais funções do módulo são as seguintes:
 4. `plot_scorecard`: esta função plota um scorecard a partir dos dataframes;
 5. `plot_dTaylor`: esta função plota um diagrama de Taylor a partir dos dataframes.
 
-Copyright (C) 2020 INPE
+A documentação do SCANPLOT pode ser encontrada em https://cfbastarz.github.io/SCANPLOT/. Um notebook do Jupyter com a aplicação das funções do SCANPLOT, está disponível em https://github.com/cfbastarz/SCANPLOT/blob/master/SCANPLOT.ipynb

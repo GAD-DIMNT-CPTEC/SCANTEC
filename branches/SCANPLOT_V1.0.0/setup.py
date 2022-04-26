@@ -14,21 +14,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import setuptools
+from setuptools import setup, find_packages
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-setuptools.setup(
-    name="scanplot-pkg-cfbastarz", 
+setup(
+    name="SCANPLOT", 
+    description="Um sistema de plotagem simples para o SCANTEC",
     version="1.1.0",
     author="Carlos Frederico Bastarz",
     author_email="cfbastarz@gmail.com",
-    description="Um sistema de plotagem simples para o SCANTEC",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
-    packages=setuptools.find_packages(),
+    url="https://github.com/cfbastarz/SCANPLOT",
+    packages=find_packages(include=['.']),
+    install_requires=['numpy','matplotlib','xarray','pandas','seaborn','SkillMetrics','scipy'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3",

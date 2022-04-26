@@ -1,6 +1,0 @@
-include __init__.py
-include core_scanplot.py
-include data_structures.py
-include aux_functions.py
-include plot_functions.py
-include gui_functions.py
