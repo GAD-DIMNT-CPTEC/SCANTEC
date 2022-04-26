@@ -35,6 +35,8 @@ import skill_metrics as sm
 from scipy.stats import t
 from scipy.stats import ttest_ind
 
+from aux_functions import isnotebook
+
 ipython = get_ipython()
 
 def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
@@ -142,8 +144,9 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
     # Refs:
     # * https://stackoverflow.com/questions/43545050/using-matplotlib-notebook-after-matplotlib-inline-in-jupyter-notebook-doesnt
     # * https://www.codegrepper.com/code-examples/python/use+ipython+magic+in+script
-    ipython.magic("matplotlib Agg")           
-    ipython.magic("matplotlib Agg")           
+    if showFig:
+        ipython.magic("matplotlib Agg")           
+        ipython.magic("matplotlib Agg")           
     import matplotlib.pyplot as plt
 
     # Reseta os parâmetros de aspecto do Seaborn
@@ -151,15 +154,25 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
 
     # Opção combine=True    
     if combine:
-     
-        if showFig:
-            ipython.magic("matplotlib inline")           
-            ipython.magic("matplotlib inline")           
-            import matplotlib.pyplot as plt
+    
+        if isnotebook(get_ipython().__class__.__name__):
+            if showFig:
+                ipython.magic("matplotlib inline")           
+                ipython.magic("matplotlib inline")           
+                import matplotlib.pyplot as plt
+            else:
+                ipython.magic("matplotlib Agg")           
+                ipython.magic("matplotlib Agg")           
+                import matplotlib.pyplot as plt
         else:
-            ipython.magic("matplotlib Agg")           
-            ipython.magic("matplotlib Agg")           
-            import matplotlib.pyplot as plt
+            if showFig:
+                ipython.magic("matplotlib inline")           
+                ipython.magic("matplotlib inline")           
+                import matplotlib.pyplot as plt
+            else:
+                #ipython.magic("matplotlib Agg")           
+                #ipython.magic("matplotlib Agg")           
+                import matplotlib.pyplot as plt
 
         fig, ax = plt.subplots()
         plt.rcParams.update({'figure.max_open_warning': 0})
@@ -230,19 +243,43 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
                         fig_name = table.replace(table[4:table.find('_')],'EXPS').replace('T.'+str(tExt),'') + Vars[var][0].replace('-','') + '-combined.png'
                     plt.savefig(os.path.join(figDir, fig_name), bbox_inches='tight', dpi=120)
 
+#                if showFig:
+#                    plt.show()
+#                else:
+#                    plt.close(fig)
+
         plt.close(fig)
 
     # Opção combine=False (padrão)
     else:
             
-        if showFig:
-            ipython.magic("matplotlib inline")           
-            ipython.magic("matplotlib inline")           
-            import matplotlib.pyplot as plt
+#        if showFig:
+#            ipython.magic("matplotlib inline")           
+#            ipython.magic("matplotlib inline")           
+#            import matplotlib.pyplot as plt
+#        else:
+#            ipython.magic("matplotlib Agg")           
+#            ipython.magic("matplotlib Agg")           
+#            import matplotlib.pyplot as plt
+        if isnotebook(get_ipython().__class__.__name__):
+            if showFig:
+                ipython.magic("matplotlib inline")           
+                ipython.magic("matplotlib inline")           
+                import matplotlib.pyplot as plt
+            else:
+                ipython.magic("matplotlib Agg")           
+                ipython.magic("matplotlib Agg")           
+                import matplotlib.pyplot as plt
         else:
-            ipython.magic("matplotlib Agg")           
-            ipython.magic("matplotlib Agg")           
-            import matplotlib.pyplot as plt
+            if showFig:
+                ipython.magic("matplotlib inline")           
+                ipython.magic("matplotlib inline")           
+                import matplotlib.pyplot as plt
+            else:
+                #ipython.magic("matplotlib Agg")           
+                #ipython.magic("matplotlib Agg")           
+                import matplotlib.pyplot as plt
+
 
         for table in list(dTable.keys()):
             Stat = table[0:4]
@@ -293,6 +330,11 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
                         fig_name = table.replace('T.'+str(tExt),'') + '_' + Vars[var][0].replace('-','') + '.png'
                     plt.savefig(os.path.join(figDir, fig_name), bbox_inches='tight', dpi=120)
                 
+#                if showFig:
+#                    plt.show()
+#                else:
+#                    plt.close(fig)
+
             plt.close(fig)
         
     return
@@ -409,17 +451,17 @@ def plot_lines_tStudent(dataInicial,dataFinal,dTable_series,Exps,Var,VarName,ldr
         lineStyles = gvars.lineStyles
         colors = ['black', 'red', 'green', 'blue', 'orange', 'brown', 'cyan', 'magenta']
 
-    ipython.magic("matplotlib Agg")           
-    ipython.magic("matplotlib Agg")           
+#    ipython.magic("matplotlib Agg")           
+#    ipython.magic("matplotlib Agg")           
     import matplotlib.pyplot as plt
 
     if showFig:
-        ipython.magic("matplotlib inline")           
-        ipython.magic("matplotlib inline")           
+#        ipython.magic("matplotlib inline")           
+#        ipython.magic("matplotlib inline")           
         import matplotlib.pyplot as plt
     else:
-        ipython.magic("matplotlib Agg")           
-        ipython.magic("matplotlib Agg")           
+#        ipython.magic("matplotlib Agg")           
+#        ipython.magic("matplotlib Agg")           
         import matplotlib.pyplot as plt
         
     # Ignore Seaborn and respect rcParams
@@ -583,8 +625,8 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
     else:
         saveFig = gvars.saveFig
 
-    ipython.magic("matplotlib Agg")           
-    ipython.magic("matplotlib Agg")           
+#    ipython.magic("matplotlib Agg")           
+#    ipython.magic("matplotlib Agg")           
     import matplotlib.pyplot as plt
 
     if showFig:
@@ -592,8 +634,8 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
         ipython.magic("matplotlib inline")           
         import matplotlib.pyplot as plt
     else:
-        ipython.magic("matplotlib Agg")           
-        ipython.magic("matplotlib Agg")           
+#        ipython.magic("matplotlib Agg")           
+#        ipython.magic("matplotlib Agg")           
         import matplotlib.pyplot as plt
 
     if tExt == 'scan': 
@@ -678,7 +720,9 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
             fig.savefig(os.path.join(figDir, fig_name), bbox_inches="tight", dpi=120)
         
         plt.close()
-        plt.show()
+    
+        if showFig:
+            plt.show()
         
     return
 
@@ -743,6 +787,13 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
     
     # Verifica se foram passados os argumentos opcionais e atribui os valores
 
+    if 'tExt' in kwargs:
+        tExt = kwargs['tExt']      
+        # Atualiza o valor global de tExt
+        gvars.tExt = tExt
+    else:
+        tExt = gvars.tExt
+
     if 'figDir' in kwargs:
         figDir = kwargs['figDir']
     else:
@@ -758,17 +809,17 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
     else:
         saveFig = gvars.saveFig
 
-    ipython.magic("matplotlib Agg")           
-    ipython.magic("matplotlib Agg")           
+#    ipython.magic("matplotlib Agg")           
+#    ipython.magic("matplotlib Agg")           
     import matplotlib.pyplot as plt
 
     if showFig:
-        ipython.magic("matplotlib inline")           
-        ipython.magic("matplotlib inline")           
+#        ipython.magic("matplotlib inline")           
+#        ipython.magic("matplotlib inline")           
         import matplotlib.pyplot as plt
     else:
-        ipython.magic("matplotlib Agg")           
-        ipython.magic("matplotlib Agg")           
+#        ipython.magic("matplotlib Agg")           
+#        ipython.magic("matplotlib Agg")           
         import matplotlib.pyplot as plt
 
     dataInicial = data_conf["Starting Time"]
@@ -815,7 +866,9 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
     
             label = [*dTable[tVies].loc[:,"%Previsao"].values]
         
-            #plt.figure()
+            if not showFig:
+                plt.figure()    
+
             plt.tight_layout()
     
             sm.taylor_diagram(sdev, crmsd, ccoef, markerLabel = label, 
@@ -837,8 +890,11 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
                     fig_name = 'DTAYLOR_' + str(Exps[exp]) + '_' + str(datai) + str(dataf) + '_' + Vars[var][0].replace('-','') + '.png'
                 plt.savefig(os.path.join(figDir, fig_name), bbox_inches="tight", dpi=120)
 
-            plt.show()
-            
+            if showFig:
+                plt.show()
+            else:
+                plt.close(fig)     
+
     plt.close(fig)     
 
     return
