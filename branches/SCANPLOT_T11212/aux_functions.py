@@ -27,16 +27,15 @@ from scipy.stats import ttest_ind
 # Função proveniente de https://stackoverflow.com/questions/15411967/how-can-i-check-if-code-is-executed-in-the-ipython-notebook
 def isnotebook(shell):
     try:
-        #shell = get_ipython().__class__.__name__
         print(shell)
         if shell == 'ZMQInteractiveShell':
-            return True   # Jupyter notebook or qtconsole
+            return True # Jupyter notebook or qtconsole
         elif shell == 'TerminalInteractiveShell':
-            return False  # Terminal running IPython
+            return False # Terminal running IPython
         else:
-            return False  # Other type (?)
+            return False # Other type (?)
     except NameError:
-        return False  # Probably standard Python interpreter
+        return False # Probably standard Python interpreter
 
 def concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,Var,series):
 

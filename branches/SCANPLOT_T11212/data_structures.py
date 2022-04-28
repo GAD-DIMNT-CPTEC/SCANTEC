@@ -30,6 +30,8 @@ from datetime import date, datetime, timedelta
 import xarray as xr
 import cartopy.crs as ccrs
 
+import pickle as pk
+
 def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,**kwargs):
 
     """
@@ -54,6 +56,9 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,**kwargs):
         tExt   : string com o extensão dos nomes das tabelas do SCANTEC:
                  * tExt='scan' (valor padrão), considera as tabelas do SCANTEC;
                  * tExt='scam', considera os nomes das tabelas das versões antigas do SCANTEC.
+        save   : valor Booleano para salvar o dicionário de dataframes em disco:
+                 * save=False (valor padrão), não salva o dicionário de dataframes em disco;
+                 * save=True, utiliza o pickle para salvar o dicionário de dataframes em disco (cria um arquivo binário).
     
     Resultado
     ---------
@@ -90,6 +95,11 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,**kwargs):
     else:
         tExt = gvars.tExt
 
+    if 'save' in kwargs:
+        save = kwargs['save']
+    else:
+        save = gvars.save
+
     # Dicionário com o(s) dataframe(s)
     ds_table = {}       
     
@@ -116,6 +126,10 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,**kwargs):
                         
             dataInicial = dataInicial + timedelta(hours=24) # pegar esta informação do namelist (timedelta)   
 
+        # No final do loop temporal, salva o dicionário em disco
+        if save:
+            pk.dump(ds_table, open(os.path.join(outDir, 'scantec_ds_table-series.pkl'), 'wb'))
+
     else:
         
         for stat in Stats:
@@ -135,6 +149,10 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,**kwargs):
     
                     ds_table[ntpath.basename(str(table))] = df_n    
         
+        # No final do loop temporal, salva o dicionário em disco
+        if save:
+            pk.dump(ds_table, open(os.path.join(outDir, 'scantec_ds_table.pkl'), 'wb'))
+
     return ds_table
 
 def get_dataset(data_conf,data_vars,Stats,Exps):
