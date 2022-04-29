@@ -484,6 +484,8 @@ def plot_lines_tStudent(dataInicial,dataFinal,dTable_series,Exps,Var,VarName,ldr
 
     if showFig:
         plt.show()
+    else:
+        plt.close()
 
     return
 
