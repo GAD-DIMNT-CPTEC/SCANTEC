@@ -3,7 +3,6 @@
 bpath=/lustre_xc50/carlos_bastarz/SCANPLOT/SCANPLOT_T11212
 
 Figs=(lines scorecard dTaylor lines_tStudent)
-#Figs=(lines_tStudent)
 
 if [ ${#Figs[@]} == 1 ]
 then 
@@ -26,12 +25,11 @@ cat << EOF > ${bpath}/test_cmd-get_dataframe.qsb
 #PBS -N SCANPLOT_GDF
 #PBS -q pesq
 
-#source /lustre_xc50/carlos_bastarz/.python/anaconda3/envs/SCANPLOT-XC50/bin/activate
-source /lustre_xc50/carlos_bastarz/.python/anaconda3/envs/SCANPLOT-teste2/bin/activate
+source /lustre_xc50/carlos_bastarz/.python/anaconda3/envs/SCANPLOT-XC50/bin/activate
 
 cd ${bpath}
 
-aprun -n 1 -N 1 -d 1 /lustre_xc50/carlos_bastarz/.python/anaconda3/envs/SCANPLOT-teste2/bin/python3 ${bpath}/test_cmd-get_dataframe.py
+aprun -n 1 -N 1 -d 1 /lustre_xc50/carlos_bastarz/.python/anaconda3/envs/SCANPLOT-XC50/bin/python3 ${bpath}/test_cmd-get_dataframe.py
 EOF
 
 cat << EOF > ${bpath}/test_cmd-plot_functions.qsb
@@ -49,12 +47,11 @@ $PBSDIRECT
 
 ${CMD}
 
-#source /lustre_xc50/carlos_bastarz/.python/anaconda3/envs/SCANPLOT-XC50/bin/activate
-source /lustre_xc50/carlos_bastarz/.python/anaconda3/envs/SCANPLOT-teste2/bin/activate
+source /lustre_xc50/carlos_bastarz/.python/anaconda3/envs/SCANPLOT-XC50/bin/activate
 
 cd ${bpath}
 
-aprun -n 1 -N 1 -d 1 /lustre_xc50/carlos_bastarz/.python/anaconda3/envs/SCANPLOT-teste2/bin/python3 ${bpath}/test_cmd-plot_\${nfig}.py
+aprun -n 1 -N 1 -d 1 /lustre_xc50/carlos_bastarz/.python/anaconda3/envs/SCANPLOT-XC50/bin/python3 ${bpath}/test_cmd-plot_\${nfig}.py
 EOF
 
 get_dataframe=$(qsub ${bpath}/test_cmd-get_dataframe.qsb)

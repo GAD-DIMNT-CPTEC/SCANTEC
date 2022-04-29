@@ -67,4 +67,4 @@ lineStyles = ['b', 'g', 'r', 'k']
 sc.plot_lines_tStudent(dataInicial, dataFinal, dTable_series,
                        Exps, Var, VarName, ldrom_exp, ldrosup_exp,
                        ldroinf_exp, varlev_exps, outDir, figDir=figDir,
-                       saveFig=True, showFig=False)
+                       showFig=False, saveFig=True)
