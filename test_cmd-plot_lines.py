@@ -10,7 +10,8 @@ import scanplot as sc
 # Outros módulos necessários para o escopo deste script
 import pickle as pk
 
-cdir = '/lustre_xc50/carlos_bastarz/SCANPLOT/SCANPLOT_T11212'
+#cdir = '/lustre_xc50/carlos_bastarz/SCANPLOT/SCANPLOT_T11212'
+cdir = '/home/carlos/Downloads/SCANPLOT_T11212'
 
 # Constrói os dicionários data_vars e data_conf
 data_vars, data_conf = sc.read_namelists(cdir + '/test/SCANTEC.TESTS')
@@ -43,7 +44,7 @@ dTable = pk.load(open(cdir + '/test/SCANTEC.TESTS/dataout/scantec_ds_table.pkl',
 # Faz os gráficos de linha
 sc.plot_lines(dTable, Vars, Stats,
               outDir, figDir=figDir, 
-              showFig=False, saveFig=True,
+              showFig=True, saveFig=True,
               combine=False)
 
 lineStyles = ['k--', 'r-', 'g-', 'b-']
@@ -51,5 +52,5 @@ lineStyles = ['k--', 'r-', 'g-', 'b-']
 sc.plot_lines(dTable, Vars, Stats,
               outDir, figDir=figDir, 
               lineStyles=lineStyles,
-              showFig=False, saveFig=True,
+              showFig=True, saveFig=True,
               combine=True)

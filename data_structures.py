@@ -155,7 +155,138 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,**kwargs):
 
     return ds_table
 
-def get_dataset(data_conf,data_vars,Stats,Exps):
+#def get_dataset_bak(data_conf,data_vars,Stats,Exps,outDir):
+#       
+#    """
+#    get_dataset
+#    ===========
+#    
+#    Esta função transforma o(s) campo(s) com a distribuição espacial da(s) 
+#    estatística(s) do SCANTEC em dataset(s).
+#    
+#    Parâmetros de entrada
+#    ---------------------
+#        data_conf : dicionário com as configurações do SCANTEC;
+#        data_vars : dicionário com as variáveis avaliadas pelo SCANTEC;
+#        Stats     : lista com os nomes das estatísticas a serem processadas;
+#        Exps      : lista com os nomes dos experimentos.
+#    
+#    Resultado
+#    ---------
+#        Dicionário com o(s) dataset(s) com a(s) distribuição(ões) espacial(is)
+#        da(s) estatística(s) do SCANTEC.
+#    
+#    Uso
+#    ---
+#        import scanplot 
+#        
+#        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
+#        
+#        Stats =  ["ACOR", "RMSE", "VIES"]
+#        Exps = list(data_conf["Experiments"].keys())
+#        
+#        dSet = scanplot.get_dataset(data_conf,data_vars,Stats,Exps)
+#    """
+#    
+#    # Datas
+#    dataInicial = data_conf['Starting Time']
+#    dataFinal = data_conf['Ending Time']
+#    t_step = str(data_conf['Forecast Time Step']) + 'H'
+#    dataInicial_fmt = dataInicial.strftime('%Y%m%d%H')
+#    dataFinal_fmt = dataFinal.strftime('%Y%m%d%H')
+#
+#    ftime = np.int(data_conf['Forecast Total Time'])
+#    atime = np.int(data_conf['Analisys Time Step'])
+#    tdef = np.int((ftime / atime) + 1) # verificar, pois no arquivo CTL esta é a conta que é feita, mas no arquivo binário não!
+#    dataFinal2 = dataInicial + timedelta(hours=np.int(tdef)*np.int(data_conf['Forecast Time Step']))
+#    #times = pd.date_range(dataInicial, dataFinal2, freq=t_step)  
+#    times = pd.date_range(dataInicial, dataFinal, freq=t_step)  
+#    tdef = len([*times])                     
+#    #tdef = 8
+#    print('Starting Time',dataInicial)
+#    print('Ending Time',dataFinal)
+#    print(times)
+#    print(tdef)
+#    print(np.arange(tdef))
+#    
+#    # Tamanho e limites do domínio                           
+#    lllat = np.float32(data_conf['run domain lower left lat'])
+#    lllon = np.float32(data_conf['run domain lower left lon'])
+#    urlat = np.float32(data_conf['run domain upper right lat'])
+#    urlon = np.float32(data_conf['run domain upper right lon'])
+# 
+#    gdx = np.float32(data_conf['run domain resolution dx'])
+#    gdy = np.float32(data_conf['run domain resolution dy'])
+#                               
+#    xdef = np.int(((urlon - lllon) / gdx) + 1)
+#    ydef = np.int(((urlat - lllat) / gdy) + 1)
+#
+#    # Latitudes e longitudes                           
+#    lats = np.linspace(lllat, urlat, num=ydef)
+#    lons = np.linspace(lllon, urlon, num=xdef)                      
+##    lats = np.arange(lllat, urlat, gdy)
+##    lons = np.arange(lllon, urlon, gdx) # fica com tamanho menor (-1 ponto)
+#
+#    # Variáveis                           
+#    fnames = []
+#
+#    for i in [*data_vars.values()]:
+#        fnames.append(i[0])                           
+# 
+#    nvars = len(fnames)
+#    
+#    # Dicionário com o(s) dataset(s)
+#    ds_field = {}
+#    
+#    for stat in Stats:
+#               
+#        dataInicial_fmt = dataInicial.strftime('%Y%m%d%H')
+#        dataFinal_fmt = dataFinal.strftime('%Y%m%d%H')
+#
+#        for exp in Exps:
+#        
+#            file_name = str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'F.scan'
+#            fname = os.path.join(outDir, file_name)
+#            
+#            lista_n = []
+#
+#            if os.path.exists(fname):
+#                              
+#                dsl = []
+#                ds = xr.Dataset()                           
+#                                       
+#                with open(fname,'rb') as f:
+#                                       
+#                    for t in np.arange(tdef): 
+#                                       
+#                        for i in np.arange(nvars):
+#                                 
+#                            f.seek(4, os.SEEK_SET) # pula os 4 primeiros bytes antes de ler o record
+#
+#                            data = np.fromfile(f, dtype=np.float32, count=xdef*ydef)#, offset=8)
+#                                       
+#                            field = np.reshape(data, (xdef, ydef), order='F')  
+#                                                       
+#                            field[field == -999.9] = np.nan # substitui o valor -999.9 por NaN
+#
+#                            print(t, stat, exp, i)
+#                            
+#                            ds[fnames[i]] = (('lon','lat'), field)
+#                            ds.coords['lat'] = ('lat', lats)
+#                            ds.coords['lon'] = ('lon', lons)
+#                            ds.coords['time'] = [times[t]]
+#                                       
+#                            dst = ds.transpose('time', 'lat', 'lon')
+#                                       
+#                        dsl.append(dst)
+#                
+#                dsc = xr.concat(dsl, dim='time')                
+#                
+#                ds_field[ntpath.basename(str(fname))] = xr.concat(dsl, dim='time')
+#                
+#    return ds_field
+
+def get_dataset(data_conf,data_vars,Stats,Exps,outDir):
        
     """
     get_dataset
@@ -170,6 +301,7 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
         data_vars : dicionário com as variáveis avaliadas pelo SCANTEC;
         Stats     : lista com os nomes das estatísticas a serem processadas;
         Exps      : lista com os nomes dos experimentos.
+        outDir    : string com o diretório com as tabelas do SCANTEC.
     
     Resultado
     ---------
@@ -184,32 +316,34 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
         
         Stats =  ["ACOR", "RMSE", "VIES"]
         Exps = list(data_conf["Experiments"].keys())
+        outDir = data_conf["Output directory"]
         
-        dSet = scanplot.get_dataset(data_conf,data_vars,Stats,Exps)
+        dSet = scanplot.get_dataset(data_conf,data_vars,Stats,Exps,outDir)
     """
-    
-    # Datas
-    dataInicial = data_conf["Starting Time"]
-    dataFinal = data_conf["Ending Time"]
-    t_step = str(data_conf["Forecast Time Step"]) + "H"
-    dataInicial_fmt = dataInicial.strftime("%Y%m%d%H")
-    dataFinal_fmt = dataFinal.strftime("%Y%m%d%H")
+
+    dataInicial = data_conf['Starting Time']
+    dataFinal = data_conf['Ending Time']
+    t_step = str(data_conf['Forecast Time Step']) + 'H'
+    dataInicial_fmt = dataInicial.strftime('%Y%m%d%H')
+    dataFinal_fmt = dataFinal.strftime('%Y%m%d%H')
 
     ftime = np.int(data_conf['Forecast Total Time'])
     atime = np.int(data_conf['Analisys Time Step'])
     tdef = np.int((ftime / atime) + 1) # verificar, pois no arquivo CTL esta é a conta que é feita, mas no arquivo binário não!
-    dataFinal2 = dataInicial + timedelta(hours=np.int(tdef)*np.int(data_conf["Forecast Time Step"]))
-    #times = pd.date_range(dataInicial, dataFinal2, freq=t_step)  
+    dataFinal2 = dataInicial + timedelta(hours=np.int(tdef)*np.int(data_conf['Forecast Time Step']))
+
     times = pd.date_range(dataInicial, dataFinal, freq=t_step)  
-    tdef = len([*times])                     
-    #tdef = 8
-    print('Starting Time',dataInicial)
-    print('Ending Time',dataFinal)
-    print(times)
-    print(tdef)
-    print(np.arange(tdef))
+#    tdef = len([*times])                     
+#    tdef = 8 # o tempo no arquivo CTL é referente à quantidade de linhas das tabelas (ie., tempos de previsão avaliados)
+ 
+#    print('Starting Time',dataInicial)
+#    print('Ending Time',dataFinal)
+#    print(t_step)
+#    print(times)
+#    print(len(times))
+#    print(tdef)
+#    print(np.arange(tdef))
     
-    # Tamanho e limites do domínio                           
     lllat = np.float32(data_conf['run domain lower left lat'])
     lllon = np.float32(data_conf['run domain lower left lon'])
     urlat = np.float32(data_conf['run domain upper right lat'])
@@ -221,15 +355,9 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
     xdef = np.int(((urlon - lllon) / gdx) + 1)
     ydef = np.int(((urlat - lllat) / gdy) + 1)
 
-    # Latitudes e longitudes                           
     lats = np.linspace(lllat, urlat, num=ydef)
     lons = np.linspace(lllon, urlon, num=xdef)                      
-#    lats = np.arange(lllat, urlat, gdy)
-#    lons = np.arange(lllon, urlon, gdx) # fica com tamanho menor (-1 ponto)
 
-    outDir = data_conf['Output directory']
-    
-    # Variáveis                           
     fnames = []
 
     for i in [*data_vars.values()]:
@@ -237,25 +365,22 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
  
     nvars = len(fnames)
     
-    #print(nvars,fnames)
-    
-    # Dicionário com o(s) dataset(s)
     ds_field = {}
     
     for stat in Stats:
                
-        dataInicial_fmt = dataInicial.strftime("%Y%m%d%H")
-        dataFinal_fmt = dataFinal.strftime("%Y%m%d%H")
+        dataInicial_fmt = dataInicial.strftime('%Y%m%d%H')
+        dataFinal_fmt = dataFinal.strftime('%Y%m%d%H')
 
         for exp in Exps:
         
             file_name = str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'F.scan'
+            #file_name = str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'F.scam'
             fname = os.path.join(outDir, file_name)
             
             lista_n = []
 
             if os.path.exists(fname):
-                #print(fname)
                               
                 dsl = []
                 ds = xr.Dataset()                           
@@ -266,20 +391,13 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
                                        
                         for i in np.arange(nvars):
                                  
-                            #s2d = str(xdef*ydef) + 'float32'
-                            #pad = '8b'  
-                                
-                            #dt = [ ('pad1', pad),  ('field', s2d), ('pad2', pad) ]    
-                                
-                            #dt_obj = np.dtype(dt)#, align=True)    
-                                
-                            #data = np.fromfile(f, dtype=np.float32, count=xdef*ydef, offset=8)    
-                                
-                            data = np.fromfile(f, dtype=np.float32, count=xdef*ydef, offset=8)
+                            data = np.fromfile(f, dtype=np.float32, count=xdef*ydef, offset=4)
                                        
                             field = np.reshape(data, (xdef, ydef), order='F')  
                                                        
-                            print(t, stat, exp, i)
+                            field[field == -999.9] = np.nan # substitui o valor -999.9 por NaN
+
+                            print('time=',t,'stat=',stat,'exp=',exp,'var=',i)
                             
                             ds[fnames[i]] = (('lon','lat'), field)
                             ds.coords['lat'] = ('lat', lats)
@@ -290,7 +408,7 @@ def get_dataset(data_conf,data_vars,Stats,Exps):
                                        
                         dsl.append(dst)
                 
-                dsc = xr.concat(dsl, dim='time')                
+                    dsc = xr.concat(dsl, dim='time')                
                 
                 ds_field[ntpath.basename(str(fname))] = xr.concat(dsl, dim='time')
                 
