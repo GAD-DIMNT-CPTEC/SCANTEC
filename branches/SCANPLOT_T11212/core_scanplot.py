@@ -25,7 +25,7 @@ import pandas as pd
 
 from datetime import date, datetime, timedelta
 
-def read_namelists(basepath):
+def read_namelists(basepath,**kwargs):
 
     """
     read_namelists
@@ -38,6 +38,11 @@ def read_namelists(basepath):
     ---------------------
         basepath : diretório raiz da instalação do SCANTEC.
         
+    Parâmetros de entrada opcionais
+    -------------------------------
+        basecomp : string com o complemento do diretório raiz da instalação do SCANTEC (específico
+                   para múltiplos experimentos).
+
     Resultados
     ----------
         VarsLevs : dicionário com as variáveis, níveis e nomes definidos no arquivo scantec.vars;
@@ -50,21 +55,28 @@ def read_namelists(basepath):
         data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
     """
     
+    # Verifica se foram passados os argumentos opcionais e atribui os valores
+    if 'basecomp' in kwargs:
+        basecomp = kwargs['basecomp']
+        filename_conf = os.path.join(basepath, 'bin', basecomp, 'scantec.conf') 
+    else:
+        filename_conf = os.path.join(basepath, 'bin/scantec.conf') 
+
     # Lê o arquivo scantec.vars e transforma a lista de variáveis e níveis e um dicionário
-    filename = os.path.join(basepath, 'tables/scantec.vars') 
+    filename_vars = os.path.join(basepath, 'tables/scantec.vars') 
     
     VarsLevs = {}
     
     # Com o método "with open", o arquivo é fechado automaticamente ao final
-    with open(filename,'r') as scantec_vars:
+    with open(filename_vars,'r') as scantec_vars:
       for idx, line in enumerate(scantec_vars.readlines(), start=-4):
         rline = line.lstrip()
         if not (rline.startswith('#') or rline.startswith('::') or rline.startswith('variables:')):
           varlevdesc = rline.strip().split(' ', 1)
           VarsLevs[idx] = (varlevdesc[0], varlevdesc[1].strip('\"'))
         
-    # Lê do arquivo scantec.conf e transforma as informações principais em um dicionário
-    filename = os.path.join(basepath, 'bin/scantec.conf') 
+#    # Lê do arquivo scantec.conf e transforma as informações principais em um dicionário
+#    filename = os.path.join(basepath, 'bin/scantec.conf') 
     
     # A função a seguir lê a linha com a informação requerida e cria uma lista com os elementos separados 
     # de acordo com o separador ':'
@@ -90,7 +102,7 @@ def read_namelists(basepath):
       return Confs
     
     # Com o método "with open", o arquivo é fechado automaticamente ao final
-    with open(filename,'r') as scantec_conf:
+    with open(filename_conf,'r') as scantec_conf:
       for line in scantec_conf:
         if line.startswith('Starting Time'):
           key_value(line)

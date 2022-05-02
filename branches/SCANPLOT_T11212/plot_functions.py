@@ -557,6 +557,9 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
         ao 'EXP1' ou que a mudança fracional é maior.
     """
 
+    if not len(Exps) == 2:
+        raise Exception('Para utilizar a função plot_scorecard, são necessários 2 experimentos.')
+
     # Verifica se foram passados os argumentos opcionais e atribui os valores
 
     global tExt

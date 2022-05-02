@@ -10,7 +10,8 @@ import scanplot as sc
 # Outros módulos necessários para o escopo deste script
 import pickle as pk
 
-cdir = '/lustre_xc50/carlos_bastarz/SCANPLOT/SCANPLOT_T11212'
+#cdir = '/lustre_xc50/carlos_bastarz/SCANPLOT/SCANPLOT_T11212'
+cdir = '/home/carlos/Downloads/SCANPLOT_T11212'
 
 # Constrói os dicionários data_vars e data_conf
 data_vars, data_conf = sc.read_namelists(cdir + '/test/SCANTEC.TESTS')
@@ -67,4 +68,4 @@ lineStyles = ['b', 'g', 'r', 'k']
 sc.plot_lines_tStudent(dataInicial, dataFinal, dTable_series,
                        Exps, Var, VarName, ldrom_exp, ldrosup_exp,
                        ldroinf_exp, varlev_exps, outDir, figDir=figDir,
-                       showFig=False, saveFig=True)
+                       showFig=True, saveFig=True)

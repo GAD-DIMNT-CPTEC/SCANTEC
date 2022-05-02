@@ -7,7 +7,8 @@
 # Importa o SCANPLOT (sc é um alias)
 import scanplot as sc
 
-cdir = '/lustre_xc50/carlos_bastarz/SCANPLOT/SCANPLOT_T11212'
+#cdir = '/lustre_xc50/carlos_bastarz/SCANPLOT/SCANPLOT_T11212'
+cdir = '/home/carlos/Downloads/SCANPLOT_T11212'
 
 # Constrói os dicionários data_vars e data_conf
 data_vars, data_conf = sc.read_namelists(cdir + '/test/SCANTEC.TESTS')
