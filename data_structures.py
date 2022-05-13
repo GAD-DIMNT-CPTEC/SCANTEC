@@ -157,7 +157,7 @@ def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,**kwargs):
 
     return ds_table
 
-def get_dataset(data_conf,data_vars,Stats,Exps,outDir):
+def get_dataset(data_conf,data_vars,Stats,Exps,outDir,**kwargs):
        
     """
     get_dataset
@@ -173,6 +173,18 @@ def get_dataset(data_conf,data_vars,Stats,Exps,outDir):
         Stats     : lista com os nomes das estatísticas a serem processadas;
         Exps      : lista com os nomes dos experimentos.
         outDir    : string com o diretório com as tabelas do SCANTEC.
+    
+    Parâmetros de entrada opcionais
+    -------------------------------
+        series : valor Booleano para ler uma série temporal das tabelas do SCANTEC:
+                 * series=False (valor padrão), lê as tabelas do SCANTEC geradas para a avaliação de um período;
+                 * series=True, lê as tabelas do SCANTEC geradas para a avaliação dos dias dentro de um período;
+        tExt   : string com o extensão dos nomes das tabelas do SCANTEC:
+                 * tExt='scan' (valor padrão), considera as tabelas do SCANTEC;
+                 * tExt='scam', considera os nomes das tabelas das versões antigas do SCANTEC.
+        save   : valor Booleano para salvar o dicionário de dataframes em disco:
+                 * save=False (valor padrão), não salva o dicionário de dataframes em disco;
+                 * save=True, utiliza o pickle para salvar o dicionário de dataframes em disco (cria um arquivo binário).
     
     Resultado
     ---------
@@ -191,6 +203,27 @@ def get_dataset(data_conf,data_vars,Stats,Exps,outDir):
         
         dSet = scanplot.get_dataset(data_conf,data_vars,Stats,Exps,outDir)
     """
+
+    # Verifica se foram passados os argumentos opcionais e atribui os valores
+
+    global tExt
+
+    if 'series' in kwargs:
+        series = kwargs['series']
+    else:
+        series = gvars.series
+
+    if 'tExt' in kwargs:
+        tExt = kwargs['tExt']
+        # Atualiza o valor global de tExt
+        gvars.tExt = tExt
+    else:
+        tExt = gvars.tExt
+
+    if 'save' in kwargs:
+        save = kwargs['save']
+    else:
+        save = gvars.save
 
     dataInicial = data_conf['Starting Time']
     dataFinal = data_conf['Ending Time']
@@ -238,63 +271,116 @@ def get_dataset(data_conf,data_vars,Stats,Exps,outDir):
     
     ds_field = {}
     
-    for stat in Stats:
-               
-        dataInicial_fmt = dataInicial.strftime('%Y%m%d%H')
-        dataFinal_fmt = dataFinal.strftime('%Y%m%d%H')
-
-        for exp in Exps:
-        
-            file_name = str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'F.scan'
-            #file_name = str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'F.scam'
-            fname = os.path.join(outDir, file_name)
-
-            print(fname)
+    if series:
+    
+        while (dataInicial <= dataFinal):
             
-
-            lista_n = []
-
-#            if os.path.exists(fname):
-            try:                              
-
-                dsl = []
-                ds = xr.Dataset()                           
-
-                with open(fname,'rb') as f:
-                                      
-                    print(fname)
-
-                    for t in np.arange(tdef): 
-                                       
-                        for i in np.arange(nvars):
-
-                            # Leitura utilizando o Numpy
-                            #data = np.fromfile(f, dtype=np.float32, count=xdef*ydef, offset=4)
-                            #field = np.reshape(data, (xdef, ydef), order='F')  
-
-                            # Leitura utilizando o SciPy
-                            data = FortranFile(f, 'r')
-                            field = data.read_record('f4').reshape(xdef, ydef, order='F') 
-
-                            field[field == -999.9] = np.nan # substitui o valor -999.9 por NaN
-
-                            print('time=',t,'stat=',stat,'exp=',exp,'var=',i)
-                            
-                            ds[fnames[i]] = (('lon','lat'), field)
-                            ds.coords['lat'] = ('lat', lats)
-                            ds.coords['lon'] = ('lon', lons)
-                            ds.coords['time'] = [times[t]]
-                                       
-                            dst = ds.transpose('time', 'lat', 'lon')
-                                       
-                        dsl.append(dst)
+            dataInicial_fmt = dataInicial.strftime("%Y%m%d%H")
+            dataFinal_fmt = dataFinal.strftime("%Y%m%d%H")
+            
+            for stat in Stats:
+                       
+                for exp in Exps:
                 
-                    dsc = xr.concat(dsl, dim='time')                
-                
-                ds_field[ntpath.basename(str(fname))] = xr.concat(dsl, dim='time')
-                
-            except IOError:
+                    file_name = str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataInicial_fmt) + 'F.' + tExt
+                    fname = os.path.join(outDir, file_name)
+        
+                    lista_n = []
+        
+                    try:                              
+        
+                        dsl = []
+                        ds = xr.Dataset()                           
+        
+                        with open(fname,'rb') as f:
+                                              
+                            for t in np.arange(tdef): 
+                                               
+                                for i in np.arange(nvars):
+        
+                                    # Leitura utilizando o SciPy
+                                    data = FortranFile(f, 'r')
+                                    field = data.read_record('f4').reshape(xdef, ydef, order='F') 
+        
+                                    field[field == -999.9] = np.nan # substitui o valor -999.9 por NaN
+        
+                                    print('time=',t,'stat=',stat,'exp=',exp,'var=',i)
+                                    
+                                    ds[fnames[i]] = (('lon','lat'), field)
+                                    ds.coords['lat'] = ('lat', lats)
+                                    ds.coords['lon'] = ('lon', lons)
+                                    ds.coords['time'] = [times[t]]
+                                               
+                                    dst = ds.transpose('time', 'lat', 'lon')
+                                               
+                                dsl.append(dst)
+                        
+                            dsc = xr.concat(dsl, dim='time')                
+                        
+                        ds_field[ntpath.basename(str(fname))] = xr.concat(dsl, dim='time')
+                        
+                    except IOError:
+        
+                        print("Arquivo " + fname + " não existe!")
+                        
+            dataInicial = dataInicial + timedelta(hours=24) # pegar esta informação do namelist (timedelta)   
 
-                print("Arquivo " + fname + " não existe!")
- 
+        # No final do loop temporal, salva o dicionário em disco
+        if save:
+            pk.dump(ds_field, open(os.path.join(outDir, 'scantec_ds_field-series.pkl'), 'wb'))
+
+    else:
+        
+        for stat in Stats:
+                   
+            dataInicial_fmt = dataInicial.strftime('%Y%m%d%H')
+            dataFinal_fmt = dataFinal.strftime('%Y%m%d%H')
+    
+            for exp in Exps:
+            
+                file_name = str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'F.' + tExt
+                fname = os.path.join(outDir, file_name)
+    
+                lista_n = []
+    
+                try:                              
+    
+                    dsl = []
+                    ds = xr.Dataset()                           
+    
+                    with open(fname,'rb') as f:
+                                          
+                        for t in np.arange(tdef): 
+                                           
+                            for i in np.arange(nvars):
+    
+                                # Leitura utilizando o SciPy
+                                data = FortranFile(f, 'r')
+                                field = data.read_record('f4').reshape(xdef, ydef, order='F') 
+    
+                                field[field == -999.9] = np.nan # substitui o valor -999.9 por NaN
+    
+                                print('time=',t,'stat=',stat,'exp=',exp,'var=',i)
+                                
+                                ds[fnames[i]] = (('lon','lat'), field)
+                                ds.coords['lat'] = ('lat', lats)
+                                ds.coords['lon'] = ('lon', lons)
+                                ds.coords['time'] = [times[t]]
+                                           
+                                dst = ds.transpose('time', 'lat', 'lon')
+                                           
+                            dsl.append(dst)
+                    
+                        dsc = xr.concat(dsl, dim='time')                
+                    
+                    ds_field[ntpath.basename(str(fname))] = xr.concat(dsl, dim='time')
+                    
+                except IOError:
+    
+                    print("Arquivo " + fname + " não existe!")
+
+        # No final do loop temporal, salva o dicionário em disco
+        if save:
+            pk.dump(ds_field, open(os.path.join(outDir, 'scantec_ds_field.pkl'), 'wb'))
+
     return ds_field
