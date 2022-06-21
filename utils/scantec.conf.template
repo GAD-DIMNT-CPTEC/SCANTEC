@@ -1,0 +1,32 @@
+$INPUTDATA
+
+Starting Time: #DATAI#
+Ending Time: #DATAF#
+Analisys Time Step: 24
+Forecast Time Step: 24
+Forecast Total Time: #FCTOTAL# 
+Time Step Type: forward 
+History Time: 48       
+scantec tables: /lustre_xc50/carlos_bastarz/SCANTEC.2.0.0b2/tables
+
+run domain number: 1
+
+run domain lower left lat:   #lowletflat#
+run domain lower left lon:   #lowleftlon#
+run domain upper right lat:  #uprightlat#
+run domain upper right lon:  #uprightlon#
+run domain resolution dx:    0.9375000000 
+run domain resolution dy:    0.9375000000
+
+Reference Model Name: #MODELTABLE#
+Reference file: #ICNFILENAME#
+
+Experiments: 1
+#MODELTABLE# #EXP# #FILENAME# 
+::
+
+Use Climatology: 1 
+Climatology Model Name: CFSR_T382L064_CLIMATOLOGY_37levs
+Climatology file: /lustre_xc50/carlos_bastarz/climatologiaCFSR/analysis/monthly/climatologiaCFSR_30yr.%mc.ctl 
+
+Output directory: #PATHOUT#

@@ -1,0 +1,81 @@
+A partir da versão 2.0.0 beta 2, o SCANTEC conta com o uso de funções para
+ajustes nas variáveis que serão avaliadas.
+
+Para a intercomparação entre diferentes modelos torna-se necessário que todas
+as variáveis sejam compatíveis entre si (ou seja, que possuam a mesma unidade), 
+além disso, nem todos os modelos possuem as mesmas variáveis. Então são necessários
+ajustes para que tal compatibilidade seja satisfeita. Nas versões anteriores do SCANTEC
+esta compatilibidade era realizada dentro da rotina de leitura de cada modelo, 
+o que tornava necessária a recompilação do código toda vez que um novo modelo 
+fosse incluído ao SCANTEC. A partir a versão 2.0.0 beta 1, os modelos são incluídos
+por meio de tabelas que devem descrever as características básicas de cada modelo,
+tal como o número de pontos de grade, a resolução horizontal, o número de níveis 
+verticais e as variáveis que devem ser avaliadas que são compatíveis com as 
+variáveis padrão do SCANTEC.
+
+A inclusão do uso de funções está disponível a partir da versão 2.0.0 beta 2 que
+inclui um conjunto de funções implícitas, que serão apresentadas a seguir. No
+entanto, novas funções poderão ser incluídas pelo usuário.
+
+Funções implícitas do SCANTEC 2.0.0 beta 2:
+
+* Funções Trigonométricas:
+
+** sin(x) - seno de x;
+** cos(x) - cosseno de x;
+** tan(x) - tangente de x;
+** asin(x) - arco seno de x;
+** acos(x) - arco cosseno de x;
+** atan(x) - arco tangente de x;
+
+* Funções Aritméticas:
+
+** sqrt(x) - Raiz quadrada de x;
+** exp(x) - Exponencial de x;
+** log(x) - Logarítmo natural de x;
+** log10(x) - Logarítmo comum (na base 10) de x;
+
+* Funções Numéricas:
+
+** abs(x) - Retorna o valor absoluto de x;
+** min(x,y) - Retorna o menor valor entre x e y;
+** max(x,y) - Retorna o maior valor entre x e y;
+** mod(x,y) -  Retorna o resto da divisão de x por y;
+
+* Funções para conversões físicas:
+
+** svap(temp)      - Calcula a pressão de vapor saturado [Pa] a partir da
+                     temperatura do ar (C);
+
+** vapp(es, rh)    - Calcula a pressão de vapor [Pa] a partir da pressão 
+                     de vapor saturado [Pa] e da umidade relativa [%];
+
+** hmxr1(q)        - Calcula a razão de mistura [kg/kg] a partir da umidade 
+                     específica [kg/kg];
+
+** hmxr2(p, ee)    - calcula a razão de mistura [kg/kg] a partir da pressão
+                     atmosférica [Pa] e da pressão de vapor [Pa];
+
+** umes1(w)        - Calcula a umidade específica [kg/kg] a partir da razão de 
+                     mistura [kg/kg];
+
+** umes2(p, td)    - Calcula a razão de mistura [kg/kg] a partir da pressão
+                     atmosférica [Pa] e da temperatura do ponto de orvalho [C];
+
+** umes3(p, t, rh) - Calcula a razão de mistura [kg/kg] a partir da pressão
+                     atmosférica [Pa], da temperatura do ar (C) e da umidade
+                     relativa do ar [%];
+
+** tpor(t, rh)     - Calcula a temperatura do ponto de orvalho [C] a partir da
+                     temperatura do ar [C] e da umidade relativa do ar [%];
+
+** umrl(p, w, es)  - Calcula a umidade relativa [%] a partir da razão de mistura
+                     [kg/kg], da pressão de vapor de saturação [Pa] e da pressão
+                     atmosférica [Pa];
+
+** vtmp1(p, t, rh) - Calcula a temperatura virtual [C] a partir da temperatura
+                     do ar [C] e da umidade relativa [%] e da pressão atmosférica [Pa];
+
+** vtmp2(t, q)     - Calcula a temperatura virtual [C ou K] a partir da temperatura
+                     do ar [C ou K] e da Umidade especícia [Kg/Kg];
+
