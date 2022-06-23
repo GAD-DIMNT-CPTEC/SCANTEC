@@ -25,7 +25,7 @@
 #      04-07-2016 - Lucas Amarante - Atualizando testcase e outors parametros
 #      15-06-2020 - Carlos Bastarz - Adaptações para o novo namelist
 #      18-06-2020 - Luiz Sapucci   - ajustes antes de publicação da versão beta
-#      11-11-2020 - Luiz Sapucci   - ajustes do diretorio dados dados/das na beta2
+#      11-11-2020 - Luiz Sapucci   - ajustes do diretorio dados dados/das na release
 #
 #EOP  
 #----------------------------------------------------------------------------------#
@@ -306,7 +306,7 @@ echo " Plugin da referência: ${pl_model_refer}   "
 echo " Análise:                                  "
 echo " ${arq_refer}                              "
 echo ""
-echo " Plugin experimento: ${pl_model_exper}     "
+echo " Plugin do experimento: ${pl_model_exper}     "
 echo " Previsões:                                "
 echo " ${arq_prev}                               "  
 echo ""

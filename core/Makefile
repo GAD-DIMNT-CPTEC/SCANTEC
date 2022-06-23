@@ -109,8 +109,8 @@ endif
 ifeq ($(SCAN_ARCH),GNU_Linux)
    FPP = gcc
    CC  = gcc
-   FC  = gfortran
-   LD  = gfortran
+   FC  = gfortran-9
+   LD  = gfortran-9
    AR  = ar
 #   FFLAGS += -cpp -frecursive -ffree-line-length-none -Dgfortran
    FFLAGS += -cpp -ffree-line-length-none -Dgfortran 
