@@ -46,6 +46,7 @@ libinterp.a:
 
 
 scantec.x:
+	@$(MKDIR) -p ./bin
 	@$(CD) $(srcdir) && \
 	    $(MAKE) -f $(MAKEFILE) $@
 
