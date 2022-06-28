@@ -9,14 +9,14 @@ Para usar o SCANPLOT é preciso uma configuração inicial do ambiente o que é 
 1. Faça login na máquina Itapemirim:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         ssh usuario@itapemirim.cptec.inpe.br -XC
         ```
 
 2. Crie a seguinte estrutura de diretórios em `/scripts/das/$USER`:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         cd /scripts/das/$USER
         mkdir conda
         cd conda
@@ -46,7 +46,7 @@ Para usar o SCANPLOT é preciso uma configuração inicial do ambiente o que é 
 2. Para isso crie um arquivo com o nome `$HOME/.condarc` com seu editor preferido e copie o conteúdo acima (trocando o `#USER#` pelo seu username no sistema) e salve em seu home. Caso não consiga execute os comando abaixo que copiaram o arquivo do user `luiz.sapucci` e o modificará apropriadamente:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         cd $HOME
         cp ~luiz.sapucci/.condarc .condarc
         sed -i "s/luiz.sapucci/${USER}/" .condarc
@@ -55,7 +55,7 @@ Para usar o SCANPLOT é preciso uma configuração inicial do ambiente o que é 
 3. Depois execute os seguintes comandos:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         source activate DASSCANPLOT
         python -m ipykernel install --user --name DASSCANPLOT --display-name DASSCANPLOT
         ```

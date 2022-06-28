@@ -5,14 +5,14 @@ Para utilizar o SCANTEC é preciso editar um arquivo de configurações localiza
 1. Para utilizar o sistema entre no diretório bin do SCANTEC:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         cd SCANTEC.2.0.0/bin/
         ```
 
 2. Edite o arquivo `SCANTEC.2.0.0/core/scantec.conf` e apropriadamente modifique as informações solicitadas sem modificar as palavras chaves e salve a versão modificada no diretório `SCANTEC.2.0.0/bin`:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         cp ../core/scantec.conf scantec.conf
         vi scantec.conf
         ```
@@ -20,7 +20,7 @@ Para utilizar o SCANTEC é preciso editar um arquivo de configurações localiza
 3. Execute o SCANTEC com o comando (na aba **Resultado**, é apresentado apenas um exemplo do que o SCANTEC fará quando configurado para a avaliação de um período particular):
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         ./scantec.x
         ```
     === "Resultado"
@@ -51,7 +51,7 @@ Para utilizar o SCANTEC é preciso editar um arquivo de configurações localiza
 4. De forma mais simplificada e mais versátil, pode-se utilizar o script `run_scantec.sh` que modifica o arquivo `scantec.conf` apropriadamente, chama o `scantec.x` e armazenas as informações em um arquivo de log. Esse mesmo script tem uma série de Testcases para permitir a validação da versão instalada pelo usuário:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         ./run_scantec.sh
         ```
     === "Resultado"
@@ -74,14 +74,14 @@ Como os dados de entrada do testcase, de todas as 3 opções de modelos disponí
 1. Para utilizar o sistema (tanto no Tupã como nas máquinas virtuais) entre no diretório raiz da instalação do SCANTEC:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         cd SCANTEC.2.0.0/
         ```
 
 2. Execute o script de execução do SCANTEC com um parâmetro na linha de comando:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         ./run_scantec.sh [parâmetro]
         ```
 
@@ -103,15 +103,15 @@ Para executar o script `run_scantec.sh` com as informações editadas pelo usuá
 1. Para utilizar o sistema (tanto no Tupã como nas máquinas virtuais) entre no diretório raiz da instalação do SCANTEC:
 
     === "Comando"
-        ```
-        $ cd SCANTEC.2.0.0/
+        ```bash linenums="1"
+        cd SCANTEC.2.0.0/
         ```
 
 2. Edite o script `run_scantec.sh`:
 
     === "Comando"
-        ```
-        $ vi run_scantec.sh
+        ```bash linenums="1"
+        vi run_scantec.sh
         ```
 
     Modifique apropriadamente as variáveis entre as (aproximadamente entre as linhas 235 e 273) da seguinte lista:
@@ -177,7 +177,7 @@ Para executar o script `run_scantec.sh` com as informações editadas pelo usuá
 3. Depois de salvar as modificações no scritp `run_scantec.sh` execute-o com a opção `4`:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         ./run_scantec.sh 4
         ```
     === "Resultado"
@@ -239,7 +239,7 @@ Para executar o script `run_scantec.sh` com as informações editadas pelo usuá
 4. Ver os resultados de saída do SCANTEC no diretório:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         ls SCANTEC.2.0.0/dataout
         ```
 

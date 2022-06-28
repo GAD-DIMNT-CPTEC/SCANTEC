@@ -20,7 +20,7 @@ Para obter uma cópia do SCANTEC:
 * Baixe a versão release de distribuição do SCANTEC (arquivo compactado extensão `.tar.gz` ou `.zip`) a partir do GitHub em [https://github.com/GAM-DIMNT-CPTEC/SCANTEC/releases/tag/V2.0.0](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/releases/tag/V2.0.0):
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         wget https://github.com/GAM-DIMNT-CPTEC/SCANTEC/archive/refs/tags/V2.0.0.tar.gz
         ```
 
@@ -36,14 +36,14 @@ Para a instalação, siga os passos a seguir.
 1. Faça login na máquina Itapemirim:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         ssh usuario@itapemirim.cptec.inpe.br -XC
         ```
 
 2. Entre em um diretório de preferência do usuário para realizar a instalação do SCANTEC (`/home/usuario` por exemplo) e descompacte o pacote nele copiado:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         cd $HOME
         tar -xvf SCANTEC.2.0.0.tar
         ```
@@ -51,14 +51,14 @@ Para a instalação, siga os passos a seguir.
 3. Entre no diretório do `SCANTEC.2.0.0`:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         cd SCANTEC.2.0.0
         ```
 
 4. Para compilar o SCANTEC execute o script install seguindo as instruções abaixo:
 
     === "Comando"
-        ```
+        ```bash linenums="1"
         ./install
         ```
     === "Resultado"
