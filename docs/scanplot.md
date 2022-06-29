@@ -31,7 +31,6 @@ Para usar o SCANPLOT é preciso uma configuração inicial do ambiente o que é 
 
 3. Crie o arquivo `$HOME/.condarc` contendo as seguintes informações (troque o `#USER#` pelo seu username no sistema, o mesmo da variável `$USER`):
 
-    === "Comando"
         ```
         envs_dirs:
         - /scripts/das/conda/envs
