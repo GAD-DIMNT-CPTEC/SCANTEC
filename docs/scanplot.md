@@ -59,7 +59,7 @@ Para usar o SCANPLOT é preciso uma configuração inicial do ambiente o que é 
         python -m ipykernel install --user --name DASSCANPLOT --display-name DASSCANPLOT
         ```
 
-## Passo-apasso para a utilização do SCANPLOT
+## Passo a passo para a utilização do SCANPLOT
 
 Depois de configurado o sistema nas máquinas Itapemirim e Ilopolis:
 
@@ -67,7 +67,7 @@ Depois de configurado o sistema nas máquinas Itapemirim e Ilopolis:
 2. Entre com suas credenciais (as mesmas utilizadas para acessar a máquina Itepemirim, pesquisa e máquinas virtuais);
 3. O sistema abrirá toda a árvore de diretórios das máquinas virtuais. Nela é preciso abrir o diretório onde foi instalado o SCANTEC.2.0.0 e nele abra o diretório `docs/Tutorial` onde estará disponivel um tutorial detalhado de como usar o SCANPLOT. Selecione clicando o mouse sobre o arquivo denominado `Tutorial_SCANPLOT.ipynb`; 
 4. Depois de acompanhar todo o tutorial, abra a aba `Kernel`, e depois a sub-aba `Change kernel` e nela selecione a opção `DASSCANPLOT`, que carregará o kernel `DASSCANPLOT` nesse notebook, o que é indicado na caixinha no canto superior direito da tela;
-5. Abra o arquivo `SCANTEC.2.0.0/scanplot/SCANPLOT.ipynb` e utilize o SCANPLOT executando cada um das linhas de comandos do passo-a-passo nessa página;
+5. Abra o arquivo `SCANTEC.2.0.0/scanplot/SCANPLOT.ipynb` e utilize o SCANPLOT executando cada um das linhas de comandos do passo a passo nessa página;
 6. Caso não tenho familiaridade com o Jupyter, observe que para executar os comandos clique sucessivamente o botão `Run`, o cursor indicará o comando sendo executado e os resultados são apresentados nas linhas posteriores ao comando nessa mesma página;
 7. Observe que no terceiro comando é necessário ajustar os dados para o seu usuário e o local onde rodou o SCANTEC;
 8. Acompanhe os resultados e salve as figuras que desejar em seu disco como convencionalmente é feito com seu navegador.
