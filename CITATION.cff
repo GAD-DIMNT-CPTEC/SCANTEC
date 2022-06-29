@@ -5,8 +5,8 @@ message: >-
   metadata from this file.
 type: software
 authors:
-  - given-names: de Mattos
-    family-names: João Gerd
+  - given-names: João Gerd
+    family-names: de Mattos
 identifiers:
   - type: url
     value: >-
