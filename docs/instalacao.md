@@ -1,23 +1,22 @@
 # Instalação
 
-Para a instalação, o sistema tem implementado um script criado para essa função, o qual prepara o ambiente para a instalação, entra nos diretórios, em uma sequência adequada e compila cada uma das bibliotecas e módulos que compõem o sistema e move o executável para a pasta bin. Ele está preparado para funcionar em diversos ambientes, máquinas virtuais do CPTEC, ou mesmo máquinas locais na mesa do usuário.
+Para a instalação do SCANTEC, o sistema tem implementado um script que prepara o ambiente para a instalação, a qual envolve a compilação de bibliotecas e módulos que compõem o sistema. Ao final do processo, é gerado o executável `scantec.x`, que é então alocado no diretório `bin`. O SCANTEC está preparado para funcionar em diversos ambientes computacionais, como as máquinas virtuais do CPTEC ou mesmo máquinas locais na mesa do usuário.
 
 !!! note "Nota"
 
-    Embora a versão idealizada deva funcionar também na máquina Tupã do CPTEC, a presente versão **SCANTEC V.2.0.0** requer recursos mais atuais do compilador Fortran, o que não é disponível ainda na Tupã e por isso não está apta. Veja instruções específicas para outras máquinas nas instruções abaixo.
+    Idealmente, o SCANTEC deve funcionar também na máquina Tupã do CPTEC, porém, a presente versão **SCANTEC V.2.0.0** requer recursos mais atuais do compilador Fortran, os quais não estão disponíveis na máquina. Apesar disso, ainda há a possibilidade de se utilizar o SCANTEC a partir de um container. Instruções específicas para a utilização do SCANTEC em outras máquinas são fornecidas ao longo desta seção.
 
 ##  Instalação em máquinas virtuais e locais
 
-A máquina itapemirim foi utilizada para validar a versão, a qual foi aprovada e podem ser utilizadas sem nenhum problema reportado. Em uma outra máquina qualquer que se deseja ter o SCANTEC funcionando, é necessário ter instalado:
+A máquina Itapemirim (baseada no Ubuntu 18.04, kernel 4.4.0-200-generic) foi utilizada para validar o SCANTEC V2.0.0. Em uma outra máquina qualquer que se deseja ter o SCANTEC para uso, é necessário ter instalado os seguintes requerimentos:
 
 * Compilador Intel Fortran (`ifort`) ou o GNU Fortran (`gfortran`, versão 9 ou superior);
-* Pacote Subversion (`svn` e `git`);
+* Pacote Subversion e Git (`svn` e `git`);
 * Biblioteca [LAPACK - Linear Algebra PACKage](https://www.netlib.org/lapack/).
 
-Para obter uma cópia do SCANTEC:
+Com os requisitos instalados na máquina, para obter uma cópia do SCANTEC basta seguir as instruções abaixo.
 
-
-* Baixe a versão release de distribuição do SCANTEC (arquivo compactado extensão `.tar.gz` ou `.zip`) a partir do GitHub em [https://github.com/GAM-DIMNT-CPTEC/SCANTEC/releases/tag/V2.0.0](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/releases/tag/V2.0.0):
+* Baixe a release de distribuição do SCANTEC V2.0.0 (arquivo compactado extensão `.tar.gz` ou `.zip`) a partir do GitHub em [https://github.com/GAM-DIMNT-CPTEC/SCANTEC/releases/tag/V2.0.0](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/releases/tag/V2.0.0):
 
     === "Comando"
         ```bash linenums="1"
@@ -29,9 +28,9 @@ Para obter uma cópia do SCANTEC:
         Na página de releases do SCANTEC, há outros arquivos que serão utilizados ao longo deste manual:
 
         * `README_SCANTEC.2.0.0.pdf`: uma cópia deste manual;
-        * `Tutorial.tar`: arquivos do Jupyter notebook para uso do SCANTEC e SCANPLOT;
+        * `Tutorial.tar`: arquivos do Jupyter notebook para uso do SCANTEC e SCANPLOT (um sistema de visualização).
 
-Para a instalação, siga os passos a seguir.
+Para a instalação do SCANTEC, siga os passos a seguir.
 
 1. Faça login na máquina Itapemirim:
 
@@ -40,7 +39,7 @@ Para a instalação, siga os passos a seguir.
         ssh usuario@itapemirim.cptec.inpe.br -XC
         ```
 
-2. Entre em um diretório de preferência do usuário para realizar a instalação do SCANTEC (`/home/usuario` por exemplo) e descompacte o pacote nele copiado:
+2. Entre em um diretório da preferência do usuário para realizar a instalação do SCANTEC (e.g., `/home/usuario`) e descompacte o pacote nele copiado:
 
     === "Comando"
         ```bash linenums="1"
@@ -48,14 +47,14 @@ Para a instalação, siga os passos a seguir.
         tar -xvf SCANTEC.2.0.0.tar
         ```
 
-3. Entre no diretório do `SCANTEC.2.0.0`:
+3. Entre no diretório criado `SCANTEC.2.0.0`:
 
     === "Comando"
         ```bash linenums="1"
         cd SCANTEC.2.0.0
         ```
 
-4. Para compilar o SCANTEC execute o script install seguindo as instruções abaixo:
+4. Execute o script `install`, seguindo as instruções abaixo:
 
     === "Comando"
         ```bash linenums="1"
@@ -80,7 +79,7 @@ Para a instalação, siga os passos a seguir.
 
 !!! warning "Observações"
 
-    * Escolha a opção `2` para utilizar o compilador Gfortran, que deverá ser a versão 9 ou melhor;
+    * Escolha a opção `2` para utilizar o compilador `gfortran`, que deverá ser a versão 9 ou superior;
     * Acompanhe a compilação com as informações no terminal;
-    * Verifique o sucesso do processo identificando o arquivo `SCANTEC.2.0.0/bin/scantec.x`;
-    * Caso algum problema seja detectado, ou precise compilar novamente, use a opção `1` para limpar a compilação anterior.
+    * Verifique o sucesso do processo identificando o arquivo executável `SCANTEC.2.0.0/bin/scantec.x`;
+    * Caso algum problema seja detectado ou precise compilar novamente, utilize a opção `1` para limpar a compilação anterior e reinicie o processo.

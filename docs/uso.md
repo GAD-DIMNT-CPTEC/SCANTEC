@@ -1,15 +1,15 @@
 #  Uso
 
-Para utilizar o SCANTEC é preciso editar um arquivo de configurações localizado em `SCANTEC.2.0.0/core/scantec.conf` e modificar as informações para adaptar para os dados do usuário salvando a versão modificada no diretorio `SCANTEC.2.0.0/bin`. Entre nesse diretório `bin`, e acione o executavel `scantec.x`, gerado na compilação. Para edição do arquivo de configuração `scantec.conf`, há um conjunto de palavras chaves que antecedem a informação requerida pelo sistema. O usuário procura essas palavras chaves e armazena nas devidas variáveis a informação constante após essas palavras chaves. Veja a lista de informações requeridas e as respectivas palavras chaves no final desta página, com uma breve descrição de cada uma dessas informações.
+Para utilizar o SCANTEC é preciso editar um namelist (arquivo de configurações) localizado em `SCANTEC.2.0.0/core/scantec.conf` e modificar as informações para adaptar para os dados do usuário salvando a versão modificada no diretorio `SCANTEC.2.0.0/bin`. Para edição do arquivo de configuração `scantec.conf`, há um conjunto de palavras-chave que antecedem a informação requerida pelo sistema (para mais informações sobre o namelist do SCANTEC, veja a página [Namelist](namelist.md)). O usuário deve procurar por essas palavras-chave e atribuir os valores desejados. 
 
-1. Para utilizar o sistema entre no diretório bin do SCANTEC:
+1. Para utilizar o sistema entre no diretório `bin` do SCANTEC:
 
     === "Comando"
         ```bash linenums="1"
         cd SCANTEC.2.0.0/bin/
         ```
 
-2. Edite o arquivo `SCANTEC.2.0.0/core/scantec.conf` e apropriadamente modifique as informações solicitadas sem modificar as palavras chaves e salve a versão modificada no diretório `SCANTEC.2.0.0/bin`:
+2. Edite o arquivo `SCANTEC.2.0.0/core/scantec.conf` e modifique apropriadamente as informações solicitadas e salve a versão modificada no diretório `SCANTEC.2.0.0/bin` (no exemplo, está sendo utilizado o editor `vi`, mas o usuário pode utilizar o editor que melhor lhe convier):
 
     === "Comando"
         ```bash linenums="1"
@@ -17,7 +17,7 @@ Para utilizar o SCANTEC é preciso editar um arquivo de configurações localiza
         vi scantec.conf
         ```
 
-3. Execute o SCANTEC com o comando (na aba **Resultado**, é apresentado apenas um exemplo do que o SCANTEC fará quando configurado para a avaliação de um período particular):
+3. Execute o SCANTEC com o comando (na aba **Resultado** a seguir, é apresentado apenas um exemplo do que o SCANTEC fará quando configurado para a avaliação de um período específico):
 
     === "Comando"
         ```bash linenums="1"
@@ -48,7 +48,7 @@ Para utilizar o SCANTEC é preciso editar um arquivo de configurações localiza
          2014080600 2014080900        72h
         ```
 
-4. De forma mais simplificada e mais versátil, pode-se utilizar o script `run_scantec.sh` que modifica o arquivo `scantec.conf` apropriadamente, chama o `scantec.x` e armazenas as informações em um arquivo de log. Esse mesmo script tem uma série de Testcases para permitir a validação da versão instalada pelo usuário:
+4. De forma mais simplificada, pode-se utilizar o script `run_scantec.sh` que modifica apropriadamente o arquivo `scantec.conf`, chama o `scantec.x` e armazenas as informações em um arquivo de log. Esse mesmo script tem uma série de Testcases para permitir a validação da versão instalada pelo usuário:
 
     === "Comando"
         ```bash linenums="1"
@@ -69,7 +69,7 @@ Para utilizar o SCANTEC é preciso editar um arquivo de configurações localiza
 
 ### Execução do SCANTEC com os dados do Testcase
 
-Como os dados de entrada do testcase, de todas as 3 opções de modelos disponíveis estão no disco NetApp em `/dados/das/public/SCANTEC/TestCase/`, esses testes funcionam tanto no Tupã como nas máquinas virtuais, Itapemirim e outras que enxergam o NetApp.
+Os dados de entrada do Testcase para as 3 opções de modelos disponíveis (i.e., BRAMS, ETA e BAM) estão no disco NetApp em `/dados/das/pesq1/public/SCANTEC`. Dentro do ambiente de computação do CPTEC, esses dados podem ser utilizados para testes e são acessíveis a partir da máquina Tupã e das máquinas virtuais como a Itapemirim, Ilopolis, Colorado entre outras que enxergam o disco NetApp.
 
 1. Para utilizar o sistema (tanto no Tupã como nas máquinas virtuais) entre no diretório raiz da instalação do SCANTEC:
 
@@ -85,20 +85,40 @@ Como os dados de entrada do testcase, de todas as 3 opções de modelos disponí
         ./run_scantec.sh [parâmetro]
         ```
 
-    * Sendo esse parâmetro as seguintes opções:
+    * Sendo esse parâmetro uma das seguintes opções:
 
         - Testcase do BRAMS (Jan/2016);
         - Testcase do ETA (Abr/2020);
         - Testcase do BAM (Ago/2014);
         - dados definidos pelo usuário.
 
-Para cada uma dessas opções o script irá criar um novo arquivo `SCANTEC.2.0.0/bin/scantec.conf` colocando nele as informações necessárias para cada um dos experimentos, já configurado o período dos dados, o passo de análise, passo de previsão e o período de integração dos modelos. O formato dos arquivos disponíveis para os testes é configurado em arquivos colocados no diretório `tables` e para novos modelos, ou versões com diferentes resoluções ou domínios, novos arquivos `*.table` devem ser disponibilizados no diretório `SCANTEC.2.0.0/tables`. Para mais informações sobre adicionar outros modelos veja a próxima seção intitulada **Adicionando outras versões ou modelos no SCANTEC**.
+Para cada uma dessas opções o script irá criar um novo namelist `SCANTEC.2.0.0/bin/scantec.conf`, onde serão adicionadas as informações necessárias para cada um dos experimentos, i.e., o período dos dados, o intervalo entre as análises, o intervalo entre as previsões e o período de integração dos modelos. O formato dos arquivos disponíveis para os testes é determinado em arquivos alocados no diretório `tables`. Para cada novo modelo ou versão com diferente resolução ou domínio, novos arquivos `*.table` devem ser disponibilizados no diretório `SCANTEC.2.0.0/tables`. Para mais informações sobre como adicionar outros modelos, veja a seção intitulada [**Adicionando outras versões ou modelos no SCANTEC**](#adicionando-outras-versoes-ou-modelos-no-scantec).
 
-A informações de saída dos testcases do SCANTEC são colocadas no diretório `SCANTEC.2.0.0/dataout/TestMODEL` onde `MODEL` pode ser `BRAMS`, `ETA` ou `BAM`, dependendo da opção escolhida acima.
+As informações de saída dos testcases do SCANTEC são escritas no diretório `SCANTEC.2.0.0/dataout/TestMODEL` onde `MODEL` pode ser `BRAMS`, `ETA` ou `BAM`, dependendo da opção escolhida acima. Por exemplo:
+
+```
+ls -ltr SCANTEC.2.0.0/dataout/TestMODEL
+total 17292
+-rw-rw-r-- 1 user group    1154 Jun 28 17:20 RMSEEXP01_20140805002014080600F.ctl
+-rw-rw-r-- 1 user group    1154 Jun 28 17:20 VIESEXP01_20140805002014080600F.ctl
+-rw-rw-r-- 1 user group    1154 Jun 28 17:20 MEANEXP01_20140805002014080600F.ctl
+-rw-rw-r-- 1 user group    1055 Jun 28 17:22 RMSEEXP01_20140805002014080600T.scan
+-rw-rw-r-- 1 user group    1055 Jun 28 17:22 VIESEXP01_20140805002014080600T.scan
+-rw-rw-r-- 1 user group    1055 Jun 28 17:22 ACOREXP01_20140805002014080600T.scan
+-rw-rw-r-- 1 user group 5864960 Jun 28 17:22 RMSEEXP01_20140805002014080600F.scan
+-rw-rw-r-- 1 user group 5864960 Jun 28 17:22 VIESEXP01_20140805002014080600F.scan
+-rw-rw-r-- 1 user group 5864960 Jun 28 17:22 MEANEXP01_20140805002014080600F.scan
+```
+
+No exemplo acima, são identificados os seguintes tipos de arquivos, todos resultantes de uma execução do SCANTEC:
+
+* `RMSEEXP01_20140805002014080600F.ctl`: arquivo ascii descritor para o arquivo `RMSEEXP01_20140805002014080600F.scan`. Pode ser aberto no software GrADS;
+* `RMSEEXP01_20140805002014080600F.scan`: arquivo binário com a distribuição espacial da estatística RMSE (Root Mean Square Error, ou Raiz do Erro Quadrático Médio);
+* `VIESEXP01_20140805002014080600T.scan`: arquivo ascci com uma tabela com o resultado do RMSE calculado para cada uma das variáveis escolhidas, por tempo de previsão para o período escolhido.
 
 ### Executando o SCANTEC com dados do usuário
 
-Para executar o script `run_scantec.sh` com as informações editadas pelo usuário, escolha a opção `4`. Mas antes, é preciso editar o script e modificar apropriadamente algumas informações.
+Para executar o script `run_scantec.sh` com as informações inseridas pelo usuário, escolha a opção `4`. Mas antes, é preciso editar o script e modificar apropriadamente algumas informações. Veja a seguir:
 
 1. Para utilizar o sistema (tanto no Tupã como nas máquinas virtuais) entre no diretório raiz da instalação do SCANTEC:
 
@@ -114,67 +134,52 @@ Para executar o script `run_scantec.sh` com as informações editadas pelo usuá
         vi run_scantec.sh
         ```
 
-    Modifique apropriadamente as variáveis entre as (aproximadamente entre as linhas 235 e 273) da seguinte lista:
-    
-    * Datas:
-    
+    Modifique apropriadamente os grupos de variáveis (Datas, Regiões, Referências, Análises, Quantidade de experimentos, Plugin experimento, Previsões e Climatologia), conforme a seguir:
+
     ```
-    datai=2014080500
-    dataf=2014080600
+    #--------------------------------------------------------------------#
+    # Configurações do usuário (ALTERAR O QUE FOR NECESSÁRIO)            #
+    #--------------------------------------------------------------------#
+    
+    
+    # Datas
+    datai=2016010100
+    dataf=2016010500
     passo_analise=12
     passo_previsao=12
-    total_previsao=72
-    ```
+    total_previsao=120
     
-    * Regiões:
+    # Regiões
+    lat_low=-49.875 
+    lon_low=-82.625 
+    lat_up=11.375 
+    lon_up=-35.375 
+    dx=0.4  
+    dy=0.4 
     
-    ```
-    lat_low=-49.875
-    lon_low=-82.625
-    lat_up=11.375
-    lon_up=-35.375
-    dx=0.4
-    dy=0.4
-    ```
+    # Referências
+    # Plugin modelo
+    pl_model_refer=prefixo_tabela_modelo
     
-    * Quantidade de experimentos:
+    # Análises
+    arq_refer=diretorio_dados/arquivo_anl.ctl
     
-    ```
+    # Quantidade de experimentos
     quant_exp=1
-    ```
     
-    * Referências Plugin modelo:
+    # Plugin experimento
+    pl_model_exper=prefixo_tabela_modelo/arquivo_fct.ctl
     
-    ```
-    pl_model_refer=BAM_TQ0299L064_18levs
-    ```
+    # Previões
+    arq_prev=diretorio_dados
     
-    * Endereço das Análises usadas como referência:
-    
-    ```
-    arq_refer=/dados/das/public/SCANTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%y4%m2%d2%h2%y4%m2%d2%h2P.icn.TQ0299L064.ctl
-    ```
-    
-    * Plugin experimento:
-    
-    ```
-    pl_model_exper=BAM_TQ0299L064_18levs
-    ```
-    
-    * Previsões:
-    
-    ```
-    arq_prev=/dados/das/public/SCANTEC/TestCase/AGCM/TQ0299L064/%y4%m2%d2%h2/GPOSNMC%iy4%im2%id2%ih2%fy4%fm2%fd2%fh2P.fct.TQ0299L064.ctl
-    ```
-    
-    * Climatologia:
-    
-    ```
+    # Climatologia
     use_climatologia=0
-    arq_clim=/dados/das/public/SCANTEC/climatologia/climatologia50yr.%mc.ctl
+    arq_clim=diretorio_climatologia/climatologia50yr.%mc.ctl
+
     ```
 
-3. Depois de salvar as modificações no scritp `run_scantec.sh` execute-o com a opção `4`:
+3. Em seguida, salve as modificações no script `run_scantec.sh` execute-o com a opção `4`:
 
     === "Comando"
         ```bash linenums="1"
@@ -236,42 +241,56 @@ Para executar o script `run_scantec.sh` com as informações editadas pelo usuá
          Fim do processo!
         ```
 
-4. Ver os resultados de saída do SCANTEC no diretório:
+4. Para verificar os resultados de saída do SCANTEC, liste os arquivos do diretório `SCANTEC.2.0.0/dataout`:
 
     === "Comando"
         ```bash linenums="1"
         ls SCANTEC.2.0.0/dataout
         ```
 
-Para visualizar os resultados gerados pelo SCANTEC é recomendado que se utilize o SCANPLOT, ver mais detalhes na seção **Visualização de resultados usando o SCANPLOT** desse manual.
+!!! note "Nota"
+
+    Para visualizar os resultados gerados pelo SCANTEC, pode-se utilizar softwares como o GrADS (para visualização da distribuição espacial dos campos) e o GNUPlot (para a plotagem das tabelas). A partir da versão SCANTEC V2.0.0, recomenda-se a utilização do SCANPLOT (veja mais detalhes na página [Visualização de resultados usando o SCANPLOT](scanplot.md) desse manual).
 
 ## Adicionando outras versões ou modelos no SCANTEC
 
-Para adicionar uma nova versão do modelo na lista das opções em que o sistema está preparado para processar basta seguir as instruções descrita nessa seção. Inicialmente verifique se a versão desejada já não está implementada no sistema. Caso não, para incluir um novo modelo, ou versão, basta criar um novo arquivo `table` (com extensão `.model`) no diretório `SCANTEC.2.0.0/tables` com algumas particularidades.
+Para adicionar uma nova versão do modelo na lista das opções em que o sistema está preparado para processar (i.e., BRAMS, ETA, BAM), siga as instruções descritas nessa seção. Inicialmente, verifique se a versão desejada já não está implementada no sistema. Caso não esteja, para incluir um novo modelo, ou versão, crie um novo arquivo com a extensão `.model` dentro do diretório `SCANTEC.2.0.0/tables`, com as informações pertinentes à versão do modelo a ser utilizado.
 
 !!! note "Nota"
 
-    * Observe que modelos com resolução diferentes, ou recortes de modelos, ou mudanças no domínio, ou mesmo com modificações no número de níveis realizados no pós processamento, requerem ajustes para que o sistema seja capaz de ler os arquivos binários.
-    * Cabe salientar que apenas arquivos binários e GRIB1 são lidos pela atual versão do sistema. Caso o modelo que deseja adicionar não esteja nesses formatos, precisam ser convertidos ou terá que aguardar uma nova versão do sistema. 
+    * Observe que modelos com resoluções, recortes ou domínio diferentes, ou mesmo com modificações no número de níveis pós-processados, requerem ajustes para que o sistema seja capaz de ler os arquivos binários;
+    * Cabe salientar que apenas arquivos binários (`*.bin`) e GRIB1 (`*.grb`) são lidos pela atual versão do sistema. Arquivos no formato GRIB2 e NetCDF não são suportados pela versão SCANTEC V2.0.0. Caso o modelo que deseja adicionar não esteja nesses formatos, estes precisam ser convertidos para binário ou GRIB1 com o auxílio do script [`lats4d`](http://opengrads.org/doc/scripts/lats4d/) ou similares. 
 
-A lista dos modelos já implementados na versão SCANTEC V2.0.0 é a que segue com seus respectivos arquivos `tables` que podem servir como exemplo para criar outros:
+A lista abaixo, elenca os modelos já implementados na versão SCANTEC V2.0.0 junto com os seus respectivos arquivos `tables`, os quais podem servir como exemplo para criar outros:
 
-* Modelo BAM Truncamento 299 64 níveis com pós de 18 níveis: `BAM_TQ0299L064_18levs.model`;
-* Modelo BAM Truncamento 299 64 níveis com pós de 28 níveis: `BAM_TQ0299L064_28levs.model`;
+* Modelo BAM truncamento 299 64 níveis com pós de 18 níveis: `BAM_TQ0299L064_18levs.model`;
+* Modelo BAM truncamento 299 64 níveis com pós de 28 níveis: `BAM_TQ0299L064_28levs.model`;
 * Modelo BRAMS 5km de resolução horizontal e pós de 19 níveis: `BRAMS_5km_19levs.model`;
 * Modelo ETA 5km de resolução horizontal e pós de 22 níveis: `ETA_ams_05km_22levs.model`;
 
-Para adicionar um novo modelo basta editar um dos arquivos acima que mais se assemelha com o modelo desejado fazer os devidos ajustes e salvar com um nome apropriado (extensão `.model`) dentro do diretório `tables`, e no arquivo de configuração `scantec.conf` ou se tiver usando o script `run_scantec.sh`, assegure que o novo modelo ou versão seja lido com o arquivo `table` criado. Para isso na linha do experimento em que esse modelo se refere a primeira palavra deve ser o nome do arquivo `table`.
+Para adicionar um novo modelo basta editar um dos arquivos acima que mais se assemelha com o modelo desejado e fazer os devidos ajustes. Salve o arquivo modificado com um nome apropriado (incluindo a extensão `.model`) dentro do diretório `tables`, e no arquivo de configurações `scantec.conf` (ou se tiver usando o script `run_scantec.sh`), assegure-se de que o novo modelo ou versão seja lido a partir do arquivo `table` criado. Para isso na linha do experimento em que esse modelo se refere a primeira palavra deve ser o nome do arquivo `table`.
+
+No script `run_scantec.sh`:
+
+```
+pl_model_refer=BAM_TQ0299L064_18levs
+```
+
+ou, no arquivo namelist do SCANTEC:
+
+```
+BAM_TQ0299L064_18levs EXP01
+```
 
 !!! warning "Atenção"
 
     * Se esse arquivo é também utilizado como referência na avaliação o novo `table` deve também ser colocado após a palavra `Reference Model Name:` no arquivo de configurações do SCANTEC:
 
     ```
-    Reference Model Name: ETA_ams_05km_22levs
+    Reference Model Name: BAM_TQ0299L064_18levs
     ```
 
-O importante é que o novo arquivo `table` tenha as seguintes informações:
+O novo arquivo `table` deve conter as seguintes informações:
 
 * Tipo de arquivo depois da palavra `ftype:`;
 * Como os valores devem ser considerados indefinidos depois da palavra `undef:`;
@@ -292,12 +311,12 @@ zdim:
            550  500 450 400 350 300 250 200 150 100 50
 ```
 
-A tabela de variáveis é preenchida da seguinte forma (colunas separadas por espaço):
+Outro arquivo importante para a customização do SCANTEC, é o arquivo `scantec.vars`. Este arquivo contém a tabela de variáveis a serem utilizadas na avaliação. A tabela de variáveis é preenchida da seguinte forma (colunas separadas por espaço):
 
 * A primeira coluna é o nome da variável do SCANTEC, veja lista em `tables/scantec.vars`;
 * A segunda coluna pode ser o nome da variável correspondente no modelo da forma como listado no arquivo descritor (`.ctl`) do modelo.
 
-Veja exemplo do arquivo `ETA_ams_05km_22levs.model`:
+Veja exemplo do arquivo `scantec.vars`:
 
 ```
 vars:
@@ -323,9 +342,11 @@ vvel:500 vvel:500
 vvel:250 vvel:250
 ```
 
-Caso o modelo não tenha a variável que o SCANTEC requer uma função pode ser chamada ao colocar na segunda coluna algumas das funções disponiveis no SCANTEC, a qual deverá produzir a variável desejada, baseando-se nas variáveis pré-existentes do modelo, as quais são colocadas entre parenteses depois do nome da função separadas por vírgulas.
+## Funções Matemáticas Implícitas
 
-Veja exemplo do arquivo `ETA_ams_05km_22levs.model`:
+A edição do arquivo `scantec.vars` permite a utilização de funções matemáticas para a definição de novas variáveis. Caso o modelo não tenha a variável que o SCANTEC requer (ou que se deseja avaliar), uma função matemática pode ser chamada ao colocar na segunda coluna algumas das funções disponiveis no SCANTEC, utilizando para isto, nas variáveis pós-processadas do modelo. Estas funções são escritas entre parênteses depois do nome da função e são separadas por vírgulas.
+
+Veja o exemplo a seguir onde a variável `vtmp` (temperatura virtual) é calculada a partir das variáveis `temp` (temperatura absoluta) e `umes` (umidade específica):
 
 ```
 vars:
@@ -334,8 +355,47 @@ vtmp:850 vtmp2(temp:850,umes:850)
 vtmp:500 vtmp2(temp:500,umes:500)
 ```
 
-Nestes exemplos, a temperatura virtual o modelo Eta não está disponível e é chamada uma função para seu cálculo, utilizando a temperatura e umidade nos respectivos níveis desejados.
+As seguintes funções matemáticas estão disponíveis na versão SCANTEC V2.0.0:
+
+* Funções Trigonométricas:
+    - `sin(x)`: seno de x;
+    - `cos(x)`: cosseno de x;
+    - `tan(x)`: tangente de x;
+    - `asin(x)`: arco seno de x;
+    - `acos(x)`: arco cosseno de x;
+    - `atan(x)`: arco tangente de x.
+
+
+* Funções Aritméticas:
+
+    - `sqrt(x)`: raiz quadrada de x;
+    - `exp(x)`: exponencial de x;
+    - `log(x)`: logarítmo natural de x;
+    - `log10(x)`: logarítmo comum (na base 10) de x.
+
+
+* Funções Numéricas:
+
+    - `abs(x)`: retorna o valor absoluto de x;
+    - `min(x,y)`: retorna o menor valor entre x e y;
+    - `max(x,y)`: retorna o maior valor entre x e y;
+    - `mod(x,y)`: rRetorna o resto da divisão de x por y.
+
+
+* Funções para conversões físicas:
+
+    - `svap(temp)`: calcula a pressão de vapor saturado [Pa] a partir da temperatura do ar (C);
+    - `vapp(es, rh)`: calcula a pressão de vapor [Pa] a partir da pressão de vapor saturado [Pa] e da umidade relativa [%];
+    - `hmxr1(q)`: calcula a razão de mistura [kg/kg] a partir da umidade específica [kg/kg];
+    - `hmxr2(p, ee)`: calcula a razão de mistura [kg/kg] a partir da pressão atmosférica [Pa] e da pressão de vapor [Pa];
+    - `umes1(w)`: calcula a umidade específica [kg/kg] a partir da razão de mistura [kg/kg];
+    - `umes2(p, td)`: calcula a razão de mistura [kg/kg] a partir da pressão atmosférica [Pa] e da temperatura do ponto de orvalho [C];
+    - `umes3(p, t, rh)`: calcula a razão de mistura [kg/kg] a partir da pressão atmosférica [Pa], da temperatura do ar (C) e da umidade relativa do ar [%];
+    - `tpor(t, rh)`: calcula a temperatura do ponto de orvalho [C] a partir da temperatura do ar [C] e da umidade relativa do ar [%];
+    - `umrl(p, w, es)`: calcula a umidade relativa [%] a partir da razão de mistura [kg/kg], da pressão de vapor de saturação [Pa] e da pressão atmosférica [Pa];
+    - `vtmp1(p, t, rh)`: calcula a temperatura virtual [C] a partir da temperatura do ar [C] e da umidade relativa [%] e da pressão atmosférica [Pa];
+    - `vtmp2(t, q)`: calcula a temperatura virtual [C ou K] a partir da temperatura do ar [C ou K] e da Umidade especícia [Kg/Kg];
 
 !!! note "Nota"
 
-    A lista das funções e os argumentos requiridas por cada uma delas está disponivel no documento chamado `funcoes.readme` no diretóro `docs`, o qual detalha como utilizar as funções disponíveis.
+    A implementação das funções matemáticas no SCANTEC, está nas rotinas [MathExpress.f90](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/blob/master/core/MathExpress.f90) e [scan_MathPlugin.f90](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/blob/master/core/scan_MathPlugin.f90).

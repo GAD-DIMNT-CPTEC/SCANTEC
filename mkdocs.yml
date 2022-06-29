@@ -47,6 +47,9 @@ markdown_extensions:
   - tables
   - admonition
   - abbr
+  - toc:
+      permalink: true
+      separator: "-"
   - pymdownx.snippets
   - pymdownx.details
   - pymdownx.critic
