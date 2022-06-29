@@ -4,7 +4,7 @@ A constante evolução dos computadores acarretou num progressivo aperfeiçoamen
 
 ## Objetivos
 
-O objetivo principal do SCANTEC é investigar as métricas mais robustas para a adequada avaliação dos modelos de PNTC, as quais atendam a todos os requesitos esperados nesta tarefa - tanto pelos desenvolvedores de modelos numéricos de PNTC, como dos usuários desses modelos. Os objetivos específicos contemplam os seguintes tópicos:
+O objetivo principal do SCANTEC é investigar as métricas mais robustas para a adequada avaliação dos modelos de PNTC, as quais atendam a todos os requisitos esperados nesta tarefa - tanto pelos desenvolvedores de modelos numéricos de PNTC, como dos usuários desses modelos. Os objetivos específicos contemplam os seguintes tópicos:
 
 * Investigação de métricas adequadas para a avaliação das variáveis atmosféricas dos modelos de PNTC na comparação com condições iniciais, bem como dados observados e climatologias;
 * Investigação de métricas adequadas para a avaliação das previsões de precipitação geradas pelos modelos de PNTC, a partir de análises estatísticas e determinação de índices baseados em observações (em superfície e por satélites), além de campos climatológicos;
