@@ -73,4 +73,4 @@ Depois de configurado o sistema na máquina Itapemirim, utilize o Jupyter notebo
 
 Também está disponível um tutorial do SCANTEC que dá a possibilidade de instalar e utilizar todo o sistema via notebook do Jupyter, o que abre algumas facilidades interessantes. Para isso abra o arquivo `SCANTEC.2.0.0/docs/Tutorial/Tutorial_SCANTEC.ipynb` e siga as instruções na página.
 
-Esse mesmo tutorial pode se obtido a partir do endereço [Tutorial.tar](https://projetos.cptec.inpe.br/attachments/download/8951/Tutorial.tar).
+Esse mesmo tutorial pode se obtido a partir do endereço [Tutorial.tar](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/releases/download/V2.0.0/Tutorial.tar).

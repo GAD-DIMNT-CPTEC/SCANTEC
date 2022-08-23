@@ -6,4 +6,6 @@ O SCANTEC[^1] é um sistema de avaliação de modelos numéricos de tempo e clim
 
 Nesta página, são apresentadas as informações sobre a última versão do SCANTEC, bem como o seu manual de utilização.
 
-[^1]: [de MATTOS, J. G. Z.](http://lattes.cnpq.br/4563659436339486); [SAPUCCI, L. F.](http://lattes.cnpq.br/8285827971934692). **SCANTEC - SISTEMA COMUNITÁRIO DE AVALIAÇÃO DE MODELOS NUMÉRICOS DE TEMPO E CLIMA. 2017.** Patente: Programa de Computador. Número do registro: BR512017000576-1, data de registro: 30/01/2017, Instituição de registro: INPI - Instituto Nacional da Propriedade Industrial.
+[^1]: [de MATTOS, J. G. Z.](http://lattes.cnpq.br/4563659436339486); [SAPUCCI, L. F.](http://lattes.cnpq.br/8285827971934692); [BASTARZ, C. F.](http://lattes.cnpq.br/2410960909883784). **SCANTEC V2.0.0 - Sistema Comunitário de Avaliação de modelos Numéricos de Tempo e Clima. 2022.** Patente: Programa de Computador. Número do registro: BR512022002066-1, data de registro: 09/08/2022, Instituição de registro: INPI - Instituto Nacional da Propriedade Industrial.
+
+<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode" target="_blank"><img src="https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-sa.png" alt="CC-BY-NC-SA" width="100"/></a>
