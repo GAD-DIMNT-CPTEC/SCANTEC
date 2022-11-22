@@ -211,7 +211,7 @@ contains
 
     write(stdout,'(A,3(1x,A))')'Model Name or Model Type not found!',&
          trim(MType_),'->',trim(MName_)
-    stop
+    stop -25
 
   end function getModel_
 
@@ -236,7 +236,7 @@ contains
        istat = -1
     else
        write(stdout,'(A,1x,A)') 'unknow Experient Name',trim(ExpName)
-       stop
+       stop -26
     endif
   end subroutine getField_
 
@@ -263,7 +263,7 @@ contains
        istat = -1
     else
        write(stdout,'(A,1x,A)')'unknow Experiment Name',trim(ExpName)
-       stop
+       stop -27
     endif
   end subroutine getBitMap_
 
@@ -323,7 +323,7 @@ contains
     enddo
     write(stdout,'(A,1x,2A,1x,A)')'Dimension not found in',&
          trim(self%Name_),'.model :',trim(mdim)
-    stop
+    stop -28
 
   end function getDimVec_
 
