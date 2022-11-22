@@ -258,7 +258,7 @@ contains
 
     if (.not.associated(self%head))then
        print*,trim(myname_)//' :: error : not initialized ...'
-       stop
+       stop -33
 !       call self%initialize()
     endif
 
@@ -477,7 +477,7 @@ contains
 
     if (.not.associated(self%head))then
        print*,trim(myname_)//' :: error : not initialized ...'
-       stop
+       stop -34
 !       call self%initialize()
     endif
    
@@ -597,7 +597,7 @@ contains
 
     if (.not.associated(self%head))then
        print*,trim(myname_)//' :: error : not initialized ...'
-       stop
+       stop -35
 !       call self%initialize()
     endif
    
