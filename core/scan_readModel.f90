@@ -123,13 +123,13 @@ module scan_readModel
       if(.not.found)then
          write(msg,'(2A)')'File not found :', trim(fileModelConf)
          call i90_perr(trim(myname_),trim(msg),-1)
-         stop -14
+         stop
       endif
       call i90_LoadF(trim(fileModelConf), iret)
       if(iret.ne.0)then
          write(msg,'(3A)')'i90_LoadF("',trim(fileModelConf),'")'
          call i90_perr(trim(myname_),trim(msg),iret)
-         stop -15
+         stop
       endif
 
 #ifdef DEBUG
@@ -334,19 +334,19 @@ module scan_readModel
     call i90_label(trim(label),ierr)
     if(ierr.ne.0)then
        call i90_perr(trim(myname_),'i90_label( '//trim(label)//' ... )', ierr)
-       stop -16
+       stop
     endif
 
     GDef%num = i90_Gint(ierr)
     if(ierr.ne.0)then
        call i90_perr(trim(myname_),'i90_Gint( '//trim(label)//'%num ... )', ierr)
-       stop -17
+       stop
     endif
 
     call i90_GToken(GDef%mapping,ierr)
     if(ierr.ne.0)then
        call i90_perr(trim(myname_),'i90_GToken( '//trim(label)//'%mapping ... )', ierr)
-       stop -18
+       stop
     endif
 
     select case (trim(i90_lcase(GDef%mapping)))
@@ -356,25 +356,25 @@ module scan_readModel
        Gdef%start_coord = i90_GFloat(ierr)
        if(ierr.ne.0)then
           call i90_perr(trim(myname_),'i90_GFloat( '//trim(label)//'%start_coord ... )', ierr)
-          stop -19
+          stop
        endif
 
        Gdef%incr_coord = i90_GFloat(ierr)
        if(ierr.ne.0)then
           call i90_perr(trim(myname_),'i90_GFloat( '//trim(label)//'%incr_coord ... )', ierr)
-          stop -20
+          stop
        endif
 
        allocate(GDef%coord(GDef%num),stat=ierr)
        if(ierr.ne.0)then
           call i90_perr(trim(myname_),'Allocate( '//trim(label)//'%coord(:) ... )', ierr)
-          stop -21
+          stop
        endif
 
        call GetLinCoords(GDef%start_coord, GDef%incr_coord, GDef%num, GDef%coord, ierr)
        if(ierr.ne.0)then
           call i90_perr(trim(myname_),'GetLinCoords( '//trim(label)//' ... )', ierr)
-          stop -22
+          stop
        endif
 
     case('levels')
@@ -384,13 +384,13 @@ module scan_readModel
        allocate(GDef%coord(GDef%num),stat=ierr)
        if(ierr.ne.0)then
           call i90_perr(trim(myname_),'Allocate( '//trim(label)//'%coord(:) ... )', ierr)
-          stop -23
+          stop
        endif
 
        call GetLevelsCoord( GDef%num, GDef%coord, ierr )
        if(ierr.ne.0)then
           call i90_perr(trim(myname_),'GetLevelsCoords( '//trim(label)//' ... )', ierr)
-          stop -24
+          stop
        endif
 
        GDef%start_coord = GDef%coord(1)
