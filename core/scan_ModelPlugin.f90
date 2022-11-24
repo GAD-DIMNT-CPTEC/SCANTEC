@@ -196,13 +196,13 @@ Contains
       if(.not.found)then
          write(msg,'(2A)')'File not found :', trim(fileModelConf)
          call i90_perr(trim(myname_),trim(msg),-1)
-         stop -3
+         stop 99002
       endif
       call i90_LoadF(trim(fileModelConf), iret)
       if(iret.ne.0)then
          write(msg,'(3A)')'i90_LoadF("',trim(fileModelConf),'")'
          call i90_perr(trim(myname_),trim(msg),iret)
-         stop -4
+         stop 99003
       endif
 
 #ifdef DEBUG
@@ -430,19 +430,19 @@ Contains
     call i90_label(trim(label),ierr)
     if(ierr.ne.0)then
        call i90_perr(trim(myname_),'i90_label( '//trim(label)//' ... )', ierr)
-       stop -5
+       stop 99004
     endif
 
     GDef%num = i90_Gint(ierr)
     if(ierr.ne.0)then
        call i90_perr(trim(myname_),'i90_Gint( '//trim(label)//'%num ... )', ierr)
-       stop -6
+       stop 99005
     endif
 
     call i90_GToken(GDef%mapping,ierr)
     if(ierr.ne.0)then
        call i90_perr(trim(myname_),'i90_GToken( '//trim(label)//'%mapping ... )', ierr)
-       stop -7
+       stop 99006
     endif
 
     select case (trim(i90_lcase(GDef%mapping)))
@@ -452,25 +452,25 @@ Contains
        Gdef%start_coord = i90_GFloat(ierr)
        if(ierr.ne.0)then
           call i90_perr(trim(myname_),'i90_GFloat( '//trim(label)//'%start_coord ... )', ierr)
-          stop -8
+          stop 99007
        endif
 
        Gdef%incr_coord = i90_GFloat(ierr)
        if(ierr.ne.0)then
           call i90_perr(trim(myname_),'i90_GFloat( '//trim(label)//'%incr_coord ... )', ierr)
-          stop -9
+          stop 99008
        endif
 
        allocate(GDef%coord(GDef%num),stat=ierr)
        if(ierr.ne.0)then
           call i90_perr(trim(myname_),'Allocate( '//trim(label)//'%coord(:) ... )', ierr)
-          stop -10
+          stop 99009
        endif
 
        call GetLinCoords(GDef%start_coord, GDef%incr_coord, GDef%num, GDef%coord, ierr)
        if(ierr.ne.0)then
           call i90_perr(trim(myname_),'GetLinCoords( '//trim(label)//' ... )', ierr)
-          stop -11
+          stop 99010
        endif
 
     case('levels')
@@ -480,13 +480,13 @@ Contains
        allocate(GDef%coord(GDef%num),stat=ierr)
        if(ierr.ne.0)then
           call i90_perr(trim(myname_),'Allocate( '//trim(label)//'%coord(:) ... )', ierr)
-          stop -12
+          stop 99011
        endif
 
        call GetLevelsCoord( GDef%num, GDef%coord, ierr )
        if(ierr.ne.0)then
           call i90_perr(trim(myname_),'GetLevelsCoords( '//trim(label)//' ... )', ierr)
-          stop -13
+          stop 99012
        endif
 
        GDef%start_coord = GDef%coord(1)

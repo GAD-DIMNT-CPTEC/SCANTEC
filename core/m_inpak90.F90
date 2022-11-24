@@ -3113,7 +3113,7 @@ end subroutine perr4_
   msg = char(27)//'[31;1m'//trim(where)//char(27)//'[m'
   write(stdout,'(A)')trim(msg)
 
-  stop
+  stop 99035
   
 end subroutine die0_
 
@@ -3155,7 +3155,7 @@ end subroutine die0_
 
   write(stdout,'(A)')trim(msg)
 
-  stop
+  stop 99036
   
 end subroutine die2_
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3195,7 +3195,7 @@ end subroutine die2_
    mesg2,'=',trim(adjustl(cval2)),'.'
 
   write(stdout,'(A)')trim(msg)
-  stop
+  stop 99038
 
 end subroutine die4_
 
