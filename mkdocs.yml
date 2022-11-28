@@ -17,6 +17,7 @@ nav:
     - 'Uso': uso.md
     - 'Namelist': namelist.md
   - 'Visualização': scanplot.md
+  - 'Resolução de Problemas': resol_problemas.md
 
 #Configuration
 theme: 
