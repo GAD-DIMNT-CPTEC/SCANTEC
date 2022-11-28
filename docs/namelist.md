@@ -27,6 +27,10 @@ Para cada um desses grupos são apresentadas as palavras-chave de cada informaç
     ```
     Analisys Time Step: 12
     ```
+!!! warning "Atenção"
+
+    Independente da forma como o SCANTEC é utilizado, é fundamental que a variável `Analisys Time Step` seja adequadamente ajustada para que os arquivos `.ctl` (utilizados para a visualização da distribuição espacial das estatísticas) sejam corretamente definidos. Se o SCANTEC for utilizado para a avaliação de modelos para apenas uma data (e.g., quando as variáveis `Starting Time` e `Ending Time` possuírem os mesmos valores), ajuste a variável `Analisys Time Step` com um valor que reflita o intervalo de tempo entre as previsões. Este valor é utilizado para o cálculo da variável `tdef` a ser alocada dentro do arquivo `.ctl`. Veja a [issue #3 no GitHub do SCANTEC](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/issues/3) para mais informações.
+
 
 * Passo de tempo em horas entre as previsões avaliadas (tem que ser o mesmo passo entre as análises usadas como referência):
 
