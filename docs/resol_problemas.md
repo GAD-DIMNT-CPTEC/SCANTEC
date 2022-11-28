@@ -1,5 +1,9 @@
 # Resolução de Problemas
 
+!!! warning "Atenção"
+
+    Informações válidas para a versão V2.1.0 do SCANTEC (ainda não lançada).
+
 A fim de fornecer aos usuários do SCANTEC meios para realizar a investigação de erros que podem ocorrer durante o uso do sistema, nesta página estão elencadas as rotinas que utilizam a instrução `STOP`, além de uma tabela com os códigos de erro que o SCANTEC utiliza e os códigos correspondentes obtidos a partir do uso do comando `echo $?` no Shell Bash do Linux. Estas informações podem ser úteis para se identificar possíveis fontes de problemas. Recomenda-se aos usuários a [abertura de issues dentro do projeto SCANTEC](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/issues) para que sejam registrados os problemas que podem ser encontrados. Antes de abrir uma nova issue, verifique antes a existência de uma issue com o problema encontrado.
 
 ## Lista de Possíveis Erros e Fontes de Investigação
