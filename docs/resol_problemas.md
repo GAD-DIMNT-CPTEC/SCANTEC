@@ -20,7 +20,12 @@ As rotinas a seguir fazem uso da instrução `STOP`. Em geral, os escopos onde e
 
 Na tabela a seguir, são relacionados os códigos decimais da instrução `STOP` das rotinas elecandas anteriormente e do comando `echo $?` com os seus respectivos códigos hexadecimais. Observe que o "lowest byte" do código hexadecimal da instrução `STOP` é exatamente o código hexadecimal do comando `echo $?`. Dessa forma pode-se fazer uma correspondência entre os códigos, apesar de haver dependência quanto ao compilador, sistema operacional e processador utilizado. Como referência, os códigos foram gerados utilizando-se o Shell GNU Bash, version 5.2.2(1)-release (x86_64-pc-linux-gnu) do Ubuntu 22.10 (kernel Linux 5.19.0-23-generic), compilador GNU Fortran (Ubuntu 9.5.0-1ubuntu3) 9.5.0 e processador Intel Core i7-4790.
 
-Para usar a tabela, após a interrupção do programa executado pelo terminal do Linux, utilize o comando `echo $?` e procure pelo erro na tabela abaixo.
+Na imagem a seguir, observe que foi gerado o código `99038` a partir de uma instrução `STOP` do SCANTEC (esse código indica que o arquivo `scantec.conf` não foi encontrado). Imediatamente após a obtenção do código, foi executado o comando `echo $?`, a partir do qual foi obtido o código `222`. Utilizando-se uma calculadora que converte números decimais em hexadecimais, pode-se observar que o número decimal `99038` corresponde ao número hexadecimal `182DE` e que o número decimal `222` corresponde ao número hexadecimal `DE` (que é o "lowest byte" do número `182DE`).
+
+![Exemplo Conversão Códigos](./imgs/codigos_scantec.png)
+
+De acordo com o exemplo apresentado, utilize a tabela a seguir para encontrar o código `STOP` emitido pelo SCANTEC e o seu correspondente código emitido pelo comando `echo $?`. A correspondência é realizada pelos números hexadecimais referentes aos códigos (representados pelos números decimais).
+
 
 | Código `STOP` (decimal) | Código `STOP` (hexadecimal) | Código `echo $?` (decimal) | Código `echo $?` (hexadecimal) | Mensagem ou Motivo | Função/Subrotina/Rotina |
 |--------|----------------|-----------------------------|----------------------------|-------------------------------|--------------------|
