@@ -1,15 +1,15 @@
 #  Uso
 
-Para utilizar o SCANTEC é preciso editar um namelist (arquivo de configurações) localizado em `SCANTEC.2.0.0/core/scantec.conf` e modificar as informações para adaptar para os dados do usuário salvando a versão modificada no diretorio `SCANTEC.2.0.0/bin`. Para edição do arquivo de configuração `scantec.conf`, há um conjunto de palavras-chave que antecedem a informação requerida pelo sistema (para mais informações sobre o namelist do SCANTEC, veja a página [Namelist](namelist.md)). O usuário deve procurar por essas palavras-chave e atribuir os valores desejados. 
+Para utilizar o SCANTEC é preciso editar um namelist (arquivo de configurações) localizado em `SCANTEC.2.1.0/core/scantec.conf` e modificar as informações para adaptar para os dados do usuário salvando a versão modificada no diretorio `SCANTEC.2.1.0/bin`. Para edição do arquivo de configuração `scantec.conf`, há um conjunto de palavras-chave que antecedem a informação requerida pelo sistema (para mais informações sobre o namelist do SCANTEC, veja a página [Namelist](namelist.md)). O usuário deve procurar por essas palavras-chave e atribuir os valores desejados. 
 
 1. Para utilizar o sistema entre no diretório `bin` do SCANTEC:
 
     === "Comando"
         ```bash linenums="1"
-        cd SCANTEC.2.0.0/bin/
+        cd SCANTEC.2.1.0/bin/
         ```
 
-2. Edite o arquivo `SCANTEC.2.0.0/core/scantec.conf` e modifique apropriadamente as informações solicitadas e salve a versão modificada no diretório `SCANTEC.2.0.0/bin` (no exemplo, está sendo utilizado o editor `vi`, mas o usuário pode utilizar o editor que melhor lhe convier):
+2. Edite o arquivo `SCANTEC.2.1.0/core/scantec.conf` e modifique apropriadamente as informações solicitadas e salve a versão modificada no diretório `SCANTEC.2.1.0/bin` (no exemplo, está sendo utilizado o editor `vi`, mas o usuário pode utilizar o editor que melhor lhe convier):
 
     === "Comando"
         ```bash linenums="1"
@@ -75,7 +75,7 @@ Os dados de entrada do Testcase para as 3 opções de modelos disponíveis (i.e.
 
     === "Comando"
         ```bash linenums="1"
-        cd SCANTEC.2.0.0/
+        cd SCANTEC.2.1.0/
         ```
 
 2. Execute o script de execução do SCANTEC com um parâmetro na linha de comando:
@@ -92,12 +92,12 @@ Os dados de entrada do Testcase para as 3 opções de modelos disponíveis (i.e.
         - Testcase do BAM (Ago/2014);
         - dados definidos pelo usuário.
 
-Para cada uma dessas opções o script irá criar um novo namelist `SCANTEC.2.0.0/bin/scantec.conf`, onde serão adicionadas as informações necessárias para cada um dos experimentos, i.e., o período dos dados, o intervalo entre as análises, o intervalo entre as previsões e o período de integração dos modelos. O formato dos arquivos disponíveis para os testes é determinado em arquivos alocados no diretório `tables`. Para cada novo modelo ou versão com diferente resolução ou domínio, novos arquivos `*.table` devem ser disponibilizados no diretório `SCANTEC.2.0.0/tables`. Para mais informações sobre como adicionar outros modelos, veja a seção intitulada [**Adicionando outras versões ou modelos no SCANTEC**](#adicionando-outras-versoes-ou-modelos-no-scantec).
+Para cada uma dessas opções o script irá criar um novo namelist `SCANTEC.2.1.0/bin/scantec.conf`, onde serão adicionadas as informações necessárias para cada um dos experimentos, i.e., o período dos dados, o intervalo entre as análises, o intervalo entre as previsões e o período de integração dos modelos. O formato dos arquivos disponíveis para os testes é determinado em arquivos alocados no diretório `tables`. Para cada novo modelo ou versão com diferente resolução ou domínio, novos arquivos `*.table` devem ser disponibilizados no diretório `SCANTEC.2.1.0/tables`. Para mais informações sobre como adicionar outros modelos, veja a seção intitulada [**Adicionando outras versões ou modelos no SCANTEC**](#adicionando-outras-versoes-ou-modelos-no-scantec).
 
-As informações de saída dos testcases do SCANTEC são escritas no diretório `SCANTEC.2.0.0/dataout/TestMODEL` onde `MODEL` pode ser `BRAMS`, `ETA` ou `BAM`, dependendo da opção escolhida acima. Por exemplo:
+As informações de saída dos testcases do SCANTEC são escritas no diretório `SCANTEC.2.1.0/dataout/TestMODEL` onde `MODEL` pode ser `BRAMS`, `ETA` ou `BAM`, dependendo da opção escolhida acima. Por exemplo:
 
 ```
-ls -ltr SCANTEC.2.0.0/dataout/TestMODEL
+ls -ltr SCANTEC.2.1.0/dataout/TestMODEL
 total 17292
 -rw-rw-r-- 1 user group    1154 Jun 28 17:20 RMSEEXP01_20140805002014080600F.ctl
 -rw-rw-r-- 1 user group    1154 Jun 28 17:20 VIESEXP01_20140805002014080600F.ctl
@@ -124,7 +124,7 @@ Para executar o script `run_scantec.sh` com as informações inseridas pelo usu�
 
     === "Comando"
         ```bash linenums="1"
-        cd SCANTEC.2.0.0/
+        cd SCANTEC.2.1.0/
         ```
 
 2. Edite o script `run_scantec.sh`:
@@ -217,10 +217,10 @@ Para executar o script `run_scantec.sh` com as informações inseridas pelo usu�
          Uso climatologia: 0     
         
          Resultados:                               
-         /scripts/ensemble/SCANTEC.2.0.0/dataout/                          
+         /scripts/ensemble/SCANTEC.2.1.0/dataout/                          
         
          Arquivo de log:                           
-         Log do processo: /scripts/ensemble/SCANTEC.2.0.0/logfile/scantec-20220628.17.30.log                
+         Log do processo: /scripts/ensemble/SCANTEC.2.1.0/logfile/scantec-20220628.17.30.log                
          ==========================                
         
          Início do processamento: Tue Jun 28 17:30:01 GMT 2022
@@ -235,33 +235,33 @@ Para executar o script `run_scantec.sh` com as informações inseridas pelo usu�
 
          Final do processo: Tue Jun 28 17:30:01 GMT 2022
         
-         Log do processo: /scripts/ensemble/SCANTEC.2.0.0/logfile/scantec-20220628.17.30.log
+         Log do processo: /scripts/ensemble/SCANTEC.2.1.0/logfile/scantec-20220628.17.30.log
         ====================================================================================
         
          Fim do processo!
         ```
 
-4. Para verificar os resultados de saída do SCANTEC, liste os arquivos do diretório `SCANTEC.2.0.0/dataout`:
+4. Para verificar os resultados de saída do SCANTEC, liste os arquivos do diretório `SCANTEC.2.1.0/dataout`:
 
     === "Comando"
         ```bash linenums="1"
-        ls SCANTEC.2.0.0/dataout
+        ls SCANTEC.2.1.0/dataout
         ```
 
 !!! note "Nota"
 
-    Para visualizar os resultados gerados pelo SCANTEC, pode-se utilizar softwares como o GrADS (para visualização da distribuição espacial dos campos) e o GNUPlot (para a plotagem das tabelas). A partir da versão SCANTEC V2.0.0, recomenda-se a utilização do SCANPLOT (veja mais detalhes na página [Visualização de resultados usando o SCANPLOT](scanplot.md) desse manual).
+    Para visualizar os resultados gerados pelo SCANTEC, pode-se utilizar softwares como o GrADS (para visualização da distribuição espacial dos campos) e o GNUPlot (para a plotagem das tabelas). A partir da versão SCANTEC V2.1.0, recomenda-se a utilização do SCANPLOT (veja mais detalhes na página [Visualização de resultados usando o SCANPLOT](scanplot.md) desse manual).
 
 ## Adicionando outras versões ou modelos no SCANTEC
 
-Para adicionar uma nova versão do modelo na lista das opções em que o sistema está preparado para processar (i.e., BRAMS, ETA, BAM), siga as instruções descritas nessa seção. Inicialmente, verifique se a versão desejada já não está implementada no sistema. Caso não esteja, para incluir um novo modelo, ou versão, crie um novo arquivo com a extensão `.model` dentro do diretório `SCANTEC.2.0.0/tables`, com as informações pertinentes à versão do modelo a ser utilizado.
+Para adicionar uma nova versão do modelo na lista das opções em que o sistema está preparado para processar (i.e., BRAMS, ETA, BAM), siga as instruções descritas nessa seção. Inicialmente, verifique se a versão desejada já não está implementada no sistema. Caso não esteja, para incluir um novo modelo, ou versão, crie um novo arquivo com a extensão `.model` dentro do diretório `SCANTEC.2.1.0/tables`, com as informações pertinentes à versão do modelo a ser utilizado.
 
 !!! note "Nota"
 
     * Observe que modelos com resoluções, recortes ou domínio diferentes, ou mesmo com modificações no número de níveis pós-processados, requerem ajustes para que o sistema seja capaz de ler os arquivos binários;
-    * Cabe salientar que apenas arquivos binários (`*.bin`) e GRIB1 (`*.grb`) são lidos pela atual versão do sistema. Arquivos no formato GRIB2 e NetCDF não são suportados pela versão SCANTEC V2.0.0. Caso o modelo que deseja adicionar não esteja nesses formatos, estes precisam ser convertidos para binário ou GRIB1 com o auxílio do script [`lats4d`](http://opengrads.org/doc/scripts/lats4d/) ou similares. 
+    * Cabe salientar que apenas arquivos binários (`*.bin`) e GRIB1 (`*.grb`) são lidos pela atual versão do sistema. Arquivos no formato GRIB2 e NetCDF não são suportados pela versão SCANTEC V2.1.0. Caso o modelo que deseja adicionar não esteja nesses formatos, estes precisam ser convertidos para binário ou GRIB1 com o auxílio do script [`lats4d`](http://opengrads.org/doc/scripts/lats4d/) ou similares. 
 
-A lista abaixo, elenca os modelos já implementados na versão SCANTEC V2.0.0 junto com os seus respectivos arquivos `tables`, os quais podem servir como exemplo para criar outros:
+A lista abaixo, elenca os modelos já implementados na versão SCANTEC V2.1.0 junto com os seus respectivos arquivos `tables`, os quais podem servir como exemplo para criar outros:
 
 * Modelo BAM truncamento 299 64 níveis com pós de 18 níveis: `BAM_TQ0299L064_18levs.model`;
 * Modelo BAM truncamento 299 64 níveis com pós de 28 níveis: `BAM_TQ0299L064_28levs.model`;
@@ -355,7 +355,7 @@ vtmp:850 vtmp2(temp:850,umes:850)
 vtmp:500 vtmp2(temp:500,umes:500)
 ```
 
-As seguintes funções matemáticas estão disponíveis na versão SCANTEC V2.0.0:
+As seguintes funções matemáticas estão disponíveis na versão SCANTEC V2.1.0:
 
 * Funções Trigonométricas:
     - `sin(x)`: seno de x;

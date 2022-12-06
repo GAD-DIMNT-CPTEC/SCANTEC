@@ -1,6 +1,6 @@
 #  Visualização de resultados usando o SCANPLOT
 
-O [SCANPLOT](https://gam-dimnt-cptec.github.io/SCANPLOT/) é um módulo escrito em linguagem Python preparado para ler e plotar as tabelas com as estatísticas do SCANTEC. O seu uso pode ser feito por meio da linha de comando ou através do Jupyter notebook. O SCANPLOT transforma as tabelas do SCANTEC em dataframes do Pandas e pode ser facilmente extendido a partir da introdução de funções para a plotagem destes dataframes na forma como o usuário precisar. Para mais informações detalhada sobre a versão SCANPLOT V1.0.0 utiliza nesta release do SCANTEC, acesse o arquivo `SCANTEC.2.0.0/scanplot/README.md`.
+O [SCANPLOT](https://gam-dimnt-cptec.github.io/SCANPLOT/) é um módulo escrito em linguagem Python preparado para ler e plotar as tabelas com as estatísticas do SCANTEC. O seu uso pode ser feito por meio da linha de comando ou através do Jupyter notebook. O SCANPLOT transforma as tabelas do SCANTEC em dataframes do Pandas e pode ser facilmente extendido a partir da introdução de funções para a plotagem destes dataframes na forma como o usuário precisar. Para mais informações detalhada sobre a versão SCANPLOT V1.0.0 utiliza nesta release do SCANTEC, acesse o arquivo `SCANTEC.2.1.0/scanplot/README.md`.
 
 ##  Configuração do ambiente para utilização do SCANPLOT
 
@@ -64,13 +64,13 @@ Depois de configurado o sistema na máquina Itapemirim, utilize o Jupyter notebo
 
 1. Acesse a plataforma do Jupyter em seu navegador de internet pelo endereço: [http://ilopolis.cptec.inpe.br/hub/login](http://ilopolis.cptec.inpe.br/hub/login);
 2. Entre com suas credenciais (as mesmas utilizadas para acessar a máquina Itepemirim);
-3. O sistema abrirá toda a árvore de diretórios das máquinas virtuais. Nela é preciso abrir o diretório onde foi instalado o SCANTEC.2.0.0 e nele abra o diretório `docs/Tutorial` onde estará disponivel um tutorial detalhado de como usar o SCANPLOT. Abra o arquivo denominado `Tutorial_SCANPLOT.ipynb`; 
+3. O sistema abrirá toda a árvore de diretórios das máquinas virtuais. Nela é preciso abrir o diretório onde foi instalado o SCANTEC.2.1.0 e nele abra o diretório `docs/Tutorial` onde estará disponivel um tutorial detalhado de como usar o SCANPLOT. Abra o arquivo denominado `Tutorial_SCANPLOT.ipynb`; 
 4. Depois de acompanhar todo o tutorial, abra a aba `Kernel`, e depois a sub-aba `Change kernel` e nela selecione a opção `DASSCANPLOT`, que carregará o kernel `DASSCANPLOT` nesse notebook, o que é indicado na caixinha no canto superior direito da tela;
-5. Abra o arquivo `SCANTEC.2.0.0/scanplot/SCANPLOT.ipynb` e utilize o SCANPLOT executando cada uma das linhas de comandos do passo a passo nessa página;
+5. Abra o arquivo `SCANTEC.2.1.0/scanplot/SCANPLOT.ipynb` e utilize o SCANPLOT executando cada uma das linhas de comandos do passo a passo nessa página;
 6. Caso não tenho familiaridade com o Jupyter, observe que para executar os comandos basta clicar sucessivamente no botão `Run` da interface, o cursor indicará o comando sendo executado e os resultados são apresentados nas linhas posteriores ao comando nessa mesma página;
 7. Observe que no terceiro comando, é necessário ajustar os dados para o seu usuário e o local onde o SCANTEC foi executado;
 8. Acompanhe os resultados e salve as figuras que desejar em seu disco como convencionalmente é feito com seu navegador.
 
-Também está disponível um tutorial do SCANTEC que dá a possibilidade de instalar e utilizar todo o sistema via notebook do Jupyter, o que abre algumas facilidades interessantes. Para isso abra o arquivo `SCANTEC.2.0.0/docs/Tutorial/Tutorial_SCANTEC.ipynb` e siga as instruções na página.
+Também está disponível um tutorial do SCANTEC que dá a possibilidade de instalar e utilizar todo o sistema via notebook do Jupyter, o que abre algumas facilidades interessantes. Para isso abra o arquivo `SCANTEC.2.1.0/docs/Tutorial/Tutorial_SCANTEC.ipynb` e siga as instruções na página.
 
 Esse mesmo tutorial pode se obtido a partir do endereço [Tutorial.tar](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/releases/download/V2.0.0/Tutorial.tar).

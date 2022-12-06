@@ -89,13 +89,13 @@ Para cada um desses grupos são apresentadas as palavras-chave de cada informaç
 * Endereço onde são encontrados os plugins dos modelos (arquivos com a extensão `.model`):
 
     ```
-    scantec tables: /scratchin/grupos/das/home/luiz.sapucci/SCANTEC.2.0.0/tables
+    scantec tables: /scratchin/grupos/das/home/luiz.sapucci/SCANTEC.2.1.0/tables
     ```
 
 * Diretório de saída dos resultados do scantec:
 
     ```
-    Output directory: /scratchin/grupos/das/home/luiz.sapucci/SCANTEC.2.0.0/dataout/ETA
+    Output directory: /scratchin/grupos/das/home/luiz.sapucci/SCANTEC.2.1.0/dataout/ETA
     ```
 
 * Nome do arquivo de configuração dos dados de referência:
