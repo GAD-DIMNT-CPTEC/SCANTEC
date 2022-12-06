@@ -1,6 +1,6 @@
 #  Visualização de resultados usando o SCANPLOT
 
-O [SCANPLOT](https://gam-dimnt-cptec.github.io/SCANPLOT/) é um módulo escrito em linguagem Python preparado para ler e plotar as tabelas com as estatísticas do SCANTEC. O seu uso pode ser feito por meio da linha de comando ou através do Jupyter notebook. O SCANPLOT transforma as tabelas do SCANTEC em dataframes do Pandas e pode ser facilmente extendido a partir da introdução de funções para a plotagem destes dataframes na forma como o usuário precisar. Para mais informações detalhada sobre a versão SCANPLOT V1.0.0 utiliza nesta release do SCANTEC, acesse o arquivo `SCANTEC.2.1.0/scanplot/README.md`.
+O [SCANPLOT](https://gam-dimnt-cptec.github.io/SCANPLOT/) é um módulo escrito em linguagem Python preparado para ler e plotar as tabelas com as estatísticas do SCANTEC. O seu uso pode ser feito por meio da linha de comando ou através do Jupyter notebook. O SCANPLOT transforma as tabelas do SCANTEC em dataframes do Pandas e pode ser facilmente extendido a partir da introdução de funções para a plotagem destes dataframes na forma como o usuário precisar. Para mais informações detalhada sobre a versão SCANPLOT V1.1.0a utiliza nesta release do SCANTEC, acesse o arquivo `SCANTEC.2.1.0/scanplot/README.md`.
 
 ##  Configuração do ambiente para utilização do SCANPLOT
 
