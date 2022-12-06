@@ -206,7 +206,8 @@ MODULE scan_Utils
          if(iret /= 0) then
             call i90_perr(myname_,'i90_LoadF("'//trim(config)//'")',iret)
              if(present(istat))istat=iret
-            return
+            !return
+            stop 99038
          endif
 !
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

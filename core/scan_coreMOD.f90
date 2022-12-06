@@ -133,7 +133,7 @@ CONTAINS
     ! Sanity Check
     if (scantec%atime_step .gt. scantec%ftime_step)then
        write(stdout,*)'ERROR: Analisys Time Step should be less or equal to Forecast Time Step'
-       stop
+       stop 99000
     endif
 
     scantec%hist_incr      = real(scantec%hist_time/24.0d0)

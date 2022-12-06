@@ -139,7 +139,7 @@ CONTAINS
     if(iret.ne.0)then
        write(msg,'(3A)')'i90_LoadF("',trim(scanVarsConf),'")'
        call i90_perr(trim(myname_),trim(msg),iret)
-       stop
+       stop 99001
     endif
 
     call i90_label('variables:',iret)

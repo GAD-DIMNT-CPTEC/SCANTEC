@@ -124,7 +124,7 @@ module varType
             value_ =  ref%value_
          class default
             print*, 'ERROR: wrong type, should be of `scalar` type '
-            stop
+            stop 99028
          end select
 
       end subroutine
@@ -161,7 +161,7 @@ module varType
             enddo
          class default
             print*, 'ERROR: wrong type, should be of `array1D` type '
-            stop
+            stop 99029
          end select
 
       end subroutine
@@ -182,7 +182,7 @@ module varType
             return_value = ref%value_
          class default
             print*, 'ERROR: wrong type, should be of `array1D` type '
-            stop
+            stop 99030
          end select
 
       end subroutine
@@ -203,7 +203,7 @@ module varType
             return_value = ref%value_
          class default
             print*, 'ERROR: wrong type, should be of `array1D` type '
-            stop
+            stop 99031
          end select
 
       end subroutine
