@@ -25,9 +25,9 @@ Com os requisitos instalados na máquina, para obter uma cópia do SCANTEC basta
 
     !!! note "Nota"
 
-        Na página de releases do SCANTEC, há outros arquivos que serão utilizados ao longo deste manual:
+        Na página de release do SCANTEC V2.0.0, há outros arquivos que fazem parte da release e que podem ser úteis no entendimento e utilização da versão:
 
-        * `README_SCANTEC.2.1.0.pdf`: uma cópia deste manual;
+        * `README_SCANTEC.2.0.0.pdf`: uma cópia deste manual;
         * `Tutorial.tar`: arquivos do Jupyter notebook para uso do SCANTEC e SCANPLOT (um sistema de visualização).
 
 Para a instalação do SCANTEC, siga os passos a seguir.
