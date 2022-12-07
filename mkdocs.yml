@@ -1,0 +1,84 @@
+# Project information
+site_name: SCANTEC
+site_author: João Gerd Zell de Mattos
+site_description: Site com a documentação e exemplos de uso do SCANTEC
+
+# Repository
+repo_name: GAM-DIMNT-CPTEC/SCANTEC
+repo_url: https://github.com/GAM-DIMNT-CPTEC/SCANTEC
+edit_uri: edit/master/docs/
+
+# Page tree
+nav:
+  - 'Início': 
+    - 'Introdução': introducao.md
+  - 'Instalação': instalacao.md
+  - 'Utilização': 
+    - 'Uso': uso.md
+    - 'Namelist': namelist.md
+    - 'Visualização': scanplot.md
+  - 'Resolução de Problemas': resol_problemas.md
+
+#Configuration
+theme: 
+  name: material
+  language: pt-BR
+  features:
+    - content.tabs.link
+#    - navigation.instant
+#    - navigation.tracking
+#    - navigation.tabs
+    - navigation.tabs.sticky
+#    - navigation.sections
+#    - navigation.top
+#  name: readthedocs
+#  palette:
+#    scheme: slate
+
+extra:
+    social:
+      - icon: fontawesome/brands/github
+        link: https://github.com/GAM-DIMNT-CPTEC
+      - icon: fontawesome/solid/paper-plane
+        link: mailto:joao.gerd@gmail.com
+
+# Extensions
+markdown_extensions:
+  - footnotes
+  - tables
+  - admonition
+  - abbr
+  - toc:
+      permalink: true
+      separator: "-"
+  - pymdownx.snippets
+  - pymdownx.details
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - md_in_html
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.arithmatex:
+      generic: true
+  - attr_list
+#  - pymdownx.emoji:
+#      emoji_index: !!python/name:materialx.emoji.twemoji
+#      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+# Plugins
+plugins:
+  - mkdocs-video
+  - search
+#  - with-pdf
+#  - mkdocs-jupyter
+#  - mkdocs-jupyter:
+#      theme: dark
