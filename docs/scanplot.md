@@ -8,6 +8,8 @@ O [SCANPLOT](https://gam-dimnt-cptec.github.io/SCANPLOT/) é um módulo escrito 
 
     As instruções a seguir sugerem a utilização do SCANPLOT a partir da máquina Ilopolis do CPTEC. Para uso em outras máquinas, as instruções de uso podem ser diferentes. Para os usuários que desejam utilizar o SCANPLOT em suas máquinas pessoais, recomenda-se seguir as instruções de instalação e uso que se encontram na página do projeto em [https://gam-dimnt-cptec.github.io/SCANPLOT/](https://gam-dimnt-cptec.github.io/SCANPLOT/).
 
+### Máquinas Ilopolis e Itapemirim
+
 Para usar o SCANPLOT na máquina Ilopolis, é necessário configurar o ambiente Python `DASSCANPLOT` para a sua conta a partir da máquina Itapemirim. A configuração inicial do ambiente de execução é feito da seguinte forma e é necessária apenas na primeira vez. ==Não se esqueça de substituir a palavra `<usuario>` pelo seu nome de usuário na máquina.==
 
 1. Faça login na máquina Itapemirim:
@@ -53,6 +55,33 @@ Para usar o SCANPLOT na máquina Ilopolis, é necessário configurar o ambiente 
         conda activate DASSCANPLOT
         python -m ipykernel install --user --name DASSCANPLOT --display-name DASSCANPLOT
         ```
+
+### Máquina Pessoal
+
+Para utilizar o SCANPLOT em máquina uma máquina pessoal (e.g., workstation ou notebook), siga os procedimentos abaixo:
+
+!!! warning "Atenção"
+
+    A realização destes procedimentos, requer a instalação da distribuição Python [Anaconda](https://www.anaconda.com/) ou [Miniconda](https://conda.io/projects/conda/en/stable/user-guide/install/download.html).
+
+1. Entre no diretório `SCANTEC-2.1.0/scanplot` e utilize o arquivo `environment.yml` para criar um ambiente Python para a utilização do SCANPLOT:
+
+```
+cd SCANTEC-2.1.0/scanplot
+conda env create -f environment.yml
+```
+
+2. Com o ambiente `SCANPLOT` criado, ative o ambiente:
+
+```
+conda activate SCANPLOT
+```
+
+3. Abra o arquivo `SCANPLOT.ipynb`:
+
+```
+jupyter-notebook SCANPLOT.ipynb
+```
 
 ## Utilização do SCANPLOT na máquina Ilopolis
 
