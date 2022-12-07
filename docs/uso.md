@@ -473,3 +473,17 @@ As seguintes funções matemáticas estão disponíveis na versão SCANTEC V2.1.
 !!! tip "Dica"
 
     A implementação das funções matemáticas no SCANTEC, está nas rotinas [MathExpress.f90](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/blob/master/core/MathExpress.f90) e [scan_MathPlugin.f90](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/blob/master/core/scan_MathPlugin.f90).
+
+## Utilização do Manual
+
+Este manual de uso pode ser também visualizado em um navegador de internet, na mesma máquina em que o SCANTEC está sendo utilizado. Para isto, um arquivo de definição de ambiente é fornecido junto com a release SCANTEC V2.1.0 para que seja criado um ambiente igual ao ambiente de referência do SCANTEC. Esta é uma etapa opcional da utilização, mas pode ser utilizada caso o usuário queira visualizar o manual na máquina.
+
+Para isso, utilize o arquivo `SCANTEC-2.1.0/environment.yml` para criar o ambiente `SCANTEC` utilizando o gerenciador de pacotes `conda`:
+
+```
+conda env create -f environment.yml
+```
+
+!!! note "Nota"
+
+    Este procedimento não é necessário para a utilização do SCANTEC nas máquinas virtuais do CPTEC.
