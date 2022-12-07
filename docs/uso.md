@@ -1,15 +1,29 @@
 #  Uso
 
-Para utilizar o SCANTEC é preciso editar um namelist (arquivo de configurações) localizado em `SCANTEC.2.1.0/core/scantec.conf` e modificar as informações para adaptar para os dados do usuário salvando a versão modificada no diretorio `SCANTEC.2.1.0/bin`. Para edição do arquivo de configuração `scantec.conf`, há um conjunto de palavras-chave que antecedem a informação requerida pelo sistema (para mais informações sobre o namelist do SCANTEC, veja a página [Namelist](namelist.md)). O usuário deve procurar por essas palavras-chave e atribuir os valores desejados. 
+O SCANTEC possui alguns arquivos de configuração (namelists) onde são definidos os parâmetros utilizados nas avaliações numéricas. Estes arquivos são os seguintes:
+
+* Arquivo namelist `scantec.conf`: arquivo com os parâmetros da avaliação (e.g., datas, nomes dos arquivos etc);
+* Arquivo namelist `scantec.vars`: arquivo com os nomes das variáveis e suas equivalências utilizadas na avaliação;
+* Arquivos tables `*.model`: arquivos de definição das grades dos modelos utilizados na avaliação.
+
+Todos estes arquivos devem ser revisados antes de se iniciar uma avaliação. Para uma descrição mais detalhada sobre os parâmetros e elementos definidos nestes arquivos, veja a página [Namelist](namelist.md).
+
+Para utilizar o SCANTEC é preciso editar o arquivo namelist `SCANTEC-2.1.0/core/scantec.conf` e modificar as informações para refletir os dados do usuário. O arquivo deve ser modificado e salvo dentro do diretorio `SCANTEC-2.1.0/bin`, junto com o arquivo executável `scantec.x`. Para edição do arquivo namelist `scantec.conf`, há um conjunto de palavras-chave que antecedem a informação requerida pelo sistema. O usuário deve procurar por essas palavras-chave e atribuir os valores desejados.
+
+Nas instruções apresentadas a seguir, são mostrados os procedimentos utilizados para preparar o SCANTEC para um tipo de avaliação, utilizando dados de exemplo.
+
+!!! info "Informação"
+
+    Os arquivos de exemplo utilizados na avaliação com o SCANTEC, estão disponíveis no disco NetApp do CPTEC, acessível a partir das máquinas virtuais do centro e Egeon. Os usuários externos ao INPE que desejam utilizar o SCANTEC em suas avaliações, deverão preparar os seus próprios arquivos de análises, previsões e climatologias.
 
 1. Para utilizar o sistema entre no diretório `bin` do SCANTEC:
 
     === "Comando"
         ```bash linenums="1"
-        cd SCANTEC.2.1.0/bin/
+        cd SCANTEC-2.1.0/bin/
         ```
 
-2. Edite o arquivo `SCANTEC.2.1.0/core/scantec.conf` e modifique apropriadamente as informações solicitadas e salve a versão modificada no diretório `SCANTEC.2.1.0/bin` (no exemplo, está sendo utilizado o editor `vi`, mas o usuário pode utilizar o editor que melhor lhe convier):
+2. Crie uma cópia do arquivo `SCANTEC-2.1.0/core/scantec.conf` para o diretório `SCANTEC-2.1.0/bin` e modifique apropriadamente as informações solicitadas (no exemplo, está sendo utilizado o editor `vi`, mas o usuário pode utilizar o editor que melhor lhe convier):
 
     === "Comando"
         ```bash linenums="1"
@@ -48,7 +62,15 @@ Para utilizar o SCANTEC é preciso editar um namelist (arquivo de configuraçõe
          2014080600 2014080900        72h
         ```
 
-4. De forma mais simplificada, pode-se utilizar o script `run_scantec.sh` que modifica apropriadamente o arquivo `scantec.conf`, chama o `scantec.x` e armazenas as informações em um arquivo de log. Esse mesmo script tem uma série de Testcases para permitir a validação da versão instalada pelo usuário:
+    !!! warning "Atenção"
+
+        No **Resultado** do exemplo acima, observe que foi emitida a mensagem `Climatology Not Found The mean reference field will be used as climatology`, o que indica que um arquivo de climatologia não foi inidicado para uso na avaliação e que uma média dos campos de referência serão utilizados para este propósito. A climatologia é utilizada para o cálculo do Coeficiente de Correlação de Anomalia.
+
+    !!! note "Nota"
+
+        No exemplo, observe que o SCANTEC foi executado para realizar avaliações objetivas a partir de arquivos de previsões numéricas para até 72 horas, entre os dias 2014080500 e 2014080600, a cada 12 horas. Verifique novamente o arquivo namelist `scantec.conf` e compare os valores dos parâmetros com as informações impressas na tela.
+
+4. De outra forma, pode-se também utilizar o script `run_scantec.sh`. Este script modifica o arquivo namelist `scantec.conf` com valores pré-definidos, executa o arquivo binário `scantec.x` e armazenas as informações em um arquivo de log. Esse script possui uma série de testcases para permitir a validação da versão instalada pelo usuário:
 
     === "Comando"
         ```bash linenums="1"
@@ -66,16 +88,29 @@ Para utilizar o SCANTEC é preciso editar um namelist (arquivo de configuraçõe
         ./run_scantec.sh 3 - TestCase do BAM   (Ago/2014)
         ./run_scantec.sh 4 - dados definidos pelo usuário
         ```
+    !!! note "Nota"
 
-### Execução do SCANTEC com os dados do Testcase
+        A correta utilização do script `run_scantec.sh` dependerá do acesso aos dados requeridos, sejam eles provenientes dos testcases do SCANTEC ou informados pelo usuário. O conjunto de dados de testcase do SCANTEC não são distribuídos com a release devido ao seu tamanho.
 
-Os dados de entrada do Testcase para as 3 opções de modelos disponíveis (i.e., BRAMS, ETA e BAM) estão no disco NetApp em `/dados/das/pesq1/public/SCANTEC`. Dentro do ambiente de computação do CPTEC, esses dados podem ser utilizados para testes e são acessíveis a partir da máquina Tupã e das máquinas virtuais como a Itapemirim, Ilopolis, Colorado entre outras que enxergam o disco NetApp.
+Na seção a seguir, e detalhada a utilização do SCANTEC a partir dos dados de testcase.
 
-1. Para utilizar o sistema (tanto no Tupã como nas máquinas virtuais) entre no diretório raiz da instalação do SCANTEC:
+### Execução do SCANTEC com os dados do testcase
+
+Os dados de entrada do testcase para as 3 opções de modelos disponíveis (i.e., BRAMS, ETA e BAM) estão no disco NetApp do CPTEC, acessíveis em locais diferentes a depender da máquina utilizada:
+
+* Máquinas virtuais (e.g., Itapemirim, Ilopolis, Colorado): `/dados/das/pesq1/public/SCANTEC`;
+* Máquina Tupã: `/dados/das/pesq1/public/SCANTEC`;
+* Máquina Egeon: `/pesq/dados/das/pesq1/public/SCANTEC`.
+
+!!! warning "Atenção"
+
+    Na máquina XC50, estes dados não estão disponíveis.
+
+1. Para utilizar o sistema (tanto na Tupã, quanto nas máquinas virtuais) entre no diretório raiz da instalação do SCANTEC:
 
     === "Comando"
         ```bash linenums="1"
-        cd SCANTEC.2.1.0/
+        cd SCANTEC-2.1.0/
         ```
 
 2. Execute o script de execução do SCANTEC com um parâmetro na linha de comando:
@@ -92,12 +127,12 @@ Os dados de entrada do Testcase para as 3 opções de modelos disponíveis (i.e.
         - Testcase do BAM (Ago/2014);
         - dados definidos pelo usuário.
 
-Para cada uma dessas opções o script irá criar um novo namelist `SCANTEC.2.1.0/bin/scantec.conf`, onde serão adicionadas as informações necessárias para cada um dos experimentos, i.e., o período dos dados, o intervalo entre as análises, o intervalo entre as previsões e o período de integração dos modelos. O formato dos arquivos disponíveis para os testes é determinado em arquivos alocados no diretório `tables`. Para cada novo modelo ou versão com diferente resolução ou domínio, novos arquivos `*.table` devem ser disponibilizados no diretório `SCANTEC.2.1.0/tables`. Para mais informações sobre como adicionar outros modelos, veja a seção intitulada [**Adicionando outras versões ou modelos no SCANTEC**](#adicionando-outras-versoes-ou-modelos-no-scantec).
+Para cada uma dessas opções, o script criará um novo arquivo namelist `SCANTEC-2.1.0/bin/scantec.conf`, onde serão ajustados os parâmetros e informações necessárias para cada um dos experimentos, i.e., o período dos dados, o intervalo entre as análises, o intervalo entre as previsões e o período de integração dos modelos. O formato dos arquivos disponíveis para os testes é determinado em arquivos alocados no diretório `tables`. Para cada novo modelo ou versão de modelo com diferente resolução ou domínio, novos arquivos `*.table` devem ser preparados e alocados no diretório `SCANTEC-2.1.0/tables`. Para mais informações sobre como adicionar outros modelos, veja a seção intitulada [Adicionando outras versões ou modelos no SCANTEC](#adicionando-outras-versoes-ou-modelos-no-scantec).
 
-As informações de saída dos testcases do SCANTEC são escritas no diretório `SCANTEC.2.1.0/dataout/TestMODEL` onde `MODEL` pode ser `BRAMS`, `ETA` ou `BAM`, dependendo da opção escolhida acima. Por exemplo:
+As informações de saída dos testcases do SCANTEC são escritas no diretório `SCANTEC-2.1.0/dataout/TestMODEL` onde `MODEL` pode ser `BRAMS`, `ETA` ou `BAM`, dependendo da opção escolhida acima. Por exemplo:
 
 ```
-ls -ltr SCANTEC.2.1.0/dataout/TestMODEL
+ls -ltr SCANTEC-2.1.0/dataout/TestMODEL
 total 17292
 -rw-rw-r-- 1 user group    1154 Jun 28 17:20 RMSEEXP01_20140805002014080600F.ctl
 -rw-rw-r-- 1 user group    1154 Jun 28 17:20 VIESEXP01_20140805002014080600F.ctl
@@ -112,9 +147,13 @@ total 17292
 
 No exemplo acima, são identificados os seguintes tipos de arquivos, todos resultantes de uma execução do SCANTEC:
 
-* `RMSEEXP01_20140805002014080600F.ctl`: arquivo ascii descritor para o arquivo `RMSEEXP01_20140805002014080600F.scan`. Pode ser aberto no software GrADS;
+* `RMSEEXP01_20140805002014080600F.ctl`: arquivo ascii (texto) descritor para o arquivo `RMSEEXP01_20140805002014080600F.scan`. Pode ser aberto no software GrADS;
 * `RMSEEXP01_20140805002014080600F.scan`: arquivo binário com a distribuição espacial da estatística RMSE (Root Mean Square Error, ou Raiz do Erro Quadrático Médio);
-* `VIESEXP01_20140805002014080600T.scan`: arquivo ascci com uma tabela com o resultado do RMSE calculado para cada uma das variáveis escolhidas, por tempo de previsão para o período escolhido.
+* `VIESEXP01_20140805002014080600T.scan`: arquivo ascci (texto) com uma tabela com o resultado do RMSE, calculado para cada uma das variáveis escolhidas e ordenadas por tempo de previsão para o período escolhido.
+
+!!! note "Nota"
+
+    Dependendo do testcase escolhido, o tempo de execução do SCANTEC pode ser diferente devido ao número de pontos de grade a serem considerados na avaliação. Independente do número de modelos utilizados em uma avaliação com o SCANTEC, sempre será realizada a interpolação bilinear (espacial, horizontal) das grades para uma grade comum. Veja na página [Namelist](namelist.md) os parâmetros `run domain resolution dx` (ou `dx`) e `run domain resolution dy` (ou `dy`), os quais indicam a resolução (em graus) para a qual as grades serão interpoladas. Na vertical, as variáveis não são interpoladas, visto que elas são definidas por níveis de pressão como descrito no arquivo `SCANTEC-2.1.0/tables/scantec.vars`.
 
 ### Executando o SCANTEC com dados do usuário
 
@@ -124,7 +163,7 @@ Para executar o script `run_scantec.sh` com as informações inseridas pelo usu�
 
     === "Comando"
         ```bash linenums="1"
-        cd SCANTEC.2.1.0/
+        cd SCANTEC-2.1.0/
         ```
 
 2. Edite o script `run_scantec.sh`:
@@ -179,7 +218,7 @@ Para executar o script `run_scantec.sh` com as informações inseridas pelo usu�
 
     ```
 
-3. Em seguida, salve as modificações no script `run_scantec.sh` execute-o com a opção `4`:
+3. Em seguida, salve as modificações no script `run_scantec.sh` e execute-o com a opção `4`:
 
     === "Comando"
         ```bash linenums="1"
@@ -217,10 +256,10 @@ Para executar o script `run_scantec.sh` com as informações inseridas pelo usu�
          Uso climatologia: 0     
         
          Resultados:                               
-         /scripts/ensemble/SCANTEC.2.1.0/dataout/                          
+         /scripts/ensemble/SCANTEC-2.1.0/dataout/                          
         
          Arquivo de log:                           
-         Log do processo: /scripts/ensemble/SCANTEC.2.1.0/logfile/scantec-20220628.17.30.log                
+         Log do processo: /scripts/ensemble/SCANTEC-2.1.0/logfile/scantec-20220628.17.30.log                
          ==========================                
         
          Início do processamento: Tue Jun 28 17:30:01 GMT 2022
@@ -235,40 +274,48 @@ Para executar o script `run_scantec.sh` com as informações inseridas pelo usu�
 
          Final do processo: Tue Jun 28 17:30:01 GMT 2022
         
-         Log do processo: /scripts/ensemble/SCANTEC.2.1.0/logfile/scantec-20220628.17.30.log
+         Log do processo: /scripts/ensemble/SCANTEC-2.1.0/logfile/scantec-20220628.17.30.log
         ====================================================================================
         
          Fim do processo!
         ```
 
-4. Para verificar os resultados de saída do SCANTEC, liste os arquivos do diretório `SCANTEC.2.1.0/dataout`:
+4. Para verificar os resultados de saída do SCANTEC, liste os arquivos do diretório `SCANTEC-2.1.0/dataout`:
 
     === "Comando"
         ```bash linenums="1"
-        ls SCANTEC.2.1.0/dataout
+        ls SCANTEC-2.1.0/dataout
         ```
 
-!!! note "Nota"
+!!! info "Informação"
 
-    Para visualizar os resultados gerados pelo SCANTEC, pode-se utilizar softwares como o GrADS (para visualização da distribuição espacial dos campos) e o GNUPlot (para a plotagem das tabelas). A partir da versão SCANTEC V2.0.0, recomenda-se a utilização do SCANPLOT (veja mais detalhes na página [Visualização de resultados usando o SCANPLOT](scanplot.md) desse manual).
+    Para visualizar os resultados gerados pelo SCANTEC, pode-se utilizar softwares como o GrADS (para visualização da distribuição espacial dos campos) e o GNUPlot (para a plotagem das tabelas). A partir da versão SCANTEC V2.0.0, recomenda-se a utilização do SCANPLOT (veja mais detalhes na página [Visualização de resultados usando o SCANPLOT](scanplot.md) ou no site do projeto em [https://gam-dimnt-cptec.github.io/SCANPLOT/](https://gam-dimnt-cptec.github.io/SCANPLOT/)).
 
 ## Adicionando outras versões ou modelos no SCANTEC
 
-Para adicionar uma nova versão do modelo na lista das opções em que o sistema está preparado para processar (i.e., BRAMS, ETA, BAM), siga as instruções descritas nessa seção. Inicialmente, verifique se a versão desejada já não está implementada no sistema. Caso não esteja, para incluir um novo modelo, ou versão, crie um novo arquivo com a extensão `.model` dentro do diretório `SCANTEC.2.1.0/tables`, com as informações pertinentes à versão do modelo a ser utilizado.
+Para adicionar uma nova versão de modelo à lista das opções em que o sistema está preparado para processar (i.e., BRAMS, ETA, BAM), siga as instruções descritas nessa seção. Inicialmente, verifique se a versão desejada já não está implementada no sistema. Caso não esteja, para incluir uma nova versão, crie um novo arquivo com a extensão `.model` dentro do diretório `SCANTEC-2.1.0/tables` com as informações pertinentes à versão do modelo a ser utilizado. Utilize um arquivo existente para saber como formatar o novo arquivo.
 
-!!! note "Nota"
+!!! note "Notas"
 
-    * Observe que modelos com resoluções, recortes ou domínio diferentes, ou mesmo com modificações no número de níveis pós-processados, requerem ajustes para que o sistema seja capaz de ler os arquivos binários;
-    * Cabe salientar que apenas arquivos binários (`*.bin`) e GRIB1 (`*.grb`) são lidos pela atual versão do sistema. Arquivos no formato GRIB2 e NetCDF não são suportados pela versão SCANTEC V2.1.0. Caso o modelo que deseja adicionar não esteja nesses formatos, estes precisam ser convertidos para binário ou GRIB1 com o auxílio do script [`lats4d`](http://opengrads.org/doc/scripts/lats4d/) ou similares. 
+    * Observe que modelos com resoluções, recortes ou domíniois diferentes, ou mesmo com modificações no número de níveis pós-processados, requerem ajustes para que o sistema seja capaz de ler os arquivos binários;
+    * Ressalta-se que apenas arquivos binários (`*.bin`) e GRIB1 (`*.grb`) são lidos pela atual versão do sistema. Arquivos no formato GRIB2 e NetCDF não são suportados pela versão SCANTEC V2.1.0. Caso o modelo que deseja adicionar não esteja nesses formatos, estes podem ser convertidos para os formatos binário ou GRIB1 com o auxílio do script [`lats4d`](http://opengrads.org/doc/scripts/lats4d/) ou similares. 
 
-A lista abaixo, elenca os modelos já implementados na versão SCANTEC V2.1.0 junto com os seus respectivos arquivos `tables`, os quais podem servir como exemplo para criar outros:
+A lista abaixo, elenca os modelos já implementados na versão SCANTEC V2.1.0 junto com os seus respectivos arquivos `table`, os quais podem servir como exemplo para criar outros:
 
-* Modelo BAM truncamento 299 64 níveis com pós de 18 níveis: `BAM_TQ0299L064_18levs.model`;
-* Modelo BAM truncamento 299 64 níveis com pós de 28 níveis: `BAM_TQ0299L064_28levs.model`;
-* Modelo BRAMS 5km de resolução horizontal e pós de 19 níveis: `BRAMS_5km_19levs.model`;
-* Modelo ETA 5km de resolução horizontal e pós de 22 níveis: `ETA_ams_05km_22levs.model`;
+* Modelo AGCM[^1] TQ0062L028 (climatologia de 50 anos), pós-processado em 18 níveis de pressão: `AGCM_TQ0062L028_50YR_CLIMATOLOGY_18levs.model`;
+* Modelo AGCM TQ0126L028, pós-processado em 9 níveis de pressão: `AGCM_TQ0126L028_9levs.model`;
+* Modelo BAM TQ0299L064, pós-processado em 18 níveis de pressão: `BAM_TQ0299L064_18levs.model`;
+* Modelo BAM TQ0299L064, pós-processado em 28 níveis de pressão: `BAM_TQ0299L064_28levs.model`;
+* Modelo BAM TQ0666L064, pós-processado em 33 níveis de pressão: `BAM_TQ0666L064_33levs.model`;
+* Modelo BRAMS com 5km resolução horizontal, pós-processado em de 19 níveis de pressão: `BRAMS_5km_19levs.model`;
+* Modelo ETA com 5km de resolução horizontal, pós-processado em 22 níveis de pressão: `ETA_ams_05km_22levs.model`;
+* Modelo CFSR T382L64, pós-processado em 33 níveis de pressão: `CFSR_T382L064_CLIMATOLOGY_37levs.model`;
+* Modelo GFS[^2] 0,25 graus, pós-processado em 22 níveus de pressão: `GFS_0p25_5levs.model`.
 
-Para adicionar um novo modelo basta editar um dos arquivos acima que mais se assemelha com o modelo desejado e fazer os devidos ajustes. Salve o arquivo modificado com um nome apropriado (incluindo a extensão `.model`) dentro do diretório `tables`, e no arquivo de configurações `scantec.conf` (ou se tiver usando o script `run_scantec.sh`), assegure-se de que o novo modelo ou versão seja lido a partir do arquivo `table` criado. Para isso na linha do experimento em que esse modelo se refere a primeira palavra deve ser o nome do arquivo `table`.
+[^1]: O modelo AGCM (Atmospheric General Circulation Modelo) representa uma geração anterior do modelo BAM (Brazilian Atmospheric Model).
+[^2]: O modelo GFS foi testado a partir da conversão dos arquivos GRIB2 para GRIB1, utilizando o script [`lats4d`](http://opengrads.org/doc/scripts/lats4d/). A utilização do SCANTEC com os arquivos convertidos desse modelo, devem ser feita com atenção para os nomes das variáveis e os níveis verticais, uma vez que o modelo utiliza coordenada vertical híbrida.
+
+Para adicionar um novo modelo basta editar um dos arquivos acima, escolhendo-se aquele que mais se assemelha com o modelo desejado e fazer os ajustes necessários. Salve o arquivo modificado com um nome apropriado (incluindo a extensão `.model`) dentro do diretório `SCANTEC-2.1.0/tables`, e no arquivo namelist `scantec.conf` (ou no script `run_scantec.sh`, caso esteja sendo utilizado), assegure-se de que a nova versão do novo modelo seja lida a partir do arquivo `table` criado. Para isso, na linha em que o experimento é referenciado, a primeira palavra deve ser o nome do arquivo `table`. Veja a seguir:
 
 No script `run_scantec.sh`:
 
@@ -276,15 +323,15 @@ No script `run_scantec.sh`:
 pl_model_refer=BAM_TQ0299L064_18levs
 ```
 
-ou, no arquivo namelist do SCANTEC:
+ou, no arquivo namelist `scantec.conf`:
 
 ```
-BAM_TQ0299L064_18levs EXP01
+BAM_TQ0299L064_18levs EXP01 /caminho/para/o/arquivo.ctl
 ```
 
 !!! warning "Atenção"
 
-    * Se esse arquivo é também utilizado como referência na avaliação o novo `table` deve também ser colocado após a palavra `Reference Model Name:` no arquivo de configurações do SCANTEC:
+    * Se esse arquivo é também utilizado como referência na avaliação, o novo arquivo `table` deve também ser colocado após a palavra `Reference Model Name:`, dentro do arquivo namelist do SCANTEC:
 
     ```
     Reference Model Name: BAM_TQ0299L064_18levs
@@ -292,14 +339,14 @@ BAM_TQ0299L064_18levs EXP01
 
 O novo arquivo `table` deve conter as seguintes informações:
 
-* Tipo de arquivo depois da palavra `ftype:`;
-* Como os valores devem ser considerados indefinidos depois da palavra `undef:`;
-* Dimensões da grade na longitude depois da palavra `xdim:`;
-* Dimensões da grade na latitude depois da palavra `ydim:`;
-* Número de níveis verticais do pós e a lista deles depois da palavra `zdim:`;
-* Por fim uma tabela de variáveis depois da palavra `vars:`.
+* Tipo de arquivo, depois da palavra `ftype:`;
+* Valor considerado indefinido, depois da palavra `undef:`;
+* Dimensões da grade na longitude, depois da palavra `xdim:`;
+* Dimensões da grade na latitude, depois da palavra `ydim:`;
+* Número de níveis verticais do pós-processamento e a sua lista, depois da palavra `zdim:`;
+* Tabela de variáveis, depois da palavra `vars:`.
 
-Veja exemplo do arquivo `ETA_ams_05km_22levs.model`:
+Veja o exemplo do arquivo `ETA_ams_05km_22levs.model`:
 
 ```
 ftype: grib
@@ -309,42 +356,69 @@ ydim: 1320 linear -51.000000 0.050000
 zdim:
 22 levels 1020 1000 950 925 900 850 800 750 700 650 600 
            550  500 450 400 350 300 250 200 150 100 50
-```
-
-Outro arquivo importante para a customização do SCANTEC, é o arquivo `scantec.vars`. Este arquivo contém a tabela de variáveis a serem utilizadas na avaliação. A tabela de variáveis é preenchida da seguinte forma (colunas separadas por espaço):
-
-* A primeira coluna é o nome da variável do SCANTEC, veja lista em `tables/scantec.vars`;
-* A segunda coluna pode ser o nome da variável correspondente no modelo da forma como listado no arquivo descritor (`.ctl`) do modelo.
-
-Veja exemplo do arquivo `scantec.vars`:
-
-```
 vars:
 vtmp:925 vtmp2(temp:925,umes:925)
 vtmp:850 vtmp2(temp:850,umes:850)
 vtmp:500 vtmp2(temp:500,umes:500)
-temp:850 temp:850
-temp:500 temp:500
-temp:250 temp:250
-psnm:000 pslm:1020
-umes:925 umes:925
-umes:850 umes:850
-umes:500 umes:500
-agpl:925 agpl:1020
-zgeo:850 zgeo:850
-zgeo:500 zgeo:500
-zgeo:250 zgeo:500
-uvel:850 uvel:850
-uvel:500 uvel:500
-uvel:250 uvel:250
-vvel:850 vvel:850
-vvel:500 vvel:500
-vvel:250 vvel:250
+temp:850 temp:850 
+temp:500 temp:500 
+temp:250 temp:250 
+psnm:000 pslm:1020 
+umes:925 umes:925 
+umes:850 umes:850 
+umes:500 umes:500 
+agpl:925 agpl:1020 
+zgeo:850 zgeo:850 
+zgeo:500 zgeo:500 
+zgeo:250 zgeo:250 
+uvel:850 uvel:850 
+uvel:500 uvel:500 
+uvel:250 uvel:250 
+vvel:850 vvel:850 
+vvel:500 vvel:500 
+vvel:250 vvel:250 
+::
 ```
+
+Outro arquivo igualmente importante para a configuração do SCANTEC, é o arquivo namelist `scantec.vars`. Este arquivo contém uma tabela de variáveis a serem utilizadas na avaliação. A tabela de variáveis é preenchida da seguinte forma (colunas separadas por espaço):
+
+* A primeira coluna é o nome da variável do SCANTEC;
+* A segunda coluna pode ser o nome da variável correspondente no modelo da forma como listado no arquivo descritor (`.ctl`) do modelo.
+
+Veja o exemplo do arquivo `scantec.vars`:
+
+```
+variables:
+VTMP:925 "Virtual Temperature @ 925 hPa [K]"
+VTMP:850 "Virtual Temperature @ 850 hPa [K]"
+VTMP:500 "Virtual Temperature @ 500 hPa [K]"
+TEMP:850 "Absolute Temperature @ 850 hPa [K]"
+TEMP:500 "Absolute Temperature @ 500 hPa [K]"
+TEMP:250 "Absolute Temperature @ 250 hPa [K]"
+PSNM:000 "Pressure reduced to MSL [hPa]"
+UMES:925 "Specific Humidity @ 925 hPa [g/Kg]"
+UMES:850 "Specific Humidity @ 850 hPa [g/Kg]"
+UMES:500 "Specific Humidity @ 500 hPa [g/Kg]"
+AGPL:925 "Inst. Precipitable Water @ 925 hPa [Kg/m2]"
+ZGEO:850 "Geopotential height @ 850 hPa [gpm]"
+ZGEO:500 "Geopotential height @ 500 hPa [gpm]"
+ZGEO:250 "Geopotential height @ 250 hPa [gpm]"
+UVEL:850 "Zonal Wind @ 850 hPa [m/s]"
+UVEL:500 "Zonal Wind @ 500 hPa [m/s]"
+UVEL:250 "Zonal Wind @ 250 hPa [m/s]"
+VVEL:850 "Meridional Wind @ 850 hPa [m/s]"
+VVEL:500 "Meridional Wind @ 500 hPa [m/s]"
+VVEL:250 "Meridional Wind @  250 hPa [m/s]"
+::
+```
+
+!!! note "Nota"
+
+    Observe que ambos os arquivos `table` e `scantec.conf`, possuem uma seção específica para a definição das variáveis. No arquivo `scantec.conf`, são definidas as variáveis e os nomes das variáveis nos níveis que se deseja avaliar com o SCANTEC. Nos arquivos `table`, as variáveis que se deseja avaliar, devem ser definidas com base nas variáveis do modelo. Isso ocorre pois nem sempre as variáveis que se dejesa avaliar, não são pós-processadas pelos modelos. Para contornar isso, o SCANTEC possibilita o cálculo de variáveis (com base nas variáveis prós-processadas do modelo) durante o seu tempo de execução. Veja a seção [Funções Matemáticas Implícitas](#funcoes-matematicas-implicitas) para mais informações.
 
 ## Funções Matemáticas Implícitas
 
-A edição do arquivo `scantec.vars` permite a utilização de funções matemáticas para a definição de novas variáveis. Caso o modelo não tenha a variável que o SCANTEC requer (ou que se deseja avaliar), uma função matemática pode ser chamada ao colocar na segunda coluna algumas das funções disponiveis no SCANTEC, utilizando para isto, nas variáveis pós-processadas do modelo. Estas funções são escritas entre parênteses depois do nome da função e são separadas por vírgulas.
+A edição do arquivo `table` permite a utilização de funções matemáticas para a definição de novas variáveis. Caso o modelo não tenha a variável que o SCANTEC requer (ou que se deseja avaliar), funções matemáticas podem ser chamadas na segunda coluna da seção `vars:`. Algumas das funções disponiveis no SCANTEC podem ser aplicadas para isto, utilizando as variáveis pós-processadas do modelo. Estas funções são escritas entre parênteses depois do nome da função e são separadas por vírgulas.
 
 Veja o exemplo a seguir onde a variável `vtmp` (temperatura virtual) é calculada a partir das variáveis `temp` (temperatura absoluta) e `umes` (umidade específica):
 
@@ -396,6 +470,6 @@ As seguintes funções matemáticas estão disponíveis na versão SCANTEC V2.1.
     - `vtmp1(p, t, rh)`: calcula a temperatura virtual [C] a partir da temperatura do ar [C] e da umidade relativa [%] e da pressão atmosférica [Pa];
     - `vtmp2(t, q)`: calcula a temperatura virtual [C ou K] a partir da temperatura do ar [C ou K] e da Umidade especícia [Kg/Kg];
 
-!!! note "Nota"
+!!! tip "Dica"
 
     A implementação das funções matemáticas no SCANTEC, está nas rotinas [MathExpress.f90](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/blob/master/core/MathExpress.f90) e [scan_MathPlugin.f90](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/blob/master/core/scan_MathPlugin.f90).
