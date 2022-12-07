@@ -22,7 +22,7 @@ ARFLAGS = r
 endif
 
 ifeq ($(SCAN_ARCH),GNU_Linux)
- F77     = gfortran-9
+ F77     = gfortran
  FFLAGS  = 
  CFLAGS  = -O -DLINUX
  CC      = gcc
