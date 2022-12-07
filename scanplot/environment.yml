@@ -1,4 +1,4 @@
-name: SCANPLOT-teste2
+name: SCANPLOT
 channels:
   - anaconda
   - defaults
