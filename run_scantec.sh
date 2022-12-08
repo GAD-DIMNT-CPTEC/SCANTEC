@@ -194,7 +194,7 @@ dir_test=TestBAM
 # Datas
 datai=2014080500
 dataf=2014080600
-passo_analise=12
+passo_analise=24
 passo_previsao=24
 total_previsao=72
 
