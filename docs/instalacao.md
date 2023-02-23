@@ -58,7 +58,7 @@ Para a instalação do SCANTEC, realize os procedimentos a seguir. ==Não se esq
 
         === "Comando"
             ```bash linenums="1"
-            source source /scripts/das/conda/envs/SCANTEC/bin/activate
+            source /scripts/das/conda/envs/SCANTEC/bin/activate
             ```
 
     * Em outras máquinas esta etapa não é necessária, mas certifique-se de que há pelo menos o compilador GNU Fortran versão 9 ou superior instalado.
