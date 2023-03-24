@@ -8,6 +8,10 @@ O SCANTEC possui alguns arquivos de configuração (namelists) onde são definid
 
 Todos estes arquivos devem ser revisados antes de se iniciar uma avaliação. Para uma descrição mais detalhada sobre os parâmetros e elementos definidos nestes arquivos, veja a página [Namelist](namelist.md).
 
+!!! note "Nota"
+
+    Para os usuários externos ao INPE que desejam utilizar os dados de testcase indicados na seção [Execução do SCANTEC com os dados do testcase](#execucao-do-scantec-com-os-dados-do-testcase), será necessário obter os arquivos de análises, previsões e climatologia que estão disponibilizados no endereço [FTP](http://ftp1.cptec.inpe.br/pesquisa/das/scantec/). Devido ao tamanho dos arquivos, recomenda-se a utilização apenas dos testcases dos modelos [WRF (regional, 432M)](http://ftp1.cptec.inpe.br/pesquisa/das/scantec/testcase/WRF.tar.gz), [AGCM (global, 3,3GB)](http://ftp1.cptec.inpe.br/pesquisa/das/scantec/testcase/AGCM.tar.gz) e [Climatologia (global, 131M)](http://ftp1.cptec.inpe.br/pesquisa/das/scantec/datain/climatologia.tar.gz). Antes de prosseguir com as instruções desta seção, realize o download dos arquivos (pelo menos do modelo WRF), descompacte e faça os ajustes no arquivo `scantec.conf` para que os arquivos de análises, previsões e climatologia possam ser encontrados pelo SCANTEC. Para mais informações sobre a utilização do arquivo `scantec.conf`, veja a página [Namelist](namelist.md).
+
 Para utilizar o SCANTEC é preciso editar o arquivo namelist `SCANTEC-2.1.0/core/scantec.conf` e modificar as informações para refletir os dados do usuário. O arquivo deve ser modificado e salvo dentro do diretorio `SCANTEC-2.1.0/bin`, junto com o arquivo executável `scantec.x`. Para edição do arquivo namelist `scantec.conf`, há um conjunto de palavras-chave que antecedem a informação requerida pelo sistema. O usuário deve procurar por essas palavras-chave e atribuir os valores desejados.
 
 Nas instruções apresentadas a seguir, são mostrados os procedimentos utilizados para preparar o SCANTEC para um tipo de avaliação, utilizando dados de exemplo.
@@ -104,7 +108,7 @@ Os dados de entrada do testcase para as 3 opções de modelos disponíveis (i.e.
 
 !!! warning "Atenção"
 
-    Na máquina XC50, estes dados não estão disponíveis.
+    Na máquina XC50, estes dados não estão disponíveis, mas podem ser copiadas a partir das máquinas Itapemirim ou Egeon.
 
 1. Para utilizar o sistema (tanto na Tupã, quanto nas máquinas virtuais) entre no diretório raiz da instalação do SCANTEC:
 
