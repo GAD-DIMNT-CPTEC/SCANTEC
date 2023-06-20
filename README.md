@@ -5,3 +5,12 @@ Sistema Comunitário de Avaliação de modelos Numéricos de Tempo E Clima (SCAN
 * Vídeo de apresentação do SCANTEC: https://www.youtube.com/watch?v=771duUyL-yo
 
 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode" target="_blank"><img src="https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-sa.png" alt="CC-BY-NC-SA" width="100"/></a>
+
+
+Em resumo, os procedimentos para instalação do SCANTEC na Egeon são os seguintes:
+
+$ module load gnu9/9.4.0
+
+$ cd SCANTEC-versão
+
+$ ./install -> escolher a opção 2
