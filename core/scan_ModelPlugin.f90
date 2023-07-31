@@ -1,5 +1,5 @@
 MODULE scan_Modelplugin
-  use scantec_module
+  use scantec_module, only: scantec, scanType 
   use bilinInterp
   use m_inpak90, only: i90_LoadF,  & 
                        i90_getVal, &
@@ -15,6 +15,92 @@ MODULE scan_Modelplugin
    use m_ioutil
    use m_constants, only: tinyStr, shortStr, normalStr,&
                           i4, r4
+
+  type, extends(scanType) :: scanModel
+
+     !
+     ! Model info
+     !
+     integer, pointer         :: nexp => null()
+     type(ModelType), pointer :: CurrModel  => null()
+     type(ModelType), pointer :: FirstModel => null()
+
+     ! for mathematical evaluation
+
+     class(MathOper), pointer :: MathEval => null()
+
+     !
+     ! routines
+     !
+   contains
+     private
+     procedure, public :: insertModel => insertModel_
+     procedure, public :: getModel => getModel_
+     procedure, public :: getField => getField_
+     procedure, public :: getBitMap => getBitMap_
+     
+  endType
+
+  type ModelType
+     character(len=LongStr) :: Name_
+     character(len=LongStr) :: FileName_
+     character(len=tinyStr) :: FileType_
+     character(len=tinyStr) :: ExpName_
+     character(len=tinyStr) :: Type_ ! Reference, Experiment, climatology
+     real(kind = r4)        :: undef_
+
+     ! grid info
+     real                      :: GDesc(200)
+     type(GridDef),    pointer :: gridInfo => null()
+     type(GridDef),    pointer :: FirstGridInfo => null()
+
+     !interp info to scantec domain
+     integer(kind=i4), allocatable :: n11(:), n12(:), n21(:), n22(:)
+     real(kind=r4),    allocatable :: w11(:), w12(:), w21(:), w22(:)
+
+     ! Field
+     real(kind=r4), pointer :: Field(:,:) => null()
+     logical, pointer       :: bitMap(:,:) => null()
+
+     !Vars to evaluate from model
+     type(EvalVar), pointer :: var => null()
+     type(EvalVar), pointer :: FirstVar => null()
+
+     type(ModelType),  pointer :: next => null()
+
+   contains
+     procedure, public :: getModelVar => getModelVar_
+     procedure, public :: getDimInfo => getDimInfo_
+     procedure, public :: getDimVec => getDimVec_
+     procedure, public :: getMapping => getMapping_
+  end type ModelType
+
+  type GridDef
+     character(len=ShortStr) :: DName       ! dimension name
+     character(len=ShortStr) :: mapping     ! Linear, Levels, gauss
+     integer                 :: num         ! number of points
+     real                    :: start_coord
+     real                    :: incr_coord
+     real, pointer           :: coord(:) => null()
+     type(GridDef), pointer  :: next => null()
+  endtype GridDef
+
+  type EvalVar
+     character(len=shortStr) :: Sys_ ! Scantec variable name
+     character(len=shortStr) :: mod_ ! Model variable name
+
+     ! Information about variable if it need be 
+     ! derivate from others variables
+!     logical          :: deriv_ ! .true. need use function to obtain model variavle
+!     type(strArray), pointer :: funcArg => null()
+!     type(strArray), pointer :: FirstFuncArg => null()
+
+     ! Field info
+     real(kind = r4), pointer :: Field(:) => null()
+     logical, pointer         :: bitMap(:) => null()
+
+     type(EvalVar), pointer :: next => null()
+  end type EvalVar
 
   
   IMPLICIT NONE
@@ -125,7 +211,7 @@ Contains
           Model%GDesc( 3) = ydim
           Model%GDesc( 4) = rlat(1)
           Model%GDesc( 5) = rlon(1)
-          Model%GDesc( 6) =     128
+          Model%GDesc( 6) = 128
           Model%GDesc( 7) = rlat(ydim)
           Model%GDesc( 8) = rlon(xdim)
           Model%GDesc( 9) = (rlon(xdim)-rlon(1))/(xdim-1)

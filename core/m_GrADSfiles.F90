@@ -298,12 +298,12 @@ contains
   ! !DESCRIPTION: (to do)
   ! !INTERFACE:
 
-  subroutine open_(gs, ctl_file, stat)
+  subroutine open_(gs, ctlFile, stat)
 
     implicit none
 
     type(GrADSfiles), intent(out) :: gs
-    character(len=*), intent(in)  :: ctl_file ! filename
+    character(len=*), intent(in)  :: ctlFile ! filename
     integer, optional, intent(out) :: stat     ! status
 
     ! !EXAMPLES: (to do)
@@ -338,14 +338,14 @@ contains
     ! Verificando tipo de arquivo de entrada
     !--------------------------------------
 
-    do i = len_trim(ctl_file), 1, -1
-       if (ctl_file(i:i) .eq. '.') then
+    do i = len_trim(ctlFile), 1, -1
+       if (ctlFile(i:i) .eq. '.') then
           j = i + 1
           exit
        endif
     end do
 
-    ext = i90_lcase(ctl_file(j:len_trim(ctl_file)))
+    ext = i90_lcase(ctlFile(j:len_trim(ctlFile)))
 
     select case (ext)
 
@@ -358,7 +358,7 @@ contains
        !
        !         gs%lu = luavail()
        !         gs%dtype = tgrib
-       !         gs%dset = trim(ctl_file)
+       !         gs%dset = trim(ctlFile)
        !
        !         ! call OpenGrib1_(gs)
        !
@@ -372,14 +372,13 @@ contains
        if (lu >= 0) close (lu)
 
 !       gs%lu = luavail()
-       gs%lu = i90_lua(exclude)
-       i = minloc(exclude,1)
+       gs%lu      = i90_lua(exclude)
+       i          = minloc(exclude,1)
        exclude(i) = gs%lu
+       gs%dtype   = tstation
+       gs%dset    = trim(ctlFile)
 
-       gs%dtype = tstation
-       gs%dset = trim(ctl_file)
-
-       call OpenAscii_(gs)
+       call openAscii_(gs)
 
        return
 
@@ -388,11 +387,24 @@ contains
        ! reading from ctl file
        !
 
-       call OpenCtl_(ctl_file, gs)
-
+       call openCtl_(ctlFile, gs)
+    case ('nc')
+       !
+       ! reading from netCDF
+       !
+#ifdef netcdf
+       call openNetCDF_(ctlFile, gs)
+#else
+       call i90_perr(trim(myname_), &
+            ': Wrong type file: "'//trim(ctlFile)//'" error, ierr =', 97)
+       call i90_perr(trim(myname_),'netCDF not implemented yeat!')
+       if (.not. present(stat)) call i90_die(myname_)
+       stat = 97
+       return
+#endif
     case default
        call i90_perr(trim(myname_), &
-            ': Wrong type file: "'//trim(ctl_file)//'" error, ierr =', 99)
+            ': Wrong type file: "'//trim(ctlFile)//'" error, ierr =', 99)
        if (.not. present(stat)) call i90_die(myname_)
        stat = 99
        return
@@ -742,6 +754,116 @@ contains
     endif
 
   end subroutine OpenCtl_
+
+#ifdef NETCDF
+  subroutine openNetCDF_(gs, fileName, istatus)
+     type(GrADSfiles),  intent(in   ) :: gs
+     character(len=*),  intent(in   ) :: fileName
+     integer, optional, intent(  out) :: istatus
+
+     integer :: rc
+     character(len=*), parameter :: myname_ = myname//':: openCtl_'
+
+    !
+    ! Initialize default values
+    !
+
+    call GrADS_Default(gs)
+     
+    gs%dset  = trim(fileName)
+    gs%dtype = lindex_(size(tname), tname, 'netcdf')
+
+    !
+    ! open netCDF file
+    rc = nf90_open(gs%dset, nf90_nowrite, gs%lu)
+    if(rc .ne. nf90_noerr)then
+       call i90_perr(myname_,nf90_strerror(rc))
+       if (present(istatus))then
+          istatus = rc
+          return
+       endif
+       call i90_die(myname_,'error to open netCDF',rc)
+    endif 
+
+    !----------------------------------------
+    ! XDEF, YDEF, ZDEF
+    gs%xdef%
+    call ncDim_(gs%lu, 'lon', gs%xdef%num)
+    call ncDim_(gs%lu, 'lat', gs%ydef%num)
+    call ncDim_(gs%lu, 'lev', gs%zdef%num)
+
+
+    ! time
+    dimName = 'time'
+    if (present(tdim))dimName = trim(tdim)
+    rc = nf90_inq_dimid(ncid,dimName, id)
+    if (rc /= nf90_noerr)then
+       print*,'Trying get ',trim(dimName),' information'
+       print*,''
+       print*,'This netcdf API use by default COARDS convention, please use a xdf file to'
+       print*,'supplement or replace any internal metadata or verify if `',trim(dimName),'`'
+       print*,'is defined inside netcdf file.'
+       call pwrn_(rc, dimName)
+    else
+       rc = nf90_inquire_dimension(ncid, id, len=self%tdef )
+       call pwrn_(rc, dimName)
+    endif
+
+  end subroutine
+
+  subroutine ncDim_(ncid, dimName, dimVal)
+     integer,          intent(in   ) :: ncid
+     character(len=*), intent(in   ) :: dimName
+     integer,          intent(  out) :: dimVal
+
+     integer :: rc
+     integer :: id
+     
+    rc = nf90_inq_dimid(ncid,dimName, id)
+    if (rc /= nf90_noerr)then
+       print*,'Trying get ',trim(dimName),' information'
+       print*,''
+       print*,'This netcdf API use by default COARDS convention, please use a xdf file to'
+       print*,'supplement or replace any internal metadata or verify if `',trim(dimName),'`'
+       print*,'is defined inside netcdf file.'
+       call pdie_(rc, dimName)
+    else
+       rc = nf90_inquire_dimension(ncid, id, len=dimVal )
+       call pwrn_(rc,dimName)
+    endif
+    
+  end subroutine
+  subroutine pdie_(istatus, mess)
+     integer, intent (in) :: istatus
+     character(len=*), optional, intent(in) :: mess
+
+     call pwrn_(istatus, mess)
+     if (istatus /= nf90_noerr)then
+        print*,'Mandatory information necessary'
+        print*,'will stop ...'
+        stop
+     endif
+
+  end subroutine pdie_    
+
+   subroutine pwrn_(istatus, mess)
+     integer, intent (in) :: istatus
+     character(len=*), optional, intent(in) :: mess
+     character(len=60) :: msc
+
+     msc = ''
+     if (present(mess)) msc = mess
+     
+     if (istatus /= nf90_noerr) then
+        write(*,*)
+        write(*,'(3A)') trim(adjustl(nf90_strerror(istatus))),' : ',trim(msc)
+        write(*,*)
+     end if
+
+  end subroutine pwrn_    
+
+
+#endif
 
   !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   !       NASA/GSFC, Data Assimilation Office, Code 910.3, GEOS/DAS      !

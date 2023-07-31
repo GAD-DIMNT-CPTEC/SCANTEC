@@ -24,7 +24,8 @@ MODULE scan_dataMOD
   USE scan_Utils, only: dom, Refer, Clima, Exper, Precip
   USE m_inpak90
   USE m_ioutil
-  USE m_GrADSfiles
+!  USE m_GrADSfiles
+  USE fileAccess
   USE BilinInterp, only: bilinear_interp_init, bilinear_interp
   USE varType
   USE MathExpress, only: tokenize
@@ -395,7 +396,8 @@ CONTAINS
     logical, allocatable :: ibitmap(:), obitmap(:)
 
     ! derivated type variables
-    type(GrADSfiles) :: gs
+    !type(GrADSfiles) :: gs
+    type(acc) :: gs
     type(ModelType), pointer :: Model => null()
     type(EvalVar),   pointer :: ModelVar => null()
 
@@ -422,12 +424,23 @@ CONTAINS
        call i90_perr(trim(myname_),'File not found!'//trim(FileName), -1)
        call i90_die(trim(myname_))       
     endif
-    call GrADS_open(gs,trim(FileName))
+!    call GrADS_open(gs,trim(FileName))
 
-    xdef  = GrADS_getDim(gs, 'xdef')
-    ydef  = GrADS_getDim(gs, 'ydef')
-    zdef  = GrADS_getDim(gs, 'zdef')
-    undef = GrADS_Undef(gs)
+!    xdef  = GrADS_getDim(gs, 'xdef')
+!    ydef  = GrADS_getDim(gs, 'ydef')
+!    zdef  = GrADS_getDim(gs, 'zdef')
+!    undef = GrADS_Undef(gs)
+
+    iret = gs%open(trim(FileName))
+    
+    xdef = gs%getDim('xdef')
+    ydef = gs%getDim('ydef')
+    zdef = gs%getDim('zdef')
+
+!    xdef  = GrADS_getDim(gs, 'xdef')
+!    ydef  = GrADS_getDim(gs, 'ydef')
+!    zdef  = GrADS_getDim(gs, 'zdef')
+!    undef = GrADS_Undef(gs)
 
     ! Get model info from scantec table
     Mxdef => Model%getDimInfo('xdim:')
@@ -491,10 +504,11 @@ CONTAINS
           ! get field
 
           allocate(iField(xdef*ydef))
-          call GrADS_input(gs, trim(VarName),1,idx,iField, iret)
+!          call GrADS_input(gs, trim(VarName),1,idx,iField, iret)
+          call gs%getField(trim(VarName),zlevs(idx),iField,iret)
 
           if(iret.ne.0)then
-             call i90_perr(trim(myname_),'GrADS_input('//trim(VarName)//')',iret)
+             call i90_perr(trim(myname_),'getField('//trim(VarName)//')',iret)
              call i90_die(trim(myname_))
           endif
 
@@ -530,10 +544,11 @@ CONTAINS
                 !-------------------------------------------------------!
                 ! get field
                 allocate(iField(xdef*ydef))
-                call GrADS_input(gs, trim(VarName),1,idx,iField, iret)
+!                call GrADS_input(gs, trim(VarName),1,idx,iField, iret)
+                call gs%getField(trim(VarName),zlevs(idx),iField,iret)
     
                 if(iret.ne.0)then
-                   call i90_perr(trim(myname_),'GrADS_input('//trim(VarName)//')',iret)
+                   call i90_perr(trim(myname_),'getField('//trim(VarName)//')',iret)
                    call i90_die(trim(myname_))
                 endif
     

@@ -611,132 +611,86 @@ Contains
      character(len=*), intent(in) :: fname
      integer :: i, j 
 
-     !
-     ! Date format for the CTL files
-     ! Note: this implementation should be in the m_string.f90 routine
-     !
-     character(len=12) :: ctl_time_fmt   ! GrADS CTL file formated date (HHZDDABCYYYY format)
-     character(len=10) :: ctl_time       ! String holding the atime or ftime integers (same format as the intring counterpart)
-     character(len=4)  :: SYYYY          ! String holding the year (four digit format)
-     character(len=3)  :: SNMM           ! String holding the month name (JAN, FEB, MAR etc)
-     character(len=2)  :: SMM, SDD, SHH  ! Strings holding the month, day and hour numbers (two digit format)
+      open(150, file=trim(scantec%output_dir)//'/RMSE'//trim(Fname)//'F.ctl',&
+                status='unknown')
+      
+      write(150,'(A,A)')'dset ^','RMSE'//trim(Fname)//'F.scan'
+      write(150,'(A)')
+      write(150,'(A)')'options sequential'
+      write(150,'(A)')      
+      write(150,'(A)')'undef -999.9'      
+      write(150,'(A)')      
+      write(150,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'xdef',scantec%nxpt,'linear', scantec%gridDesc(5), scantec%gridDesc(10)
+      write(150,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'ydef',scantec%nypt,'linear', scantec%gridDesc(4), scantec%gridDesc(9)      
+      write(150,'(A)') 
+      write(150,'(A)')'zdef    1 linear 0 1'                  
+      write(150,'(A)') 
+      write(150,'(A,I3,A,I2,A)')'tdef  ',(scantec%forecast_time/scantec%atime_step)+1,' linear 00Z05AUG2014 ',scantec%atime_step,'HR'
+      write(150,'(A)')
+      write(150,'(A,1x,I3)')'vars', scantec%nvar
+      do i=1,scantec%nvar
+         j = index(scantec%varName(i),':')
+         write(150,'(A,2(1x,A))')scantec%varName(i)(1:j-1)//scantec%varName(i)(j+1:len_trim(scantec%varName(i))),&
+                                '0 99',trim(scantec%varDesc(i))
+      enddo
+      write(150,'(A)')'endvars'   
+      
+      close(150)
+    
+      !VIES   
+      open(151, file=trim(scantec%output_dir)//'/VIES'//trim(Fname)//'F.ctl',&
+                status='unknown')
 
-     ! Convert scantec%atime or scantec%ftime (integer) to ctl_time (character)
-     if (scantec%TimeStepType=='forward') then
-       write(ctl_time,'(I10)') scantec%atime
-     else
-       write(ctl_time,'(I10)') scantec%ftime
-     endif
-
-     ! Get the substrings for the year, month, day and hour
-     SYYYY = ctl_time(1:4)
-     SMM   = ctl_time(5:6)
-     SDD   = ctl_time(7:8)
-     SHH   = ctl_time(9:10)
-     
-     ! Define the name of the month
-     if (SMM=='01') then; SNMM='JAN'; endif 
-     if (SMM=='02') then; SNMM='FEB'; endif 
-     if (SMM=='03') then; SNMM='MAR'; endif 
-     if (SMM=='04') then; SNMM='APR'; endif 
-     if (SMM=='05') then; SNMM='MAY'; endif 
-     if (SMM=='06') then; SNMM='JUN'; endif 
-     if (SMM=='07') then; SNMM='JUL'; endif 
-     if (SMM=='08') then; SNMM='AUG'; endif 
-     if (SMM=='09') then; SNMM='SEP'; endif 
-     if (SMM=='10') then; SNMM='OCT'; endif 
-     if (SMM=='11') then; SNMM='NOV'; endif 
-     if (SMM=='12') then; SNMM='DEC'; endif 
-
-     ! Format the string holding the GrADS formated date (HHZDDABCYYYY format)
-     ! ctl_time_fmt will be used in the GrADS control file in the tdef line
-     ctl_time_fmt = trim(SHH//'Z'//SDD//SNMM//SYYYY)
-
-     !
-
-     open(150, file=trim(scantec%output_dir)//'/RMSE'//trim(Fname)//'F.ctl',&
-               status='unknown')
-     
-     write(150,'(A,A)')'dset ^','RMSE'//trim(Fname)//'F.scan'
-     write(150,'(A)')
-     write(150,'(A)')'options sequential'
-     write(150,'(A)')      
-     write(150,'(A)')'undef -999.9'      
-     write(150,'(A)')      
-     write(150,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'xdef',scantec%nxpt,'linear', scantec%gridDesc(5), scantec%gridDesc(10)
-     write(150,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'ydef',scantec%nypt,'linear', scantec%gridDesc(4), scantec%gridDesc(9)      
-     write(150,'(A)') 
-     write(150,'(A)')'zdef    1 linear 0 1'                  
-     write(150,'(A)') 
-!     write(150,'(A,I3,A,I2,A)')'tdef  ',(scantec%forecast_time/scantec%atime_step)+1,' linear 00Z05AUG2014 ',scantec%atime_step,'HR'
-     write(150,'(A,I3,A,A12,A,I2,A)')'tdef  ',(scantec%forecast_time/scantec%atime_step)+1,' linear ',ctl_time_fmt, '  ',  scantec%atime_step,'HR'
-     write(150,'(A)')
-     write(150,'(A,1x,I3)')'vars', scantec%nvar
-     do i=1,scantec%nvar
-        j = index(scantec%varName(i),':')
-        write(150,'(A,2(1x,A))')scantec%varName(i)(1:j-1)//scantec%varName(i)(j+1:len_trim(scantec%varName(i))),&
-                               '0 99',trim(scantec%varDesc(i))
-     enddo
-     write(150,'(A)')'endvars'   
-     
-     close(150)
-   
-     !VIES   
-     open(151, file=trim(scantec%output_dir)//'/VIES'//trim(Fname)//'F.ctl',&
-               status='unknown')
-
-     
-     write(151,'(A,A)')'dset ^','VIES'//trim(Fname)//'F.scan'
-     write(151,'(A)')
-     write(151,'(A)')'options sequential'
-     write(151,'(A)')      
-     write(151,'(A)')'undef -999.9'      
-     write(151,'(A)')      
-     write(151,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'xdef',scantec%nxpt,'linear', scantec%gridDesc(5), scantec%gridDesc(10)
-     write(151,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'ydef',scantec%nypt,'linear', scantec%gridDesc(4), scantec%gridDesc(9)      
-     write(151,'(A)') 
-     write(151,'(A)')'zdef    1 linear 0 1'                  
-     write(151,'(A)') 
-!     write(151,'(A,I3,A,I2,A)')'tdef  ',(scantec%forecast_time/scantec%atime_step)+1,' linear 00Z05AUG2014 ',scantec%atime_step,'HR'
-     write(151,'(A,I3,A,A12,A,I2,A)')'tdef  ',(scantec%forecast_time/scantec%atime_step)+1,' linear ',ctl_time_fmt, '  ',  scantec%atime_step,'HR'
-     write(151,'(A)')
-     write(151,'(A,1x,I3)')'vars', scantec%nvar
-     do i=1,scantec%nvar
-        j = index(scantec%varName(i),':')
-        write(151,'(A,2(1x,A))')scantec%varName(i)(1:j-1)//scantec%varName(i)(j+1:len_trim(scantec%varName(i))),&
-                               '0 99',trim(scantec%varDesc(i))
-     enddo
-     write(151,'(A)')'endvars'   
-     
-     close(151)
-     
-     !MEAN   
-     open(152, file=trim(scantec%output_dir)//'/MEAN'//trim(Fname)//'F.ctl',&
-               status='unknown')
-     
-     write(152,'(A,A)')'dset ^','MEAN'//trim(Fname)//'F.scan'
-     write(152,'(A)')
-     write(152,'(A)')'options sequential'
-     write(152,'(A)')      
-     write(152,'(A)')'undef -999.9'      
-     write(152,'(A)')      
-     write(152,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'xdef',scantec%nxpt,'linear', scantec%gridDesc(5), scantec%gridDesc(10)
-     write(152,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'ydef',scantec%nypt,'linear', scantec%gridDesc(4), scantec%gridDesc(9)      
-     write(152,'(A)') 
-     write(152,'(A)')'zdef    1 linear 0 1'                  
-     write(152,'(A)') 
-!     write(152,'(A,I3,A,I2,A)')'tdef  ',(scantec%forecast_time/scantec%atime_step)+1,' linear 00Z05AUG2014 ',scantec%atime_step,'HR'
-     write(152,'(A,I3,A,A12,A,I2,A)')'tdef  ',(scantec%forecast_time/scantec%atime_step)+1,' linear ',ctl_time_fmt, '  ',  scantec%atime_step,'HR'
-     write(152,'(A)')
-     write(152,'(A,1x,I3)')'vars', scantec%nvar
-     do i=1,scantec%nvar
-        j = index(scantec%varName(i),':')
-        write(152,'(A,2(1x,A))')scantec%varName(i)(1:j-1)//scantec%varName(i)(j+1:len_trim(scantec%varName(i))),&
-                               '0 99',trim(scantec%varDesc(i))
-     enddo
-     write(152,'(A)')'endvars'     
-     
-     close(152)
+      
+      write(151,'(A,A)')'dset ^','VIES'//trim(Fname)//'F.scan'
+      write(151,'(A)')
+      write(151,'(A)')'options sequential'
+      write(151,'(A)')      
+      write(151,'(A)')'undef -999.9'      
+      write(151,'(A)')      
+      write(151,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'xdef',scantec%nxpt,'linear', scantec%gridDesc(5), scantec%gridDesc(10)
+      write(151,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'ydef',scantec%nypt,'linear', scantec%gridDesc(4), scantec%gridDesc(9)      
+      write(151,'(A)') 
+      write(151,'(A)')'zdef    1 linear 0 1'                  
+      write(151,'(A)') 
+      write(151,'(A,I3,A,I2,A)')'tdef  ',(scantec%forecast_time/scantec%atime_step)+1,' linear 00Z05AUG2014 ',scantec%atime_step,'HR'
+      write(151,'(A)')
+      write(151,'(A,1x,I3)')'vars', scantec%nvar
+      do i=1,scantec%nvar
+         j = index(scantec%varName(i),':')
+         write(151,'(A,2(1x,A))')scantec%varName(i)(1:j-1)//scantec%varName(i)(j+1:len_trim(scantec%varName(i))),&
+                                '0 99',trim(scantec%varDesc(i))
+      enddo
+      write(151,'(A)')'endvars'   
+      
+      close(151)
+      
+      !MEAN   
+      open(152, file=trim(scantec%output_dir)//'/MEAN'//trim(Fname)//'F.ctl',&
+                status='unknown')
+      
+      write(152,'(A,A)')'dset ^','MEAN'//trim(Fname)//'F.scan'
+      write(152,'(A)')
+      write(152,'(A)')'options sequential'
+      write(152,'(A)')      
+      write(152,'(A)')'undef -999.9'      
+      write(152,'(A)')      
+      write(152,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'xdef',scantec%nxpt,'linear', scantec%gridDesc(5), scantec%gridDesc(10)
+      write(152,'(A,1x,I4.3,1x,A,F9.3,F9.3)')'ydef',scantec%nypt,'linear', scantec%gridDesc(4), scantec%gridDesc(9)      
+      write(152,'(A)') 
+      write(152,'(A)')'zdef    1 linear 0 1'                  
+      write(152,'(A)') 
+      write(152,'(A,I3,A,I2,A)')'tdef  ',(scantec%forecast_time/scantec%atime_step)+1,' linear 00Z05AUG2014 ',scantec%atime_step,'HR'
+      write(152,'(A)')
+      write(152,'(A,1x,I3)')'vars', scantec%nvar
+      do i=1,scantec%nvar
+         j = index(scantec%varName(i),':')
+         write(152,'(A,2(1x,A))')scantec%varName(i)(1:j-1)//scantec%varName(i)(j+1:len_trim(scantec%varName(i))),&
+                                '0 99',trim(scantec%varDesc(i))
+      enddo
+      write(152,'(A)')'endvars'     
+      
+      close(152)
     
   End Subroutine writeCtl
   !EOC
