@@ -27,6 +27,12 @@ INSTALL = install
 # dirs
 #MPEU_LIB = ../lib/mpeu
 #MPEU_INC = ../lib/mpeu
+NETCDFF_LIB=/opt/netcdf-fortran-4.6.0/lib
+NETCDFF_INC=/opt/netcdf-fortran-4.6.0/include
+NETCDF_LIB=/opt/netcdf-c-4.9.2/lib
+NETCDF_INC=/opt/netcdf-c-4.9.2/include
+LIBAX_LIB = /media/extra/wrk/dev/sharedLibs/lib
+LIBAX_INC = /media/extra/wrk/dev/sharedLibs/include
 BILIN_LIB = ../lib/BilinInterp
 BILIN_INC = ../lib/BilinInterp
 GRIB_LIB = ../lib/w3lib-2.0.6
@@ -38,8 +44,8 @@ srcdir = ./
 mode = #dbg #pro
 
 # header file directories
-CCFLAGS = -I$(incdir) -I$(BILIN_INC)
-FFLAGS  += -I$(incdir) -I$(BILIN_INC) 
+CCFLAGS = -I$(incdir) -I$(BILIN_INC) -I$(LIBAX_INC) -I$(NETCDF_INC) -I$(NETCDFF_INC)
+FFLAGS  += -I$(incdir) -I$(BILIN_INC) -I$(LIBAX_INC) -I$(NETCDF_INC) -I$(NETCDF_INC)
 
 # default flags
   FPPFLAGS = -C -E 
@@ -161,8 +167,8 @@ endif
 include Makefile-objs
 
 # additionnal libraries
-LIBDIRS = -L$(BILIN_LIB) -L$(GRIB_LIB) 
-LIBS    = -lw3  -linterp #-llapack 
+LIBDIRS = -L$(BILIN_LIB) -L$(GRIB_LIB) -L$(LIBAX_LIB) -L$(NETCDF_LIB) -L$(NETCDFF_LIB)
+LIBS    = -lw3  -linterp -lax -lnetcdf -lnetcdff  
 
 PATH2=../bin
 

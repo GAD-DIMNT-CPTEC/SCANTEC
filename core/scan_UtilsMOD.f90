@@ -34,7 +34,7 @@ MODULE scan_Utils
                         i90_die,   &
                         i90_lcase, &
                         i90_fullRelease
-   use m_constants, only: i4, r4
+   use m_constants, only: i4, r4, r8
    
    !
    IMPLICIT NONE
@@ -56,22 +56,12 @@ MODULE scan_Utils
 ! DERIVED TYPES
 !
 
-   TYPE, PUBLIC  :: domain
-      REAL    :: ll_lat   !Lower Left Latitude
-      REAL    :: ll_lon   !Lower Left Longitude
-      REAL    :: ur_lat   !Upper Right Latitude
-      REAL    :: ur_lon   !Upper Right Longitude
-      REAL    :: dx
-      REAL    :: dy
-      INTEGER :: nx
-      INTEGER :: ny
-   END TYPE
 
-   TYPE, PUBLIC  :: RUNS
-      CHARACTER(len=300)               :: Id
-      CHARACTER(len=300)               :: name
-      CHARACTER(len=300)               :: file
-   END TYPE
+!   TYPE, PUBLIC  :: RUNS
+!      CHARACTER(len=300)               :: Id
+!      CHARACTER(len=300)               :: name
+!      CHARACTER(len=300)               :: file
+!   END TYPE
 !
 ! Global Variables
 !
@@ -85,14 +75,14 @@ MODULE scan_Utils
    INTEGER, PUBLIC   :: hist_time
    REAL(r8), PUBLIC  :: hist_incr
 
-   TYPE(domain), PUBLIC, DIMENSION(:), ALLOCATABLE    :: dom
+!   TYPE(domain), PUBLIC, DIMENSION(:), ALLOCATABLE    :: dom
 
 
-   TYPE(RUNS), PUBLIC                            :: Refer
-   TYPE(RUNS), PUBLIC                            :: Clima
-   TYPE(RUNS), PUBLIC                            :: Precip             !paulo dias
+!   TYPE(RUNS), PUBLIC                            :: Refer
+!   TYPE(RUNS), PUBLIC                            :: Clima
+!   TYPE(RUNS), PUBLIC                            :: Precip             !paulo dias
    INTEGER   , PUBLIC                            :: Precipitation_Flag !paulo dias
-   TYPE(RUNS), PUBLIC, DIMENSION(:), ALLOCATABLE :: Exper
+!   TYPE(RUNS), PUBLIC, DIMENSION(:), ALLOCATABLE :: Exper
 !   TYPE(RUNS), 
 
    !
@@ -182,340 +172,6 @@ MODULE scan_Utils
 
          if(present(istat)) istat=0
 
-!         call i90_Release ( )
-!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-! Load descritor file
-
-         narg=iargc()
-         IF(narg.EQ.1)then
-            call getarg(1,config)
-         ELSE
-            config='scantec.conf'
-!            INQUIRE(FILE=trim(config),EXIST=exists)
-!            IF(.NOT. exists)THEN
-!               iret = -1
-!               call i90_perr(myname_,'config file not found',iret)
-!               if(present(istat))istat=iret
-!               return
-!            END IF
-         END IF
-
-
-         call i90_LoadF ( TRIM(config), iret )
-
-         if(iret /= 0) then
-            call i90_perr(myname_,'i90_LoadF("'//trim(config)//'")',iret)
-             if(present(istat))istat=iret
-            !return
-            stop 99038
-         endif
-!
-!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-! Reading time parameters
-!
-         scantec%starting_time = huge(1)
-         call i90_getVal ( 'Starting Time:',      scantec%starting_time, iret )
-
-         scantec%ending_time = huge(1)
-         call i90_getVal ( 'Ending Time:',        scantec%ending_time,   iret )
-
-         call i90_getVal ( 'Analisys Time Step:', scantec%atime_step,    iret )
-         call i90_getVal ( 'Forecast Time Step:', scantec%ftime_step,    iret )
-         call i90_getVal ( 'Forecast Total Time:',scantec%forecast_time, iret )
-         call i90_getVal ( 'History Time:',       scantec%hist_time,     iret )
-         !call i90_getVal ( 'Undefined Value:',    scantec%udef,          iret )
-
-         call i90_getVal ('scantec tables:', scantec%tables, iret, default='../tables')
-         call i90_getVal ('Time Step Type:', TimeStepType, iret, default = 'forward')
-
-         timeStepType = i90_lcase(TimeStepType)
-
-         if(trim(timeStepType) .eq. 'forward' .or. &
-            trim(timeStepType) .eq. 'backward')then
-
-            scantec%TimeStepType = i90_lcase(TimeStepType)
-            
-          else
-            call i90_perr(myname_,'wrong time step type: '//trim(timeStepType))
-            call i90_perr(myname_,'setting default type: forward')
-
-            scantec%TimeStepType = 'forward'
-         endif
-!
-! Apply Sanity Checks on time specifications!
-!
-
-! Starting time is validy?
-
-         if (scantec%starting_time .eq. huge(1) )then
-
-            iret = 99
-            call i90_perr(myname_,'Error to specify Starting Time :',iret)
-            if(present(istat))istat=iret
-            return
-
-         endif
-
-! Ending time is validy?
-
-         if (scantec%Ending_time .eq. huge(1) )then
-
-            iret = 99
-            call i90_perr(myname_,'Error to specify Ending Time :',iret)
-            if(present(istat))istat=iret
-            return
-
-         endif
-
-
-! Ending time >= Starting time?
-
-
-#ifdef DEBUG
-        write(*,'(   1A   )')'Running Specification:'
-        write(*,'(A,x,I10.10)')'Starting Time:',     scantec%starting_time
-        write(*,'(A,x,I10.10)')'Ending Time:',       scantec%ending_time
-        write(*,'(A,x,I3.2)')'Time Step:',           scantec%time_step 
-        write(*,'(A,x,   A)')'Time Step Type:',      scantec%TimeStepType
-        write(*,'(A,x,I3.2)')'Analisys Time Step:',  scantec%atime_step
-        write(*,'(A,x,I3.2)')'Forecast Time Step:',  scantec%ftime_step
-        write(*,'(A,x,I3.2)')'Forecast Total Time:', scantec%forecast_time
-        write(*,'(A,x,I3.2)')'History Time:',        scantec%hist_time
-#endif
-
-
-!
-!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-! Reading Domain Specifications
-
-         call i90_getVal ( 'run domain number:', ndom, iret )
-
-         ALLOCATE(dom(ndom),STAT=iret)
-         if(iret/=0)then
-            call i90_perr(myname_,'allocate(dom('//int2str(ndom)//'))',iret)
-            if(present(istat))istat=iret
-            return
-         endif
-
-         call i90_getVal ( 'run domain lower left lat:', dom(:)%ll_lat, iret )
-         call i90_getVal ( 'run domain lower left lon:', dom(:)%ll_lon, iret )
-         call i90_getVal ( 'run domain upper right lat:',dom(:)%ur_lat, iret )
-         call i90_getVal ( 'run domain upper right lon:',dom(:)%ur_lon, iret )
-         call i90_getVal ( 'run domain resolution dx:',  dom(:)%dx,     iret )
-         call i90_getVal ( 'run domain resolution dy:',  dom(:)%dy,     iret )
-
-         DO I=1,ndom
-            dom(I)%nx = ((dom(I)%ur_lon-dom(I)%ll_lon)/dom(I)%dx ) + 1
-            dom(I)%ny = ((dom(I)%ur_lat-dom(I)%ll_lat)/dom(I)%dy ) + 1
-         ENDDO
-         
-#ifdef DEBUG         
-         DO I=1,ndom
-            WRITE(*,'(A,I2.2,A)')'Grid ',I,' Specification'
-            WRITE(*,'(A,F9.3)')'lower left latitude  :',dom(I)%ll_lat
-            WRITE(*,'(A,F9.3)')'lower left longitude :',dom(I)%ll_lon
-            WRITE(*,'(A,F9.3)')'upper right latitude :',dom(I)%ur_lat
-            WRITE(*,'(A,F9.3)')'upper right longitude:',dom(I)%ur_lon
-            WRITE(*,'(A,F9.3)')'resolution dx        :',dom(I)%dx
-            WRITE(*,'(A,F9.3)')'resolution dy        :',dom(I)%dy
-            WRITE(*,'(A,I9.3)')'number of points (X) :',dom(I)%nx
-            WRITE(*,'(A,I9.3)')'number of points (Y) :',dom(I)%ny            
-         ENDDO
-#endif
-!
-!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!Reading Files Names and Variables names to Analise 
-!
-
-!
-! Reference File
-!
-         call i90_getVal( 'Reference Model Name:', ModelName, ierr ); iret = ierr
-         call i90_getVal( 'Reference file:'      ,  FileName, ierr ); iret = iret + ierr
-         if(iret .eq. 0)then
-            call scantec%insertModel('Reference',trim(ModelName), 'refer', trim(FileName))
-         else
-            call i90_perr(trim(myname_),'You must configure a reference file', -1)
-         endif
-
-
-!
-! Experiments
-!
-
-         call i90_label ( 'Experiments:', iret )
-         if(iret /= 0) then
-            call i90_perr(trim(myname_),'i90_label("Experiments:")',iret)
-            if(.not.present(istat)) call i90_die(trim(myname_))
-            istat=iret
-            return
-         endif
-
-         ! get experiment info, one by line of config file
-         call i90_gline(iret)
-         if(iret .ne. 0)then
-            call i90_perr(trim(myname_), 'You must configure at least one experiment !',-1)
-            call i90_die(myname_)
-         endif
-
-         do while (iret .eq. 0)
-
-            !--------------------------------------------------------------------
-            ! Used Model
-            call i90_Gtoken(ModelName,iret)
-            if(iret /= 0) then
-               call i90_perr(myname_,'i90_gint("Experiment Model Name:")',iret)
-               if(.not.present(istat)) call i90_die(trim(myname_))
-               istat=iret
-               return
-            endif
-
-            ! Experiment Name
-            call i90_Gtoken(ExpName,iret)
-            if(iret /= 0) then
-               call i90_perr(trim(myname_),'i90_label("Experiment Name")',iret)
-               if(present(istat))call i90_die(trim(myname_))
-               istat=iret
-               return
-            endif
-
-            ! Experiment File
-            call i90_Gtoken(FileName,iret)
-            if(iret /= 0) then
-               call i90_perr(trim(myname_),'i90_label("Experiment file_name_with_mask")',iret)
-               if(present(istat))call i90_die(trim(myname_))
-               istat=iret
-               return
-            endif
-
-            !
-            !Insert model at scantec structure
-            !
-            call scantec%insertModel('Experiment',    &
-                                     trim(ModelName), &
-                                     trim(ExpName),   &
-                                     trim(FileName)   &
-                                     )
-
-            ! get next line
-            !    - iret =  0, next line ok
-            !    - iret = -1, end of buffer (some problem with table)
-            !    - iret = +1, end of table
-            call i90_gline(iret)
-            if(iret.lt.0)then
-               call i90_perr(trim(myname_),'getting experiment table.', iret)
-               call i90_die(trim(myname_))
-            endif
-
-         enddo
-
-!
-! Climatology
-!
-         call i90_label ( 'Use Climatology:', iret )
-         if(iret == -2) then
-            call i90_perr(myname_,'Climarology Not Found')
-            scantec%cflag = 0
-         else
-            scantec%cflag = i90_gint(iret)
-            if(iret /= 0) then
-               call i90_perr(trim(myname_),'i90_label("Use Climatology:")',iret)
-               if(.not.present(istat))call i90_die(trim(myname_))
-               istat=iret
-               return
-            endif
-         endif
-
-         IF(scantec%cflag.EQ.1)THEN
-
-            call i90_label ( 'Climatology Model Name:', iret )
-            call i90_Gtoken(ModelName, iret)
-            if(iret /= 0) then
-               call i90_perr(trim(myname_),'i90_gint("Climatology Model Name:")',iret)
-               if(present(istat))call i90_die(trim(myname_))
-               istat=iret
-               return
-            endif
-
-            call i90_label ( 'Climatology file:', iret )
-            call i90_Gtoken(FileName,iret)
-            if(iret /= 0) then
-               call i90_perr(trim(myname_),'i90_label("Climatology file:")',iret)
-               if(.not.present(istat))call i90_die(trim(myname_))
-               istat=iret
-               return
-            endif
-            
-            call scantec%insertModel('Climatology',   &
-                                     trim(ModelName), &
-                                     'clima',         &
-                                     trim(FileName)   &
-                                    )
-         ELSE
-
-
-            WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
-            WRITE(*,'(a72)')'!                         Climatology Not Found                       !'
-            WRITE(*,'(a72)')'!         The mean reference field will be used as climatology        !'
-            WRITE(*,'(a72)')'!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!'
-         ENDIF
-
-         !-----------------------------------------------------------------------------------!
-         ! Mantem a estrutura antiga, assim não preciso mexer em muitas coisas
-         ! neste momento
-         ALLOCATE(Exper(scantec%nexp),STAT=iret)
-         scantec%currModel => scantec%FirstModel ! return to begin of linked list 
-         I = 0
-         DO while(associated(scantec%currModel))
-            if (trim(scantec%currModel%Type_) .eq. 'Reference')then
-               Refer%Id   = trim(scantec%currModel%Name_)
-               Refer%file = trim(scantec%currModel%FileName_)
-               Refer%name = trim(scantec%currModel%ExpName_)
-
-            else if (trim(scantec%currModel%Type_) .eq. 'Climatology')then
-               clima%Id   = trim(ModelName)
-               clima%name = 'Climatology'
-               clima%file = trim(FileName)
-
-            else if (trim(scantec%currModel%Type_) .eq. 'Experiment')then
-               
-               i = i + 1
-               Exper(I)%Id   = trim(scantec%currModel%Name_)
-               Exper(I)%name = trim(scantec%currModel%ExpName_)
-               Exper(I)%file = trim(scantec%currModel%FileName_)
-
-            endif 
-
-#ifdef DEBUG
-               WRITE(*,'(2A)')'Type : ', trim(scantec%currModel%Type_)
-               WRITE(*,'(2A)')'  |---- Model Name :',trim(scantec%currModel%Name_)
-               WRITE(*,'(2A)')'  |---- Exp Name   :',trim(scantec%currModel%ExpName_)
-               WRITE(*,'(2A)')'  |---- File       :',trim(scantec%currModel%FileName_)
-#endif
-            scantec%currModel => scantec%currModel%next
-         ENDDO
-
-
-!------------------------------------------------------------------------------- !Paulo Dias
-! Diretorio de Saida
-!   
-        call i90_label ( 'Output directory:', iret )
-            call i90_Gtoken(scantec%output_dir,iret)
-            if(iret /= 0) then
-               call i90_perr(myname_,'i90_label("Output directory:")',iret)
-               if(present(istat))istat=iret
-               return
-            endif
-
-!Fim Diretorio de Saida
-!--------
-
-   call I90_fullRelease( iret )
-   if(iret /= 0) then
-      call i90_perr(myname_,'i90_fullRelease',iret)
-      if(present(istat))istat=iret
-      return
-   endif
 
 
    END SUBROUTINE

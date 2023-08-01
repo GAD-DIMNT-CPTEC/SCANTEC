@@ -111,51 +111,51 @@ CONTAINS
     !  1. Read information about statistical analisys
     !
 
-    CALL readcard()
+    !CALL readcard()
 
     !
     !  2. Grid Reallocation to 0-360
     !
 
-    WHERE(dom(:)%ll_lon.LT.0.)dom(:)%ll_lon=dom(:)%ll_lon+360.
-    WHERE(dom(:)%ur_lon.LT.0.)dom(:)%ur_lon=dom(:)%ur_lon+360.    
+    !WHERE(dom(:)%ll_lon.LT.0.)dom(:)%ll_lon=dom(:)%ll_lon+360.
+    !WHERE(dom(:)%ur_lon.LT.0.)dom(:)%ur_lon=dom(:)%ur_lon+360.    
 
     !
     !  3. Time configuration
     !
 
 
-    scantec%time_step      = 1
-    scantec%ftime_idx      = 1
-    scantec%loop_count     = 1
-    scantec%atime_flag     = .true.
+    !scantec%time_step      = 1
+    !scantec%ftime_idx      = 1
+    !scantec%loop_count     = 1
+    !scantec%atime_flag     = .true.
 
-    ! Sanity Check
-    if (scantec%atime_step .gt. scantec%ftime_step)then
-       write(stdout,*)'ERROR: Analisys Time Step should be less or equal to Forecast Time Step'
-       stop 99000
-    endif
+    !! Sanity Check
+    !if (scantec%atime_step .gt. scantec%ftime_step)then
+    !   write(stdout,*)'ERROR: Analisys Time Step should be less or equal to Forecast Time Step'
+    !   stop 99000
+    !endif
 
-    scantec%hist_incr      = real(scantec%hist_time/24.0d0)
-    scantec%aincr          = real(scantec%atime_step/24.0d0)
-    scantec%fincr          = real(scantec%ftime_step/24.0d0)
+    !scantec%hist_incr      = real(scantec%hist_time/24.0d0)
+    !scantec%aincr          = real(scantec%atime_step/24.0d0)
+    !scantec%fincr          = real(scantec%ftime_step/24.0d0)
 
 
-    scantec%ntime_steps    = ( ( cal2jul(scantec%ending_time) - &
-                              cal2jul(scantec%starting_time) +  &
-                              scantec%aincr ) / scantec%aincr )
+    !scantec%ntime_steps    = ( ( cal2jul(scantec%ending_time) - &
+    !                          cal2jul(scantec%starting_time) +  &
+    !                          scantec%aincr ) / scantec%aincr )
 
-    scantec%ntime_forecast = ( scantec%Forecast_time / scantec%ftime_step ) + 1
+    !scantec%ntime_forecast = ( scantec%Forecast_time / scantec%ftime_step ) + 1
+
+    !!scantec%atime          = scantec%starting_time
+    !!scantec%ftime          = jul2cal(cal2jul(scantec%starting_time)+scantec%fincr)
 
     !scantec%atime          = scantec%starting_time
-    !scantec%ftime          = jul2cal(cal2jul(scantec%starting_time)+scantec%fincr)
+    !scantec%ftime          = scantec%starting_time
 
-    scantec%atime          = scantec%starting_time
-    scantec%ftime          = scantec%starting_time
-
-    Allocate(scantec%ftime_count(scantec%ntime_forecast))
-    scantec%ftime_count    = 0
-    scantec%ftime_count(1) = 1
+    !Allocate(scantec%ftime_count(scantec%ntime_forecast))
+    !scantec%ftime_count    = 0
+    !scantec%ftime_count(1) = 1
 
     ! 4. Initialize Mathematical Expressions
 
@@ -205,16 +205,16 @@ CONTAINS
 #endif
 
     !
-    !  1. condigure scantec grid and variable names
+    !  1. configure scantec grid and variable names
     !
 
-    call data_config ( )
+    call scantec%configure ( )
 
     !
     !  2. Registering models to be used and configure it
     !
 
-    call scan_models_plugin()
+    !call scan_models_plugin()
 
     !
     !  3. Registering observations to be used

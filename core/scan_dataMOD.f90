@@ -19,12 +19,12 @@ MODULE scan_dataMOD
   !
 
   USE scantec_module    ! scantec types
+  USE scan_Modelplugin, only: ModelType, EvalVar
   USE m_constants
   USE m_string          ! String Manipulation
-  USE scan_Utils, only: dom, Refer, Clima, Exper, Precip
+  !USE scan_Utils, only: dom, Refer, Clima, Exper, Precip
   USE m_inpak90
   USE m_ioutil
-!  USE m_GrADSfiles
   USE fileAccess
   USE BilinInterp, only: bilinear_interp_init, bilinear_interp
   USE varType
@@ -65,7 +65,6 @@ MODULE scan_dataMOD
   ! !PUBLIC MEMBER FUNCTIONS:
   !
 
-  public :: data_config
   public :: allocate_data_mem
   public :: data_init
   !  public :: ldata
@@ -88,137 +87,6 @@ MODULE scan_dataMOD
   character(len=*),parameter :: myname = 'scan_dataMOD'
 
 CONTAINS
-
-  SUBROUTINE data_config()
-    IMPLICIT NONE
-    integer :: I
-    integer :: iret
-    character(len=NormalStr) :: scanVarsConf
-    type vars
-       character(len=8)        :: vname
-       character(len=shortStr) :: vdesc
-       type(vars), pointer :: next => null()
-    end type vars
-    integer :: nvars
-    type(vars), pointer :: first => null()
-    type(vars), pointer :: curr => null()
-
-    logical :: found
-    character(len=smallStr) :: msg
-
-    character(len=*),parameter :: myname_=myname//' :: readModelConf( )'
-
-    scantec%gridDesc = 0
-
-    scantec%gridDesc( 1) = 0
-    scantec%gridDesc( 2) = dom(1)%nx        ! Number of x points
-    scantec%gridDesc( 3) = dom(1)%ny        ! number of y points
-    scantec%gridDesc( 4) = dom(1)%ll_lat    ! First latitude point (South point)
-    scantec%gridDesc( 5) = dom(1)%ll_lon    ! First longitude point (West point)
-    scantec%gridDesc( 6) = 128
-    scantec%gridDesc( 7) = dom(1)%ur_lat    ! Last latitude point (North Point)
-    scantec%gridDesc( 8) = dom(1)%ur_lon    ! Last longitude Point (East point)
-    scantec%gridDesc( 9) = dom(1)%dx        ! Delta x point
-    scantec%gridDesc(10) = dom(1)%dy        ! Delta y point
-    scantec%gridDesc(20) = 0
-
-    scantec%nxpt = dom(1)%nx
-    scantec%nypt = dom(1)%ny
-    scantec%npts = dom(1)%nx*dom(1)%ny
-
-    scantec%udef = -999.9
-
-    scanVarsConf = trim(scantec%tables)//'/scantec.vars'
-    inquire(file=trim(scanVarsConf), exist=found)
-
-    if(.not.found)then
-       call i90_perr(trim(myname_),'scantec.vars not found!', -1 )
-       call i90_die(trim(myname_))
-    endif
-
-    call i90_LoadF(trim(scanVarsConf), iret)
-    if(iret.ne.0)then
-       write(msg,'(3A)')'i90_LoadF("',trim(scanVarsConf),'")'
-       call i90_perr(trim(myname_),trim(msg),iret)
-       stop 99001
-    endif
-
-    call i90_label('variables:',iret)
-    if(iret.ne.0)then
-       call i90_perr(trim(myname_),'GetDef( variables ... )', iret)
-       call i90_die(trim(myname_))
-    endif
-    allocate(First)
-    curr => first
-    nvars = 0
-    call i90_gline(iret)
-    if(iret.ne.0)then
-       call i90_perr(trim(myname_),'scantec.vars: need configure at least one variable', iret)
-       call i90_die(trim(myname_))
-    endif
-    
-    do while(iret.eq.0)
-       call i90_gtoken(curr%vname, iret)
-       if (iret.eq.0)then
-          nvars = nvars + 1
-       else
-          if(iret.lt.0)then
-             call i90_perr(trim(myname_),'reading scantec.vars', iret)
-             call i90_die(trim(myname_))
-          endif
-       endif
-
-       call i90_gtoken(curr%vdesc, iret)
-       if(iret.ne.0)then
-          curr%vdesc = 'variable without description'
-       endif
-
-
-
-       ! get next line
-       !    - iret =  0, next line ok
-       !    - iret = -1, end of buffer (some problem with table)
-       !    - iret = +1, end of table
-       call i90_gline(iret)
-       if(iret.lt.0)then
-          call i90_perr(trim(myname_),'reading scantec.vars', iret)
-          call i90_die(trim(myname_))
-       endif
-       allocate(curr%next)
-       curr => curr%next
-    enddo
-
-    scantec%nvar = nVars
-
-    Allocate(scantec%VarName(nVars))
-    Allocate(scantec%VarDesc(nVars))
-    curr => First
-    do i=1,nvars
-       scantec%VarName(i) = i90_lcase(curr%vname)
-       scantec%VarDesc(i) = i90_lcase(curr%vdesc)
-       curr => curr%next
-    enddo
-
-
-    curr => First%next
-    do while(associated(curr))
-       deallocate(First)
-       First => curr
-       curr => First%next
-    enddo
-    call I90_fullRelease(iret)
-
-
-
-#ifdef DEBUG  
-    write(6, FMT=123)'xdef',scantec%nxpt,'linear', scantec%gridDesc(5), scantec%gridDesc(10)
-    write(6, FMT=123)'ydef',scantec%nypt,'linear', scantec%gridDesc(4), scantec%gridDesc(9)
-123 FORMAT(A,1x,I4.3,1x,A,F9.3,F9.3)    
-#endif
-
-
-  END SUBROUTINE data_config
-
 
 
   SUBROUTINE allocate_data_mem()
@@ -397,7 +265,7 @@ CONTAINS
 
     ! derivated type variables
     !type(GrADSfiles) :: gs
-    type(acc) :: gs
+    type(ax) :: gs
     type(ModelType), pointer :: Model => null()
     type(EvalVar),   pointer :: ModelVar => null()
 
@@ -424,23 +292,13 @@ CONTAINS
        call i90_perr(trim(myname_),'File not found!'//trim(FileName), -1)
        call i90_die(trim(myname_))       
     endif
-!    call GrADS_open(gs,trim(FileName))
 
-!    xdef  = GrADS_getDim(gs, 'xdef')
-!    ydef  = GrADS_getDim(gs, 'ydef')
-!    zdef  = GrADS_getDim(gs, 'zdef')
-!    undef = GrADS_Undef(gs)
 
     iret = gs%open(trim(FileName))
     
     xdef = gs%getDim('xdef')
     ydef = gs%getDim('ydef')
     zdef = gs%getDim('zdef')
-
-!    xdef  = GrADS_getDim(gs, 'xdef')
-!    ydef  = GrADS_getDim(gs, 'ydef')
-!    zdef  = GrADS_getDim(gs, 'zdef')
-!    undef = GrADS_Undef(gs)
 
     ! Get model info from scantec table
     Mxdef => Model%getDimInfo('xdim:')
@@ -544,7 +402,6 @@ CONTAINS
                 !-------------------------------------------------------!
                 ! get field
                 allocate(iField(xdef*ydef))
-!                call GrADS_input(gs, trim(VarName),1,idx,iField, iret)
                 call gs%getField(trim(VarName),zlevs(idx),iField,iret)
     
                 if(iret.ne.0)then
@@ -597,9 +454,8 @@ CONTAINS
 
     enddo
 
-    call GrADS_close(gs, iret) 
-!    deallocate(iField)
-!    deallocate(iBitMap)
+    iret = gs%close() 
+
   END SUBROUTINE loadData
 
 

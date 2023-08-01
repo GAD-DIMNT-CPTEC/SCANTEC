@@ -25,7 +25,6 @@ Module scan_bstatistic
   USE m_ioutil                      ! Module to defines std. I/O parameters
   USE m_string                      ! string manipulations
   use omp_lib
-  USE scan_Utils, only: Exper 
 
   IMPLICIT NONE
   PRIVATE

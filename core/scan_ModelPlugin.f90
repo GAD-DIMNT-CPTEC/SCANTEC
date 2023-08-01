@@ -1,5 +1,5 @@
 MODULE scan_Modelplugin
-  use scantec_module, only: scantec, scanType 
+
   use bilinInterp
   use m_inpak90, only: i90_LoadF,  & 
                        i90_getVal, &
@@ -13,21 +13,34 @@ MODULE scan_Modelplugin
                        i90_die,    &
                        i90_fullRelease
    use m_ioutil
-   use m_constants, only: tinyStr, shortStr, normalStr,&
+   use m_constants, only: tinyStr, shortStr, normalStr, LongStr,&
                           i4, r4
+   use MathExpress, only: MathOper
+   
+  implicit none
+  private
 
-  type, extends(scanType) :: scanModel
+  public :: scanModel
+  public :: ModelType
+  public :: EvalVar
+
+
+  type :: scanModel
 
      !
      ! Model info
      !
-     integer, pointer         :: nexp => null()
+     integer, pointer :: nexp => null()
      type(ModelType), pointer :: CurrModel  => null()
      type(ModelType), pointer :: FirstModel => null()
 
      ! for mathematical evaluation
 
      class(MathOper), pointer :: MathEval => null()
+
+     ! directory of config tables
+
+     character(len=normalStr) :: tables
 
      !
      ! routines
@@ -38,10 +51,11 @@ MODULE scan_Modelplugin
      procedure, public :: getModel => getModel_
      procedure, public :: getField => getField_
      procedure, public :: getBitMap => getBitMap_
+     procedure, public :: readModelConf => readModelConf_
      
   endType
 
-  type ModelType
+  type :: ModelType
      character(len=LongStr) :: Name_
      character(len=LongStr) :: FileName_
      character(len=tinyStr) :: FileType_
@@ -89,12 +103,6 @@ MODULE scan_Modelplugin
      character(len=shortStr) :: Sys_ ! Scantec variable name
      character(len=shortStr) :: mod_ ! Model variable name
 
-     ! Information about variable if it need be 
-     ! derivate from others variables
-!     logical          :: deriv_ ! .true. need use function to obtain model variavle
-!     type(strArray), pointer :: funcArg => null()
-!     type(strArray), pointer :: FirstFuncArg => null()
-
      ! Field info
      real(kind = r4), pointer :: Field(:) => null()
      logical, pointer         :: bitMap(:) => null()
@@ -103,7 +111,6 @@ MODULE scan_Modelplugin
   end type EvalVar
 
   
-  IMPLICIT NONE
   !BOP
   !
   !  !MODULE: scan_Modelplugin
@@ -127,13 +134,12 @@ MODULE scan_Modelplugin
   !
   !EOP
 
-  PRIVATE
 
   !-------------------------------------------------------------------
   ! !PUBLIC MEMBER FUNCTIONS:
   !-------------------------------------------------------------------
 
-  public :: scan_Models_Plugin  
+  !public :: scan_Models_Plugin  
 
   !---------------------------------------------------------------------
   !
@@ -162,69 +168,69 @@ Contains
     !
     !------------------------------------------------------------------
     !BOC
-  subroutine scan_models_plugin
-    !  !REVISION HISTORY: 
-    !  18 May 2020    J. G. de Mattos  Initial Specification
-    !
-    !------------------------------------------------------------------
-    !BOC
-    character(len=*),parameter :: myname_=myname//'::scan_Models_Plugin'
-    real, pointer :: rlat(:) => null()
-    real, pointer :: rlon(:) => null()
-    real :: GDesc(200)
-    integer, pointer :: xdim => null()
-    integer, pointer :: ydim => null()
-    integer :: i, j, k
-    character(len=ShortStr), pointer :: mapping => null()
-    type(ModelType), pointer :: Model => null()
-
-    Model => scantec%FirstModel
-    do while(associated(Model))
-    
-       call readModelConf(Model)
-
-       ! compute weights to be used for interpolation
-       rlat => Model%getDimVec('ydim:')
-       rlon => Model%getDimVec('xdim:')
-
-       xdim => Model%getDimInfo('xdim:')
-       ydim => Model%getDimInfo('ydim:')
-       mapping => Model%getMapping('xdim:')
-
-       if (i90_lcase(mapping) .eq. 'linear')then
-          Model%GDesc = 0
-          Model%GDesc( 1) = 0
-          Model%GDesc( 2) = xdim
-          Model%GDesc( 3) = ydim
-          Model%GDesc( 4) = rlat(1)
-          Model%GDesc( 5) = rlon(1)
-          Model%GDesc( 6) = 128
-          Model%GDesc( 7) = rlat(ydim)
-          Model%GDesc( 8) = rlon(xdim)
-          Model%GDesc( 9) = (rlon(xdim)-rlon(1))/(xdim-1)
-          Model%GDesc(10) = (rlat(ydim)-rlat(1))/(ydim-1)
-       else
-          ! For now support only Gaussian grid
-          Model%GDesc = 0
-          Model%GDesc( 1) =   4
-          Model%GDesc( 2) = xdim
-          Model%GDesc( 3) = ydim
-          Model%GDesc( 4) = rlat(1)
-          Model%GDesc( 5) = rlon(1)
-          Model%GDesc( 6) = 128
-          Model%GDesc( 7) = rlat(ydim)
-          Model%GDesc( 8) = rlon(xdim)
-          Model%GDesc( 9) = (rlon(xdim)-rlon(1))/(xdim-1)
-          Model%GDesc(10) = ydim/2.0
-          
-       endif
-
-       deallocate(rlon)
-       deallocate(rlat)
-       Model => Model%next
-    enddo    
-
-  end subroutine scan_models_plugin
+!  subroutine scan_models_plugin
+!    !  !REVISION HISTORY: 
+!    !  18 May 2020    J. G. de Mattos  Initial Specification
+!    !
+!    !------------------------------------------------------------------
+!    !BOC
+!    character(len=*),parameter :: myname_=myname//'::scan_Models_Plugin'
+!    real, pointer :: rlat(:) => null()
+!    real, pointer :: rlon(:) => null()
+!    real :: GDesc(200)
+!    integer, pointer :: xdim => null()
+!    integer, pointer :: ydim => null()
+!    integer :: i, j, k
+!    character(len=ShortStr), pointer :: mapping => null()
+!    type(ModelType), pointer :: Model => null()
+!
+!    Model => scantec%FirstModel
+!    do while(associated(Model))
+!    
+!       call readModelConf(Model)
+!
+!       ! compute weights to be used for interpolation
+!       rlat => Model%getDimVec('ydim:')
+!       rlon => Model%getDimVec('xdim:')
+!
+!       xdim => Model%getDimInfo('xdim:')
+!       ydim => Model%getDimInfo('ydim:')
+!       mapping => Model%getMapping('xdim:')
+!
+!       if (i90_lcase(mapping) .eq. 'linear')then
+!          Model%GDesc = 0
+!          Model%GDesc( 1) = 0
+!          Model%GDesc( 2) = xdim
+!          Model%GDesc( 3) = ydim
+!          Model%GDesc( 4) = rlat(1)
+!          Model%GDesc( 5) = rlon(1)
+!          Model%GDesc( 6) = 128
+!          Model%GDesc( 7) = rlat(ydim)
+!          Model%GDesc( 8) = rlon(xdim)
+!          Model%GDesc( 9) = (rlon(xdim)-rlon(1))/(xdim-1)
+!          Model%GDesc(10) = (rlat(ydim)-rlat(1))/(ydim-1)
+!       else
+!          ! For now support only Gaussian grid
+!          Model%GDesc = 0
+!          Model%GDesc( 1) =   4
+!          Model%GDesc( 2) = xdim
+!          Model%GDesc( 3) = ydim
+!          Model%GDesc( 4) = rlat(1)
+!          Model%GDesc( 5) = rlon(1)
+!          Model%GDesc( 6) = 128
+!          Model%GDesc( 7) = rlat(ydim)
+!          Model%GDesc( 8) = rlon(xdim)
+!          Model%GDesc( 9) = (rlon(xdim)-rlon(1))/(xdim-1)
+!          Model%GDesc(10) = ydim/2.0
+!          
+!       endif
+!
+!       deallocate(rlon)
+!       deallocate(rlat)
+!       Model => Model%next
+!    enddo    
+!
+!  end subroutine scan_models_plugin
 !-----------------------------------------------------------------------------!
 !EOC
 !-----------------------------------------------------------------------------!
@@ -240,13 +246,12 @@ Contains
 !
 ! !INTERFACE:
 !
-   subroutine readModelConf(Model)
+   subroutine readModelConf_(self)
 
 !
 ! !INPUT PARAMETERS:
 !
-      type(ModelType), intent(inout) :: Model
-
+     class(scanModel), intent(inout) :: self
 ! !REVISION HISTORY:
 !
 !   10 May 2020 - J. G. de Mattos -  Initial code.
@@ -272,12 +277,13 @@ Contains
       logical :: found
 
       type(GridDef), pointer :: DimTmp => null()
+      type(ModelType), pointer :: Model => null()
 
       !
       ! Open Configure File for model
       !
 
-      fileModelConf = trim(scantec%tables)//'/'//trim(Model%Name_)//'.model'
+      fileModelConf = trim(self%tables)//'/'//trim(Model%Name_)//'.model'
       inquire(file=trim(fileModelConf),exist=found)
       if(.not.found)then
          write(msg,'(2A)')'File not found :', trim(fileModelConf)
@@ -299,7 +305,9 @@ Contains
       !
       ! Get information about model post-processed files
       !
-      
+
+      Model => self%currModel
+
       ! ftype: should be binary, grib or netcdf file
       call i90_getVal('ftype:',Model%fileType_)
 
@@ -402,44 +410,6 @@ Contains
             endif
          enddo
 
-!         if(iret.eq.0)then
-!            select case(mvar(1:1))
-!               ! if a variable model need be pre-processed to
-!               ! obtain a scantec var
-!               case ('@')
-!                  ! Get function name and arguments
-!                  Model%var%mod_   = trim(mvar(2:len_trim(mvar)))
-!                  Model%var%deriv_ = .true.
-!
-!                  ! get arguments
-!                  allocate(Model%var%FirstFuncArg)
-!                  Model%var%funcArg => Model%var%FirstFuncArg
-!                  call i90_gtoken(mvar,iret)
-!                  if(iret .ne. 0)then
-!                     call i90_perr(trim(myname_),'@func (need at least one function arg)', iret)
-!                     call i90_die(trim(myname_)) ! não precisa matar o processo, so pular p/ outra var
-!                  endif
-!                  Model%var%funcArg%str_ = i90_lcase(trim(mvar))
-!                  do while(iret .eq. 0)
-!
-!                     call i90_Gtoken(mvar,iret)
-!                     if (iret .eq. 0) then
-!                        allocate(Model%var%funcArg%next)
-!                        Model%var%funcArg => Model%var%funcArg%next
-!                        Model%var%funcArg%str_ = i90_lcase(trim(mvar))
-!                     endif
-!                     
-!                  enddo
-!
-!               case default
-!                  Model%var%mod_   = i90_lcase(trim(mvar))
-!                  Model%var%deriv_ = .false.
-!            end select
-!         else
-!           call i90_perr(trim(myname_),'some issue with model var name ...', iret)
-!           call i90_perr(trim(myname_),'look inside '//trim(Model%Name_)//'.model')
-!           call i90_die(trim(myname))
-!         endif
          ! get next line
          !    - iret =  0, next line ok
          !    - iret = -1, end of buffer (some problem with table)
@@ -712,6 +682,246 @@ Contains
 
 
   end subroutine PLevels_
+
+  !------------------------------------------------------------!
+  !scanType
+
+  function getFirstModel(self) result(Model)
+    class(scanModel), intent(in) :: self
+    type(ModelType), pointer :: Model
+
+    Model => self%FirstModel
+  end function getFirstModel
+
+  subroutine insertModel_(self, runType, ModelName, ExpName, FileName)
+    class(scanModel), intent(inout) :: self
+    character(len=*), intent(in   ) :: ModelName
+    character(len=*), intent(in   ) :: runType
+    character(len=*), intent(in   ) :: ExpName
+    character(len=*), intent(in   ) :: FileName
+
+
+    real, pointer :: rlat(:) => null()
+    real, pointer :: rlon(:) => null()
+    integer, pointer :: xdim => null()
+    integer, pointer :: ydim => null()
+    character(len=ShortStr), pointer :: mapping => null()
+    type(ModelType), pointer :: Model => null()
+
+    
+
+    !verify if is the first model to include
+    if(.not.associated(self%FirstModel))then
+       allocate(self%nexp); self%nexp = 0
+       allocate(self%FirstModel)
+       self%currModel => self%FirstModel
+    else
+       allocate(self%currModel%next)
+       self%currModel => self%currModel%next
+    endif
+
+    Model => self%currModel
+
+    Model%Name_     = trim(ModelName)
+    Model%FileName_ = trim(FileName)
+    Model%Type_     = trim(runType)
+    Model%ExpName_  = trim(ExpName)
+
+    call self%readModelConf( )
+
+    ! compute weights to be used for interpolation
+    rlat => Model%getDimVec('ydim:')
+    rlon => Model%getDimVec('xdim:')
+
+    xdim => Model%getDimInfo('xdim:')
+    ydim => Model%getDimInfo('ydim:')
+    mapping => Model%getMapping('xdim:')
+
+    if (i90_lcase(mapping) .eq. 'linear')then
+       Model%GDesc = 0
+       Model%GDesc( 1) = 0
+       Model%GDesc( 2) = xdim
+       Model%GDesc( 3) = ydim
+       Model%GDesc( 4) = rlat(1)
+       Model%GDesc( 5) = rlon(1)
+       Model%GDesc( 6) = 128
+       Model%GDesc( 7) = rlat(ydim)
+       Model%GDesc( 8) = rlon(xdim)
+       Model%GDesc( 9) = (rlon(xdim)-rlon(1))/(xdim-1)
+       Model%GDesc(10) = (rlat(ydim)-rlat(1))/(ydim-1)
+    else
+       ! For now support only Gaussian grid
+       Model%GDesc = 0
+       Model%GDesc( 1) =   4
+       Model%GDesc( 2) = xdim
+       Model%GDesc( 3) = ydim
+       Model%GDesc( 4) = rlat(1)
+       Model%GDesc( 5) = rlon(1)
+       Model%GDesc( 6) = 128
+       Model%GDesc( 7) = rlat(ydim)
+       Model%GDesc( 8) = rlon(xdim)
+       Model%GDesc( 9) = (rlon(xdim)-rlon(1))/(xdim-1)
+       Model%GDesc(10) = ydim/2.0      
+    endif
+
+    deallocate(rlon)
+    deallocate(rlat)
+
+    if(runType .eq. 'Experiment') self%nexp = self%nexp + 1
+
+  end subroutine insertModel_
+
+  function getModel_(self, MType_, MName_) result(Model)
+    class(scanModel), intent(inout) :: self
+    character(len=*), intent(in   ) :: MType_
+    character(len=*), intent(in   ) :: MName_
+    type(ModelType), pointer :: Model
+
+
+    Model => self%FirstModel
+    do while(associated(Model))
+       if (trim(Model%Name_) .eq. trim(MName_) .and.&
+            trim(Model%Type_) .eq. trim(MType_)) return
+       Model => Model%next
+    enddo
+
+    write(stdout,'(A,3(1x,A))')'Model Name or Model Type not found!',&
+         trim(MType_),'->',trim(MName_)
+    stop 99024
+
+  end function getModel_
+
+  subroutine getField_(self, ExpName, Field, istat)
+    class(scanModel), intent(in) :: self
+    character(len=*), intent(in) :: ExpName
+    real, pointer, intent(out) :: Field(:,:)
+    integer, optional, intent(out) :: istat
+
+    type(ModelType), pointer :: Model => null()
+
+    if(present(istat)) istat = 0
+    Model => self%FirstModel
+    do while(associated(Model))
+       if (trim(ExpName) .eq. trim(Model%ExpName_))then
+          Field => Model%Field
+          return
+       endif
+       Model => Model%next
+    enddo
+    if(present(istat)) then
+       istat = -1
+    else
+       write(stdout,'(A,1x,A)') 'unknow Experient Name',trim(ExpName)
+       stop 99025
+    endif
+  end subroutine getField_
+
+
+  subroutine getBitMap_(self, ExpName, BitMap, istat)
+    class(scanModel), intent(in) :: self
+    character(len=*), intent(in) :: ExpName
+    logical, pointer, intent(out) :: BitMap(:,:)
+    integer, optional, intent(out) :: istat
+
+    type(ModelType), pointer :: Model => null()
+
+
+    if(present(istat)) istat = 0
+    Model => self%FirstModel
+    do while(associated(Model))
+       if (trim(ExpName) .eq. trim(Model%ExpName_))then
+          BitMap => Model%BitMap
+          return
+       endif
+       Model => Model%next
+    enddo
+    if(present(istat)) then
+       istat = -1
+    else
+       write(stdout,'(A,1x,A)')'unknow Experiment Name',trim(ExpName)
+       stop 99026
+    endif
+  end subroutine getBitMap_
+
+  !------------------------------------------!
+  ! ModelType
+
+  function getModelVar_(self,VarName) result(varInfo)
+    class(ModelType),  intent(in) :: self
+    character(len=*), intent(in) :: VarName
+    type(EvalVar), pointer :: varInfo
+
+    type(EvalVar), pointer :: ModelVar => null()
+
+    VarInfo => self%FirstVar
+    do while(associated(VarInfo))
+       if(trim(VarName).eq.trim(VarInfo%Sys_)) return
+       VarInfo => VarInfo%next
+    enddo
+
+    write(stdout,'(A,1x,A)')'unknow variable Name',trim(VarName)
+
+  end function getModelVar_
+
+
+  function getDimInfo_(self, mdim) result(vdim)
+    class(ModelType),  intent(in   ) :: self
+    character(len=*), intent(in   ) :: mdim
+    integer, pointer :: vdim
+
+    type(gridDef), pointer :: grid => null()
+
+    grid => self%FirstGridInfo
+    do while(associated(grid))
+       if(trim(mdim) .eq. trim(grid%DName))then
+          vdim => grid%num
+          return
+       endif
+       grid => grid%next
+    enddo
+
+  end function getDimInfo_
+
+
+  function getDimVec_(self, mdim) result(vdim)
+    class(ModelType),  intent(in   ) :: self
+    character(len=*), intent(in   ) :: mdim
+    real, pointer :: vdim(:)
+
+    type(gridDef), pointer :: grid => null()
+    grid => self%FirstGridInfo
+    do while(associated(grid))
+       if(trim(mdim) .eq. trim(grid%DName))then
+          vdim => grid%coord
+          return
+       endif
+       grid => grid%next
+    enddo
+    write(stdout,'(A,1x,2A,1x,A)')'Dimension not found in',&
+         trim(self%Name_),'.model :',trim(mdim)
+    stop 99027
+
+  end function getDimVec_
+
+  function getMapping_(self, mdim) result(vdim)
+    class(ModelType),  intent(in   ) :: self
+    character(len=*), intent(in   ) :: mdim
+    character(len=ShortStr), pointer :: vdim
+
+    type(gridDef), pointer :: grid => null()
+
+    grid => self%FirstGridInfo
+    do while(associated(grid))
+       if(trim(mdim) .eq. trim(grid%DName))then
+          vdim => grid%mapping
+          return
+       endif
+       grid => grid%next
+    enddo
+
+  end function getMapping_
+
+
 
 
 END MODULE scan_Modelplugin

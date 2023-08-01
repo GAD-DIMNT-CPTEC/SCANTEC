@@ -34,7 +34,9 @@ $(srcdir)/scan_MetForm.o scan_MetForm.o: \
 
 $(srcdir)/scan_ModelPlugin.o scan_ModelPlugin.o: \
 	$(srcdir)/scan_ModelPlugin.f90 \
+	$(srcdir)/MathExpress.o \
 	$(srcdir)/m_inpak90.o \
+	$(srcdir)/m_ioutil.o \
 	$(srcdir)/m_constants.o \
 	$(srcdir)/scantec_module.o
 
@@ -49,7 +51,6 @@ $(srcdir)/scan_bstatistic.o scan_bstatistic.o: \
 	$(srcdir)/m_ioutil.o \
 	$(srcdir)/m_string.o \
 	$(srcdir)/scan_dataMOD.o \
-	$(srcdir)/scan_UtilsMOD.o \
 	$(srcdir)/scantec_module.o
 
 $(srcdir)/scan_coreMOD.o scan_coreMOD.o: \
@@ -95,8 +96,8 @@ $(srcdir)/scandrv.o scandrv.o: \
 
 $(srcdir)/scantec_module.o scantec_module.o: \
 	$(srcdir)/scantec_module.f90 \
-	$(srcdir)/m_ioutil.o \
-	$(srcdir)/MathExpress.o \
+	$(srcdir)/m_time.o \
+	$(srcdir)/scan_ModelPlugin.o \
 	$(srcdir)/m_constants.o
 
 $(srcdir)/scan_MathPlugin.o scan_MathPlugin.o: \
