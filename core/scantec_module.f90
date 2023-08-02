@@ -154,17 +154,25 @@ contains
     type(vars), pointer :: curr => null()
 
     logical :: found
-    character(len=smallStr) :: msg
-    character(len=NormalStr):: config
-    character(len=shortSTr) :: ModelName
-    character(len=shortSTr) :: FileName
-    character(len=shortSTr) :: ExpName
-    character(len=shortStr) :: timeStepType
+    character(len=smallStr)  :: msg
+    character(len=NormalStr) :: config
+    character(len=NormalSTr) :: ModelName
+    character(len=NormalSTr) :: FileName
+    character(len=shortSTr)  :: ExpName
+    character(len=shortStr)  :: timeStepType
 
 
     !-------------------------------------------------------------------!
 
     character(len=*), parameter :: myname_=myname//' :: Configure( )'
+
+    !
+    !  0. Hello
+    !
+
+#ifdef DEBUG
+    WRITE(6,'(     2A)')'Hello from ', myname_
+#endif
 
     !-------------------------------------------------------------------!
     ! Load descritor file
@@ -336,13 +344,13 @@ contains
     WRITE(*,'(A,F9.3)')'upper right longitude:',self%gridDesc( 8)
     WRITE(*,'(A,F9.3)')'resolution dx        :',self%gridDesc( 9)
     WRITE(*,'(A,F9.3)')'resolution dy        :',self%gridDesc(10)
-    WRITE(*,'(A,I9.3)')'number of points (X) :',self%gridDesc( 2)
-    WRITE(*,'(A,I9.3)')'number of points (Y) :',self%gridDesc( 3)            
+    WRITE(*,'(A,F9.3)')'number of points (X) :',self%gridDesc( 2)
+    WRITE(*,'(A,F9.3)')'number of points (Y) :',self%gridDesc( 3)            
 #endif
 
-    self%nxpt = self%gridDesc( 9)
-    self%nypt = self%gridDesc(10)
-    self%npts = self%gridDesc( 9) * self%gridDesc(10)
+    self%nxpt = self%gridDesc( 2)
+    self%nypt = self%gridDesc( 3)
+    self%npts = self%gridDesc( 2) * self%gridDesc( 3)
 
     self%udef = -999.9
 

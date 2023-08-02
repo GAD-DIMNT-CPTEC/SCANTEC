@@ -161,13 +161,13 @@ CONTAINS
 
     call scan_mathPlugin_Init()
 
-#ifdef DEBUG    
-   write(6,'(A,F9.3)')'history increment    :',scantec%hist_incr
-   write(6,'(A,F9.3)')'Analisys increment   :',scantec%aincr
-   write(6,'(A,F9.3)')'Forecast increment   :',scantec%aincr           
-   write(6,'(A,I9.3)')'N time steps         :',scantec%ntime_steps
-   write(6,'(A,I9.3)')'N forecast time steps :',scantec%ntime_forecast
-#endif
+!#ifdef DEBUG    
+!   write(6,'(A,F9.3)')'history increment    :',scantec%hist_incr
+!   write(6,'(A,F9.3)')'Analisys increment   :',scantec%aincr
+!   write(6,'(A,F9.3)')'Forecast increment   :',scantec%aincr           
+!   write(6,'(A,I9.3)')'N time steps         :',scantec%ntime_steps
+!   write(6,'(A,I9.3)')'N forecast time steps :',scantec%ntime_forecast
+!#endif
 
   END SUBROUTINE scan_Config_init
 

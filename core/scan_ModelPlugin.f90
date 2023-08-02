@@ -11,7 +11,7 @@ MODULE scan_Modelplugin
                        i90_label,  &
                        i90_perr,   &
                        i90_die,    &
-                       i90_fullRelease
+                       i90_Release
    use m_ioutil
    use m_constants, only: tinyStr, shortStr, normalStr, LongStr,&
                           i4, r4
@@ -279,10 +279,25 @@ Contains
       type(GridDef), pointer :: DimTmp => null()
       type(ModelType), pointer :: Model => null()
 
+    !
+    !  0. Hello
+    !
+
+#ifdef DEBUG
+    WRITE(6,'(     2A)')'Hello from ', myname_
+#endif
+
+      !
+      ! Get information about model post-processed files
+      !
+
+      Model => self%currModel
+
       !
       ! Open Configure File for model
       !
-
+      print*,trim(self%tables)
+      print*,trim(Model%Name_)
       fileModelConf = trim(self%tables)//'/'//trim(Model%Name_)//'.model'
       inquire(file=trim(fileModelConf),exist=found)
       if(.not.found)then
@@ -302,11 +317,6 @@ Contains
       write(stdout,'(A,1x,A)')char(27)//'[32;1mGetting model info from:',&
                               trim(Model%Name_)//'.model'//char(27)//'[m'
 #endif
-      !
-      ! Get information about model post-processed files
-      !
-
-      Model => self%currModel
 
       ! ftype: should be binary, grib or netcdf file
       call i90_getVal('ftype:',Model%fileType_)
@@ -424,7 +434,7 @@ Contains
          endif
       enddo
 
-      call i90_fullRelease(iret)
+      call i90_Release(iret)
       if(iret.lt.0)then
          call i90_perr(trim(myname),'i90_fullRelease', iret)
       endif
@@ -480,6 +490,15 @@ Contains
 !BOC
 
     character(len=*), parameter :: myname_ = myname//' :: GetDef(...)'
+
+    !
+    !  0. Hello
+    !
+
+#ifdef DEBUG
+    WRITE(6,'(     2A)')'Hello from ', myname_
+#endif
+
 
     GDef%DName = trim(label)
 
@@ -708,7 +727,6 @@ Contains
     character(len=ShortStr), pointer :: mapping => null()
     type(ModelType), pointer :: Model => null()
 
-    
 
     !verify if is the first model to include
     if(.not.associated(self%FirstModel))then

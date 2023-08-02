@@ -96,6 +96,16 @@ CONTAINS
     integer :: ny
     integer :: nvar
     type(ModelType), pointer :: Model => null()
+    character(len=*),parameter :: myname_=myname//' :: allocate_data_mem( )'
+
+    !
+    !  0. Hello
+    !
+
+#ifdef DEBUG
+    WRITE(6,'(     2A)')'Hello from ', myname_
+#endif
+
 
     nx   = scantec%nxpt
     ny   = scantec%nypt
@@ -168,6 +178,17 @@ CONTAINS
     character(len=LongStr) :: Reference    ! Reference File Name
     character(len=LongStr) :: Experiment   ! Experiment File Name
     character(len=LongStr) :: Climatology  ! Climatology File Name
+
+    character(len=*),parameter :: myname_=myname//' :: scan_ModelData( )'
+
+
+    !
+    !  0. Hello
+    !
+
+#ifdef DEBUG
+    WRITE(6,'(     2A)')'Hello from ', myname_
+#endif
 
 
     aymd = scantec%atime/100
@@ -257,7 +278,7 @@ CONTAINS
     real, allocatable :: iField(:), oField(:)
 
     ! Character variables
-    character(len=10) :: VarName, VarLevel
+    character(len=100) :: VarName, VarLevel
 
     ! Logical variables
     logical :: found
@@ -275,6 +296,16 @@ CONTAINS
     character(len=50), allocatable :: tokens(:)
     character(len=32), allocatable :: outExp(:)
     character(len=32) :: fmtt
+
+    !
+    !  0. Hello
+    !
+
+#ifdef DEBUG
+    WRITE(6,'(     2A)')'Hello from ', myname_
+#endif
+
+
 !
 !---------------------------------------------------------------------!
 !
@@ -308,11 +339,10 @@ CONTAINS
 
     ! Sanity Check
     if (xdef .ne. Mxdef .or. &
-         ydef .ne. Mydef .or. &
-         zdef .ne. Mzdef) then
+         ydef .ne. Mydef) then
        write(stderr,    '(A,1x,A)')trim(myname_),'error:'
        write(stderr,      '(2x,A)')'Dimensions not match!'
-       write(stderr,      '(2x,A)')'wrong info by xdef, ydef or zdef.'
+       write(stderr,      '(2x,A)')'wrong info by xdef, ydef.'
        write(stderr,'(2x,A,1x,2A)')'See ',trim(Model%Name_),'.model'
        call i90_die(trim(myname_))
     endif
