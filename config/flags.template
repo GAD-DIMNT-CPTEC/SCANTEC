@@ -1,0 +1,17 @@
+#---------------#
+# Template Compiler #
+#---------------#
+# default flags
+DFLT_FCFLAGS=""
+
+# double precision flags
+DBL_FCFLAGS=""
+
+# debug flags
+DBG_FCFLAGS=""
+
+# optimization flags
+OPT_FCFLAGS=""
+
+# profiling flags
+PRO_FCFLAGS=""

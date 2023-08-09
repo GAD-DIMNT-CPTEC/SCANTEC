@@ -1,0 +1,18 @@
+#--------------#
+# GNU Compiler #
+#--------------#
+# default flags
+DFLT_FCFLAGS="--free-form -ffree-line-length-none -fno-second-underscore -fno-range-check"
+
+# double precision flags
+DBL_FCFLAGS="-fdefault-integer-8 -fdefault-real-8"
+
+# debug flags
+DBG_FCFLAGS="-DDEBUG -g3 -fbacktrace -O0 -ggdb3 -fvar-tracking -fvar-tracking-assignments -Wall -Wextra -pedantic"
+
+# optimization flags
+OPT_FCFLAGS="-O3"
+
+# profiling flags
+PRO_FCFLAGS="-pg"
+

@@ -1,0 +1,18 @@
+#---------------#
+# Cray Compiler #
+#---------------#
+# default flags
+DFLT_FCFLAGS="-ffree -N 255 -h nosecond_underscore -emf"                                                                                                               
+
+# double precision flags
+DBL_FCFLAGS="-sinteger64 -sreal64"
+
+# debug flags
+DBG_FCFLAGS="-G0 -m2 -R bcdsp"
+
+# optimization flags
+OPT_FCFLAGS="-O3"
+
+# profiling flags
+PRO_FCFLAGS=""
+

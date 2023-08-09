@@ -1,0 +1,17 @@
+#---------------#
+# ifort Compiler #
+#---------------#
+# default flags
+DFLT_FCFLAGS=""
+
+# double precision flags
+DBL_FCFLAGS=""
+
+# debug flags
+DBG_FCFLAGS="-DDEBUG -g -Wall -traceback"
+
+# optimization flags
+OPT_FCFLAGS="-fast"
+
+# profiling flags
+PRO_FCFLAGS="-pg"
