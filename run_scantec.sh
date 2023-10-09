@@ -296,6 +296,8 @@ arq_clim=${dir_data}/datain/climatologia/climatologia50yr.%mc.ctl
 #--------------------------------------------------------------------#
 MODELCASE=" <<<<< TESTCASE WRF  >>>>>>"
 
+variavel=3
+
 # Diretório de saída
 dir_test=TestWRF
 
