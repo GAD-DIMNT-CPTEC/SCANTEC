@@ -40,11 +40,11 @@ then
   echo "A opção TestCase não foi informada!"
   echo ""
   echo "Uso:"
-  echo "./run_scantec.sh 1 - TestCase do BRAMS     (Jul/2023)"
-  echo "./run_scantec.sh 2 - TestCase do ETA       (Jul/2023)"  
-  echo "./run_scantec.sh 3 - TestCase do WRF       (Jul/2023)"
-  echo "./run_scantec.sh 4 - TestCase do BAM       (Ago/2014)"
-  echo "./run_scantec.sh 5 - Compara WRF/ETA/BRAMS (Jul/2023)"
+  echo "./run_scantec.sh 1 - TestCase do BRAMS         (Jul/2023)"
+  echo "./run_scantec.sh 2 - TestCase do ETA           (Jul/2023)"  
+  echo "./run_scantec.sh 3 - TestCase do WRF           (Jul/2023)"
+  echo "./run_scantec.sh 4 - TestCase do BAM           (Jul/2023)"
+  echo "./run_scantec.sh 5 - Compara WRF/ETA/BRAMS/BAM (Jul/2023)"
   echo "./run_scantec.sh 6 - Dados definidos pelo usuário"
   echo "" 
   exit 1
@@ -58,11 +58,11 @@ else
     echo "A opção TestCase desconhecida!"
     echo ""
     echo "Uso:"
-    echo "./run_scantec.sh 1 - TestCase do BRAMS     (Jul/2023)"
-    echo "./run_scantec.sh 2 - TestCase do ETA       (Jul/2023)"
-    echo "./run_scantec.sh 3 - TestCase do WRF       (Jul/2023)"
-    echo "./run_scantec.sh 4 - TestCase do BAM       (Ago/2014)"
-    echo "./run_scantec.sh 5 - Compara WRF/ETA/BRAMS (Jul/2023)"
+    echo "./run_scantec.sh 1 - TestCase do BRAMS         (Jul/2023)"
+    echo "./run_scantec.sh 2 - TestCase do ETA           (Jul/2023)"
+    echo "./run_scantec.sh 3 - TestCase do WRF           (Jul/2023)"
+    echo "./run_scantec.sh 4 - TestCase do BAM           (Jul/2023)"
+    echo "./run_scantec.sh 5 - Compara WRF/ETA/BRAMS/BAM (Jul/2023)"
     echo "./run_scantec.sh 6 - Dados definidos pelo usuário"
     echo ""
     exit 1
@@ -383,12 +383,12 @@ arq_clim=${dir_data}/datain/climatologia/climatologia50yr.%mc.ctl
 # Configuraçõees do TestCase BAM (NÃO ALTERAR!)                      #
 #--------------------------------------------------------------------#
 MODELCASE=" <<<<< TESTCASE BAM  >>>>>>"
+
+variavel=4
+
 # diretório de saída
 dir_test=TestBAM
 
-echo 'Ainda em desenvolvimento'
-
-exit 
 
 # Verificação de existencia de arquivos
 cd ${dir_data}/datain/TestBAM
@@ -398,16 +398,17 @@ tamanho_BAM=$(du -sh ${dir_data}/datain/TestBAM | awk '{print $1}')
 tamanho_clima=$(du -sh ${dir_data}/datain/climatologia | awk '{print $1}')
 
 
-if [ ${tamanho_BAM} = "4,0G" ]; then
+if [ ${tamanho_BAM} = "9,7G" ]; then
 
         echo ''
         echo 'Download já efetuado. Iniciando os trabalhos...'
         echo ''
 else
         echo ''
-        echo 'Iniciando o download do TestCase do modelo WRF. '
+        echo 'Iniciando o download do TestCase do modelo BAM. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/WRF/" >> TestETA.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/BAM_T666L64/" >> TestBAM.log 2>&1
+	rm -r old
 fi
 
 if [ ${tamanho_clima} = "159M" ]; then
@@ -428,7 +429,7 @@ fi
 
 # Datas
 datai=2023070100
-dataf=2023070500
+dataf=2023070700
 passo_analise=24
 passo_previsao=24
 total_previsao=120
@@ -444,22 +445,22 @@ dy=0.4
 # Quantidade de experimentos
 quant_exp=1
 
-# Referências
+# Referências 
 # Plugin modelo
-pl_model_refer=WRF_cpt_07KM_SCAN_5levs
+pl_model_refer=BAM_global_20km_SCAN_5levs
 
 # Análises
-arq_refer=${dir_data}/datain/${dir_test}/%y4%m2%d200/WRF_cpt_07KM_SCAN_%y4%m2%d200_%y4%m2%d200.ctl
+arq_refer=${dir_data}/datain/TestBAM/%y4%m2%d200/BAM_global_20km_SCAN_%y4%m2%d200_%y4%m2%d200.ctl
 
 # Experimento
 # Plugin experimento
-pl_model_exper=WRF_cpt_07KM_SCAN_5levs
+pl_model_exper=BAM_global_20km_SCAN_5levs
 
 # Previsões
-arq_prev=${dir_data}/datain/${dir_test}/%y4%m2%d200/WRF_cpt_07KM_SCAN_%y4%m2%d200_%y4%m2%d200.ctl
+arq_prev=${dir_data}/datain/TestBAM/%y4%m2%d200/BAM_global_20km_SCAN_%y4%m2%d200_%y4%m2%d200.ctl
 
 # Climatologia
-use_climatologia=0
+use_climatologia=1
 arq_clim=${dir_data}/datain/climatologia/climatologia50yr.%mc.ctl
 
 ;;
@@ -499,6 +500,10 @@ else
         echo ''
         cd ${dir_data}/datain/TestETA
         wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/ETA/" >> TestETA.log 2>&1
+	echo ''
+        echo 'Download concluido.'
+        echo ''
+
 fi
 
 if [ ${tamanho_WRF} = "5,4G" ]; then
@@ -512,6 +517,10 @@ else
         echo ''
         cd ${dir_data}/datain/TestWRF
         wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/WRF/" >> TestWRF.log 2>&1
+	echo ''
+        echo 'Download concluido.'
+        echo ''
+
 fi
 
 if [ ${tamanho_BRAMS} = "5,0G" ]; then
@@ -527,6 +536,22 @@ else
 	echo ''
 	echo 'Download Concluído'
 	echo ''
+fi
+
+if [ ${tamanho_BAM} = "9,7G" ]; then
+
+        echo ''
+        echo 'Download já efetuado. Iniciando os trabalhos...'
+        echo ''
+else
+        echo ''
+        echo 'Iniciando o download do TestCase do modelo BAM. '
+        echo ''
+	cd ${dir_data}/datain/TestBAM
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/BAM_T666L64/" >> TestBAM.log 2>&1
+	echo ''
+        echo 'Download concluido.'
+        echo ''	
 fi
 
 if [ ${tamanho_clima} = "159M" ]; then
@@ -561,7 +586,7 @@ dx=0.4
 dy=0.4
 
 # Quantidade de experimentos
-quant_exp=3
+quant_exp=4
 
 # Referências
 # Plugin modelo
@@ -577,11 +602,14 @@ arq_refer=${dir_data}/datain/TestWRF/%y4%m2%d200/WRF_cpt_07KM_SCAN_%y4%m2%d200_%
 pl_model_exper=WRF_cpt_07KM_SCAN_5levs
 pl_model_exper1=BRAMS_ams_08km_SCAN_5levs
 pl_model_exper2=Eta_ams_08km_SCAN_5levs
+pl_model_exper3=BAM_global_20km_SCAN_5levs
 
 # Previsões
 arq_prev=${dir_data}/datain/TestWRF/%y4%m2%d200/WRF_cpt_07KM_SCAN_%y4%m2%d200_%y4%m2%d200.ctl
 arq_prev1=${dir_data}/datain/TestBRAMS/%y4%m2%d200/BRAMS_ams_08km_SCAN_%y4%m2%d200_%y4%m2%d200.ctl
 arq_prev2=${dir_data}/datain/TestETA/%y4%m2%d200/Eta_ams_08km_SCAN_%y4%m2%d200_%y4%m2%d200.ctl
+arq_prev3=${dir_data}/datain/TestBAM/%y4%m2%d200/BAM_global_20km_SCAN_%y4%m2%d200_%y4%m2%d200.ctl
+
 
 # Climatologia
 use_climatologia=1
@@ -671,11 +699,13 @@ echo ""
 echo " Plugin do experimento: ${pl_model_exper}  "
 echo " ${pl_model_exper1}                       "
 echo " ${pl_model_exper2}                       "
+echo " ${pl_model_exper3}                       "
 echo ""
 echo " Previsões:                                "
 echo " ${arq_prev}                               " 
 echo " ${arq_prev1}                              "
-echo " ${arq_prev2}                              "  
+echo " ${arq_prev2}                              "
+echo " ${arq_prev3}                              "   
 echo ""
 echo " Uso climatologia: ${use_climatologia}     "
 echo ""
@@ -705,12 +735,13 @@ echo ""
 
 if [ ${variavel} -eq 5 ]; then
 	linha_out="${pl_model_exper} WRF ${arq_prev}"
-	linha_out2="${pl_model_exper1} BRAMS ${arq_prev1}"	
-	linha_out3="${pl_model_exper2} ETA ${arq_prev2}"
+	linha_out1="${pl_model_exper1} BRAMS ${arq_prev1}"	
+	linha_out2="${pl_model_exper2} ETA ${arq_prev2}"
+	linha_out3="${pl_model_exper3} BAM ${arq_prev3}"
 	linha_out4='::'	
 else
 	linha_out="${pl_model_exper} EXP01 ${arq_prev}"
-	linha_out2='::'
+	linha_out1='::'
 fi
 
 	
@@ -785,6 +816,7 @@ Reference file: ${arq_refer}
 Experiments: ${quant_exp}
 #ModelId Name Diretory File_Name_with_mask
 ${linha_out}
+${linha_out1}
 ${linha_out2}
 ${linha_out3}
 ${linha_out4}
