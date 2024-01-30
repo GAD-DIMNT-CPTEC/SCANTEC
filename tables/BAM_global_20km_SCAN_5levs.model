@@ -1,7 +1,7 @@
 ftype: grib
 undef: 1e+20
-xdim:  1019 linear 269.326050 0.070000
-ydim:  1081 linear -57.901371 0.070000
+xdim:  2000 linear 0.000000 0.180000
+ydim:  1000 linear -89.910004 0.180000
 zdim:    5 levels 1000 925 850 500 250
 #------------------------------------------------------#
 # A tabela de variáveis é preenchida da seguinte forma
@@ -11,22 +11,22 @@ zdim:    5 levels 1000 925 850 500 250
 # nas variáveis pré-existentes do modelo. Para o uso das funções veja o docu-
 # mento funcoes.readme
 vars:
-psnm:000 prmslmsl:1000
-temp:850 tmpprs:850
-temp:500 tmpprs:500
-temp:250 tmpprs:250
-agpl:925 pwatclm:1000
-umre:925 rhprs:925 
-umre:850 rhprs:850
-umre:500 rhprs:500
-umre:250 rhprs:250
-zgeo:850 hgtprs:850
-zgeo:500 hgtprs:500
-zgeo:250 hgtprs:250
-uvel:850 ugrdprs:850
-uvel:500 ugrdprs:500
-uvel:250 ugrdprs:250
-vvel:850 vgrdprs:850
-vvel:500 vgrdprs:500
-vvel:250 vgrdprs:250
+psnm:000 psnm:1000
+temp:850 temp:850
+temp:500 temp:500
+temp:250 temp:250
+agpl:925 agpl:1000
+umre:925 umrl:925 
+umre:850 umrl:850
+umre:500 umrl:500
+umre:250 umrl:250 
+zgeo:850 zgeo:850
+zgeo:500 zgeo:500
+zgeo:250 zgeo:250
+uvel:850 uvel:850
+uvel:500 uvel:500
+uvel:250 uvel:250
+vvel:850 vvel:850
+vvel:500 vvel:500
+vvel:250 vvel:250
 ::
