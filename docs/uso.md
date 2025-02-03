@@ -493,14 +493,26 @@ Teste de uso do documento local.
 
     Este procedimento não é necessário para a utilização do SCANTEC nas máquinas virtuais do CPTEC.
 
-## Utilização do SCANTEC para arquivos do tipo NETCDF. 
+Utilização do SCANTEC neste repositório e conversão de dados NetCDF
 
-Os arquivos lidos pelo SCANTEC precisam estar nos formatos .bin ou .grb. Caso os dados estejam em formato NetCDF (.nc), é necessário convertê-los.
+Os arquivos lidos pelo SCANTEC precisam estar nos formatos .bin ou .grb. Caso os dados estejam no formato NetCDF (.nc), é necessário convertê-los.
 
-No diretório scripts_uteis, há um script chamado nc2grb.sh, que realiza a conversão de arquivos .nc para um conjunto de arquivos compatíveis (.grb, .ctl, .gmp). Esse script utiliza o lats4d.sh, que permite recortar os dados espacialmente, temporalmente, por níveis de pressão e por variáveis, facilitando o processamento dos arquivos brutos.
+No diretório scripts_uteis, há um script chamado nc2grb.sh, que converte arquivos .nc para um conjunto de arquivos compatíveis (.grb, .ctl, .gmp). Esse script utiliza o lats4d.sh, que permite recortar os dados espacialmente, temporalmente, por níveis de pressão e por variáveis, facilitando o processamento dos arquivos brutos.
 
-A versão SCANTEC-MASTER apresenta outros arquivos de TESTCASE (BRAMS, BAM, ETA, WRF, MONAN e um comparativo entre BRAMS, BAM, ETA, WRF).
+A versão SCANTEC-MASTER inclui arquivos de TESTCASE para diversos modelos meteorológicos (BRAMS, BAM, ETA, WRF, MONAN), além de um comparativo entre BRAMS, BAM, ETA e WRF.
+
 ![image](https://github.com/user-attachments/assets/eb87d3b4-4328-41e1-8e0d-57225ff8cd44)
 
+Se você estiver na máquina Itapemirim, não é necessário fazer o download dos arquivos do TestCase. Porém, caso esteja utilizando uma máquina remota (como um notebook), o download é obrigatório.
 
+O download pode ser feito automaticamente ao selecionar uma das opções do TestCase. Por exemplo, para baixar os dados do BRAMS, utilize:
+
+./run_scantec.sh 1
+
+Isso iniciará o download dos dados do TestCase do BRAMS.
+
+Lembrando que script run_scantec.sh está no diretório SCANTEC-MASTER. Os dados de entrada estão no diretório datain e os dados de saída estão no diretório dataout.
+
+
+## Saída e resultado
 
