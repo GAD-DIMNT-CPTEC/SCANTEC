@@ -92,3 +92,69 @@ Para a instalação do SCANTEC, realize os procedimentos a seguir. ==Não se esq
         * Acompanhe a compilação com as informações no terminal;
         * Verifique o sucesso do processo identificando o arquivo executável `SCANTEC-2.1.0/bin/scantec.x`;
         * Caso algum problema seja detectado ou seja necessário compilar novamente, utilize a opção `1` para limpar a compilação anterior e reinicie o processo.
+
+## Instalação do SCANTEC em maquina leptops no windows via WSL
+
+A instalação do SCANTEC em máquinas com o sistema operacional Windows pode ser feita através do WSL.
+Um guia de instalação mais detalhado pode ser encontrado através do link: https://learn.microsoft.com/pt-br/windows/wsl/install
+
+### WSL
+
+O WSL (Windows Subsystem for Linux) é uma funcionalidade do Windows que permite executar um ambiente Linux diretamente no Windows, sem a necessidade de uma máquina virtual. Ele possibilita a execução de comandos e ferramentas do Linux nativamente, proporcionando integração entre os sistemas operacionais e facilitando o desenvolvimento de software que precisa utilizar recursos do Linux enquanto ainda opera no ambiente Windows.
+
+### Requisitos para instalação
+
+Para instalar o WSL você deve estar executando o Windows 10 ou versões superiores.
+
+### Comandos para a instalação
+
+No Prompt de Comando do Windows digite a seguinte linha de código:
+```
+wsl --install
+```
+![image](https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER/assets/71741679/72c1201d-aa1b-4751-b788-aa43ffc8fb28)
+
+
+A versão defaut que será instalada será UBUNTU. Reinicie a máquina para que as novas atualizações sejam feitas. Com a máquina reiniciada, busque pela aplicação linux instalada e faça o devido processo de "cadastro" de login e senha.
+
+![image](https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER/assets/71741679/11fa35a7-be67-4d4f-95cc-fd5a2c7193a5)
+Pronto! Um terminal linux está instalado em sua máquina.
+
+### Instalação do SCANTEC
+
+Entre na página https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER e procure pela barra azul Code. Vá na aba HTTPS, copie o endereço https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER.git e digite o código no terminal linux
+
+```
+git clone https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER.git
+```
+
+![image](https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER/assets/71741679/6b5618af-e7ab-42a4-9c53-d4aa435f6c51)
+
+Instale as bibliotecas necessárias. (você irá precisar da senha que você cadastrou). No terminal linux digite as seguintes linhas de código:
+```
+sudo apt install make
+```
+![image](https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER/assets/71741679/63117044-8b0c-4454-b993-da725b3e91c0)
+```
+sudo apt update
+
+sudo apt install gfortran
+```
+Verifique a instalação do Gfortran com o comando:
+```
+gfortran --version
+```
+![image](https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER/assets/71741679/9b162cfc-fb5c-43ce-9509-7240b88a7944)
+
+### Compilação do SCANTEC
+
+Com as bibliotecas e compilador instalados, entre no diretório onde o SCANTEC foi instalado.
+
+Digite o comando no terminal linux
+```
+./install
+```
+Escolha a opção 1 para limpar o ambiente. Faça esse procedimento novamente porém agora digite 2 (opção para compilação do Gfortran)
+![image](https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER/assets/71741679/1aa5f665-93d6-4acb-9d2d-76bb81551a43)
+
+
