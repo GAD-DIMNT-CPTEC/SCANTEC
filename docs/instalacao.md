@@ -16,12 +16,7 @@ A máquina Itapemirim (baseada no Ubuntu 18.04, kernel 4.4.0-200-generic) foi ut
 
 !!! info "Informação"
 
-    Para a [release do SCANTEC V2.0.0](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/releases/tag/V2.0.0), há outros arquivos que fazem parte da distribuição e que podem ser úteis no entendimento e utilização do SCANTEC:
-
-    * `README_SCANTEC.2.0.0.pdf`: uma cópia do manual de uso para a V2.0.0;
-    * `Tutorial.tar`: arquivos do Jupyter notebook para uso do SCANTEC e SCANPLOT (um sistema de visualização dos resultados do SCANTEC).
-
-    Embora estes arquivos pertençam à release V2.0.0, eles podem também ser considerados pelos usuários caso as informações apresentadas neste manual não sejam suficientes.
+    Essa versão contém algumas atualizações como um script para conversão de dados NETCDF para .grb além de atualização dos dados de teste.
 
 Para a instalação do SCANTEC, realize os procedimentos a seguir. ==Não se esqueça de substituir as palavras `<grupo>` e `<usuario>` pelos nomes do seu grupo e usuário, respectivamente.==
 
