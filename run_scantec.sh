@@ -45,12 +45,13 @@ then
   echo "./run_scantec.sh 3 - TestCase do WRF           (Jul/2023)"
   echo "./run_scantec.sh 4 - TestCase do BAM           (Jul/2023)"
   echo "./run_scantec.sh 5 - Compara WRF/ETA/BRAMS/BAM (Jul/2023)"
-  echo "./run_scantec.sh 6 - Dados definidos pelo usuário"
+  echo "./run_scantec.sh 6 - MONAN                     (Jan/2025)"
+  echo "./run_scantec.sh 7 - Dados definidos pelo usuário"
   echo "" 
   exit 1
 else
   export TESTCASE=${1} 
-  if [ ${TESTCASE} -gt 6 ]
+  if [ ${TESTCASE} -gt 7 ]
   then
     echo ""
     echo "Sistema Comunitário de Avaliação de modelos Numéricos de Tempo e Clima (SCANTEC)"
@@ -63,7 +64,8 @@ else
     echo "./run_scantec.sh 3 - TestCase do WRF           (Jul/2023)"
     echo "./run_scantec.sh 4 - TestCase do BAM           (Jul/2023)"
     echo "./run_scantec.sh 5 - Compara WRF/ETA/BRAMS/BAM (Jul/2023)"
-    echo "./run_scantec.sh 6 - Dados definidos pelo usuário"
+    echo "./run_scantec.sh 6 - MONAN                     (Jan/2025)"
+    echo "./run_scantec.sh 7 - Dados definidos pelo usuário"
     echo ""
     exit 1
   fi
@@ -94,6 +96,7 @@ mkdir -p ${dir_data}/datain/TestBRAMS
 mkdir -p ${dir_data}/datain/TestETA
 mkdir -p ${dir_data}/datain/TestWRF
 mkdir -p ${dir_data}/datain/TestBAM
+mkdir -p ${dir_data}/datain/TestMONAN
 
 # Data e arquivo de log
 RUNTM=$(date "+%Y%m%d.%H.%M")
@@ -137,7 +140,7 @@ else
 	echo ''
 	echo 'Iniciando o download do TestCase do modelo BRAMS.'
 	echo ''
-	wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/BRAMS/" >> TestBRAMS.log 2>&1
+#	wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BRAMS/" >> TestBRAMS.log 2>&1
 	echo ''
 	echo 'Download Concluído'
 	echo ''
@@ -231,7 +234,8 @@ else
 	echo ''
         echo 'Iniciando o download do TestCase do modelo ETA. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/ETA/" >> TestETA.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/testcase/ETA/" 
+#>> TestETA.log 2>&1
 fi
 
 if [ ${tamanho_clima} = "159M" ]; then
@@ -465,6 +469,8 @@ arq_clim=${dir_data}/datain/climatologia/climatologia50yr.%mc.ctl
 
 ;;
 
+
+
 [5])
 
 #--------------------------------------------------------------------#
@@ -620,6 +626,65 @@ arq_clim=${dir_data}/datain/climatologia/climatologia50yr.%mc.ctl
 [6])
 
 #--------------------------------------------------------------------#
+# Configuraçõees TestCase MONAN (NÃO ALTERAR!)          #
+#--------------------------------------------------------------------#
+MODELCASE=" <<<<< TESTCASE MONAN  >>>>>>"
+
+# Diretório de saída
+dir_test=TestMONAN
+
+#Variável para configuração do scantec.conf
+variavel=5
+
+
+
+
+
+# Datas
+datai=2024021400
+dataf=2024021900
+passo_analise=24
+passo_previsao=24
+total_previsao=96
+
+# Regiões
+lat_low=-90.000000
+lon_low=-180.0000
+lat_up=90.0000
+lon_up=179.0000
+dx=0.4
+dy=0.4
+
+# Quantidade de experimentos
+quant_exp=1
+
+# Referências 
+# Plugin modelo
+pl_model_refer=MONAN_global_SCAN
+
+# Análises
+arq_refer=${dir_data}/datain/${dir_test}/MONAN_v1.1.0/%y4%m2%d200/global/MONAN_global_v1_%y4%m2%d200-%y4%m2%d200-reg.ctl
+                                                                         #MONAN_global_v1_2024021400-2024021400-reg.ctl
+
+# Experimento
+# Plugin experimento
+pl_model_exper=MONAN_global_SCAN
+
+# Previsões
+arq_prev=${dir_data}/datain/${dir_test}/MONAN_v1.1.0/%y4%m2%d200/global/MONAN_global_v1_%y4%m2%d200-%y4%m2%d200-reg.ctl
+
+
+# Climatologia
+use_climatologia=1
+arq_clim=${dir_data}/datain/climatologia/climatologia50yr.%mc.ctl
+i
+
+
+
+;;
+
+[7])
+#--------------------------------------------------------------------#
 # Configurações do usuário (ALTERAR O QUE FOR NECESSÁRIO)            #
 #--------------------------------------------------------------------#
 
@@ -733,7 +798,7 @@ echo ""
 
 # Condição para a comparação dos TestCase
 
-if [ ${variavel} -eq 5 ]; then
+if [ ${variavel} -eq 6 ]; then
 	linha_out="${pl_model_exper} WRF ${arq_prev}"
 	linha_out1="${pl_model_exper1} BRAMS ${arq_prev1}"	
 	linha_out2="${pl_model_exper2} ETA ${arq_prev2}"
