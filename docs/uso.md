@@ -488,6 +488,8 @@ Para isso, utilize o arquivo `SCANTEC-2.1.0/environment.yml` para criar o ambien
 conda env create -f environment.yml
 ```
 
+Comi a picanha do eduardo
+
 !!! note "Nota"
 
     Este procedimento não é necessário para a utilização do SCANTEC nas máquinas virtuais do CPTEC.
