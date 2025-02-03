@@ -37,22 +37,22 @@ Para a instalação do SCANTEC, realize os procedimentos a seguir. ==Não se esq
     === "Comando"
         ```bash linenums="1"
         cd /scripts/<grupo>/<usuario>
-        wget https://github.com/GAM-DIMNT-CPTEC/SCANTEC/archive/refs/tags/V2.1.0.tar.gz
-        tar -zxvf V2.1.0.tar.gz
+        git clone https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER.git
+        cd SCANTEC-MASTER
         ```
 
     !!! note "Nota"
 
         Embora o nome do pacote baixado seja `V2.1.0.tar.gz`, o comando `tar -zxvf V2.1.0.tar.gz` criará o diretório `SCANTEC-2.1.0` no local escolhido pelo usuário.
 
-3. Entre no diretório criado `SCANTEC-2.1.0`:
+4. Entre no diretório criado `SCANTEC-2.1.0`:
 
     === "Comando"
         ```bash linenums="1"
-        cd SCANTEC-2.1.0
+        cd SCANTEC-MASTER
         ```
 
-4. Carregue o ambiente `SCANTEC` para a compilação do SCANTEC:
+5. Carregue o ambiente `SCANTEC` para a compilação do SCANTEC:
 
     * Na máquina Itapemirim, carregue o ambiente (disponível na máquina) com o comando:    
 
@@ -63,7 +63,7 @@ Para a instalação do SCANTEC, realize os procedimentos a seguir. ==Não se esq
 
     * Em outras máquinas esta etapa não é necessária, mas certifique-se de que há pelo menos o compilador GNU Fortran versão 9 ou superior instalado.
 
-5. Execute o script `install`:
+6. Execute o script `install`:
 
     === "Comando"
         ```bash linenums="1"
