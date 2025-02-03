@@ -26,7 +26,6 @@
 #      15-06-2020 - Carlos Bastarz - Adaptações para o novo namelist
 #      18-06-2020 - Luiz Sapucci   - ajustes antes de publicação da versão beta
 #      11-11-2020 - Luiz Sapucci   - ajustes do diretorio dados dados/das na release
-#      03-02-2025 - Victor Ranieri - Ajustes dos TestCases para usuarios externos, inclusão do modelo MONAN.
 #
 #EOP  
 #----------------------------------------------------------------------------------#
@@ -188,7 +187,6 @@ pl_model_refer=BRAMS_ams_08km_SCAN_5levs
 
 # Análises
 arq_refer=${dir_data}/datain/TestBRAMS/%y4%m2%d200/BRAMS_ams_08km_SCAN_%y4%m2%d200_%y4%m2%d200.ctl
-#arq_refer=${dir_data}/datain/TestERA5/%y4%m2%d200/ERA5_SCAN_%y4%m2%d200_%y4%m2%d200.ctl
 
 # Experimentos
 # Plugin experimento
@@ -235,7 +233,7 @@ else
 	echo ''
         echo 'Iniciando o download do TestCase do modelo ETA. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/ETA/" 
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/testcase/ETA/" 
 #>> TestETA.log 2>&1
 fi
 
@@ -323,7 +321,7 @@ else
         echo ''
         echo 'Iniciando o download do TestCase do modelo WRF. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/WRF/" >> TestWRF.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/WRF/" >> TestWRF.log 2>&1
 fi
 
 if [ ${tamanho_clima} = "159M" ]; then
@@ -412,7 +410,7 @@ else
         echo ''
         echo 'Iniciando o download do TestCase do modelo BAM. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BAM_T666L64/" >> TestBAM.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/BAM_T666L64/" >> TestBAM.log 2>&1
 	rm -r old
 fi
 
@@ -506,7 +504,7 @@ else
         echo 'Iniciando o download do TestCase do modelo ETA. '
         echo ''
         cd ${dir_data}/datain/TestETA
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/ETA/" >> TestETA.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/ETA/" >> TestETA.log 2>&1
 	echo ''
         echo 'Download concluido.'
         echo ''
@@ -523,7 +521,7 @@ else
         echo 'Iniciando o download do TestCase do modelo WRF. '
         echo ''
         cd ${dir_data}/datain/TestWRF
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/WRF/" >> TestWRF.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/WRF/" >> TestWRF.log 2>&1
 	echo ''
         echo 'Download concluido.'
         echo ''
@@ -539,7 +537,7 @@ else
 	echo 'Iniciando o download do TestCase do modelo BRAMS.'
 	echo ''
 	cd ${dir_data}/datain/TestBRAMS
-	wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BRAMS/" >> TestBRAMS.log 2>&1
+	wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/BRAMS/" >> TestBRAMS.log 2>&1
 	echo ''
 	echo 'Download Concluído'
 	echo ''
@@ -555,7 +553,7 @@ else
         echo 'Iniciando o download do TestCase do modelo BAM. '
         echo ''
 	cd ${dir_data}/datain/TestBAM
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BAM_T666L64" >> TestBAM.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/BAM_T666L64/" >> TestBAM.log 2>&1
 	echo ''
         echo 'Download concluido.'
         echo ''	
@@ -664,15 +662,15 @@ quant_exp=1
 pl_model_refer=MONAN_global_SCAN
 
 # Análises
-arq_refer=${dir_data}/datain/${dir_test}/MONAN_v1.1.0/%y4%m2%d200/global/MONAN_global_v1_%y4%m2%d200-%y4%m2%d200-reg.ctl
-                                                                         #MONAN_global_v1_2024021400-2024021400-reg.ctl
+arq_refer=${dir_data}/datain/${dir_test}/%y4%m2%d200/global/MONAN_global_v1_%y4%m2%d200-%y4%m2%d200-reg.ctl
+                                                                         
 
 # Experimento
 # Plugin experimento
 pl_model_exper=MONAN_global_SCAN
 
 # Previsões
-arq_prev=${dir_data}/datain/${dir_test}/MONAN_v1.1.0/%y4%m2%d200/global/MONAN_global_v1_%y4%m2%d200-%y4%m2%d200-reg.ctl
+arq_prev=${dir_data}/datain/${dir_test}/%y4%m2%d200/global/MONAN_global_v1_%y4%m2%d200-%y4%m2%d200-reg.ctl
 
 
 # Climatologia
