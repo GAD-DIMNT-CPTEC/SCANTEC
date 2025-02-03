@@ -492,3 +492,15 @@ Teste de uso do documento local.
 !!! note "Nota"
 
     Este procedimento não é necessário para a utilização do SCANTEC nas máquinas virtuais do CPTEC.
+
+## Utilização do SCANTEC para arquivos do tipo NETCDF. 
+
+Os arquivos lidos pelo SCANTEC precisam estar nos formatos .bin ou .grb. Caso os dados estejam em formato NetCDF (.nc), é necessário convertê-los.
+
+No diretório scripts_uteis, há um script chamado nc2grb.sh, que realiza a conversão de arquivos .nc para um conjunto de arquivos compatíveis (.grb, .ctl, .gmp). Esse script utiliza o lats4d.sh, que permite recortar os dados espacialmente, temporalmente, por níveis de pressão e por variáveis, facilitando o processamento dos arquivos brutos.
+
+A versão SCANTEC-MASTER apresenta outros arquivos de TESTCASE (BRAMS, BAM, ETA, WRF, MONAN e um comparativo entre BRAMS, BAM, ETA, WRF).
+![image](https://github.com/user-attachments/assets/eb87d3b4-4328-41e1-8e0d-57225ff8cd44)
+
+
+
