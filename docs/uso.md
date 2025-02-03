@@ -514,5 +514,6 @@ Isso iniciará o download dos dados do TestCase do BRAMS.
 Lembrando que script run_scantec.sh está no diretório SCANTEC-MASTER. Os dados de entrada estão no diretório datain e os dados de saída estão no diretório dataout.
 
 
-## Saída e resultado
+## Saída e resultados
 
+Os resultados dos experimentos são armazenados no diretório dataout. Nele, você encontrará estatísticas como RMSE, BIAS e ACOR (correlação de anomalia), disponíveis em tabelas (arquivos T.scan). Além disso, há arquivos .ctl, que podem ser abertos e visualizados no software GrADS.
