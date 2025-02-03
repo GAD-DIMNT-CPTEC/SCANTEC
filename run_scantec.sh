@@ -26,7 +26,7 @@
 #      15-06-2020 - Carlos Bastarz - Adaptações para o novo namelist
 #      18-06-2020 - Luiz Sapucci   - ajustes antes de publicação da versão beta
 #      11-11-2020 - Luiz Sapucci   - ajustes do diretorio dados dados/das na release
-#      03-02-2025 - Victor Ranieri - Ajustes dos TestCases para usuarios externos, inclusão do modelo MONAN
+#      03-02-2025 - Victor Ranieri - Ajustes dos TestCases para usuarios externos, inclusão do modelo MONAN.
 #
 #EOP  
 #----------------------------------------------------------------------------------#
