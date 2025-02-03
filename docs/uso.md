@@ -487,8 +487,7 @@ Para isso, utilize o arquivo `SCANTEC-2.1.0/environment.yml` para criar o ambien
 ```
 conda env create -f environment.yml
 ```
-
-Comi a picanha do eduardo
+Teste de uso do documento local.
 
 !!! note "Nota"
 
