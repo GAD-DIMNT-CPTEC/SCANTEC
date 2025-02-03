@@ -26,6 +26,7 @@
 #      15-06-2020 - Carlos Bastarz - Adaptações para o novo namelist
 #      18-06-2020 - Luiz Sapucci   - ajustes antes de publicação da versão beta
 #      11-11-2020 - Luiz Sapucci   - ajustes do diretorio dados dados/das na release
+#      03-02-2025 - Victor Ranieri - Ajustes dos TestCases para usuarios externos, inclusão do modelo MONAN
 #
 #EOP  
 #----------------------------------------------------------------------------------#
@@ -234,7 +235,7 @@ else
 	echo ''
         echo 'Iniciando o download do TestCase do modelo ETA. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/testcase/ETA/" 
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/ETA/" 
 #>> TestETA.log 2>&1
 fi
 
@@ -322,7 +323,7 @@ else
         echo ''
         echo 'Iniciando o download do TestCase do modelo WRF. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/WRF/" >> TestWRF.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/WRF/" >> TestWRF.log 2>&1
 fi
 
 if [ ${tamanho_clima} = "159M" ]; then
@@ -411,7 +412,7 @@ else
         echo ''
         echo 'Iniciando o download do TestCase do modelo BAM. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/BAM_T666L64/" >> TestBAM.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BAM_T666L64/" >> TestBAM.log 2>&1
 	rm -r old
 fi
 
@@ -505,7 +506,7 @@ else
         echo 'Iniciando o download do TestCase do modelo ETA. '
         echo ''
         cd ${dir_data}/datain/TestETA
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/ETA/" >> TestETA.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/ETA/" >> TestETA.log 2>&1
 	echo ''
         echo 'Download concluido.'
         echo ''
@@ -522,7 +523,7 @@ else
         echo 'Iniciando o download do TestCase do modelo WRF. '
         echo ''
         cd ${dir_data}/datain/TestWRF
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/WRF/" >> TestWRF.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/WRF/" >> TestWRF.log 2>&1
 	echo ''
         echo 'Download concluido.'
         echo ''
@@ -538,7 +539,7 @@ else
 	echo 'Iniciando o download do TestCase do modelo BRAMS.'
 	echo ''
 	cd ${dir_data}/datain/TestBRAMS
-	wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/BRAMS/" >> TestBRAMS.log 2>&1
+	wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BRAMS/" >> TestBRAMS.log 2>&1
 	echo ''
 	echo 'Download Concluído'
 	echo ''
@@ -554,7 +555,7 @@ else
         echo 'Iniciando o download do TestCase do modelo BAM. '
         echo ''
 	cd ${dir_data}/datain/TestBAM
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/BAM_T666L64/" >> TestBAM.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BAM_T666L64" >> TestBAM.log 2>&1
 	echo ''
         echo 'Download concluido.'
         echo ''	
