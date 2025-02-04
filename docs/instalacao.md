@@ -27,7 +27,7 @@ Para a instalação do SCANTEC, realize os procedimentos a seguir. ==Não se esq
         ssh <usuario>@itapemirim.cptec.inpe.br -XC
         ```
 
-2. Entre no diretório `/scripts/<grupo>/usuario` (recomendado) ou em um diretório da preferência do usuário para realizar a instalação do SCANTEC. Faça o download da release V2.1.0 e descompacte o arquivo baixado:
+2. Entre no diretório `/scripts/<grupo>/usuario` (recomendado) ou em um diretório da preferência do usuário para realizar a instalação do SCANTEC. Faça o download utilizando o github https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER:
 
     === "Comando"
         ```bash linenums="1"
@@ -35,12 +35,8 @@ Para a instalação do SCANTEC, realize os procedimentos a seguir. ==Não se esq
         git clone https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER.git
         cd SCANTEC-MASTER
         ```
-
-    !!! note "Nota"
-
-        Embora o nome do pacote baixado seja `V2.1.0.tar.gz`, o comando `tar -zxvf V2.1.0.tar.gz` criará o diretório `SCANTEC-2.1.0` no local escolhido pelo usuário.
-
-4. Entre no diretório criado `SCANTEC-2.1.0`:
+        
+4. Entre no diretório criado `SCANTEC-MASTER`:
 
     === "Comando"
         ```bash linenums="1"
