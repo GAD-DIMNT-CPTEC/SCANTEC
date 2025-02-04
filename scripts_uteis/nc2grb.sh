@@ -16,6 +16,8 @@ for data in $(seq $dia_inicio $dia_final); do
 
 ## diretório onde estão os dados brutos
     datain="/share/das/dist/victor.ranieri/MONANexp/MONAN_v1.1.0/202402${data}00/"
+    dataout="/share/das/dist/victor.ranieri/MONANexp/MONAN_v1.1.0/global/202402${data}00/"
+    dir_script="/share/das/dist/victor.ranieri/MONANexp/MONAN_v1.1.0/"
 #
 ## Nome do arquivo em .nc
     file_name="MONAN_DIAG_G_POS_GFS_202402${data}00.00.00.x1024002L55.nc"
@@ -28,7 +30,7 @@ for data in $(seq $dia_inicio $dia_final); do
 
     echo "Fazendo o recorte para o arquivo ${file_name} com recorte global (?)"
 
-    fout=${datain}MONAN_v1_global_202402${data}00
+    fout=${dataout}MONAN_v1_global_202402${data}00
         
         # América do sul com as variaveis rainc rainnc mslp u10 v10, lat/lon -60 15 -lon 270 330
         # 
@@ -98,7 +100,7 @@ while [ ${dataANA} -le ${dataFIM} ]; do
   data=${dataANA}
   dataf=$(${inctime} ${dataANA} +${ndia}d %y4%m2%d2%h2)  
 
-  cd ${dataANA}/${area}
+  cd ${dir_script}${area}${dataANA}
 
   # Loop para iterar sobre as datas
   while [ ${data} -le ${dataf} ]; do
@@ -119,7 +121,7 @@ while [ ${dataANA} -le ${dataFIM} ]; do
         data=$(${inctime} ${data} +${nhor}h %y4%m2%d2%h2)  
 	
   done
-  cp ../../grade.txt .
+  cp ${dir_script}grade.txt .
   for file in MONAN_global_v1*.nc; do
     echo "$file"
 
@@ -142,6 +144,6 @@ while [ ${dataANA} -le ${dataFIM} ]; do
 
   dataANA=$(${inctime} ${dataANA} +${nhan}h %y4%m2%d2%h2)  
 
-  cd ../../
+  cd ${dir_script}
  
 done
