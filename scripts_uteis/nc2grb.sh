@@ -39,7 +39,7 @@ for data in $(seq $dia_inicio $dia_final); do
 
          #Global 
 
-    #lats4d.sh -v -i ${datain}${file_name} -o ${fout} -ftype sdf -format netcdf -time 00Z{data}FEB2024 00Z${final_data}FEB2024 -vars uzonal umeridional zgeo relhum temperature mslp -levs 250 500 850 925 1000 
+    lats4d.sh -v -i ${datain}${file_name} -o ${fout} -ftype sdf -format netcdf -time 00Z{data}FEB2024 00Z${final_data}FEB2024 -vars uzonal umeridional zgeo relhum temperature mslp -levs 250 500 850 925 1000 
 
 ## Parte 2 
 
