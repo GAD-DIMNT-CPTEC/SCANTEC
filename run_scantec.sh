@@ -102,8 +102,6 @@ mkdir -p ${dir_data}/datain/TestMONAN
 RUNTM=$(date "+%Y%m%d.%H.%M")
 ARQlog=${dir_data}/logfile/scantec-${RUNTM}.log
 
-
-
 ############################
 # Denifições dos testcases #
 ############################
@@ -114,13 +112,14 @@ if [ ${maqui} = "itapemirim" ]; then
   echo ">>>>>"
   echo "A maquina itapemirim já tem o acesso aos dados" 
   echo "Criando links simbolicos para o repositorio do testcase"
-  echo ">>>>>"
+  echo ">>>>>" ${maqui}
   ln -s /share/das/dist/scantec/TestCase_SCANTEC/BRAMS datain/TestBRAMS
   ln -s /share/das/dist/scantec/TestCase_SCANTEC/ETA datain/TestETA
   ln -s /share/das/dist/scantec/TestCase_SCANTEC/BAM datain/TestBAM
   ln -s /share/das/dist/scantec/TestCase_SCANTEC/WRF datain/TestWRF
   ln -s /share/das/dist/scantec/TestCase_SCANTEC/Climatologia datain/climatologia
 fi
+
 case ${TESTCASE} in
 
 [1])
@@ -155,10 +154,11 @@ else
 	echo ''
 	echo 'Iniciando o download do TestCase do modelo BRAMS.'
 	echo ''
-	wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BRAMS/" >> TestBRAMS.log 2>&1
+	echo "wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BRAMS/" >> TestBRAMS.log 2>&1"
 	echo ''
 	echo 'Download Concluído'
 	echo ''
+        exit
 fi
 
 if [ ${tamanho_clima} = "159M" ]; then
