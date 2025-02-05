@@ -127,12 +127,12 @@ dir_test=TestBRAMS
 
 cd ${dir_data}/datain/TestBRAMS
 
-tamanho_BRAMS=$(du -sh ${dir_data}/datain/TestBRAMS | awk '{print $1}')
+tamanho_BRAMS=$(du -sh ${dir_data}/datain/TestBRAMS/ | awk '{print $1}')
 
 
-tamanho_clima=$(du -sh ${dir_data}/datain/climatologia | awk '{print $1}')
+tamanho_clima=$(du -sh ${dir_data}/datain/climatologia/ | awk '{print $1}')
 
-if [ ${tamanho_BRAMS} = "5,0G" ]; then
+if [ "$tamanho_BRAMS" = "5.0G" ]; then
 	echo ''
 	echo 'Download do modelo BRAMS já efetuado. Iniciando os trabalhos...'
 	echo ''
@@ -140,7 +140,7 @@ else
 	echo ''
 	echo 'Iniciando o download do TestCase do modelo BRAMS.'
 	echo ''
-#	wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BRAMS/" >> TestBRAMS.log 2>&1
+	wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BRAMS/" >> TestBRAMS.log 2>&1
 	echo ''
 	echo 'Download Concluído'
 	echo ''
@@ -219,12 +219,12 @@ dir_test=TestETA
 
 cd ${dir_data}/datain/TestETA
 
-tamanho_ETA=$(du -sh ${dir_data}/datain/TestETA | awk '{print $1}')
+tamanho_ETA=$(du -sh ${dir_data}/datain/TestETA/ | awk '{print $1}')
 
-tamanho_clima=$(du -sh ${dir_data}/datain/climatologia | awk '{print $1}')
+tamanho_clima=$(du -sh ${dir_data}/datain/climatologia/ | awk '{print $1}')
 
 
-if [ ${tamanho_ETA} = "4,0G" ]; then
+if [ ${tamanho_ETA} = "4.0G" ]; then
 
 	echo ''
         echo 'Download do modelo ETA já efetuado. Iniciando os trabalhos...'
@@ -233,8 +233,7 @@ else
 	echo ''
         echo 'Iniciando o download do TestCase do modelo ETA. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/testcase/ETA/" 
-#>> TestETA.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/testcase/ETA/" >> TestETA.log 2>&1
 fi
 
 if [ ${tamanho_clima} = "159M" ]; then
@@ -307,12 +306,12 @@ dir_test=TestWRF
 # Verificação de existencia dos arquivos
 cd ${dir_data}/datain/TestWRF
 
-tamanho_WRF=$(du -sh ${dir_data}/datain/TestWRF | awk '{print $1}')
+tamanho_WRF=$(du -sh ${dir_data}/datain/TestWRF/ | awk '{print $1}')
 
-tamanho_clima=$(du -sh ${dir_data}/datain/climatologia | awk '{print $1}')
+tamanho_clima=$(du -sh ${dir_data}/datain/climatologia/ | awk '{print $1}')
 
 
-if [ ${tamanho_WRF} = "5,4G" ]; then
+if [ ${tamanho_WRF} = "5.4G" ]; then
 
         echo ''
         echo 'Download do modelo WRF já efetuado. Iniciando os trabalhos...'
@@ -321,7 +320,7 @@ else
         echo ''
         echo 'Iniciando o download do TestCase do modelo WRF. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/WRF/" >> TestWRF.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/WRF/" >> TestWRF.log 2>&1
 fi
 
 if [ ${tamanho_clima} = "159M" ]; then
@@ -396,12 +395,12 @@ dir_test=TestBAM
 # Verificação de existencia de arquivos
 cd ${dir_data}/datain/TestBAM
 
-tamanho_BAM=$(du -sh ${dir_data}/datain/TestBAM | awk '{print $1}')
+tamanho_BAM=$(du -sh ${dir_data}/datain/TestBAM/ | awk '{print $1}')
 
-tamanho_clima=$(du -sh ${dir_data}/datain/climatologia | awk '{print $1}')
+tamanho_clima=$(du -sh ${dir_data}/datain/climatologia/ | awk '{print $1}')
 
 
-if [ ${tamanho_BAM} = "9,7G" ]; then
+if [ ${tamanho_BAM} = "9.7G" ]; then
 
         echo ''
         echo 'Download já efetuado. Iniciando os trabalhos...'
@@ -410,7 +409,7 @@ else
         echo ''
         echo 'Iniciando o download do TestCase do modelo BAM. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/BAM_T666L64/" >> TestBAM.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BAM_T666L64/" >> TestBAM.log 2>&1
 	rm -r old
 fi
 
@@ -485,16 +484,16 @@ variavel=5
 
 # Verifica a existencia dos arquivos para utilizar na comparação
 
-tamanho_BAM=$(du -sh ${dir_data}/datain/TestBAM | awk '{print $1}')
-tamanho_ETA=$(du -sh ${dir_data}/datain/TestETA | awk '{print $1}')
-tamanho_WRF=$(du -sh ${dir_data}/datain/TestWRF | awk '{print $1}')
-tamanho_BRAMS=$(du -sh ${dir_data}/datain/TestBRAMS | awk '{print $1}')
+tamanho_BAM=$(du -sh ${dir_data}/datain/TestBAM/ | awk '{print $1}')
+tamanho_ETA=$(du -sh ${dir_data}/datain/TestETA/ | awk '{print $1}')
+tamanho_WRF=$(du -sh ${dir_data}/datain/TestWRF/ | awk '{print $1}')
+tamanho_BRAMS=$(du -sh ${dir_data}/datain/TestBRAMS/ | awk '{print $1}')
 
 
-tamanho_clima=$(du -sh ${dir_data}/datain/climatologia | awk '{print $1}')
+tamanho_clima=$(du -sh ${dir_data}/datain/climatologia/ | awk '{print $1}')
 
 
-if [ ${tamanho_ETA} = "4,0G" ]; then
+if [ ${tamanho_ETA} = "4.0G" ]; then
 
         echo ''
         echo 'Download do modelo ETA já efetuado. Iniciando os trabalhos...'
@@ -504,14 +503,14 @@ else
         echo 'Iniciando o download do TestCase do modelo ETA. '
         echo ''
         cd ${dir_data}/datain/TestETA
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/ETA/" >> TestETA.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/WRF/ETA/" >> TestETA.log 2>&1
 	echo ''
         echo 'Download concluido.'
         echo ''
 
 fi
 
-if [ ${tamanho_WRF} = "5,4G" ]; then
+if [ ${tamanho_WRF} = "5.4G" ]; then
 
         echo ''
         echo 'Download do modelo WRF já efetuado. Iniciando os trabalhos...'
@@ -521,14 +520,14 @@ else
         echo 'Iniciando o download do TestCase do modelo WRF. '
         echo ''
         cd ${dir_data}/datain/TestWRF
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/WRF/" >> TestWRF.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/WRF/" >> TestWRF.log 2>&1
 	echo ''
         echo 'Download concluido.'
         echo ''
 
 fi
 
-if [ ${tamanho_BRAMS} = "5,0G" ]; then
+if [ ${tamanho_BRAMS} = "5.0G" ]; then
 	echo ''
 	echo 'Download do modelo BRAMS já efetuado. Iniciando os trabalhos...'
 	echo ''
@@ -537,23 +536,23 @@ else
 	echo 'Iniciando o download do TestCase do modelo BRAMS.'
 	echo ''
 	cd ${dir_data}/datain/TestBRAMS
-	wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/BRAMS/" >> TestBRAMS.log 2>&1
+	wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BRAMS/" >> TestBRAMS.log 2>&1
 	echo ''
 	echo 'Download Concluído'
 	echo ''
 fi
 
-if [ ${tamanho_BAM} = "9,7G" ]; then
+if [ ${tamanho_BAM} = "9.7G" ]; then
 
         echo ''
-        echo 'Download já efetuado. Iniciando os trabalhos...'
+        echo 'Download já efetuado do modelo BAM já efetuado. Iniciando os trabalhos...'
         echo ''
 else
         echo ''
         echo 'Iniciando o download do TestCase do modelo BAM. '
         echo ''
 	cd ${dir_data}/datain/TestBAM
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/BAM_T666L64/" >> TestBAM.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BAM_T666L64/" >> TestBAM.log 2>&1
 	echo ''
         echo 'Download concluido.'
         echo ''	
@@ -596,11 +595,11 @@ quant_exp=4
 # Referências
 # Plugin modelo
 pl_model_refer=WRF_cpt_07KM_SCAN_5levs
-#pl_model_refer=era5_SCAN_5levs
+
 
 # Análises
 arq_refer=${dir_data}/datain/TestWRF/%y4%m2%d200/WRF_cpt_07KM_SCAN_%y4%m2%d200_%y4%m2%d200.ctl
-#arq_refer=${dir_data}/datain/TestERA5/%y4%m2%d200/ERA5_SCAN_%y4%m2%d200_%y4%m2%d200.ctl
+
 
 # Experimento
 # Plugin experimento
@@ -635,9 +634,39 @@ dir_test=TestMONAN
 #Variável para configuração do scantec.conf
 variavel=5
 
+tamanho_MONAN=$(du -sh ${dir_data}/datain/TestMONAN/ | awk '{print $1}')
+
+tamanho_clima=$(du -sh ${dir_data}/datain/climatologia/ | awk '{print $1}')
 
 
+if [ ${tamanho_MONAN} = "49G" ]; then
 
+        echo ''
+        echo 'Download já efetuado. Iniciando os trabalhos...'
+        echo ''
+else
+        echo ''
+        echo 'Iniciando o download do TestCase do modelo BAM. '
+        echo ''
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/MONAN/" >> TestMONAN.log 2>&1
+	rm -r old
+fi
+
+if [ ${tamanho_clima} = "159M" ]; then
+        echo ''
+        echo 'Download já efetuado. Iniciando os trabalhos...'
+        echo ''
+else
+        echo ''
+        echo 'Iniciando o download da climatologia.'
+        echo ''
+        cd ../climatologia
+        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/datain/climatologia/" >> climatologia.log 2>&1
+        echo ''
+        echo 'Download concluido.'
+        echo ''
+
+fi
 
 # Datas
 datai=2024021400
@@ -662,7 +691,7 @@ quant_exp=1
 pl_model_refer=MONAN_global_SCAN
 
 # Análises
-arq_refer=${dir_data}/datain/${dir_test}/%y4%m2%d200/global/MONAN_global_v1_%y4%m2%d200-%y4%m2%d200-reg.ctl
+arq_refer=${dir_data}/datain/${dir_test}/%y4%m2%d200/MONAN_global_v1_%y4%m2%d200-%y4%m2%d200-reg.ctl
                                                                          
 
 # Experimento
@@ -670,7 +699,7 @@ arq_refer=${dir_data}/datain/${dir_test}/%y4%m2%d200/global/MONAN_global_v1_%y4%
 pl_model_exper=MONAN_global_SCAN
 
 # Previsões
-arq_prev=${dir_data}/datain/${dir_test}/%y4%m2%d200/global/MONAN_global_v1_%y4%m2%d200-%y4%m2%d200-reg.ctl
+arq_prev=${dir_data}/datain/${dir_test}/%y4%m2%d200/MONAN_global_v1_%y4%m2%d200-%y4%m2%d200-reg.ctl
 
 
 # Climatologia
