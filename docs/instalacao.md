@@ -74,7 +74,7 @@ Para a instalação do SCANTEC, realize os procedimentos a seguir. ==Não se esq
             source ~/conda/envs/SCANTEC/bin/activate
             ```
       
-     -5.2.4   Executar o conda-unpack para corrigir/atualizar os paths:
+      -5.2.4   Executar o conda-unpack para corrigir/atualizar os paths:
 
         === "Comando"
             ```bash linenums="1"
