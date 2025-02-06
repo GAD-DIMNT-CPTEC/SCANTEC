@@ -50,7 +50,7 @@ then
   echo "./run_scantec.sh 3 - TestCase do WRF           (Jul/2023)"
   echo "./run_scantec.sh 4 - TestCase do BAM           (Jul/2023)"
   echo "./run_scantec.sh 5 - Compara WRF/ETA/BRAMS/BAM (Jul/2023)"
-  echo "./run_scantec.sh 6 - MONAN                     (Jan/2025)"
+  echo "./run_scantec.sh 6 - TestCase do MONAN         (Jan/2025)"
   echo "./run_scantec.sh 7 - Dados definidos pelo usuário"
   echo "" 
   exit 1
@@ -69,7 +69,7 @@ else
     echo "./run_scantec.sh 3 - TestCase do WRF           (Jul/2023)"
     echo "./run_scantec.sh 4 - TestCase do BAM           (Jul/2023)"
     echo "./run_scantec.sh 5 - Compara WRF/ETA/BRAMS/BAM (Jul/2023)"
-    echo "./run_scantec.sh 6 - MONAN                     (Jan/2025)"
+    echo "./run_scantec.sh 6 - TestCase do MONAN         (Jan/2025)"
     echo "./run_scantec.sh 7 - Dados definidos pelo usuário"
     echo ""
     exit 1
@@ -157,11 +157,10 @@ else
 	echo ''
 	echo 'Iniciando o download do TestCase do modelo BRAMS.'
 	echo ''
-	wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BRAMS/" >> TestBRAMS.log 2>&1
+	wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BRAMS/" >> TestBRAMS.log 2>&1
 	echo ''
 	echo 'Download Concluído'
 	echo ''
-        exit
 fi
 
 if [ ${tamanho_clima} = "159M" ]; then
@@ -173,7 +172,7 @@ else
         echo 'Iniciando o download da climatologia.'
         echo ''
 	cd ../climatologia
-	wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1 
+	wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1 
 	echo ''
 	echo 'Download Concluido'
 	echo ''
@@ -251,7 +250,7 @@ else
 	echo ''
         echo 'Iniciando o download do TestCase do modelo ETA. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/testcase/ETA/" >> TestETA.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/ETA/" >> TestETA.log 2>&1
 fi
 
 if [ ${tamanho_clima} = "159M" ]; then
@@ -263,7 +262,7 @@ else
         echo 'Iniciando o download da climatologia.'
         echo ''
         cd ../climatologia
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1
         echo ''
 	echo 'Download concluido.'
 	echo ''
@@ -338,7 +337,7 @@ else
         echo ''
         echo 'Iniciando o download do TestCase do modelo WRF. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/WRF/" >> TestWRF.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/WRF/" >> TestWRF.log 2>&1
 fi
 
 if [ ${tamanho_clima} = "159M" ]; then
@@ -350,7 +349,7 @@ else
         echo 'Iniciando o download da climatologia.'
         echo ''
         cd ../climatologia
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http:/ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http:/ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1
         echo ''
         echo 'Download concluido.'
         echo ''
@@ -427,8 +426,7 @@ else
         echo ''
         echo 'Iniciando o download do TestCase do modelo BAM. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BAM_T666L64/" >> TestBAM.log 2>&1
-	rm -r old
+        wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BAM_T666L64/" >> TestBAM.log 2>&1
 fi
 
 if [ ${tamanho_clima} = "159M" ]; then
@@ -440,7 +438,7 @@ else
         echo 'Iniciando o download da climatologia.'
         echo ''
         cd ../climatologia
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http:/ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http:/ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1
         echo ''
         echo 'Download concluido.'
         echo ''
@@ -521,7 +519,7 @@ else
         echo 'Iniciando o download do TestCase do modelo ETA. '
         echo ''
         cd ${dir_data}/datain/TestETA
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/WRF/ETA/" >> TestETA.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/ETA/" >> TestETA.log 2>&1
 	echo ''
         echo 'Download concluido.'
         echo ''
@@ -538,7 +536,7 @@ else
         echo 'Iniciando o download do TestCase do modelo WRF. '
         echo ''
         cd ${dir_data}/datain/TestWRF
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/WRF/" >> TestWRF.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/WRF/" >> TestWRF.log 2>&1
 	echo ''
         echo 'Download concluido.'
         echo ''
@@ -554,7 +552,7 @@ else
 	echo 'Iniciando o download do TestCase do modelo BRAMS.'
 	echo ''
 	cd ${dir_data}/datain/TestBRAMS
-	wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BRAMS/" >> TestBRAMS.log 2>&1
+	wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BRAMS/" >> TestBRAMS.log 2>&1
 	echo ''
 	echo 'Download Concluído'
 	echo ''
@@ -570,7 +568,7 @@ else
         echo 'Iniciando o download do TestCase do modelo BAM. '
         echo ''
 	cd ${dir_data}/datain/TestBAM
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BAM_T666L64/" >> TestBAM.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/BAM_T666L64/" >> TestBAM.log 2>&1
 	echo ''
         echo 'Download concluido.'
         echo ''	
@@ -585,7 +583,7 @@ else
         echo 'Iniciando o download da climatologia.'
         echo ''
         cd ${dir_data}/datain/climatologia
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http:/ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http:/ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1
         echo ''
         echo 'Download concluido.'
         echo ''
@@ -666,8 +664,7 @@ else
         echo ''
         echo 'Iniciando o download do TestCase do modelo MONAN. '
         echo ''
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/luiz.sapucci/SCANTEC/testcase/MONAN/" >> TestMONAN.log 2>&1
-	rm -r old
+        wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/MONAN/" >> TestMONAN.log 2>&1
 fi
 
 if [ ${tamanho_clima} = "159M" ]; then
@@ -679,7 +676,7 @@ else
         echo 'Iniciando o download da climatologia.'
         echo ''
         cd ../climatologia
-        wget -r -np -nH -nc --cut-dirs=6 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1
+        wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1
         echo ''
         echo 'Download concluido.'
         echo ''
@@ -734,7 +731,8 @@ i
 # Configurações do usuário (ALTERAR O QUE FOR NECESSÁRIO)            #
 #--------------------------------------------------------------------#
 
-echo 'Em desenvolvimento'
+echo 'Ajustar configuração requerida'
+echo 'Saindo sem processar'
 exit
 
 # Datas
