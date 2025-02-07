@@ -98,9 +98,11 @@ Nas instruções apresentadas a seguir, são mostrados os procedimentos utilizad
 
 ![image](https://github.com/user-attachments/assets/eb87d3b4-4328-41e1-8e0d-57225ff8cd44)
 
-   !!! note "Nota"
+!!! note "Nota"
 
-        A correta utilização do script `run_scantec.sh` dependerá do acesso aos dados requeridos, sejam eles provenientes dos testcases do SCANTEC ou informados pelo usuário. O conjunto de dados de testcase do SCANTEC não são distribuídos com a release devido ao seu tamanho, no entanto esse script está apto a baixar os dados do repositorio do CPTEC https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/ onde estão disponiveis um conjunto de dados para testar os modelos listados acima.
+	A correta utilização do script `run_scantec.sh` dependerá do acesso aos dados requeridos, sejam eles provenientes dos testcases do SCANTEC ou informados pelo usuário.
+	
+	O conjunto de dados de testcase do SCANTEC não são distribuídos com a release devido ao seu tamanho, no entanto esse script está apto a baixar os dados do repositorio do CPTEC https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/ onde estão disponiveis um conjunto de dados para testar os modelos listados acima.
 
 Na seção a seguir, e detalhada a utilização do SCANTEC a partir dos dados de testcase.
 
@@ -129,28 +131,19 @@ Os dados de entrada do testcase para as 6 opções de modelos disponíveis (i.e.
 2. Se estiver rodando nas maquina virtuais (itapemirim,ilopolis, etc) faça:
 
     === "Comando"
-        ```bash linenums="1"
-        rmdir datain/TestBRAMS;  ln -s /share/das/dist/scantec/TestCase_SCANTEC/BRAMS datain/TestBRAMS
-        ```
-    === "Comando"
-        ```bash linenums="1"
-        rmdir datain/TestETA;  ln -s /share/das/dist/scantec/TestCase_SCANTEC/ETA datain/TestETA
-        ```
-    === "Comando"
-        ```bash linenums="1"
-        rmdir datain/TestWRF;  ln -s /share/das/dist/scantec/TestCase_SCANTEC/WRF datain/TestWRF
-        ```
-    === "Comando"
-        ```bash linenums="1"
-        rmdir datain/TestBAM;  ln -s /share/das/dist/scantec/TestCase_SCANTEC/BAM_T666L64 datain/TestBAM
-        ```
-    === "Comando"
-        ```bash linenums="1"
-        rmdir datain/TestMONAN;  ln -s /share/das/dist/scantec/TestCase_SCANTEC/MONAN datain/TestMONAN
-        ```
-    === "Comando"
-        ```bash linenums="1"
-        rmdir datain/climatologia;  ln -s /share/das/dist/scantec/TestCase_SCANTEC/Climatologia datain/climatologia
+        ```bash linenums="12"
+        rmdir datain/TestBRAMS
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/BRAMS datain/TestBRAMS
+        rmdir datain/TestETA
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/ETA datain/TestETA
+        rmdir datain/TestWRF
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/WRF datain/TestWRF  
+        rmdir datain/TestBAM
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/BAM_T666L64 datain/TestBAM
+        rmdir datain/TestMONAN
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/MONAN datain/TestMONAN
+        rmdir datain/climatologia
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/Climatologia datain/climatologia
         ```
  
 3. Execute o script de execução do SCANTEC com um parâmetro na linha de comando:
