@@ -4,6 +4,7 @@
 ## Parte 1 Script que transforma dados .nc em dados .nc menor
 ## Altere os caminhos que precisar
 
+# Caso não tenha o inctime instalado obtenha-o em https://svn.cptec.inpe.br/inctime
 inctime=${HOME}/bin/inctime
 
 dia_inicio=14
