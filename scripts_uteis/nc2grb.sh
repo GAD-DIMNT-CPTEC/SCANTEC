@@ -1,37 +1,38 @@
 #! /bin/bash
 
 #
-#BOP
+# BOP
 #----------------------------------------------------------------------------------#
-# Sistema Comunitário de Avaliação de modelos Numéricos de Tempo e Clima (SCANTEC) #
+# Sistema Comunitário de Avaliação de Modelos Numéricos de Tempo e Clima (SCANTEC) #
 #----------------------------------------------------------------------------------#
 #
-# !DESCRIPTION:
-# Script que transforma dados .nc do MONAN em dados .nc recortados e depois em formato grib
-# Altere os caminhos que precisar. Essa configuração é a mesma que foi usada para criar o 
-# testcase do MONAN disponivel em 
+# !DESCRIÇÃO:
+# Script que transforma dados .nc do MONAN em dados .nc recortados e, em seguida, em formato GRIB.
+# Altere os caminhos conforme necessário. Esta configuração é a mesma utilizada para criar o 
+# testcase do MONAN disponível em 
 # https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/MONAN/
 #
-# !CALLING SEQUENCE:
+# !SEQUÊNCIA DE CHAMADA:
 # ./run_scantec.sh 
 #                  
 # !Histórico de revisões: 
-#      05/02/2025 - Victor Ranieri - versão inicial basweado no projeto PIBIC
-#      07-02-2025 - Luiz Sapucci   - ajustes nos diretorio dados no scantec
+#      05/02/2025 - Victor Ranieri - versão inicial baseada no projeto PIBIC
+#      07/02/2025 - Luiz Sapucci   - ajustes nos diretórios de dados do SCANTEC
 #
-# !Pre requesitos:
+# !Pré-requisitos:
 #      inctime no /home/bin
-#      versao do grads com lat4d disponivel
-#      Espaco em disco suficiente para seu periodo.
+#      versão do GrADS com lat4d disponível
+#      Espaço em disco suficiente para o seu período.
 #
-#EOP  
+# EOP  
 #----------------------------------------------------------------------------------#
-#BOC
+# BOC
+
 
 # Caso não tenha o inctime instalado obtenha-o em https://svn.cptec.inpe.br/inctime
 inctime=${HOME}/bin/inctime
 
-# Esse script precisa ser rodado no diretório scripts_uteis na arvore do scantec.
+# Esse script precisa ser rodado no diretório scripts_uteis na árvore do SCANTEC.
 # Dados processados no datain
 cd ../datain
 
@@ -52,7 +53,7 @@ area=global             # Area onde o modelo está sendo avaliado
 mkdir -p ${dataout}/${area}
 cd ${dataout}/${area}
 
-#Função para formato especifico do tempo para o lats4d
+#Função para formato específico do tempo para o lats4d
 data_fmt() {
 
   data=${1}      
@@ -81,7 +82,7 @@ dataANA=$dataINI
 
 while [ ${dataANA} -le ${dataFIM} ]; do
   echo  
-  echo "%%%%%%%%Processando a data do periodo:"${dataANA}
+  echo "######### Processando a data do periodo: ${dataANA} #########"
   echo 
 
   mkdir -p ${dataANA}
@@ -99,7 +100,7 @@ while [ ${dataANA} -le ${dataFIM} ]; do
   file_name="MONAN_DIAG_G_POS_GFS_${dataANA}.00.00.x1024002L55.nc"
 
 
-  ## lats4d.sh e usado aqui para recortar o dado bruto em dados menores 
+  ## lats4d.sh é usado aqui para recortar o dado bruto em dados menores 
 
   echo "Fazendo o recorte para o arquivo ${file_name} com recorte " $area
 
