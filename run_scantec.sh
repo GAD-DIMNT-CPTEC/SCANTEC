@@ -648,7 +648,7 @@ MODELCASE=" <<<<< TESTCASE MONAN  >>>>>>"
 dir_test=TestMONAN
 
 #Variável para configuração do scantec.conf
-variavel=5
+variavel=6
 
 tamanho_MONAN=$(du -sh ${dir_data}/datain/TestMONAN/ | awk '{print $1}')
 
@@ -842,7 +842,7 @@ echo ""
 
 # Condição para a comparação dos TestCase
 
-if [ ${variavel} -eq 6 ]; then
+if [ ${variavel} -eq 5 ]; then
 	linha_out="${pl_model_exper} WRF ${arq_prev}"
 	linha_out1="${pl_model_exper1} BRAMS ${arq_prev1}"	
 	linha_out2="${pl_model_exper2} ETA ${arq_prev2}"
