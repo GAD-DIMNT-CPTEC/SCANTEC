@@ -36,45 +36,46 @@ Para a instalação do SCANTEC, realize os procedimentos a seguir. ==Não se esq
         cd SCANTEC-MASTER
         ```
         
-4. Entre no diretório criado `SCANTEC-MASTER`:
+3. Entre no diretório criado `SCANTEC-MASTER`:
 
     === "Comando"
         ```bash linenums="1"
         cd SCANTEC-MASTER
         ```
 
-5. Carregue o ambiente `SCANTEC` para a compilação do SCANTEC:
+4. Carregue o ambiente `SCANTEC` para a compilação do SCANTEC:
 
-    * 5.1 Para usuarios do grupo DAS, aa máquina Itapemirim, carregue o ambiente (disponível em /scripts/das/) com o comando:    
-
-        === "Comando"
-            ```bash linenums="1"
-            source /scripts/das/conda/envs/SCANTEC/bin/activate
-            ```
-    * 5.2 Para usuarios fora do grupo DAS, é preciso copiar um pacote do ambiente conda do SCANTEC, desempacota-lo ativar esse ambiente e ajustar os endereços com o comando conda-pack. Para isso faça os commandos abaixo:
-
-      -5.2.1 Copie o pacote SCANTEC.tar para sua  instalação local do conda:
+    * 4.1 Para usuarios do grupo DAS, aa máquina Itapemirim, carregue o ambiente (disponível em /scripts/das/) com o comando:    
 
         === "Comando"
-            ```bash linenums="1"
-            cp /scripts/das/conda/envs/SCANTEC.tar ~/conda/envs
-            ```
-      
-      -5.2.2  Desempacotar o ambiente:
+       ```bash linenums="1"
+       source /scripts/das/conda/envs/SCANTEC/bin/activate
+       ```
+            
+    * 4.2 Para usuarios fora do grupo DAS, é preciso copiar um pacote do ambiente conda do SCANTEC, desempacota-lo ativar esse ambiente e ajustar os endereços com o comando conda-pack. Para isso faça os commandos abaixo:
+
+      - 4.2.1 Copie o pacote SCANTEC.tar para sua instalação local do conda:
+
+	=== "Comando"
+    	   ```bash
+    	    cp /scripts/das/conda/envs/SCANTEC.tar ~/conda/envs
+    	   ```
+    	    
+      	- 4.2.2  Desempacotar o ambiente:
 
         === "Comando"
             ```bash linenums="1"
             cd ~/conda/envs ; tar -xvf SCANTEC.tar
             ```
       
-      -5.2.3  Ativar o ambiente:
+      	- 4.2.3  Ativar o ambiente:
 
         === "Comando"
             ```bash linenums="1"
             source ~/conda/envs/SCANTEC/bin/activate
             ```
       
-      -5.2.4   Executar o conda-unpack para corrigir/atualizar os paths:
+      	- 4.2.4   Executar o conda-unpack para corrigir/atualizar os paths:
 
         === "Comando"
             ```bash linenums="1"
@@ -83,7 +84,7 @@ Para a instalação do SCANTEC, realize os procedimentos a seguir. ==Não se esq
    
     * Em outras máquinas esta etapa não é necessária, mas certifique-se de que há pelo menos o compilador GNU Fortran versão 9 ou superior instalado.
 
-7. Execute o script `install`:
+5. Execute o script `install`:
 
     === "Comando"
         ```bash linenums="1"
@@ -106,7 +107,7 @@ Para a instalação do SCANTEC, realize os procedimentos a seguir. ==Não se esq
         Choose one of options (1-E): 
         ```
 
-    !!! note "Notas"
+!!! note "Notas"
     
         * Escolha a opção `2` para utilizar o compilador `gfortran`, que deverá ser a versão 9 ou superior;
         * Acompanhe a compilação com as informações no terminal;
