@@ -655,7 +655,7 @@ tamanho_MONAN=$(du -sh ${dir_data}/datain/TestMONAN/ | awk '{print $1}')
 tamanho_clima=$(du -sh ${dir_data}/datain/climatologia/ | awk '{print $1}')
 
 
-if [ ${tamanho_MONAN} = "49G" ]; then
+if [ ${tamanho_MONAN} = "194M" ]; then
 
         echo ''
         echo 'Dados do modelo MONAN já disponivel. Iniciando os trabalhos...'
@@ -720,9 +720,6 @@ arq_prev=${dir_data}/datain/${dir_test}/%y4%m2%d200/MONAN_global_v1_%y4%m2%d200-
 # Climatologia
 use_climatologia=1
 arq_clim=${dir_data}/datain/climatologia/climatologia50yr.%mc.ctl
-i
-
-
 
 ;;
 

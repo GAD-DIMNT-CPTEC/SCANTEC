@@ -197,6 +197,9 @@ No exemplo acima, são identificados os seguintes tipos de arquivos, todos resul
 
 A atual versão do SCANTEC está apta para ler apenas dados gribs ou binários (.bin ou .grb.), logo se a saida do pos do modelo é escrita em NetCDF (.nc) é necessário um pre processamento nesses dados para depois serem avaliados no SCANTEC. Esse é  o caso dos dados do WRF, MPAS e MONAN. Para isso no diretório scripts_uteis, há um script chamado nc2grb.sh, que converte arquivos .nc para um conjunto de arquivos compatíveis (.grb, .ctl, .gmp). Esse script utiliza o lats4d.sh, que permite recortar os dados espacialmente, temporalmente, por níveis de pressão e por variáveis, facilitando o processamento dos arquivos brutos. Os dados do MONAN e WRF disponiveis no testacase foram pre processados usando esse script, e o mesmo deve ser feito para outros arquivos que o usuário deseja avaliar no SCANTEC.
 
+A atual versao do script lats4d.sh no diretorio SCANTEC/scripts_uteis, esta configurado para ler a versao  pos processada do MONAN_v1.1.0 e foi utilizado para gerar os arquivos gribs disponiveis no testcase do MONAN (`https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/MONAN`). A versao esta especifica para essa versao e ajustes s'ao necessarios para adpatar para a versao do usuario ou mesmo outros modelos como o WRF ou o MPAS. Observe que foi feito nessa conversao uma sele;'ao de variaveis e niveis do modelo visando deixar o arquivo mais leve para o download durante o testcase.
+
+
 ### Executando o SCANTEC com dados do usuário
 
 Para executar o script `run_scantec.sh` com as informações inseridas pelo usuário, escolha a opção `7`. Mas antes, é preciso editar o script e modificar apropriadamente algumas informações. Veja a seguir:
