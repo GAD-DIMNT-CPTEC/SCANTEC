@@ -4,8 +4,6 @@ Sistema Comunitário de Avaliação de modelos Numéricos de Tempo E Clima (SCAN
 
 ## Playlist do SCANTEC: 
 
-Videos explicativos abordando a aplicação do SCANTEC.
-
-Link: https://www.youtube.com/playlist?list=PLI3MAF1dSyywSO21n_JEikJWQ1-_s2QJT
+Videos explicativos abordando a aplicação do SCANTEC e SCANPLOT, disponíveis no Youtube ([link](https://www.youtube.com/playlist?list=PLI3MAF1dSyywSO21n_JEikJWQ1-_s2QJT)).
 
 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode" target="_blank"><img src="https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-sa.png" alt="CC-BY-NC-SA" width="100"/></a>
