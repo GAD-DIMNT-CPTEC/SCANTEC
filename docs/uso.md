@@ -195,18 +195,24 @@ No exemplo acima, são identificados os seguintes tipos de arquivos, todos resul
 
 ### Utilizando o SCANTEC em dados NetCDF
 
-A atual versão do SCANTEC está apta para ler apenas dados gribs ou binários (.bin ou .grb.), logo se a saida do pos do modelo é escrita em NetCDF (.nc) é necessário um pre processamento nesses dados para depois serem avaliados no SCANTEC. Esse é  o caso dos dados do WRF, MPAS e MONAN. Para isso no diretório scripts_uteis, há um script chamado nc2grb.sh, que converte arquivos .nc para um conjunto de arquivos compatíveis (.grb, .ctl, .gmp). Esse script utiliza o lats4d.sh, que permite recortar os dados espacialmente, temporalmente, por níveis de pressão e por variáveis, facilitando o processamento dos arquivos brutos. Os dados do MONAN e WRF disponiveis no testacase foram pre processados usando esse script, e o mesmo deve ser feito para outros arquivos que o usuário deseja avaliar no SCANTEC.
+A atual versão do SCANTEC está apta para ler apenas dados nos formatos GRIB ou binário (`.grb` ou `.bin`.), logo se a saida do pós-processamento do modelo é escrita no formato NetCDF (`.nc`) é necessário um pré-processamento nesses dados para depois serem avaliados no SCANTEC. Esse é o caso dos dados do WRF, MPAS e MONAN. Para isso no diretório `scripts_uteis`, há um script chamado `nc2grb.sh`, que converte arquivos NetCDF para um conjunto de arquivos compatíveis no formato GRIB (`.grb`, `.ctl`, `.gmp`). Esse script utiliza o script [`lats4d.sh`](http://opengrads.org/doc/scripts/lats4d/), que permite recortar os dados espacialmente, temporalmente, por níveis de pressão e por variáveis, facilitando o processamento dos arquivos brutos. Os dados dos modelos [MONAN](https://monanadmin.github.io/monan_cc_docs/) (Model for Ocean-laNd-Atmosphere predictioN) e [WRF](https://www.mmm.ucar.edu/models/wrf) (Weather Research and Forecasting model) disponiveis no testacase foram pré-processados usando esse script e o mesmo deve ser feito para outros arquivos que o usuário deseja avaliar no SCANTEC, que estejam no formato NetCDF.
 
-A atual versao do script lats4d.sh no diretorio SCANTEC/scripts_uteis, esta configurado para ler a versao  pos processada do MONAN_v1.1.0 (dados brutos disponiveis em `https://ftp1.cptec.inpe.br/pesquisa/das/victor.ranieri/MONANexp/MONAN_v1.1.0/`) e foi utilizado para gerar os arquivos gribs disponiveis no testcase do MONAN (`https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/MONAN`). A versao esta especifica para essa versao e ajustes sao necessarios para adpatar para a versao do usuario ou mesmo outros modelos como o WRF ou o MPAS. Observe que foi feito nessa conversao uma selecao de variaveis e niveis do modelo visando deixar o arquivo mais leve para o download durante o testcase. Se tiver nas maquina itapemirim, o script pode ser rodado e testado da forma como está. Se tiver fora do CPTEC é preciso baixar os dados brutos (que são bem grandes) e modificar o endereço do local onde ele deve ser lido localmente. Os dados são gerados no datain/MONAN. O recorte utilizado foi o global mas a America do Sul está disponivel basta descomentar as linhas apropriadamente. Para rodar o scritp faça:
+A atual versão do script `lats4d.sh` no diretório `SCANTEC/scripts_uteis`, está configurado para ler a versão  pós-processada do MONAN v1.1.0 (dados brutos disponiveis no endereço [https://ftp1.cptec.inpe.br/pesquisa/das/victor.ranieri/MONANexp/MONAN_v1.1.0/](https://ftp1.cptec.inpe.br/pesquisa/das/victor.ranieri/MONANexp/MONAN_v1.1.0/)) e foi utilizado para gerar os arquivos GRIB disponíveis no testcase do MONAN ([https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/MONAN](https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/MONAN)). 
 
-1. entre na pasta scripts_uteis onde o SCANTEC foi instalado:
+!!! note "Nota"
+
+    A presente versão dos scripts está ajustada para o modelo MONAN. Ajustes podem ser necessários para adaptar os scripts para as necessidades do usuário! 
+
+Observe que foi feita nessa conversão uma seleção de variáveis e níveis do modelo visando deixar o arquivo mais leve para o download durante o testcase. Na máquina Itapemirim, o script pode ser executado e testado da forma como está. Fora da rede interna do CPTEC, é preciso baixar os dados brutos (~1,2 TB) e modificar o endereço de onde ele deve ser lido localmente. Os dados são gerados no diretório `datain/MONAN`. O domínio dos dados é o global, mas há um recorte sobre a América do Sul. Para utilizar este recorte, basta descomentar as linhas apropriadamente. Para executar o scritp faça:
+
+1. Entre no diretório `scripts_uteis` onde o SCANTEC foi instalado:
 
     === "Comando"
         ```bash linenums="1"
         cd SCANTEC/scripts_uteis
         ```
 
-2. Rode nesse local o `nc2grb.sh`:
+2. Execute o script `nc2grb.sh`:
 
     === "Comando"
         ```bash linenums="1"
@@ -214,7 +220,11 @@ A atual versao do script lats4d.sh no diretorio SCANTEC/scripts_uteis, esta conf
         ```
 !!! note "Nota"
 
-	Obviamente para ser utilizado para os dados do usuario é preciso modificar os endereços que estão fixos. Poderiam ser argumentos da linha da chamada, o que poderá ser feito posteriormente por um colaborador interessado em contribuir. Isso é muito bem vindo.
+	Para utilizar os dados do usuário, é preciso modificar os endereços das variáveis a seguir:
+
+    * `datain`
+    * `dataout`
+    * `dir_script`
 
 ### Executando o SCANTEC com dados do usuário
 

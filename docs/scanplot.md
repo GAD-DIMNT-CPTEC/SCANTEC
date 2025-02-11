@@ -1,12 +1,12 @@
 #  Visualização de resultados usando o SCANPLOT
 
-O [SCANPLOT](https://gam-dimnt-cptec.github.io/SCANPLOT/) é um módulo escrito em linguagem Python preparado para ler e plotar as tabelas e os arquivos binários com as estatísticas do SCANTEC. O seu uso pode ser feito por meio da linha de comando ou através do Jupyter notebook. O SCANPLOT transforma os resultados do SCANTEC em estruturas de dados como dataframes e datasets, podendo ser facilmente extendido a partir da introdução de funções para a plotagem dos resultados na forma como o usuário precisar. Para informações detalhadas sobre a versão SCANPLOT V1.1.0a utiliza nesta release do SCANTEC, acesse a página do projeto em [https://gam-dimnt-cptec.github.io/SCANPLOT/](https://gam-dimnt-cptec.github.io/SCANPLOT/).
+O [SCANPLOT](https://gad-dimnt-cptec.github.io/SCANPLOT/) é um módulo escrito em linguagem Python preparado para ler e plotar as tabelas e os arquivos binários com as estatísticas do SCANTEC. O seu uso pode ser feito por meio da linha de comando ou através do Jupyter notebook. O SCANPLOT transforma os resultados do SCANTEC em estruturas de dados como dataframes e datasets, podendo ser facilmente extendido a partir da introdução de funções para a plotagem dos resultados na forma como o usuário precisar. Para informações detalhadas sobre a versão SCANPLOT V1.1.0a utiliza nesta release do SCANTEC, acesse a página do projeto em [https://gad-dimnt-cptec.github.io/SCANPLOT/](https://gad-dimnt-cptec.github.io/SCANPLOT/).
 
 ##  Configuração do ambiente para utilização do SCANPLOT
 
 !!! warning "Atenção"
 
-    As instruções a seguir sugerem a utilização do SCANPLOT a partir da máquina Ilopolis do CPTEC. Para uso em outras máquinas, as instruções de uso podem ser diferentes. Para os usuários que desejam utilizar o SCANPLOT em suas máquinas pessoais, recomenda-se seguir as instruções de instalação e uso que se encontram na página do projeto em [https://gam-dimnt-cptec.github.io/SCANPLOT/](https://gam-dimnt-cptec.github.io/SCANPLOT/).
+    As instruções a seguir sugerem a utilização do SCANPLOT a partir da máquina Ilopolis do CPTEC. Para uso em outras máquinas, as instruções de uso podem ser diferentes. Para os usuários que desejam utilizar o SCANPLOT em suas máquinas pessoais, recomenda-se seguir as instruções de instalação e uso que se encontram na página do projeto em [https://gad-dimnt-cptec.github.io/SCANPLOT/](https://gad-dimnt-cptec.github.io/SCANPLOT/).
 
 ### Máquinas Ilopolis e Itapemirim
 
@@ -103,4 +103,4 @@ Assista no video a seguir, um exemplo de utilização do SCANPLOT a partir da m�
 
 ![type:video](https://youtube.com/embed/HOao_F0-Pi8)
 
-Na [release V2.0.0 do SCANTEC](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/releases/tag/V2.0.0), também está disponível um tutorial que pode ser utilizado (com algumas diferenças em relação à release mais atual) para a instalação e utilização de todo o sistema via notebook do Jupyter. Para isso abra o arquivo `Tutorial/Tutorial_SCANTEC.ipynb` e siga as instruções na página. Esse mesmo tutorial pode se obtido a partir do endereço [Tutorial.tar](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/releases/download/V2.0.0/Tutorial.tar).
+Na [release V2.0.0 do SCANTEC](https://github.com/GAD-DIMNT-CPTEC/SCANTEC/releases/tag/V2.0.0), também está disponível um tutorial que pode ser utilizado (com algumas diferenças em relação à release mais atual) para a instalação e utilização de todo o sistema via notebook do Jupyter. Para isso abra o arquivo `Tutorial/Tutorial_SCANTEC.ipynb` e siga as instruções na página. Esse mesmo tutorial pode se obtido a partir do endereço [Tutorial.tar](https://github.com/GAD-DIMNT-CPTEC/SCANTEC/releases/download/V2.0.0/Tutorial.tar).
