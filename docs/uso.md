@@ -10,9 +10,9 @@ Todos estes arquivos devem ser revisados antes de se iniciar uma avaliação. Pa
 
 !!! note "Nota"
 
-    Para os usuários externos ao INPE que desejam utilizar os dados de testcase indicados na seção [Execução do SCANTEC com os dados do testcase](#execucao-do-scantec-com-os-dados-do-testcase), será necessário obter os arquivos de análises, previsões e climatologia que estão disponibilizados no endereço [FTP](http://ftp1.cptec.inpe.br/pesquisa/das/scantec/). Devido ao tamanho dos arquivos, recomenda-se a utilização apenas dos testcases dos modelos [WRF (regional, 432M)](http://ftp1.cptec.inpe.br/pesquisa/das/scantec/testcase/WRF.tar.gz), [AGCM (global, 3,3GB)](http://ftp1.cptec.inpe.br/pesquisa/das/scantec/testcase/AGCM.tar.gz) e [Climatologia (global, 131M)](http://ftp1.cptec.inpe.br/pesquisa/das/scantec/datain/climatologia.tar.gz). Antes de prosseguir com as instruções desta seção, realize o download dos arquivos (pelo menos do modelo WRF), descompacte e faça os ajustes no arquivo `scantec.conf` para que os arquivos de análises, previsões e climatologia possam ser encontrados pelo SCANTEC. Para mais informações sobre a utilização do arquivo `scantec.conf`, veja a página [Namelist](namelist.md).
+    Para os usuários internos que usam as maquinas virtuais não é necessário baixar os arquivos de testcase, pois eles estão disponiveis na maquina no /share, para os usuários externos ao INPE esses dados são baixados por FTP, na primeira ocasião de teste com o script que roda o scantec. Os dados necessários ( arquivos de análises, previsões e climatologia) são baixados e colocados no datain/Test{Model} e estão já configurados no 'scantec.conf' para esses locais. Para mais informações sobre a utilização do arquivo `scantec.conf`, veja a página [Namelist](namelist.md).
 
-Para utilizar o SCANTEC é preciso editar o arquivo namelist `SCANTEC-2.1.0/core/scantec.conf` e modificar as informações para refletir os dados do usuário. O arquivo deve ser modificado e salvo dentro do diretorio `SCANTEC-2.1.0/bin`, junto com o arquivo executável `scantec.x`. Para edição do arquivo namelist `scantec.conf`, há um conjunto de palavras-chave que antecedem a informação requerida pelo sistema. O usuário deve procurar por essas palavras-chave e atribuir os valores desejados.
+Para utilizar o SCANTEC é preciso editar o arquivo namelist `SCANTEC/core/scantec.conf` e modificar as informações para refletir os dados do usuário. O arquivo deve ser modificado e salvo dentro do diretorio `SCANTEC/bin`, junto com o arquivo executável `scantec.x`. Para edição do arquivo namelist `scantec.conf`, há um conjunto de palavras-chave que antecedem a informação requerida pelo sistema. O usuário deve procurar por essas palavras-chave e atribuir os valores desejados.
 
 Nas instruções apresentadas a seguir, são mostrados os procedimentos utilizados para preparar o SCANTEC para um tipo de avaliação, utilizando dados de exemplo.
 
@@ -24,10 +24,10 @@ Nas instruções apresentadas a seguir, são mostrados os procedimentos utilizad
 
     === "Comando"
         ```bash linenums="1"
-        cd SCANTEC-2.1.0/bin/
+        cd SCANTEC/bin/
         ```
 
-2. Crie uma cópia do arquivo `SCANTEC-2.1.0/core/scantec.conf` para o diretório `SCANTEC-2.1.0/bin` e modifique apropriadamente as informações solicitadas (no exemplo, está sendo utilizado o editor `vi`, mas o usuário pode utilizar o editor que melhor lhe convier):
+2. Crie uma cópia do arquivo `SCANTEC/core/scantec.conf` para o diretório `SCANTEC/bin` e modifique apropriadamente as informações solicitadas (no exemplo, está sendo utilizado o editor `vi`, mas o usuário pode utilizar o editor que melhor lhe convier):
 
     === "Comando"
         ```bash linenums="1"
@@ -87,37 +87,66 @@ Nas instruções apresentadas a seguir, são mostrados os procedimentos utilizad
         A opção TestCase não foi informada!
         
         Uso:
-        ./run_scantec.sh 1 - TestCase do BRAMS (Jan/2016)
-        ./run_scantec.sh 2 - TestCase do ETA   (Abr/2020)
-        ./run_scantec.sh 3 - TestCase do BAM   (Ago/2014)
-        ./run_scantec.sh 4 - dados definidos pelo usuário
+        ./run_scantec.sh 1 - TestCase do BRAMS         (Jul/2023)
+        ./run_scantec.sh 2 - TestCase do ETA           (Jul/2023)
+        ./run_scantec.sh 3 - TestCase do WRF           (Jul/2023)
+        ./run_scantec.sh 4 - TestCase do BAM           (Jul/2023)
+        ./run_scantec.sh 5 - Compara WRF/ETA/BRAMS/BAM (Jul/2023)
+        ./run_scantec.sh 6 - TestCase do MONAN         (Jan/2025)
+        ./run_scantec.sh 7 - Dados definidos pelo usuário
         ```
-    !!! note "Nota"
 
-        A correta utilização do script `run_scantec.sh` dependerá do acesso aos dados requeridos, sejam eles provenientes dos testcases do SCANTEC ou informados pelo usuário. O conjunto de dados de testcase do SCANTEC não são distribuídos com a release devido ao seu tamanho.
+![image](https://github.com/user-attachments/assets/eb87d3b4-4328-41e1-8e0d-57225ff8cd44)
+
+!!! note "Nota"
+
+	A correta utilização do script `run_scantec.sh` dependerá do acesso aos dados requeridos, sejam eles provenientes dos testcases do SCANTEC ou informados pelo usuário.
+	
+	O conjunto de dados de testcase do SCANTEC não são distribuídos com a release devido ao seu tamanho, no entanto esse script está apto a baixar os dados do repositorio do CPTEC https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/ onde estão disponiveis um conjunto de dados para testar os modelos listados acima.
 
 Na seção a seguir, e detalhada a utilização do SCANTEC a partir dos dados de testcase.
 
 ### Execução do SCANTEC com os dados do testcase
 
-Os dados de entrada do testcase para as 3 opções de modelos disponíveis (i.e., BRAMS, ETA e BAM) estão no disco NetApp do CPTEC, acessíveis em locais diferentes a depender da máquina utilizada:
+Os dados de entrada do testcase para as 6 opções de modelos disponíveis (i.e., BRAMS, ETA, WRF, BAM e MONAN) estão no disco NetApp do CPTEC, acessíveis em locais diferentes a depender da máquina utilizada:
 
-* Máquinas virtuais (e.g., Itapemirim, Ilopolis, Colorado): `/dados/das/pesq1/public/SCANTEC`;
-* Máquina Tupã: `/dados/das/pesq1/public/SCANTEC`;
-* Máquina Egeon: `/pesq/dados/das/pesq1/public/SCANTEC`.
+* Máquinas virtuais (e.g., Itapemirim, Ilopolis, Colorado): `/share/das/dist/scantec/TestCase_SCANTEC/`;
+* Máquina Egeon: `/pesq/share/das/dist/scantec/TestCase_SCANTEC/`;
+* Máquina externas ao inpe: `https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/`.
 
 !!! warning "Atenção"
 
     Na máquina XC50, estes dados não estão disponíveis, mas podem ser copiadas a partir das máquinas Itapemirim ou Egeon.
 
-1. Para utilizar o sistema (tanto na Tupã, quanto nas máquinas virtuais) entre no diretório raiz da instalação do SCANTEC:
+1. Para utilizar o sistema (tanto local, quanto nas máquinas virtuais) entre no diretório raiz da instalação do SCANTEC:
 
     === "Comando"
         ```bash linenums="1"
-        cd SCANTEC-2.1.0/
+        cd SCANTEC/
         ```
+!!! warning "Atenção"
 
-2. Execute o script de execução do SCANTEC com um parâmetro na linha de comando:
+    Nas máquinas virtuais, é preciso antes de rodar o run_scantec.sh apagar os diretorios do datain e criar links para os locais onde esses dadps estão pois, caso contrário os dados (que já estão na itapemerim) serão baixados via ftp ocupando espaço desnecessário. Nesse caso é preciso fazer a proxima ação, caso esteja em maquina sem acesso direto a esses dados pule essa etapa:
+
+2. Se estiver rodando nas maquina virtuais (itapemirim,ilopolis, etc) faça:
+
+    === "Comando"
+        ```bash linenums="12"
+        rmdir datain/TestBRAMS
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/BRAMS datain/TestBRAMS
+        rmdir datain/TestETA
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/ETA datain/TestETA
+        rmdir datain/TestWRF
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/WRF datain/TestWRF  
+        rmdir datain/TestBAM
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/BAM_T666L64 datain/TestBAM
+        rmdir datain/TestMONAN
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/MONAN datain/TestMONAN
+        rmdir datain/climatologia
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/Climatologia datain/climatologia
+        ```
+ 
+3. Execute o script de execução do SCANTEC com um parâmetro na linha de comando:
 
     === "Comando"
         ```bash linenums="1"
@@ -126,17 +155,22 @@ Os dados de entrada do testcase para as 3 opções de modelos disponíveis (i.e.
 
     * Sendo esse parâmetro uma das seguintes opções:
 
-        - Testcase do BRAMS (Jan/2016);
-        - Testcase do ETA (Abr/2020);
-        - Testcase do BAM (Ago/2014);
-        - dados definidos pelo usuário.
+        - 1 - TestCase do BRAMS         (Jul/2023)
+        - 2 - TestCase do ETA           (Jul/2023)
+        - 3 - TestCase do WRF           (Jul/2023)
+        - 4 - TestCase do BAM           (Jul/2023)
+        - 5 - Compara WRF/ETA/BRAMS/BAM (Jul/2023)
+        - 6 - TestCase do MONAN         (Jan/2025)
+        - 7 - Dados definidos pelo usuário
 
-Para cada uma dessas opções, o script criará um novo arquivo namelist `SCANTEC-2.1.0/bin/scantec.conf`, onde serão ajustados os parâmetros e informações necessárias para cada um dos experimentos, i.e., o período dos dados, o intervalo entre as análises, o intervalo entre as previsões e o período de integração dos modelos. O formato dos arquivos disponíveis para os testes é determinado em arquivos alocados no diretório `tables`. Para cada novo modelo ou versão de modelo com diferente resolução ou domínio, novos arquivos `*.table` devem ser preparados e alocados no diretório `SCANTEC-2.1.0/tables`. Para mais informações sobre como adicionar outros modelos, veja a seção intitulada [Adicionando outras versões ou modelos no SCANTEC](#adicionando-outras-versoes-ou-modelos-no-scantec).
+Para cada uma dessas opções, o script criará um novo arquivo namelist `SCANTEC/bin/scantec.conf`, onde serão ajustados os parâmetros e informações necessárias para cada um dos experimentos, i.e., o período dos dados, o intervalo entre as análises, o intervalo entre as previsões e o período de integração dos modelos. O formato dos arquivos disponíveis para os testes é determinado em arquivos alocados no diretório `tables`. Para cada novo modelo ou versão de modelo com diferente resolução ou domínio, novos arquivos `*.table` devem ser preparados e alocados no diretório `SCANTEC/tables`. Para mais informações sobre como adicionar outros modelos, veja a seção intitulada [Adicionando outras versões ou modelos no SCANTEC](#adicionando-outras-versoes-ou-modelos-no-scantec).
 
-As informações de saída dos testcases do SCANTEC são escritas no diretório `SCANTEC-2.1.0/dataout/TestMODEL` onde `MODEL` pode ser `BRAMS`, `ETA` ou `BAM`, dependendo da opção escolhida acima. Por exemplo:
+Observe que a opção 5 faz uma intercomparação entre os modelos WRF, ETA BRAMS e BAM. Observe nos arquivos de saida é possivel gerar gráficos que comparam o desempenho dos diferentes modelos avaliados. Obviamente que um pre requisito para essa intercomparação é que todos os períodos dos dados disponíveis para os diferentes modelos devem ser o mesmo. Observe esse detalhe ao elaborar avaliações de intercomparações de modelos. 
+
+As informações de saída dos testcases do SCANTEC são escritas no diretório `SCANTEC/dataout/TestMODEL` onde `MODEL` pode ser `BRAMS`, ` WRF`, ` MONAN`,  `ETA` ou `BAM`, dependendo da opção escolhida acima. Para a opção 5 o diretorio está seetado para se chamar TestCompara. Por exemplo:
 
 ```
-ls -ltr SCANTEC-2.1.0/dataout/TestMODEL
+ls -ltr SCANTEC/dataout/TestMODEL
 total 17292
 -rw-rw-r-- 1 user group    1154 Jun 28 17:20 RMSEEXP01_20140805002014080600F.ctl
 -rw-rw-r-- 1 user group    1154 Jun 28 17:20 VIESEXP01_20140805002014080600F.ctl
@@ -157,17 +191,50 @@ No exemplo acima, são identificados os seguintes tipos de arquivos, todos resul
 
 !!! note "Nota"
 
-    Dependendo do testcase escolhido, o tempo de execução do SCANTEC pode ser diferente devido ao número de pontos de grade a serem considerados na avaliação. Independente do número de modelos utilizados em uma avaliação com o SCANTEC, sempre será realizada a interpolação bilinear (espacial, horizontal) das grades para uma grade comum. Veja na página [Namelist](namelist.md) os parâmetros `run domain resolution dx` (ou `dx`) e `run domain resolution dy` (ou `dy`), os quais indicam a resolução (em graus) para a qual as grades serão interpoladas. Na vertical, as variáveis não são interpoladas, visto que elas são definidas por níveis de pressão como descrito no arquivo `SCANTEC-2.1.0/tables/scantec.vars`.
+    Dependendo do testcase escolhido, o tempo de execução do SCANTEC pode ser diferente devido ao número de pontos de grade a serem considerados na avaliação. Independente do número de modelos utilizados em uma avaliação com o SCANTEC, sempre será realizada a interpolação bilinear (espacial, horizontal) das grades para uma grade comum. Veja na página [Namelist](namelist.md) os parâmetros `run domain resolution dx` (ou `dx`) e `run domain resolution dy` (ou `dy`), os quais indicam a resolução (em graus) para a qual as grades serão interpoladas. Na vertical, as variáveis não são interpoladas, visto que elas são definidas por níveis de pressão como descrito no arquivo `SCANTEC/tables/scantec.vars`.
+
+### Utilizando o SCANTEC em dados NetCDF
+
+A atual versão do SCANTEC está apta para ler apenas dados nos formatos GRIB ou binário (`.grb` ou `.bin`.), logo se a saida do pós-processamento do modelo é escrita no formato NetCDF (`.nc`) é necessário um pré-processamento nesses dados para depois serem avaliados no SCANTEC. Esse é o caso dos dados do WRF, MPAS e MONAN. Para isso no diretório `scripts_uteis`, há um script chamado `nc2grb.sh`, que converte arquivos NetCDF para um conjunto de arquivos compatíveis no formato GRIB (`.grb`, `.ctl`, `.gmp`). Esse script utiliza o script [`lats4d.sh`](http://opengrads.org/doc/scripts/lats4d/), que permite recortar os dados espacialmente, temporalmente, por níveis de pressão e por variáveis, facilitando o processamento dos arquivos brutos. Os dados dos modelos [MONAN](https://monanadmin.github.io/monan_cc_docs/) (Model for Ocean-laNd-Atmosphere predictioN) e [WRF](https://www.mmm.ucar.edu/models/wrf) (Weather Research and Forecasting model) disponiveis no testacase foram pré-processados usando esse script e o mesmo deve ser feito para outros arquivos que o usuário deseja avaliar no SCANTEC, que estejam no formato NetCDF.
+
+A atual versão do script `lats4d.sh` no diretório `SCANTEC/scripts_uteis`, está configurado para ler a versão  pós-processada do MONAN v1.1.0 (dados brutos disponiveis no endereço [https://ftp1.cptec.inpe.br/pesquisa/das/victor.ranieri/MONANexp/MONAN_v1.1.0/](https://ftp1.cptec.inpe.br/pesquisa/das/victor.ranieri/MONANexp/MONAN_v1.1.0/)) e foi utilizado para gerar os arquivos GRIB disponíveis no testcase do MONAN ([https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/MONAN](https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/MONAN)). 
+
+!!! note "Nota"
+
+    A presente versão dos scripts está ajustada para o modelo MONAN. Ajustes podem ser necessários para adaptar os scripts para as necessidades do usuário! 
+
+Observe que foi feita nessa conversão uma seleção de variáveis e níveis do modelo visando deixar o arquivo mais leve para o download durante o testcase. Na máquina Itapemirim, o script pode ser executado e testado da forma como está. Fora da rede interna do CPTEC, é preciso baixar os dados brutos (~1,2 TB) e modificar o endereço de onde ele deve ser lido localmente. Os dados são gerados no diretório `datain/MONAN`. O domínio dos dados é o global, mas há um recorte sobre a América do Sul. Para utilizar este recorte, basta descomentar as linhas apropriadamente. Para executar o scritp faça:
+
+1. Entre no diretório `scripts_uteis` onde o SCANTEC foi instalado:
+
+    === "Comando"
+        ```bash linenums="1"
+        cd SCANTEC/scripts_uteis
+        ```
+
+2. Execute o script `nc2grb.sh`:
+
+    === "Comando"
+        ```bash linenums="1"
+        nc2grb.sh
+        ```
+!!! note "Nota"
+
+	Para utilizar os dados do usuário, é preciso modificar os endereços das variáveis a seguir:
+
+    * `datain`
+    * `dataout`
+    * `dir_script`
 
 ### Executando o SCANTEC com dados do usuário
 
-Para executar o script `run_scantec.sh` com as informações inseridas pelo usuário, escolha a opção `4`. Mas antes, é preciso editar o script e modificar apropriadamente algumas informações. Veja a seguir:
+Para executar o script `run_scantec.sh` com as informações inseridas pelo usuário, escolha a opção `7`. Mas antes, é preciso editar o script e modificar apropriadamente algumas informações. Veja a seguir:
 
 1. Para utilizar o sistema (tanto no Tupã como nas máquinas virtuais) entre no diretório raiz da instalação do SCANTEC:
 
     === "Comando"
         ```bash linenums="1"
-        cd SCANTEC-2.1.0/
+        cd SCANTEC/
         ```
 
 2. Edite o script `run_scantec.sh`:
@@ -222,11 +289,11 @@ Para executar o script `run_scantec.sh` com as informações inseridas pelo usu�
 
     ```
 
-3. Em seguida, salve as modificações no script `run_scantec.sh` e execute-o com a opção `4`:
+3. Em seguida, salve as modificações no script `run_scantec.sh` e execute-o com a opção `7`:
 
     === "Comando"
         ```bash linenums="1"
-        ./run_scantec.sh 4
+        ./run_scantec.sh 7
         ```
     === "Resultado"
         ```
@@ -260,10 +327,10 @@ Para executar o script `run_scantec.sh` com as informações inseridas pelo usu�
          Uso climatologia: 0     
         
          Resultados:                               
-         /scripts/ensemble/SCANTEC-2.1.0/dataout/                          
+         /scripts/ensemble/SCANTEC/dataout/                          
         
          Arquivo de log:                           
-         Log do processo: /scripts/ensemble/SCANTEC-2.1.0/logfile/scantec-20220628.17.30.log                
+         Log do processo: /scripts/ensemble/SCANTEC/logfile/scantec-20220628.17.30.log                
          ==========================                
         
          Início do processamento: Tue Jun 28 17:30:01 GMT 2022
@@ -278,26 +345,26 @@ Para executar o script `run_scantec.sh` com as informações inseridas pelo usu�
 
          Final do processo: Tue Jun 28 17:30:01 GMT 2022
         
-         Log do processo: /scripts/ensemble/SCANTEC-2.1.0/logfile/scantec-20220628.17.30.log
+         Log do processo: /scripts/ensemble/SCANTEC/logfile/scantec-20220628.17.30.log
         ====================================================================================
         
          Fim do processo!
         ```
 
-4. Para verificar os resultados de saída do SCANTEC, liste os arquivos do diretório `SCANTEC-2.1.0/dataout`:
+4. Para verificar os resultados de saída do SCANTEC, liste os arquivos do diretório `SCANTEC/dataout`:
 
     === "Comando"
         ```bash linenums="1"
-        ls SCANTEC-2.1.0/dataout
+        ls SCANTEC/dataout
         ```
 
 !!! info "Informação"
 
-    Para visualizar os resultados gerados pelo SCANTEC, pode-se utilizar softwares como o GrADS (para visualização da distribuição espacial dos campos) e o GNUPlot (para a plotagem das tabelas). A partir da versão SCANTEC V2.0.0, recomenda-se a utilização do SCANPLOT (veja mais detalhes na página [Visualização de resultados usando o SCANPLOT](scanplot.md) ou no site do projeto em [https://gam-dimnt-cptec.github.io/SCANPLOT/](https://gam-dimnt-cptec.github.io/SCANPLOT/)).
+    Para visualizar os resultados gerados pelo SCANTEC, pode-se utilizar softwares como o GrADS (para visualização da distribuição espacial dos campos) e o GNUPlot (para a plotagem das tabelas). A partir da versão SCANTEC V2.0.0, recomenda-se a utilização do SCANPLOT (veja mais detalhes na página [Visualização de resultados usando o SCANPLOT](scanplot.md) ou no site do projeto em [https://gad-dimnt-cptec.github.io/SCANPLOT/](https://gad-dimnt-cptec.github.io/SCANPLOT/)).
 
 ## Adicionando outras versões ou modelos no SCANTEC
 
-Para adicionar uma nova versão de modelo à lista das opções em que o sistema está preparado para processar (i.e., BRAMS, ETA, BAM), siga as instruções descritas nessa seção. Inicialmente, verifique se a versão desejada já não está implementada no sistema. Caso não esteja, para incluir uma nova versão, crie um novo arquivo com a extensão `.model` dentro do diretório `SCANTEC-2.1.0/tables` com as informações pertinentes à versão do modelo a ser utilizado. Utilize um arquivo existente para saber como formatar o novo arquivo.
+Para adicionar uma nova versão de modelo à lista das opções em que o sistema está preparado para processar (i.e., BRAMS, ETA, BAM), siga as instruções descritas nessa seção. Inicialmente, verifique se a versão desejada já não está implementada no sistema. Caso não esteja, para incluir uma nova versão, crie um novo arquivo com a extensão `.model` dentro do diretório `SCANTEC/tables` com as informações pertinentes à versão do modelo a ser utilizado. Utilize um arquivo existente para saber como formatar o novo arquivo.
 
 !!! note "Notas"
 
@@ -319,7 +386,7 @@ A lista abaixo, elenca os modelos já implementados na versão SCANTEC V2.1.0 ju
 [^1]: O modelo AGCM (Atmospheric General Circulation Modelo) representa uma geração anterior do modelo BAM (Brazilian Atmospheric Model).
 [^2]: O modelo GFS foi testado a partir da conversão dos arquivos GRIB2 para GRIB1, utilizando o script [`lats4d`](http://opengrads.org/doc/scripts/lats4d/). A utilização do SCANTEC com os arquivos convertidos desse modelo, devem ser feita com atenção para os nomes das variáveis e os níveis verticais, uma vez que o modelo utiliza coordenada vertical híbrida.
 
-Para adicionar um novo modelo basta editar um dos arquivos acima, escolhendo-se aquele que mais se assemelha com o modelo desejado e fazer os ajustes necessários. Salve o arquivo modificado com um nome apropriado (incluindo a extensão `.model`) dentro do diretório `SCANTEC-2.1.0/tables`, e no arquivo namelist `scantec.conf` (ou no script `run_scantec.sh`, caso esteja sendo utilizado), assegure-se de que a nova versão do novo modelo seja lida a partir do arquivo `table` criado. Para isso, na linha em que o experimento é referenciado, a primeira palavra deve ser o nome do arquivo `table`. Veja a seguir:
+Para adicionar um novo modelo basta editar um dos arquivos acima, escolhendo-se aquele que mais se assemelha com o modelo desejado e fazer os ajustes necessários. Salve o arquivo modificado com um nome apropriado (incluindo a extensão `.model`) dentro do diretório `SCANTEC/tables`, e no arquivo namelist `scantec.conf` (ou no script `run_scantec.sh`, caso esteja sendo utilizado), assegure-se de que a nova versão do novo modelo seja lida a partir do arquivo `table` criado. Para isso, na linha em que o experimento é referenciado, a primeira palavra deve ser o nome do arquivo `table`. Veja a seguir:
 
 No script `run_scantec.sh`:
 
@@ -433,7 +500,7 @@ vtmp:850 vtmp2(temp:850,umes:850)
 vtmp:500 vtmp2(temp:500,umes:500)
 ```
 
-As seguintes funções matemáticas estão disponíveis na versão SCANTEC V2.1.0:
+As seguintes funções matemáticas estão disponíveis na versão SCANTEC:
 
 * Funções Trigonométricas:
     - `sin(x)`: seno de x;
@@ -476,18 +543,4 @@ As seguintes funções matemáticas estão disponíveis na versão SCANTEC V2.1.
 
 !!! tip "Dica"
 
-    A implementação das funções matemáticas no SCANTEC, está nas rotinas [MathExpress.f90](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/blob/master/core/MathExpress.f90) e [scan_MathPlugin.f90](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/blob/master/core/scan_MathPlugin.f90).
-
-## Utilização do Manual
-
-Este manual de uso pode ser também visualizado em um navegador de internet, na mesma máquina em que o SCANTEC está sendo utilizado. Para isto, um arquivo de definição de ambiente é fornecido junto com a release SCANTEC V2.1.0 para que seja criado um ambiente igual ao ambiente de referência do SCANTEC. Esta é uma etapa opcional da utilização, mas pode ser utilizada caso o usuário queira visualizar o manual na máquina.
-
-Para isso, utilize o arquivo `SCANTEC-2.1.0/environment.yml` para criar o ambiente `SCANTEC` utilizando o gerenciador de pacotes `conda`:
-
-```
-conda env create -f environment.yml
-```
-
-!!! note "Nota"
-
-    Este procedimento não é necessário para a utilização do SCANTEC nas máquinas virtuais do CPTEC.
+    A implementação das funções matemáticas no SCANTEC, está nas rotinas [MathExpress.f90](https://github.com/GAD-DIMNT-CPTEC/SCANTEC/blob/master/core/MathExpress.f90) e [scan_MathPlugin.f90](https://github.com/GAD-DIMNT-CPTEC/SCANTEC/blob/master/core/scan_MathPlugin.f90).

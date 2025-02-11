@@ -1,0 +1,32 @@
+ftype: grib
+undef: 1e+20
+xdim:  2000 linear 0.000000 0.180000
+ydim:  1000 linear -89.910004 0.180000
+zdim:    5 levels 1000 925 850 500 250
+#------------------------------------------------------#
+# A tabela de variáveis é preenchida da seguinte forma
+# A primeira coluna é o nome da variável do scantec, veja scantec.vars
+# A segunda coluna pode ser o nome da variável correspondente no modelo
+# ou então uma função (@func) que irá produzir a variável desejada, baseando-se
+# nas variáveis pré-existentes do modelo. Para o uso das funções veja o docu-
+# mento funcoes.readme
+vars:
+psnm:000 psnm:1000
+temp:850 temp:850
+temp:500 temp:500
+temp:250 temp:250
+agpl:925 agpl:1000
+umre:925 umrl:925 
+umre:850 umrl:850
+umre:500 umrl:500
+umre:250 umrl:250 
+zgeo:850 zgeo:850
+zgeo:500 zgeo:500
+zgeo:250 zgeo:250
+uvel:850 uvel:850
+uvel:500 uvel:500
+uvel:250 uvel:250
+vvel:850 vvel:850
+vvel:500 vvel:500
+vvel:250 vvel:250
+::
