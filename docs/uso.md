@@ -360,7 +360,7 @@ Para executar o script `run_scantec.sh` com as informações inseridas pelo usu�
 
 !!! info "Informação"
 
-    Para visualizar os resultados gerados pelo SCANTEC, pode-se utilizar softwares como o GrADS (para visualização da distribuição espacial dos campos) e o GNUPlot (para a plotagem das tabelas). A partir da versão SCANTEC V2.0.0, recomenda-se a utilização do SCANPLOT (veja mais detalhes na página [Visualização de resultados usando o SCANPLOT](scanplot.md) ou no site do projeto em [https://gam-dimnt-cptec.github.io/SCANPLOT/](https://gam-dimnt-cptec.github.io/SCANPLOT/)).
+    Para visualizar os resultados gerados pelo SCANTEC, pode-se utilizar softwares como o GrADS (para visualização da distribuição espacial dos campos) e o GNUPlot (para a plotagem das tabelas). A partir da versão SCANTEC V2.0.0, recomenda-se a utilização do SCANPLOT (veja mais detalhes na página [Visualização de resultados usando o SCANPLOT](scanplot.md) ou no site do projeto em [https://gad-dimnt-cptec.github.io/SCANPLOT/](https://gad-dimnt-cptec.github.io/SCANPLOT/)).
 
 ## Adicionando outras versões ou modelos no SCANTEC
 
@@ -543,4 +543,4 @@ As seguintes funções matemáticas estão disponíveis na versão SCANTEC:
 
 !!! tip "Dica"
 
-    A implementação das funções matemáticas no SCANTEC, está nas rotinas [MathExpress.f90](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/blob/master/core/MathExpress.f90) e [scan_MathPlugin.f90](https://github.com/GAM-DIMNT-CPTEC/SCANTEC/blob/master/core/scan_MathPlugin.f90).
+    A implementação das funções matemáticas no SCANTEC, está nas rotinas [MathExpress.f90](https://github.com/GAD-DIMNT-CPTEC/SCANTEC/blob/master/core/MathExpress.f90) e [scan_MathPlugin.f90](https://github.com/GAD-DIMNT-CPTEC/SCANTEC/blob/master/core/scan_MathPlugin.f90).

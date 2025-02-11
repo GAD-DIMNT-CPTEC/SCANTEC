@@ -4,8 +4,8 @@ site_author: João Gerd Zell de Mattos
 site_description: Site com a documentação e exemplos de uso do SCANTEC
 
 # Repository
-repo_name: GAD-DIMNT-CPTEC/SCANTEC-MASTER
-repo_url: https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER
+repo_name: GAD-DIMNT-CPTEC/SCANTEC
+repo_url: https://github.com/GAD-DIMNT-CPTEC/SCANTEC
 edit_uri: edit/master/docs/
 
 # Page tree
@@ -38,7 +38,7 @@ theme:
 extra:
     social:
       - icon: fontawesome/brands/github
-        link: https://github.com/GAM-DIMNT-CPTEC
+        link: https://github.com/GAD-DIMNT-CPTEC
       - icon: fontawesome/solid/paper-plane
         link: mailto:joao.gerd@gmail.com
 
