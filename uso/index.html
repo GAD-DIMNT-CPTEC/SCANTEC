@@ -1,0 +1,1295 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Site com a documentação e exemplos de uso do SCANTEC">
+      
+      
+        <meta name="author" content="João Gerd Zell de Mattos">
+      
+      
+      
+        <link rel="prev" href="../instalacao/">
+      
+      
+        <link rel="next" href="../namelist/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.4">
+    
+    
+      
+        <title>Uso - SCANTEC</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.8608ea7d.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#uso" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="SCANTEC" class="md-header__button md-logo" aria-label="SCANTEC" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SCANTEC
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Uso
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/GAD-DIMNT-CPTEC/SCANTEC" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GAD-DIMNT-CPTEC/SCANTEC
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="SCANTEC" class="md-nav__button md-logo" aria-label="SCANTEC" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    SCANTEC
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/GAD-DIMNT-CPTEC/SCANTEC" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GAD-DIMNT-CPTEC/SCANTEC
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Início
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Início
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../introducao/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introdução
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../instalacao/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Instalação
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Utilização
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Utilização
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Uso
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Uso
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#execucao-do-scantec-com-os-dados-do-testcase" class="md-nav__link">
+    <span class="md-ellipsis">
+      Execução do SCANTEC com os dados do testcase
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utilizando-o-scantec-em-dados-netcdf" class="md-nav__link">
+    <span class="md-ellipsis">
+      Utilizando o SCANTEC em dados NetCDF
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#executando-o-scantec-com-dados-do-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      Executando o SCANTEC com dados do usuário
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adicionando-outras-versoes-ou-modelos-no-scantec" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adicionando outras versões ou modelos no SCANTEC
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#funcoes-matematicas-implicitas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Funções Matemáticas Implícitas
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../namelist/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Namelist
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scanplot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Visualização
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resol_problemas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Resolução de Problemas
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#execucao-do-scantec-com-os-dados-do-testcase" class="md-nav__link">
+    <span class="md-ellipsis">
+      Execução do SCANTEC com os dados do testcase
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utilizando-o-scantec-em-dados-netcdf" class="md-nav__link">
+    <span class="md-ellipsis">
+      Utilizando o SCANTEC em dados NetCDF
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#executando-o-scantec-com-dados-do-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      Executando o SCANTEC com dados do usuário
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adicionando-outras-versoes-ou-modelos-no-scantec" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adicionando outras versões ou modelos no SCANTEC
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#funcoes-matematicas-implicitas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Funções Matemáticas Implícitas
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<div><h1 id="uso">Uso<a class="headerlink" href="#uso" title="Permanent link">¶</a></h1>
+<p>O SCANTEC possui alguns arquivos de configuração (namelists) onde são definidos os parâmetros utilizados nas avaliações numéricas. Estes arquivos são os seguintes:</p>
+<ul>
+<li>Arquivo namelist <code>scantec.conf</code>: arquivo com os parâmetros da avaliação (e.g., datas, nomes dos arquivos etc);</li>
+<li>Arquivo namelist <code>scantec.vars</code>: arquivo com os nomes das variáveis e suas equivalências utilizadas na avaliação;</li>
+<li>Arquivos tables <code>*.model</code>: arquivos de definição das grades dos modelos utilizados na avaliação.</li>
+</ul>
+<p>Todos estes arquivos devem ser revisados antes de se iniciar uma avaliação. Para uma descrição mais detalhada sobre os parâmetros e elementos definidos nestes arquivos, veja a página <a href="../namelist/">Namelist</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Para os usuários internos que usam as maquinas virtuais não é necessário baixar os arquivos de testcase, pois eles estão disponiveis na maquina no /share, para os usuários externos ao INPE esses dados são baixados por FTP, na primeira ocasião de teste com o script que roda o scantec. Os dados necessários ( arquivos de análises, previsões e climatologia) são baixados e colocados no datain/Test{Model} e estão já configurados no 'scantec.conf' para esses locais. Para mais informações sobre a utilização do arquivo <code>scantec.conf</code>, veja a página <a href="../namelist/">Namelist</a>.</p>
+</div>
+<p>Para utilizar o SCANTEC é preciso editar o arquivo namelist <code>SCANTEC/core/scantec.conf</code> e modificar as informações para refletir os dados do usuário. O arquivo deve ser modificado e salvo dentro do diretorio <code>SCANTEC/bin</code>, junto com o arquivo executável <code>scantec.x</code>. Para edição do arquivo namelist <code>scantec.conf</code>, há um conjunto de palavras-chave que antecedem a informação requerida pelo sistema. O usuário deve procurar por essas palavras-chave e atribuir os valores desejados.</p>
+<p>Nas instruções apresentadas a seguir, são mostrados os procedimentos utilizados para preparar o SCANTEC para um tipo de avaliação, utilizando dados de exemplo.</p>
+<div class="admonition info">
+<p class="admonition-title">Informação</p>
+<p>Os arquivos de exemplo utilizados na avaliação com o SCANTEC, estão disponíveis no disco NetApp do CPTEC, acessível a partir das máquinas virtuais do centro e Egeon. Os usuários externos ao INPE que desejam utilizar o SCANTEC em suas avaliações, deverão preparar os seus próprios arquivos de análises, previsões e climatologias.</p>
+</div>
+<ol>
+<li>
+<p>Para utilizar o sistema entre no diretório <code>bin</code> do SCANTEC:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked id="__tabbed_1_1" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">Comando</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>SCANTEC/bin/
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Crie uma cópia do arquivo <code>SCANTEC/core/scantec.conf</code> para o diretório <code>SCANTEC/bin</code> e modifique apropriadamente as informações solicitadas (no exemplo, está sendo utilizado o editor <code>vi</code>, mas o usuário pode utilizar o editor que melhor lhe convier):</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked id="__tabbed_2_1" name="__tabbed_2" type="radio"><div class="tabbed-labels"><label for="__tabbed_2_1">Comando</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>cp<span class="w"> </span>../core/scantec.conf<span class="w"> </span>scantec.conf
+vi<span class="w"> </span>scantec.conf
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Execute o SCANTEC com o comando (na aba <strong>Resultado</strong> a seguir, é apresentado apenas um exemplo do que o SCANTEC fará quando configurado para a avaliação de um período específico):</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked id="__tabbed_3_1" name="__tabbed_3" type="radio"><input id="__tabbed_3_2" name="__tabbed_3" type="radio"><div class="tabbed-labels"><label for="__tabbed_3_1">Comando</label><label for="__tabbed_3_2">Resultado</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>./scantec.x
+</code></pre></div></td></tr></table></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code> !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+ !                         Climatology Not Found                       !
+ !         The mean reference field will be used as climatology        !
+ !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+ !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+ !                          Running scantec                            !
+ !     Please wait while the system is performing the statistics       !
+ !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+   Analisys   Forecast        fct
+ 2014080500 2014080500        00h
+ 2014080500 2014080600        24h
+ 2014080500 2014080700        48h
+ 2014080500 2014080800        72h
+ 2014080512 2014080512        00h
+ 2014080512 2014080612        24h
+ 2014080512 2014080712        48h
+ 2014080512 2014080812        72h
+ 2014080600 2014080600        00h
+ 2014080600 2014080700        24h
+ 2014080600 2014080800        48h
+ 2014080600 2014080900        72h
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Atenção</p>
+<p>No <strong>Resultado</strong> do exemplo acima, observe que foi emitida a mensagem <code>Climatology Not Found The mean reference field will be used as climatology</code>, o que indica que um arquivo de climatologia não foi inidicado para uso na avaliação e que uma média dos campos de referência serão utilizados para este propósito. A climatologia é utilizada para o cálculo do Coeficiente de Correlação de Anomalia.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>No exemplo, observe que o SCANTEC foi executado para realizar avaliações objetivas a partir de arquivos de previsões numéricas para até 72 horas, entre os dias 2014080500 e 2014080600, a cada 12 horas. Verifique novamente o arquivo namelist <code>scantec.conf</code> e compare os valores dos parâmetros com as informações impressas na tela.</p>
+</div>
+</li>
+<li>
+<p>De outra forma, pode-se também utilizar o script <code>run_scantec.sh</code>. Este script modifica o arquivo namelist <code>scantec.conf</code> com valores pré-definidos, executa o arquivo binário <code>scantec.x</code> e armazenas as informações em um arquivo de log. Esse script possui uma série de testcases para permitir a validação da versão instalada pelo usuário:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked id="__tabbed_4_1" name="__tabbed_4" type="radio"><input id="__tabbed_4_2" name="__tabbed_4" type="radio"><div class="tabbed-labels"><label for="__tabbed_4_1">Comando</label><label for="__tabbed_4_2">Resultado</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>./run_scantec.sh
+</code></pre></div></td></tr></table></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>Sistema Comunitário de Avaliação de modelos Numéricos de Tempo e Clima (SCANTEC)
+
+A opção TestCase não foi informada!
+
+Uso:
+./run_scantec.sh 1 - TestCase do BRAMS         (Jul/2023)
+./run_scantec.sh 2 - TestCase do ETA           (Jul/2023)
+./run_scantec.sh 3 - TestCase do WRF           (Jul/2023)
+./run_scantec.sh 4 - TestCase do BAM           (Jul/2023)
+./run_scantec.sh 5 - Compara WRF/ETA/BRAMS/BAM (Jul/2023)
+./run_scantec.sh 6 - TestCase do MONAN         (Jan/2025)
+./run_scantec.sh 7 - Dados definidos pelo usuário
+</code></pre></div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+<p><img alt="image" src="https://github.com/user-attachments/assets/eb87d3b4-4328-41e1-8e0d-57225ff8cd44"></p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>A correta utilização do script <code>run_scantec.sh</code> dependerá do acesso aos dados requeridos, sejam eles provenientes dos testcases do SCANTEC ou informados pelo usuário.</p>
+<p>O conjunto de dados de testcase do SCANTEC não são distribuídos com a release devido ao seu tamanho, no entanto esse script está apto a baixar os dados do repositorio do CPTEC https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/ onde estão disponiveis um conjunto de dados para testar os modelos listados acima.</p>
+</div>
+<p>Na seção a seguir, e detalhada a utilização do SCANTEC a partir dos dados de testcase.</p>
+<h3 id="execucao-do-scantec-com-os-dados-do-testcase">Execução do SCANTEC com os dados do testcase<a class="headerlink" href="#execucao-do-scantec-com-os-dados-do-testcase" title="Permanent link">¶</a></h3>
+<p>Os dados de entrada do testcase para as 6 opções de modelos disponíveis (i.e., BRAMS, ETA, WRF, BAM e MONAN) estão no disco NetApp do CPTEC, acessíveis em locais diferentes a depender da máquina utilizada:</p>
+<ul>
+<li>Máquinas virtuais (e.g., Itapemirim, Ilopolis, Colorado): <code>/share/das/dist/scantec/TestCase_SCANTEC/</code>;</li>
+<li>Máquina Egeon: <code>/pesq/share/das/dist/scantec/TestCase_SCANTEC/</code>;</li>
+<li>Máquina externas ao inpe: <code>https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/</code>.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Atenção</p>
+<p>Na máquina XC50, estes dados não estão disponíveis, mas podem ser copiadas a partir das máquinas Itapemirim ou Egeon.</p>
+</div>
+<ol>
+<li>
+<p>Para utilizar o sistema (tanto local, quanto nas máquinas virtuais) entre no diretório raiz da instalação do SCANTEC:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:1"><input checked id="__tabbed_5_1" name="__tabbed_5" type="radio"><div class="tabbed-labels"><label for="__tabbed_5_1">Comando</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>SCANTEC/
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Atenção</p>
+<p>Nas máquinas virtuais, é preciso antes de rodar o run_scantec.sh apagar os diretorios do datain e criar links para os locais onde esses dadps estão pois, caso contrário os dados (que já estão na itapemerim) serão baixados via ftp ocupando espaço desnecessário. Nesse caso é preciso fazer a proxima ação, caso esteja em maquina sem acesso direto a esses dados pule essa etapa:</p>
+</div>
+<ol>
+<li>
+<p>Se estiver rodando nas maquina virtuais (itapemirim,ilopolis, etc) faça:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:1"><input checked id="__tabbed_6_1" name="__tabbed_6" type="radio"><div class="tabbed-labels"><label for="__tabbed_6_1">Comando</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span></pre></div></td><td class="code"><div><pre><span></span><code>rmdir<span class="w"> </span>datain/TestBRAMS
+ln<span class="w"> </span>-s<span class="w"> </span>/share/das/dist/scantec/TestCase_SCANTEC/BRAMS<span class="w"> </span>datain/TestBRAMS
+rmdir<span class="w"> </span>datain/TestETA
+ln<span class="w"> </span>-s<span class="w"> </span>/share/das/dist/scantec/TestCase_SCANTEC/ETA<span class="w"> </span>datain/TestETA
+rmdir<span class="w"> </span>datain/TestWRF
+ln<span class="w"> </span>-s<span class="w"> </span>/share/das/dist/scantec/TestCase_SCANTEC/WRF<span class="w"> </span>datain/TestWRF<span class="w">  </span>
+rmdir<span class="w"> </span>datain/TestBAM
+ln<span class="w"> </span>-s<span class="w"> </span>/share/das/dist/scantec/TestCase_SCANTEC/BAM_T666L64<span class="w"> </span>datain/TestBAM
+rmdir<span class="w"> </span>datain/TestMONAN
+ln<span class="w"> </span>-s<span class="w"> </span>/share/das/dist/scantec/TestCase_SCANTEC/MONAN<span class="w"> </span>datain/TestMONAN
+rmdir<span class="w"> </span>datain/climatologia
+ln<span class="w"> </span>-s<span class="w"> </span>/share/das/dist/scantec/TestCase_SCANTEC/Climatologia<span class="w"> </span>datain/climatologia
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Execute o script de execução do SCANTEC com um parâmetro na linha de comando:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="7:1"><input checked id="__tabbed_7_1" name="__tabbed_7" type="radio"><div class="tabbed-labels"><label for="__tabbed_7_1">Comando</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>./run_scantec.sh<span class="w"> </span><span class="o">[</span>parâmetro<span class="o">]</span>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<ul>
+<li>
+<p>Sendo esse parâmetro uma das seguintes opções:</p>
+<ul>
+<li>1 - TestCase do BRAMS         (Jul/2023)</li>
+<li>2 - TestCase do ETA           (Jul/2023)</li>
+<li>3 - TestCase do WRF           (Jul/2023)</li>
+<li>4 - TestCase do BAM           (Jul/2023)</li>
+<li>5 - Compara WRF/ETA/BRAMS/BAM (Jul/2023)</li>
+<li>6 - TestCase do MONAN         (Jan/2025)</li>
+<li>7 - Dados definidos pelo usuário</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>Para cada uma dessas opções, o script criará um novo arquivo namelist <code>SCANTEC/bin/scantec.conf</code>, onde serão ajustados os parâmetros e informações necessárias para cada um dos experimentos, i.e., o período dos dados, o intervalo entre as análises, o intervalo entre as previsões e o período de integração dos modelos. O formato dos arquivos disponíveis para os testes é determinado em arquivos alocados no diretório <code>tables</code>. Para cada novo modelo ou versão de modelo com diferente resolução ou domínio, novos arquivos <code>*.table</code> devem ser preparados e alocados no diretório <code>SCANTEC/tables</code>. Para mais informações sobre como adicionar outros modelos, veja a seção intitulada <a href="#adicionando-outras-versoes-ou-modelos-no-scantec">Adicionando outras versões ou modelos no SCANTEC</a>.</p>
+<p>Observe que a opção 5 faz uma intercomparação entre os modelos WRF, ETA BRAMS e BAM. Observe nos arquivos de saida é possivel gerar gráficos que comparam o desempenho dos diferentes modelos avaliados. Obviamente que um pre requisito para essa intercomparação é que todos os períodos dos dados disponíveis para os diferentes modelos devem ser o mesmo. Observe esse detalhe ao elaborar avaliações de intercomparações de modelos. </p>
+<p>As informações de saída dos testcases do SCANTEC são escritas no diretório <code>SCANTEC/dataout/TestMODEL</code> onde <code>MODEL</code> pode ser <code>BRAMS</code>, <code>WRF</code>, <code>MONAN</code>,  <code>ETA</code> ou <code>BAM</code>, dependendo da opção escolhida acima. Para a opção 5 o diretorio está seetado para se chamar TestCompara. Por exemplo:</p>
+<div class="highlight"><pre><span></span><code>ls -ltr SCANTEC/dataout/TestMODEL
+total 17292
+-rw-rw-r-- 1 user group    1154 Jun 28 17:20 RMSEEXP01_20140805002014080600F.ctl
+-rw-rw-r-- 1 user group    1154 Jun 28 17:20 VIESEXP01_20140805002014080600F.ctl
+-rw-rw-r-- 1 user group    1154 Jun 28 17:20 MEANEXP01_20140805002014080600F.ctl
+-rw-rw-r-- 1 user group    1055 Jun 28 17:22 RMSEEXP01_20140805002014080600T.scan
+-rw-rw-r-- 1 user group    1055 Jun 28 17:22 VIESEXP01_20140805002014080600T.scan
+-rw-rw-r-- 1 user group    1055 Jun 28 17:22 ACOREXP01_20140805002014080600T.scan
+-rw-rw-r-- 1 user group 5864960 Jun 28 17:22 RMSEEXP01_20140805002014080600F.scan
+-rw-rw-r-- 1 user group 5864960 Jun 28 17:22 VIESEXP01_20140805002014080600F.scan
+-rw-rw-r-- 1 user group 5864960 Jun 28 17:22 MEANEXP01_20140805002014080600F.scan
+</code></pre></div>
+<p>No exemplo acima, são identificados os seguintes tipos de arquivos, todos resultantes de uma execução do SCANTEC:</p>
+<ul>
+<li><code>RMSEEXP01_20140805002014080600F.ctl</code>: arquivo ascii (texto) descritor para o arquivo <code>RMSEEXP01_20140805002014080600F.scan</code>. Pode ser aberto no software GrADS;</li>
+<li><code>RMSEEXP01_20140805002014080600F.scan</code>: arquivo binário com a distribuição espacial da estatística RMSE (Root Mean Square Error, ou Raiz do Erro Quadrático Médio);</li>
+<li><code>VIESEXP01_20140805002014080600T.scan</code>: arquivo ascci (texto) com uma tabela com o resultado do RMSE, calculado para cada uma das variáveis escolhidas e ordenadas por tempo de previsão para o período escolhido.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Dependendo do testcase escolhido, o tempo de execução do SCANTEC pode ser diferente devido ao número de pontos de grade a serem considerados na avaliação. Independente do número de modelos utilizados em uma avaliação com o SCANTEC, sempre será realizada a interpolação bilinear (espacial, horizontal) das grades para uma grade comum. Veja na página <a href="../namelist/">Namelist</a> os parâmetros <code>run domain resolution dx</code> (ou <code>dx</code>) e <code>run domain resolution dy</code> (ou <code>dy</code>), os quais indicam a resolução (em graus) para a qual as grades serão interpoladas. Na vertical, as variáveis não são interpoladas, visto que elas são definidas por níveis de pressão como descrito no arquivo <code>SCANTEC/tables/scantec.vars</code>.</p>
+</div>
+<h3 id="utilizando-o-scantec-em-dados-netcdf">Utilizando o SCANTEC em dados NetCDF<a class="headerlink" href="#utilizando-o-scantec-em-dados-netcdf" title="Permanent link">¶</a></h3>
+<p>A atual versão do SCANTEC está apta para ler apenas dados nos formatos GRIB ou binário (<code>.grb</code> ou <code>.bin</code>.), logo se a saida do pós-processamento do modelo é escrita no formato NetCDF (<code>.nc</code>) é necessário um pré-processamento nesses dados para depois serem avaliados no SCANTEC. Esse é o caso dos dados do WRF, MPAS e MONAN. Para isso no diretório <code>scripts_uteis</code>, há um script chamado <code>nc2grb.sh</code>, que converte arquivos NetCDF para um conjunto de arquivos compatíveis no formato GRIB (<code>.grb</code>, <code>.ctl</code>, <code>.gmp</code>). Esse script utiliza o script <a href="http://opengrads.org/doc/scripts/lats4d/"><code>lats4d.sh</code></a>, que permite recortar os dados espacialmente, temporalmente, por níveis de pressão e por variáveis, facilitando o processamento dos arquivos brutos. Os dados dos modelos <a href="https://monanadmin.github.io/monan_cc_docs/">MONAN</a> (Model for Ocean-laNd-Atmosphere predictioN) e <a href="https://www.mmm.ucar.edu/models/wrf">WRF</a> (Weather Research and Forecasting model) disponiveis no testacase foram pré-processados usando esse script e o mesmo deve ser feito para outros arquivos que o usuário deseja avaliar no SCANTEC, que estejam no formato NetCDF.</p>
+<p>A atual versão do script <code>lats4d.sh</code> no diretório <code>SCANTEC/scripts_uteis</code>, está configurado para ler a versão  pós-processada do MONAN v1.1.0 (dados brutos disponiveis no endereço <a href="https://ftp1.cptec.inpe.br/pesquisa/das/victor.ranieri/MONANexp/MONAN_v1.1.0/">https://ftp1.cptec.inpe.br/pesquisa/das/victor.ranieri/MONANexp/MONAN_v1.1.0/</a>, ~1,2 TB) e foi utilizado para gerar os arquivos GRIB disponíveis no testcase do MONAN (<a href="https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/MONAN">https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/MONAN</a>, ~195 MB). </p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>A presente versão dos scripts está ajustada para o modelo MONAN. Ajustes podem ser necessários para adaptar os scripts para as necessidades do usuário! </p>
+</div>
+<p>Observe que foi feita nessa conversão uma seleção de variáveis e níveis do modelo visando deixar o arquivo mais leve para o download durante o testcase. Na máquina Itapemirim, o script pode ser executado e testado da forma como está. Fora da rede interna do CPTEC, é preciso baixar os dados brutos (~1,2 TB) e modificar o endereço de onde ele deve ser lido localmente. Os dados são gerados no diretório <code>datain/MONAN</code>. O domínio dos dados é o global, mas há um recorte sobre a América do Sul. Para utilizar este recorte, basta descomentar as linhas apropriadamente. Para executar o scritp faça:</p>
+<ol>
+<li>
+<p>Entre no diretório <code>scripts_uteis</code> onde o SCANTEC foi instalado:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="8:1"><input checked id="__tabbed_8_1" name="__tabbed_8" type="radio"><div class="tabbed-labels"><label for="__tabbed_8_1">Comando</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>SCANTEC/scripts_uteis
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Execute o script <code>nc2grb.sh</code>:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="9:1"><input checked id="__tabbed_9_1" name="__tabbed_9" type="radio"><div class="tabbed-labels"><label for="__tabbed_9_1">Comando</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>nc2grb.sh
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Para utilizar os dados do usuário, é preciso modificar os endereços das variáveis a seguir:</p>
+<ul>
+<li><code>datain</code></li>
+<li><code>dataout</code></li>
+<li><code>dir_script</code></li>
+</ul>
+</div>
+<h3 id="executando-o-scantec-com-dados-do-usuario">Executando o SCANTEC com dados do usuário<a class="headerlink" href="#executando-o-scantec-com-dados-do-usuario" title="Permanent link">¶</a></h3>
+<p>Para executar o script <code>run_scantec.sh</code> com as informações inseridas pelo usuário, escolha a opção <code>7</code>. Mas antes, é preciso editar o script e modificar apropriadamente algumas informações. Veja a seguir:</p>
+<ol>
+<li>
+<p>Para utilizar o sistema (tanto no Tupã como nas máquinas virtuais) entre no diretório raiz da instalação do SCANTEC:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="10:1"><input checked id="__tabbed_10_1" name="__tabbed_10" type="radio"><div class="tabbed-labels"><label for="__tabbed_10_1">Comando</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>SCANTEC/
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Edite o script <code>run_scantec.sh</code>:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="11:1"><input checked id="__tabbed_11_1" name="__tabbed_11" type="radio"><div class="tabbed-labels"><label for="__tabbed_11_1">Comando</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>vi<span class="w"> </span>run_scantec.sh
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<p>Modifique apropriadamente os grupos de variáveis (Datas, Regiões, Referências, Análises, Quantidade de experimentos, Plugin experimento, Previsões e Climatologia), conforme a seguir:</p>
+<div class="highlight"><pre><span></span><code>#--------------------------------------------------------------------#
+# Configurações do usuário (ALTERAR O QUE FOR NECESSÁRIO)            #
+#--------------------------------------------------------------------#
+
+
+# Datas
+datai=2016010100
+dataf=2016010500
+passo_analise=12
+passo_previsao=12
+total_previsao=120
+
+# Regiões
+lat_low=-49.875 
+lon_low=-82.625 
+lat_up=11.375 
+lon_up=-35.375 
+dx=0.4  
+dy=0.4 
+
+# Referências
+# Plugin modelo
+pl_model_refer=prefixo_tabela_modelo
+
+# Análises
+arq_refer=diretorio_dados/arquivo_anl.ctl
+
+# Quantidade de experimentos
+quant_exp=1
+
+# Plugin experimento
+pl_model_exper=prefixo_tabela_modelo/arquivo_fct.ctl
+
+# Previões
+arq_prev=diretorio_dados
+
+# Climatologia
+use_climatologia=0
+arq_clim=diretorio_climatologia/climatologia50yr.%mc.ctl
+</code></pre></div>
+</li>
+<li>
+<p>Em seguida, salve as modificações no script <code>run_scantec.sh</code> e execute-o com a opção <code>7</code>:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="12:2"><input checked id="__tabbed_12_1" name="__tabbed_12" type="radio"><input id="__tabbed_12_2" name="__tabbed_12" type="radio"><div class="tabbed-labels"><label for="__tabbed_12_1">Comando</label><label for="__tabbed_12_2">Resultado</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>./run_scantec.sh<span class="w"> </span><span class="m">7</span>
+</code></pre></div></td></tr></table></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>&lt;&lt;&lt; INICIANDO SCANTEC &gt;&gt;&gt;        
+
+
+ Configurações da avaliação:               
+ ==========================                
+ Data inicial:   2016010100                  
+ Data final:     2016010500                  
+ Passo análise:  12          
+ Passo previsão: 12         
+ Total previsão: 120         
+
+ Região:                                   
+ Lat low: -49.875                       
+ Lon low: -82.625                       
+ Lat up:  11.375                        
+ Lon up:  -35.375                        
+
+ Quantidade de experimentos: 1  
+
+ Num. plugin referência: prefixo_tabela_modelo 
+ Análise:                                  
+ diretorio_dados/arquivo_anl.ctl                              
+
+ Num. plugin experimento: prefixo_tabela_modelo/arquivo_fct.ctl
+ Previsões:                                
+ diretorio_dados                               
+
+ Uso climatologia: 0     
+
+ Resultados:                               
+ /scripts/ensemble/SCANTEC/dataout/                          
+
+ Arquivo de log:                           
+ Log do processo: /scripts/ensemble/SCANTEC/logfile/scantec-20220628.17.30.log                
+ ==========================                
+
+ Início do processamento: Tue Jun 28 17:30:01 GMT 2022
+
+ Criando o arquivo de configurações em bin/scantec.conf
+
+ Arquivo de configuracao criado com sucesso.
+
+ Executando o scantec.x ...
+
+ . . . 
+
+ Final do processo: Tue Jun 28 17:30:01 GMT 2022
+
+ Log do processo: /scripts/ensemble/SCANTEC/logfile/scantec-20220628.17.30.log
+====================================================================================
+
+ Fim do processo!
+</code></pre></div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Para verificar os resultados de saída do SCANTEC, liste os arquivos do diretório <code>SCANTEC/dataout</code>:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="13:1"><input checked id="__tabbed_13_1" name="__tabbed_13" type="radio"><div class="tabbed-labels"><label for="__tabbed_13_1">Comando</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>ls<span class="w"> </span>SCANTEC/dataout
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+<div class="admonition info">
+<p class="admonition-title">Informação</p>
+<p>Para visualizar os resultados gerados pelo SCANTEC, pode-se utilizar softwares como o GrADS (para visualização da distribuição espacial dos campos) e o GNUPlot (para a plotagem das tabelas). A partir da versão SCANTEC V2.0.0, recomenda-se a utilização do SCANPLOT (veja mais detalhes na página <a href="../scanplot/">Visualização de resultados usando o SCANPLOT</a> ou no site do projeto em <a href="https://gad-dimnt-cptec.github.io/SCANPLOT/">https://gad-dimnt-cptec.github.io/SCANPLOT/</a>).</p>
+</div>
+<h2 id="adicionando-outras-versoes-ou-modelos-no-scantec">Adicionando outras versões ou modelos no SCANTEC<a class="headerlink" href="#adicionando-outras-versoes-ou-modelos-no-scantec" title="Permanent link">¶</a></h2>
+<p>Para adicionar uma nova versão de modelo à lista das opções em que o sistema está preparado para processar (i.e., BRAMS, ETA, BAM), siga as instruções descritas nessa seção. Inicialmente, verifique se a versão desejada já não está implementada no sistema. Caso não esteja, para incluir uma nova versão, crie um novo arquivo com a extensão <code>.model</code> dentro do diretório <code>SCANTEC/tables</code> com as informações pertinentes à versão do modelo a ser utilizado. Utilize um arquivo existente para saber como formatar o novo arquivo.</p>
+<div class="admonition note">
+<p class="admonition-title">Notas</p>
+<ul>
+<li>Observe que modelos com resoluções, recortes ou domíniois diferentes, ou mesmo com modificações no número de níveis pós-processados, requerem ajustes para que o sistema seja capaz de ler os arquivos binários;</li>
+<li>Ressalta-se que apenas arquivos binários (<code>*.bin</code>) e GRIB1 (<code>*.grb</code>) são lidos pela atual versão do sistema. Arquivos no formato GRIB2 e NetCDF não são suportados pela versão SCANTEC V2.1.0. Caso o modelo que deseja adicionar não esteja nesses formatos, estes podem ser convertidos para os formatos binário ou GRIB1 com o auxílio do script <a href="http://opengrads.org/doc/scripts/lats4d/"><code>lats4d</code></a> ou similares. </li>
+</ul>
+</div>
+<p>A lista abaixo, elenca os modelos já implementados na versão SCANTEC V2.1.0 junto com os seus respectivos arquivos <code>table</code>, os quais podem servir como exemplo para criar outros:</p>
+<ul>
+<li>Modelo AGCM<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> TQ0062L028 (climatologia de 50 anos), pós-processado em 18 níveis de pressão: <code>AGCM_TQ0062L028_50YR_CLIMATOLOGY_18levs.model</code>;</li>
+<li>Modelo AGCM TQ0126L028, pós-processado em 9 níveis de pressão: <code>AGCM_TQ0126L028_9levs.model</code>;</li>
+<li>Modelo BAM TQ0299L064, pós-processado em 18 níveis de pressão: <code>BAM_TQ0299L064_18levs.model</code>;</li>
+<li>Modelo BAM TQ0299L064, pós-processado em 28 níveis de pressão: <code>BAM_TQ0299L064_28levs.model</code>;</li>
+<li>Modelo BAM TQ0666L064, pós-processado em 33 níveis de pressão: <code>BAM_TQ0666L064_33levs.model</code>;</li>
+<li>Modelo BRAMS com 5km resolução horizontal, pós-processado em de 19 níveis de pressão: <code>BRAMS_5km_19levs.model</code>;</li>
+<li>Modelo ETA com 5km de resolução horizontal, pós-processado em 22 níveis de pressão: <code>ETA_ams_05km_22levs.model</code>;</li>
+<li>Modelo CFSR T382L64, pós-processado em 33 níveis de pressão: <code>CFSR_T382L064_CLIMATOLOGY_37levs.model</code>;</li>
+<li>Modelo GFS<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> 0,25 graus, pós-processado em 22 níveus de pressão: <code>GFS_0p25_5levs.model</code>.</li>
+</ul>
+<p>Para adicionar um novo modelo basta editar um dos arquivos acima, escolhendo-se aquele que mais se assemelha com o modelo desejado e fazer os ajustes necessários. Salve o arquivo modificado com um nome apropriado (incluindo a extensão <code>.model</code>) dentro do diretório <code>SCANTEC/tables</code>, e no arquivo namelist <code>scantec.conf</code> (ou no script <code>run_scantec.sh</code>, caso esteja sendo utilizado), assegure-se de que a nova versão do novo modelo seja lida a partir do arquivo <code>table</code> criado. Para isso, na linha em que o experimento é referenciado, a primeira palavra deve ser o nome do arquivo <code>table</code>. Veja a seguir:</p>
+<p>No script <code>run_scantec.sh</code>:</p>
+<div class="highlight"><pre><span></span><code>pl_model_refer=BAM_TQ0299L064_18levs
+</code></pre></div>
+<p>ou, no arquivo namelist <code>scantec.conf</code>:</p>
+<div class="highlight"><pre><span></span><code>BAM_TQ0299L064_18levs EXP01 /caminho/para/o/arquivo.ctl
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Atenção</p>
+<ul>
+<li>Se esse arquivo é também utilizado como referência na avaliação, o novo arquivo <code>table</code> deve também ser colocado após a palavra <code>Reference Model Name:</code>, dentro do arquivo namelist do SCANTEC:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>Reference Model Name: BAM_TQ0299L064_18levs
+</code></pre></div>
+</div>
+<p>O novo arquivo <code>table</code> deve conter as seguintes informações:</p>
+<ul>
+<li>Tipo de arquivo, depois da palavra <code>ftype:</code>;</li>
+<li>Valor considerado indefinido, depois da palavra <code>undef:</code>;</li>
+<li>Dimensões da grade na longitude, depois da palavra <code>xdim:</code>;</li>
+<li>Dimensões da grade na latitude, depois da palavra <code>ydim:</code>;</li>
+<li>Número de níveis verticais do pós-processamento e a sua lista, depois da palavra <code>zdim:</code>;</li>
+<li>Tabela de variáveis, depois da palavra <code>vars:</code>.</li>
+</ul>
+<p>Veja o exemplo do arquivo <code>ETA_ams_05km_22levs.model</code>:</p>
+<div class="highlight"><pre><span></span><code>ftype: grib
+undef: 1e+20
+xdim: 1162 linear -84.099998 0.050000
+ydim: 1320 linear -51.000000 0.050000
+zdim:
+22 levels 1020 1000 950 925 900 850 800 750 700 650 600 
+           550  500 450 400 350 300 250 200 150 100 50
+vars:
+vtmp:925 vtmp2(temp:925,umes:925)
+vtmp:850 vtmp2(temp:850,umes:850)
+vtmp:500 vtmp2(temp:500,umes:500)
+temp:850 temp:850 
+temp:500 temp:500 
+temp:250 temp:250 
+psnm:000 pslm:1020 
+umes:925 umes:925 
+umes:850 umes:850 
+umes:500 umes:500 
+agpl:925 agpl:1020 
+zgeo:850 zgeo:850 
+zgeo:500 zgeo:500 
+zgeo:250 zgeo:250 
+uvel:850 uvel:850 
+uvel:500 uvel:500 
+uvel:250 uvel:250 
+vvel:850 vvel:850 
+vvel:500 vvel:500 
+vvel:250 vvel:250 
+::
+</code></pre></div>
+<p>Outro arquivo igualmente importante para a configuração do SCANTEC, é o arquivo namelist <code>scantec.vars</code>. Este arquivo contém uma tabela de variáveis a serem utilizadas na avaliação. A tabela de variáveis é preenchida da seguinte forma (colunas separadas por espaço):</p>
+<ul>
+<li>A primeira coluna é o nome da variável do SCANTEC;</li>
+<li>A segunda coluna pode ser o nome da variável correspondente no modelo da forma como listado no arquivo descritor (<code>.ctl</code>) do modelo.</li>
+</ul>
+<p>Veja o exemplo do arquivo <code>scantec.vars</code>:</p>
+<div class="highlight"><pre><span></span><code>variables:
+VTMP:925 "Virtual Temperature @ 925 hPa [K]"
+VTMP:850 "Virtual Temperature @ 850 hPa [K]"
+VTMP:500 "Virtual Temperature @ 500 hPa [K]"
+TEMP:850 "Absolute Temperature @ 850 hPa [K]"
+TEMP:500 "Absolute Temperature @ 500 hPa [K]"
+TEMP:250 "Absolute Temperature @ 250 hPa [K]"
+PSNM:000 "Pressure reduced to MSL [hPa]"
+UMES:925 "Specific Humidity @ 925 hPa [g/Kg]"
+UMES:850 "Specific Humidity @ 850 hPa [g/Kg]"
+UMES:500 "Specific Humidity @ 500 hPa [g/Kg]"
+AGPL:925 "Inst. Precipitable Water @ 925 hPa [Kg/m2]"
+ZGEO:850 "Geopotential height @ 850 hPa [gpm]"
+ZGEO:500 "Geopotential height @ 500 hPa [gpm]"
+ZGEO:250 "Geopotential height @ 250 hPa [gpm]"
+UVEL:850 "Zonal Wind @ 850 hPa [m/s]"
+UVEL:500 "Zonal Wind @ 500 hPa [m/s]"
+UVEL:250 "Zonal Wind @ 250 hPa [m/s]"
+VVEL:850 "Meridional Wind @ 850 hPa [m/s]"
+VVEL:500 "Meridional Wind @ 500 hPa [m/s]"
+VVEL:250 "Meridional Wind @  250 hPa [m/s]"
+::
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Observe que ambos os arquivos <code>table</code> e <code>scantec.conf</code>, possuem uma seção específica para a definição das variáveis. No arquivo <code>scantec.conf</code>, são definidas as variáveis e os nomes das variáveis nos níveis que se deseja avaliar com o SCANTEC. Nos arquivos <code>table</code>, as variáveis que se deseja avaliar, devem ser definidas com base nas variáveis do modelo. Isso ocorre pois nem sempre as variáveis que se dejesa avaliar, não são pós-processadas pelos modelos. Para contornar isso, o SCANTEC possibilita o cálculo de variáveis (com base nas variáveis prós-processadas do modelo) durante o seu tempo de execução. Veja a seção <a href="#funcoes-matematicas-implicitas">Funções Matemáticas Implícitas</a> para mais informações.</p>
+</div>
+<h2 id="funcoes-matematicas-implicitas">Funções Matemáticas Implícitas<a class="headerlink" href="#funcoes-matematicas-implicitas" title="Permanent link">¶</a></h2>
+<p>A edição do arquivo <code>table</code> permite a utilização de funções matemáticas para a definição de novas variáveis. Caso o modelo não tenha a variável que o SCANTEC requer (ou que se deseja avaliar), funções matemáticas podem ser chamadas na segunda coluna da seção <code>vars:</code>. Algumas das funções disponiveis no SCANTEC podem ser aplicadas para isto, utilizando as variáveis pós-processadas do modelo. Estas funções são escritas entre parênteses depois do nome da função e são separadas por vírgulas.</p>
+<p>Veja o exemplo a seguir onde a variável <code>vtmp</code> (temperatura virtual) é calculada a partir das variáveis <code>temp</code> (temperatura absoluta) e <code>umes</code> (umidade específica):</p>
+<div class="highlight"><pre><span></span><code>vars:
+vtmp:925 vtmp2(temp:925,umes:925)
+vtmp:850 vtmp2(temp:850,umes:850)
+vtmp:500 vtmp2(temp:500,umes:500)
+</code></pre></div>
+<p>As seguintes funções matemáticas estão disponíveis na versão SCANTEC:</p>
+<ul>
+<li>
+<p>Funções Trigonométricas:</p>
+<ul>
+<li><code>sin(x)</code>: seno de x;</li>
+<li><code>cos(x)</code>: cosseno de x;</li>
+<li><code>tan(x)</code>: tangente de x;</li>
+<li><code>asin(x)</code>: arco seno de x;</li>
+<li><code>acos(x)</code>: arco cosseno de x;</li>
+<li><code>atan(x)</code>: arco tangente de x.</li>
+</ul>
+</li>
+<li>
+<p>Funções Aritméticas:</p>
+<ul>
+<li><code>sqrt(x)</code>: raiz quadrada de x;</li>
+<li><code>exp(x)</code>: exponencial de x;</li>
+<li><code>log(x)</code>: logarítmo natural de x;</li>
+<li><code>log10(x)</code>: logarítmo comum (na base 10) de x.</li>
+</ul>
+</li>
+<li>
+<p>Funções Numéricas:</p>
+<ul>
+<li><code>abs(x)</code>: retorna o valor absoluto de x;</li>
+<li><code>min(x,y)</code>: retorna o menor valor entre x e y;</li>
+<li><code>max(x,y)</code>: retorna o maior valor entre x e y;</li>
+<li><code>mod(x,y)</code>: rRetorna o resto da divisão de x por y.</li>
+</ul>
+</li>
+<li>
+<p>Funções para conversões físicas:</p>
+<ul>
+<li><code>svap(temp)</code>: calcula a pressão de vapor saturado [Pa] a partir da temperatura do ar (C);</li>
+<li><code>vapp(es, rh)</code>: calcula a pressão de vapor [Pa] a partir da pressão de vapor saturado [Pa] e da umidade relativa [%];</li>
+<li><code>hmxr1(q)</code>: calcula a razão de mistura [kg/kg] a partir da umidade específica [kg/kg];</li>
+<li><code>hmxr2(p, ee)</code>: calcula a razão de mistura [kg/kg] a partir da pressão atmosférica [Pa] e da pressão de vapor [Pa];</li>
+<li><code>umes1(w)</code>: calcula a umidade específica [kg/kg] a partir da razão de mistura [kg/kg];</li>
+<li><code>umes2(p, td)</code>: calcula a razão de mistura [kg/kg] a partir da pressão atmosférica [Pa] e da temperatura do ponto de orvalho [C];</li>
+<li><code>umes3(p, t, rh)</code>: calcula a razão de mistura [kg/kg] a partir da pressão atmosférica [Pa], da temperatura do ar (C) e da umidade relativa do ar [%];</li>
+<li><code>tpor(t, rh)</code>: calcula a temperatura do ponto de orvalho [C] a partir da temperatura do ar [C] e da umidade relativa do ar [%];</li>
+<li><code>umrl(p, w, es)</code>: calcula a umidade relativa [%] a partir da razão de mistura [kg/kg], da pressão de vapor de saturação [Pa] e da pressão atmosférica [Pa];</li>
+<li><code>vtmp1(p, t, rh)</code>: calcula a temperatura virtual [C] a partir da temperatura do ar [C] e da umidade relativa [%] e da pressão atmosférica [Pa];</li>
+<li><code>vtmp2(t, q)</code>: calcula a temperatura virtual [C ou K] a partir da temperatura do ar [C ou K] e da Umidade especícia [Kg/Kg];</li>
+</ul>
+</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Dica</p>
+<p>A implementação das funções matemáticas no SCANTEC, está nas rotinas <a href="https://github.com/GAD-DIMNT-CPTEC/SCANTEC/blob/master/core/MathExpress.f90">MathExpress.f90</a> e <a href="https://github.com/GAD-DIMNT-CPTEC/SCANTEC/blob/master/core/scan_MathPlugin.f90">scan_MathPlugin.f90</a>.</p>
+</div>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn:1">
+<p>O modelo AGCM (Atmospheric General Circulation Modelo) representa uma geração anterior do modelo BAM (Brazilian Atmospheric Model). <a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">↩</a></p>
+</li>
+<li id="fn:2">
+<p>O modelo GFS foi testado a partir da conversão dos arquivos GRIB2 para GRIB1, utilizando o script <a href="http://opengrads.org/doc/scripts/lats4d/"><code>lats4d</code></a>. A utilização do SCANTEC com os arquivos convertidos desse modelo, devem ser feita com atenção para os nomes das variáveis e os níveis verticais, uma vez que o modelo utiliza coordenada vertical híbrida. <a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">↩</a></p>
+</li>
+</ol>
+</div></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/GAD-DIMNT-CPTEC" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="mailto:joao.gerd@gmail.com" target="_blank" rel="noopener" title="" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480v-83.6c0-4 1.5-7.8 4.2-10.8l167.6-182.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8l-88.3-44.2C7.1 311.3.3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.tabs.link", "navigation.tabs.sticky"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f1b6f286.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
