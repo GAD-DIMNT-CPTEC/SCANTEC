@@ -116,11 +116,11 @@ ARQlog=${dir_data}/logfile/scantec-${RUNTM}.log
 if [ ${maqui} = "itapemirim" ]; then
   echo
   echo ">>>>>"
-  echo "A maquina itapemirim já tem o acesso aos dados" 
-  echo "Os diretorios de test e climatologia devem ser"
-  echo "links simbolicos para o repositorio do testcase no/share/das"
-  echo "não sendo necessário fazer o download dos dados nessa maquina."
-  echo ">>>>>" ${maqui}
+  echo "A maquina itapemirim já tem o acesso aos dados de testcase" 
+  echo "Os diretórios com os dados de testcase e climatologia devem ser"
+  echo "links simbolicos para o repositorio do testcase armazenados no /share/das,"
+  echo "não sendo necessário fazer o download dos dados nessa máquina."
+  echo ">>>>>" 
 fi
 
 case ${TESTCASE} in
@@ -142,7 +142,7 @@ dir_test=TestBRAMS
 
 # Verificação de existencia de arquivo
 
-cd ${dir_data}/datain/TestBRAMS
+cd ${dir_data}/datain/${dir_test}
 
 tamanho_BRAMS=$(du -sh ${dir_data}/datain/TestBRAMS/ | awk '{print $1}')
 
@@ -171,7 +171,7 @@ else
         echo ''
         echo 'Iniciando o download da climatologia.'
         echo ''
-	cd ../climatologia
+	cd ${dir_data}/datain/climatologia
 	wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1 
 	echo ''
 	echo 'Download Concluido'
@@ -234,7 +234,7 @@ dir_test=TestETA
 
 # Verificação de existencia dos arquivos
 
-cd ${dir_data}/datain/TestETA
+cd ${dir_data}/datain/${dir_test}
 
 tamanho_ETA=$(du -sh ${dir_data}/datain/TestETA/ | awk '{print $1}')
 
@@ -261,7 +261,7 @@ else
         echo ''
         echo 'Iniciando o download da climatologia.'
         echo ''
-        cd ../climatologia
+        cd ${dir_data}/datain/climatologia
         wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1
         echo ''
 	echo 'Download concluido.'
@@ -321,7 +321,7 @@ variavel=3
 dir_test=TestWRF
 
 # Verificação de existencia dos arquivos
-cd ${dir_data}/datain/TestWRF
+cd ${dir_data}/datain/${dir_test}
 
 tamanho_WRF=$(du -sh ${dir_data}/datain/TestWRF/ | awk '{print $1}')
 
@@ -348,7 +348,7 @@ else
         echo ''
         echo 'Iniciando o download da climatologia.'
         echo ''
-        cd ../climatologia
+        cd ${dir_data}/datain/climatologia
         wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http:/ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1
         echo ''
         echo 'Download concluido.'
@@ -410,7 +410,7 @@ dir_test=TestBAM
 
 
 # Verificação de existencia de arquivos
-cd ${dir_data}/datain/TestBAM
+cd ${dir_data}/datain/${dir_test}
 
 tamanho_BAM=$(du -sh ${dir_data}/datain/TestBAM/ | awk '{print $1}')
 
@@ -437,7 +437,7 @@ else
         echo ''
         echo 'Iniciando o download da climatologia.'
         echo ''
-        cd ../climatologia
+        cd ${dir_data}/datain/climatologia
         wget -r -np -nH -nc --cut-dirs=5 -R "index.html*" "http:/ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/Climatologia/" >> climatologia.log 2>&1
         echo ''
         echo 'Download concluido.'
@@ -497,6 +497,9 @@ dir_test=TestCompara
 
 #Variável para configuração do scantec.conf
 variavel=5
+
+# Verificação de existencia de arquivos
+cd ${dir_data}/datain/${dir_test}
 
 # Verifica a existencia dos arquivos para utilizar na comparação
 
@@ -649,6 +652,9 @@ dir_test=TestMONAN
 
 #Variável para configuração do scantec.conf
 variavel=6
+
+# Verificação de existencia de arquivos
+cd ${dir_data}/datain/${dir_test}
 
 tamanho_MONAN=$(du -sh ${dir_data}/datain/TestMONAN/ | awk '{print $1}')
 
