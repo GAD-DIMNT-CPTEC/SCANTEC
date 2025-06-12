@@ -2,9 +2,91 @@
 
 Para a instalação do SCANTEC, o sistema possui um script que prepara o ambiente para a instalação, o qual envolve a compilação de bibliotecas e módulos que integram o sistema. Ao final do processo, é gerado o executável `scantec.x`, que é então alocado no diretório `bin`. O SCANTEC está preparado para funcionar em diversos ambientes computacionais, como as máquinas virtuais do CPTEC (e.g., Itapemirim), e supercomputadores XC50. O SCANTEC também pode ser utilizado em máquinas locais na mesa do usuário, sejam elas workstations ou mesmo notebooks.
 
+
+## Instalação na máquina Egeon do CPTEC
+
+A partir da versão **SCANTEC V2.1.0**, a utilização do SCANTEC tem como requisito a versão 12.2.0 do Gfortran, a qual não está disponível na máquina. Para contornar este problema, os usuários podem criar um ambiente do conda e instalar esta versão do compilador Gfortran. Veja a seguir como construir o ambiente para instalar e executar o SCANTEC na mquina Egeon. 
+
+### Construção do ambiente conda para a instalação do SCANTEC na Egeon
+
+Na Egeon, siga os passos a seguir para construir um ambiente (na sua conta de usuário) para instalar e utilizar o SCANTEC na máquina Egeon:
+
+1. Carregar o módulo do anaconda:
+
+    === "Comando"
+        ```bash linenums="1"
+        module load anaconda3-2022.05-gcc-11.2.0-q74p53i
+        ```
+
+2. Criar um ambiente conda para a instalação do Gfortran 12.2.0:
+
+    === "Comando"
+        ```bash linenums="1"
+        conda create -n SCANTEC python=3.11.0
+        ```
+3. Instalação do Gfortran 12.2.0:
+
+    === "Comando"
+        ```bash linenums="1"
+        conda install conda-forge::gfortran=12.2.0
+        ```
+
+4. Ativação do ambiente criado:
+
+    === "Comando"
+        ```bash linenums="1"
+        conda activate SCANTEC
+        ```
+
+5. Instalação do SCANTEC:
+
+    Com o ambiente do conda preparado e ativado, a instalação do SCANTEC na Egeon deve ser feita dentro desse ambiente, de forma a garantir que o compilador e as bibliotecas necessárias sejam corretamente utilizadas. Para isso, proceda da seguinte forma:
+
+    * Obtenha a release mais recente do SCANTEC (atualmente a versão V2.2.0):
+
+        === "Comando"
+            ```bash linenums="1"
+            wget -c https://github.com/GAD-DIMNT-CPTEC/SCANTEC/archive/refs/tags/V2.2.0.tar.gz
+            ```
+        
+    * Desempacote do código e entre no diretório criado `SCANTEC`:
+    
+        === "Comando"
+            ```bash linenums="1"
+            tar -zxvf V2.2.0.tar.gz
+            cd SCANTEC-2.2.0
+            ```
+    
+    * Execute o script `install` e escolha a opção `2 - GNU - Load GNU Gfortran Environment to LINUX and compile`:
+    
+        === "Comando"
+            ```bash linenums="1"
+            ./install
+            ```
+        === "Resultado"
+            ```
+            ------------------choose one of options-----------------
+            
+             1 - Clean Environment
+            
+             2 - GNU - Load GNU Gfortran Environment to LINUX and compile
+            
+             3 - CCE XE - Load Cray Environment to XT/XE and compile
+            
+             4 - INTEL - Load INTEL Environment to LINUX and compile
+            
+             E - Exit
+            
+            Choose one of options (1-E): 
+            ```
+
 !!! note "Nota"
 
-    Idealmente, o SCANTEC deve funcionar também na máquina EGEON do CPTEC, porém, a presente versão **SCANTEC V.2.1.0** requer recursos mais atuais do compilador Fortran, os quais não estão disponíveis na máquina. Apesar disso, ainda há a possibilidade de se utilizar o SCANTEC a partir de um container. Instruções específicas para a utilização do SCANTEC em outras máquinas são fornecidas ao longo desta seção.
+    Na máquina Egeon, quando o SCANTEC for utilizado, será necessário exportar a variável de ambiente a seguir antes de utilizar o executável `scantec.x`:
+
+    ```bash linenums="1"
+    export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+    ```
 
 ##  Instalação em máquinas virtuais e locais
 
@@ -27,22 +109,23 @@ Para a instalação do SCANTEC, realize os procedimentos a seguir. ==Não se esq
         ssh <usuario>@itapemirim.cptec.inpe.br -XC
         ```
 
-2. Entre no diretório `/scripts/<grupo>/usuario` (recomendado) ou em um diretório da preferência do usuário para realizar a instalação do SCANTEC. Faça o download utilizando o github https://github.com/GAD-DIMNT-CPTEC/SCANTEC:
+2. Entre no diretório `/scripts/<grupo>/usuario` (recomendado) ou em um diretório da preferência do usuário para realizar a instalação do SCANTEC:
 
     === "Comando"
         ```bash linenums="1"
         cd /scripts/<grupo>/<usuario>
-        git clone https://github.com/GAD-DIMNT-CPTEC/SCANTEC.git
+        wget -c https://github.com/GAD-DIMNT-CPTEC/SCANTEC/archive/refs/tags/V2.2.0.tar.gz
         ```
-        
-3. Entre no diretório criado `SCANTEC`:
+
+2. Descompacte o código baixado e entre no diretório criado:
 
     === "Comando"
         ```bash linenums="1"
+        tar -zxvf V2.2.0.tar.gz
         cd SCANTEC
         ```
-
-4. Carregue o ambiente `SCANTEC` para a compilação do SCANTEC:
+        
+3. Carregue o ambiente `SCANTEC` para a compilação do SCANTEC:
 
     Para usuários do grupo DAS, a máquina Itapemirim, carregue o ambiente (disponível em `/scripts/das/conda/envs/SCANTEC`) com o comando:    
 
@@ -85,7 +168,7 @@ Para a instalação do SCANTEC, realize os procedimentos a seguir. ==Não se esq
        
         Em outras máquinas esta etapa não é necessária, mas certifique-se de que há pelo menos o compilador GNU Fortran versão 9 ou superior instalado.
 
-5. Execute o script `install`:
+4. Execute o script `install`:
 
     === "Comando"
         ```bash linenums="1"
@@ -120,8 +203,6 @@ Para a instalação do SCANTEC, realize os procedimentos a seguir. ==Não se esq
 A instalação do SCANTEC em máquinas com o sistema operacional Windows pode ser feita através do WSL.
 Um guia de instalação mais detalhado pode ser encontrado através do link: [https://learn.microsoft.com/pt-br/windows/wsl/install](https://learn.microsoft.com/pt-br/windows/wsl/install).
 
-### WSL
-
 O WSL (Windows Subsystem for Linux) é uma funcionalidade do Windows que permite executar um ambiente Linux diretamente no Windows, sem a necessidade de uma máquina virtual. Ele possibilita a execução de comandos e ferramentas do Linux nativamente, proporcionando integração entre os sistemas operacionais e facilitando o desenvolvimento de software que precisa utilizar recursos do Linux enquanto ainda opera no ambiente Windows.
 
 ### Requisitos para instalação
@@ -148,45 +229,67 @@ Pronto! Um terminal linux está instalado em sua máquina.
 
 ### Instalação do SCANTEC
 
-Entre na página [https://github.com/GAD-DIMNT-CPTEC/SCANTEC](https://github.com/GAD-DIMNT-CPTEC/SCANTEC) e procure pela barra azul "Code/Código". Vá na aba HTTPS, copie o endereço https://github.com/GAD-DIMNT-CPTEC/SCANTEC.git e digite o código no terminal linux
+1. Instale os programas e as bibliotecas necessárias:
 
-=== "Comando"
+    === "Comando"
+    
+        ```linenums="1"
+        sudo apt update
+        sudo apt upgrade
+        sudo apt install wget make gfortran
+        ```
+        ![image](https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER/assets/71741679/63117044-8b0c-4454-b993-da725b3e91c0)
+    
+    Verifique a instalação do Gfortran com o comando:
+    
+    === "Comando"
+    
+        ```linenums="1"
+        gfortran --version
+        ```
+        ![image](https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER/assets/71741679/9b162cfc-fb5c-43ce-9509-7240b88a7944)
 
-    ```linenums="1"
-    git clone https://github.com/GAD-DIMNT-CPTEC/SCANTEC.git
-    ```
+2. Baixe a release V2.2.0 do SCANTEC:
 
-    ![image](https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER/assets/71741679/6b5618af-e7ab-42a4-9c53-d4aa435f6c51)
+    === "Comando"
 
-Instale as bibliotecas necessárias. (você irá precisar da senha que você cadastrou). No terminal linux digite as seguintes linhas de código:
+        ```linenums="1"
+        wget -c https://github.com/GAD-DIMNT-CPTEC/SCANTEC/archive/refs/tags/V2.2.0.tar.gz
+        ```
 
-=== "Comando"
+3. Desempacote do código baixado:
 
-    ```linenums="1"
-    sudo apt update
-    sudo apt install make gfortran
-    ```
-    ![image](https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER/assets/71741679/63117044-8b0c-4454-b993-da725b3e91c0)
+    === "Comando"
+        ```bash linenums="1"
+        tar -zxvf V2.2.0.tar.gz
+        cd SCANTEC-2.2.0
+        ```
 
-Verifique a instalação do Gfortran com o comando:
+4. Compilação do SCANTEC:
 
-=== "Comando"
-
-    ```linenums="1"
-    gfortran --version
-    ```
-    ![image](https://github.com/GAD-DIMNT-CPTEC/SCANTEC-MASTER/assets/71741679/9b162cfc-fb5c-43ce-9509-7240b88a7944)
-
-### Compilação do SCANTEC
-
-Com as bibliotecas e compilador instalados, entre no diretório onde o SCANTEC foi instalado.
-
-Digite o comando no terminal linux
-
-=== "Comando"
-
-    ```linenums="1"
-    ./install
-    ```
-
-Escolha a opção 1 para limpar o ambiente. Faça esse procedimento novamente porém agora digite 2 (opção para compilação do Gfortran).
+    Com as bibliotecas e compilador instalados, entre no diretório onde o SCANTEC foi instalado.
+    
+    Digite o comando no terminal linux
+    
+    === "Comando"
+        ```bash linenums="1"
+        ./install
+        ```
+    === "Resultado"
+        ```
+        ------------------choose one of options-----------------
+        
+         1 - Clean Environment
+        
+         2 - GNU - Load GNU Gfortran Environment to LINUX and compile
+        
+         3 - CCE XE - Load Cray Environment to XT/XE and compile
+        
+         4 - INTEL - Load INTEL Environment to LINUX and compile
+        
+         E - Exit
+        
+        Choose one of options (1-E): 
+        ```
+    
+    Escolha a opção 2 para compilação do Gfortran.
