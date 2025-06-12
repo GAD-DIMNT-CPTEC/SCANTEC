@@ -84,9 +84,10 @@ Na Egeon, siga os passos a seguir para construir um ambiente (na sua conta de us
 
     Na máquina Egeon, quando o SCANTEC for utilizado, será necessário exportar a variável de ambiente a seguir antes de utilizar o executável `scantec.x`:
 
-    ```bash linenums="1"
-    export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
-    ```
+    === "Comando"
+        ```bash linenums="1"
+        export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+        ```
 
 ##  Instalação em máquinas virtuais e locais
 
@@ -292,4 +293,4 @@ Pronto! Um terminal linux está instalado em sua máquina.
         Choose one of options (1-E): 
         ```
     
-    Escolha a opção 2 para compilação do Gfortran.
+    Escolha a opção 2 para compilação com o Gfortran.
