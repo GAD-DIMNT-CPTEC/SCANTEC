@@ -110,13 +110,13 @@ Na seção a seguir, e detalhada a utilização do SCANTEC a partir dos dados de
 
 Os dados de entrada do testcase para as 6 opções de modelos disponíveis (i.e., BRAMS, ETA, WRF, BAM e MONAN) estão no disco NetApp do CPTEC, acessíveis em locais diferentes a depender da máquina utilizada:
 
-* Máquinas virtuais (e.g., Itapemirim, Ilopolis, Colorado): `/share/das/dist/scantec/TestCase_SCANTEC/`;
+* Máquinas virtuais (e.g., Bastos): `/share/das/dist/scantec/TestCase_SCANTEC/`;
 * Máquina Egeon: `/pesq/share/das/dist/scantec/TestCase_SCANTEC/`;
 * Máquina externas ao inpe: `https://ftp1.cptec.inpe.br/pesquisa/das/scantec/TestCase_SCANTEC/`.
 
 !!! warning "Atenção"
 
-    Na máquina XC50, estes dados não estão disponíveis, mas podem ser copiadas a partir das máquinas Itapemirim ou Egeon.
+    Na máquina XC50, estes dados não estão disponíveis, mas podem ser copiadas a partir das máquinas Bastos ou Egeon.
 
 1. Para utilizar o sistema (tanto local, quanto nas máquinas virtuais) entre no diretório raiz da instalação do SCANTEC:
 
@@ -128,7 +128,7 @@ Os dados de entrada do testcase para as 6 opções de modelos disponíveis (i.e.
 
     Nas máquinas virtuais, é preciso antes de rodar o run_scantec.sh apagar os diretorios do datain e criar links para os locais onde esses dadps estão pois, caso contrário os dados (que já estão na itapemerim) serão baixados via ftp ocupando espaço desnecessário. Nesse caso é preciso fazer a proxima ação, caso esteja em maquina sem acesso direto a esses dados pule essa etapa:
 
-2. Se estiver rodando nas maquina virtuais (itapemirim,ilopolis, etc) faça:
+2. Se estiver rodando nas maquina virtuais (e.g., Bastos) faça:
 
     === "Comando"
         ```bash linenums="12"
@@ -223,7 +223,7 @@ A atual versão do script `lats4d.sh` no diretório `SCANTEC/scripts_uteis`, est
 
     A presente versão dos scripts está ajustada para o modelo MONAN. Ajustes podem ser necessários para adaptar os scripts para as necessidades do usuário! 
 
-Observe que foi feita nessa conversão uma seleção de variáveis e níveis do modelo visando deixar o arquivo mais leve para o download durante o testcase. Na máquina Itapemirim, o script pode ser executado e testado da forma como está. Fora da rede interna do CPTEC, é preciso baixar os dados brutos (~1,2 TB) e modificar o endereço de onde ele deve ser lido localmente. Os dados são gerados no diretório `datain/MONAN`. O domínio dos dados é o global, mas há um recorte sobre a América do Sul. Para utilizar este recorte, basta descomentar as linhas apropriadamente. Para executar o scritp faça:
+Observe que foi feita nessa conversão uma seleção de variáveis e níveis do modelo visando deixar o arquivo mais leve para o download durante o testcase. Na máquina Bastos, o script pode ser executado e testado da forma como está. Fora da rede interna do CPTEC, é preciso baixar os dados brutos (~1,2 TB) e modificar o endereço de onde ele deve ser lido localmente. Os dados são gerados no diretório `datain/MONAN`. O domínio dos dados é o global, mas há um recorte sobre a América do Sul. Para utilizar este recorte, basta descomentar as linhas apropriadamente. Para executar o scritp faça:
 
 1. Entre no diretório `scripts_uteis` onde o SCANTEC foi instalado:
 
