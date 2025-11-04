@@ -133,17 +133,17 @@ Os dados de entrada do testcase para as 6 opções de modelos disponíveis (i.e.
     === "Comando"
         ```bash linenums="12"
         rmdir datain/TestBRAMS
-        ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/BRAMS datain/TestBRAMS
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/BRAMS datain/TestBRAMS
         rmdir datain/TestETA
-        ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/ETA datain/TestETA
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/ETA datain/TestETA
         rmdir datain/TestWRF
-        ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/WRF datain/TestWRF  
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/WRF datain/TestWRF  
         rmdir datain/TestBAM
-        ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/BAM_T666L64 datain/TestBAM
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/BAM_T666L64 datain/TestBAM
         rmdir datain/TestMONAN
-        ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/MONAN datain/TestMONAN
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/MONAN datain/TestMONAN
         rmdir datain/climatologia
-        ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/Climatologia datain/climatologia
+        ln -s /share/das/dist/scantec/TestCase_SCANTEC/Climatologia datain/climatologia
         ```
 
     !!! note "Nota"
@@ -153,17 +153,17 @@ Os dados de entrada do testcase para as 6 opções de modelos disponíveis (i.e.
         === "Comando"
             ```bash linenums="12"
             rmdir datain/TestBRAMS
-            ln -s /share/das/dist/scantec/TestCase_SCANTEC/BRAMS datain/TestBRAMS
+            ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/BRAMS datain/TestBRAMS
             rmdir datain/TestETA
-            ln -s /share/das/dist/scantec/TestCase_SCANTEC/ETA datain/TestETA
+            ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/ETA datain/TestETA
             rmdir datain/TestWRF
-            ln -s /share/das/dist/scantec/TestCase_SCANTEC/WRF datain/TestWRF  
+            ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/WRF datain/TestWRF  
             rmdir datain/TestBAM
-            ln -s /share/das/dist/scantec/TestCase_SCANTEC/BAM_T666L64 datain/TestBAM
+            ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/BAM_T666L64 datain/TestBAM
             rmdir datain/TestMONAN
-            ln -s /share/das/dist/scantec/TestCase_SCANTEC/MONAN datain/TestMONAN
+            ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/MONAN datain/TestMONAN
             rmdir datain/climatologia
-            ln -s /share/das/dist/scantec/TestCase_SCANTEC/Climatologia datain/climatologia
+            ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/Climatologia datain/climatologia
             ```
  
 3. Execute o script de execução do SCANTEC com um parâmetro na linha de comando:
