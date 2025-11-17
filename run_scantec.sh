@@ -113,14 +113,20 @@ ARQlog=${dir_data}/logfile/scantec-${RUNTM}.log
 
 # Criando links do datain para o caso da maquina itapemirim
 
-if [ ${maqui} = "itapemirim" ]; then
-  echo
-  echo ">>>>>"
-  echo "A maquina itapemirim já tem o acesso aos dados de testcase" 
-  echo "Os diretórios com os dados de testcase e climatologia devem ser"
-  echo "links simbolicos para o repositorio do testcase armazenados no /share/das,"
-  echo "não sendo necessário fazer o download dos dados nessa máquina."
-  echo ">>>>>" 
+if [ ${maqui} = "itapemirim.cptec.inpe.br" ] || [ ${maqui} = "bastos.cptec.inpe.br" ]; then
+  ln -sf /share/das/dist/scantec/TestCase_SCANTEC/BRAMS/* ${dir_data}/datain/TestBRAMS
+  ln -sf /share/das/dist/scantec/TestCase_SCANTEC/Climatologia/* ${dir_data}/datain/climatologia
+  ln -sf /share/das/dist/scantec/TestCase_SCANTEC/ETA/* ${dir_data}/datain/TestETA
+  ln -sf /share/das/dist/scantec/TestCase_SCANTEC/WRF/* ${dir_data}/datain/TestWRF
+  ln -sf /share/das/dist/scantec/TestCase_SCANTEC/MONAN/* ${dir_data}/datain/TestMONAN
+  ln -sf /share/das/dist/scantec/TestCase_SCANTEC/BAM_T666L64/* ${dir_data}/datain/TestBAM
+elif [ ${maqui} = "headnode.egeon.cptec.inpe.br" ] || [ ${maqui} = "egeon-login.cptec.inpe.br" ] ; then
+  ln -sf /pesq/share/das/dist/scantec/TestCase_SCANTEC/BRAMS/* ${dir_data}/datain/TestBRAMS
+  ln -sf /pesq/share/das/dist/scantec/TestCase_SCANTEC/Climatologia/* ${dir_data}/datain/climatologia
+  ln -sf /pesq/share/das/dist/scantec/TestCase_SCANTEC/ETA/* ${dir_data}/datain/TestETA
+  ln -sf /pesq/share/das/dist/scantec/TestCase_SCANTEC/WRF/* ${dir_data}/datain/TestWRF
+  ln -sf /pesq/share/das/dist/scantec/TestCase_SCANTEC/MONAN/* ${dir_data}/datain/TestMONAN
+  ln -sf /pesq/share/das/dist/scantec/TestCase_SCANTEC/BAM_T666L64/* ${dir_data}/datain/TestBAM
 fi
 
 case ${TESTCASE} in

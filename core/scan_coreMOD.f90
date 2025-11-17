@@ -293,10 +293,10 @@ CONTAINS
      write(*,'(3A11)')'Analisys','Forecast','fct'
      DO WHILE (.NOT.is_last_step())
         if(scantec%timeStepType .eq. 'forward')then
-           write(*,'(2(1x,I10.10),7x,I3.2"h")')scantec%atime, scantec%ftime,&
+           write(*,'(2(1x,I10.10),7x,I3.2,"h")')scantec%atime, scantec%ftime,&
                  int(abs(cal2jul(scantec%atime)-cal2jul(scantec%ftime))*24)
         else
-           write(*,'(2(1x,I10.10),7x,I3.2"h")')scantec%ftime, scantec%atime,&
+           write(*,'(2(1x,I10.10),7x,I3.2,"h")')scantec%ftime, scantec%atime,&
                  int(abs(cal2jul(scantec%atime)-cal2jul(scantec%ftime))*24)
         endif
         

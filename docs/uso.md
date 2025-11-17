@@ -124,49 +124,8 @@ Os dados de entrada do testcase para as 6 opções de modelos disponíveis (i.e.
         ```bash linenums="1"
         cd SCANTEC/
         ```
-!!! warning "Atenção"
 
-    Nas máquinas virtuais, é preciso antes de rodar o run_scantec.sh apagar os diretorios do datain e criar links para os locais onde esses dadps estão pois, caso contrário os dados (que já estão na itapemerim) serão baixados via ftp ocupando espaço desnecessário. Nesse caso é preciso fazer a proxima ação, caso esteja em maquina sem acesso direto a esses dados pule essa etapa:
-
-2. Se estiver rodando nas maquina virtuais (e.g., Bastos) faça:
-
-    === "Comando"
-        ```bash linenums="12"
-        rmdir datain/TestBRAMS
-        ln -s /share/das/dist/scantec/TestCase_SCANTEC/BRAMS datain/TestBRAMS
-        rmdir datain/TestETA
-        ln -s /share/das/dist/scantec/TestCase_SCANTEC/ETA datain/TestETA
-        rmdir datain/TestWRF
-        ln -s /share/das/dist/scantec/TestCase_SCANTEC/WRF datain/TestWRF  
-        rmdir datain/TestBAM
-        ln -s /share/das/dist/scantec/TestCase_SCANTEC/BAM_T666L64 datain/TestBAM
-        rmdir datain/TestMONAN
-        ln -s /share/das/dist/scantec/TestCase_SCANTEC/MONAN datain/TestMONAN
-        rmdir datain/climatologia
-        ln -s /share/das/dist/scantec/TestCase_SCANTEC/Climatologia datain/climatologia
-        ```
-
-    !!! note "Nota"
-
-        Na máquina Egeon, utilize:
-
-        === "Comando"
-            ```bash linenums="12"
-            rmdir datain/TestBRAMS
-            ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/BRAMS datain/TestBRAMS
-            rmdir datain/TestETA
-            ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/ETA datain/TestETA
-            rmdir datain/TestWRF
-            ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/WRF datain/TestWRF  
-            rmdir datain/TestBAM
-            ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/BAM_T666L64 datain/TestBAM
-            rmdir datain/TestMONAN
-            ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/MONAN datain/TestMONAN
-            rmdir datain/climatologia
-            ln -s /pesq/share/das/dist/scantec/TestCase_SCANTEC/Climatologia datain/climatologia
-            ```
- 
-3. Execute o script de execução do SCANTEC com um parâmetro na linha de comando:
+2. Execute o script de execução do SCANTEC com um parâmetro na linha de comando:
 
     === "Comando"
         ```bash linenums="1"
