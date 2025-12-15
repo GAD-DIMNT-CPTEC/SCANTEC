@@ -24,12 +24,14 @@ Na Egeon, siga os passos a seguir para construir um ambiente (na sua conta de us
         ```bash linenums="1"
         conda create -n SCANTEC python=3.11.0
         ```
+
 3. Ativação do ambiente criado:
 
     === "Comando"
         ```bash linenums="1"
         conda activate SCANTEC
         ```
+
 4. Instalação do Gfortran 12.2.0:
 
     === "Comando"
